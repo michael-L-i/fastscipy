@@ -41,6 +41,9 @@ impl Mode {
 /// non-native byte order) fall back to SciPy.
 pub trait Elem: numpy::Element + Copy + Send + Sync + PartialOrd + 'static {
     fn to_f64(self) -> f64;
+    /// Conversion from double with Rust `as` semantics: truncation toward zero,
+    /// saturating out-of-range values (matching aarch64 C casts), NaN to 0 for ints.
+    fn from_f64(v: f64) -> Self;
     const IS_FLOAT: bool;
 }
 
@@ -49,6 +52,8 @@ macro_rules! impl_elem {
         impl Elem for $t {
             #[inline(always)]
             fn to_f64(self) -> f64 { self as f64 }
+            #[inline(always)]
+            fn from_f64(v: f64) -> Self { v as $t }
             const IS_FLOAT: bool = $float;
         }
     )*};

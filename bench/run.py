@@ -4,10 +4,12 @@
 
 Each ``bench/bench_<area>.py`` defines ``cases()``, yielding ``(name, call)``
 where ``call()`` makes one SciPy call through module attributes (so the patch
-applies) and returns its result. Yield ``(name, call, False)`` for a case the
-fast path is expected to decline (it must then simply not be slower). Every case checks that the patched result is
-byte-identical to SciPy's. Writes ``bench/results/<area>.json`` and prints a
-markdown table; ``--check`` exits non-zero if a case differs, never took the
+applies) and returns its result. A third item says where the fast path must
+run: ``True`` (default: on 1 and all threads), ``"threads"`` (only with
+threads; a module sets ``THREADED_ONLY = True`` to make that its default) or
+``False`` (a control it should decline, which must just not be slower).
+Every case checks that the patched result is byte-identical to SciPy's.
+Writes ``bench/results/<area>.json`` and prints a markdown table; ``--check`` exits non-zero if a case differs, never took the
 fast path, or is slower than SciPy on one thread.
 """
 import argparse
@@ -36,16 +38,17 @@ def timeit(call, budget):
     return best
 
 
-def run_case(call, budget, threads, expect_fast=True):
+def run_case(call, budget, threads, expect=True):
     with fastscipy.disabled():
         ref = call()
         t_scipy = timeit(call, budget)
-    row = {"scipy_ms": t_scipy * 1e3, "identical": True, "fast_path": True, "expect_fast": expect_fast}
+    row = {"scipy_ms": t_scipy * 1e3, "identical": True, "fast_path": True}
     for label, n in (("1t", 1), ("nt", threads)):
         fastscipy.set_num_threads(n)
         before = fast_calls()
         out = call()
-        row["fast_path"] &= fast_calls() > before or not expect_fast
+        if expect is True or (expect == "threads" and n > 1):
+            row["fast_path"] &= fast_calls() > before
         row["identical"] &= identical(ref, out)
         row[f"{label}_ms"] = timeit(call, budget) * 1e3
         row[f"x{label}"] = t_scipy / (row[f"{label}_ms"] / 1e3)
@@ -74,10 +77,12 @@ def main():
     print("|---|---:|---:|---:|---:|---:|---|")
     for area in areas:
         rows = {}
-        for name, call, *expect in importlib.import_module(f"bench_{area}").cases():
+        mod = importlib.import_module(f"bench_{area}")
+        default = "threads" if getattr(mod, "THREADED_ONLY", False) else True
+        for name, call, *expect in mod.cases():
             if args.only not in name:
                 continue
-            r = rows[name] = run_case(call, args.budget, threads, *expect)
+            r = rows[name] = run_case(call, args.budget, threads, *(expect or [default]))
             flag = "yes" if r["identical"] else "**NO**"
             if not r["fast_path"]:
                 flag += " (no fast path)"

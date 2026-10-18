@@ -14,19 +14,17 @@ from . import _native, _patch, _threads
 _k = _native.interp
 _orig = {}
 
-# Measured break-evens (see bench/bench_interpolate.py).
+# Break-evens measured on one thread against SciPy 1.18.1 (Apple M-series).
 SPLINE_MIN_QUERIES = 300
-SPLINE_MIN_KNOTS = 150
-SPLINE_MIN_JUMP = 48             # mean knot-index jump between consecutive queries
-KERNEL_MIN_JUMP = 8              # Rust binary-search kernel from this jump
+SPLINE_MIN_JUMP = 100            # mean knot-index jump between consecutive queries (SciPy's walk length)
 KERNEL_PARALLEL_FROM = 1 << 16   # with threads the kernel also pays on sorted queries
-SIMPLEX_MIN_SIMPLICES = 1500
 SIMPLEX_MIN_QUERIES = 300
-SIMPLEX_MIN_WORK = 5e4           # queries * sqrt(simplices)
+SIMPLEX_MIN_WORK = 5e4           # queries * sqrt(simplices): the walk length
+SAMPLE = 1024                    # consecutive query pairs sampled to judge the query order
+LOCAL_JUMP = 4.0                 # mean jump between consecutive queries, in grid cells, below which SciPy wins
 TIE_BAND = 1e-9                  # barycentric distance to a face that triggers a replay
 MAX_REPLAY = 0.25                # replay more than this fraction of the queries: use SciPy
 MAX_REPLAY_RANGES = 20000
-PCHIP_MIN_QUERIES = 8
 CHUNK = 4000                     # smallest per-thread find_simplex chunk
 
 
@@ -34,10 +32,10 @@ def _is_array(a, kinds):
     return type(a) is np.ndarray and a.dtype.kind in kinds
 
 
-def _jump(x, nknots, span):
-    """Mean knot-index jump between consecutive queries, from up to 4096 pairs."""
-    i = np.arange(len(x) - 1) if len(x) <= 4097 else np.linspace(0, len(x) - 2, 4096).astype(np.intp)
-    return float(np.abs(x[i + 1] - x[i]).mean()) / span * nknots if span > 0 else 0.0
+def _jump(x, t):
+    """Mean knot-index jump between consecutive queries, from up to SAMPLE pairs."""
+    i = np.arange(len(x) - 1) if len(x) <= SAMPLE + 1 else np.linspace(0, len(x) - 2, SAMPLE).astype(np.intp)
+    return np.abs(np.searchsorted(t, x[i + 1]) - np.searchsorted(t, x[i])).mean()
 
 
 def _on_axis(out, nd, axis):
@@ -54,14 +52,14 @@ def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
     n = len(flat)
     if n < SPLINE_MIN_QUERIES:
         return NotImplemented
-    jump = _jump(flat, len(t), t[-k - 1] - t[k])
-    if kernel_ok and (jump >= KERNEL_MIN_JUMP or (n >= KERNEL_PARALLEL_FROM and _threads.get_num_threads() > 1)):
+    jump = _jump(flat, t)
+    if kernel_ok and (jump >= SPLINE_MIN_JUMP or (n >= KERNEL_PARALLEL_FROM and _threads.get_num_threads() > 1)):
         cc = c.reshape(len(c), -1)
         out = _k.bspline_eval(t, cc.view(np.float64) if c.dtype.kind == "c" else cc, k, flat)
         if out is not None:
             out = out.view(complex) if c.dtype.kind == "c" else out
             return _on_axis(out.reshape(shape + c.shape[1:]), len(shape), axis)
-    if len(t) < SPLINE_MIN_KNOTS or not jump >= SPLINE_MIN_JUMP:
+    if not jump >= SPLINE_MIN_JUMP:
         return NotImplemented
     order = np.argsort(flat)
     r = np.moveaxis(np.asarray(call(flat[order])), axis, 0)
@@ -105,16 +103,14 @@ def _grid(tri):
 
 
 def _eligible(tri, x):
-    return (len(x) >= SIMPLEX_MIN_QUERIES and tri.nsimplex >= SIMPLEX_MIN_SIMPLICES
-            and len(x) * tri.nsimplex ** 0.5 >= SIMPLEX_MIN_WORK)
+    return len(x) >= SIMPLEX_MIN_QUERIES and len(x) * tri.nsimplex ** 0.5 >= SIMPLEX_MIN_WORK
 
 
 def _is_local(x, tri):
     """Consecutive queries already close (sorted or raster order): SciPy's walk is short."""
     g, lo, span = _grid(tri)
-    i = np.linspace(0, len(x) - 2, 4096).astype(np.intp)
-    d = np.abs(x[i + 1] - x[i]) / span * g
-    return (~(d.max(axis=1) <= 3.0)).mean() < 0.01      # NaN counts as far
+    i = np.linspace(0, len(x) - 2, SAMPLE).astype(np.intp)
+    return (np.abs(x[i + 1] - x[i]) / span * g).max(axis=1).mean() < LOCAL_JUMP     # NaN is not local
 
 
 def _locate(tri, x):
@@ -200,7 +196,7 @@ def _make_evaluate(cls, name):
 def _evaluate_spline(self, xi, method):
     g, v = self._grid, self._values
     if (method != "pchip" or not _is_array(xi, "f") or xi.ndim != 2 or xi.dtype != np.float64
-            or len(xi) < PCHIP_MIN_QUERIES or not _is_array(v, "f") or v.dtype != np.float64 or v.ndim != len(g)
+            or not len(xi) or not _is_array(v, "f") or v.dtype != np.float64 or v.ndim != len(g)
             or not all(_is_array(a, "f") and a.dtype == np.float64 and a.ndim == 1 for a in g)):
         return NotImplemented
     out = _k.pchip_eval(list(g), np.ascontiguousarray(v).reshape(-1), np.ascontiguousarray(xi))

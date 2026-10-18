@@ -1,0 +1,220 @@
+"""Batched stacks for the scipy.linalg functions that SciPy still loops over in
+Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
+``solve_triangular``, ``eigh`` and ``eigvalsh``.
+
+Tier 1 (faithful port). The Rust kernels call the same LAPACK routines as SciPy's
+f2py wrappers. They commit only if every matrix finishes with ``info == 0`` and
+finite input; otherwise SciPy reruns the whole call and warns or raises itself.
+"""
+import math
+
+import numpy as np
+
+from . import _native, _patch
+from ._threads import get_num_threads
+
+_F8 = np.dtype(np.float64)
+_I4 = np.dtype(np.int32)
+_MAX_BYTES = 1 << 29      # per array; SciPy handles anything bigger
+_MIN_WORK_US = 150.0      # no threads for less work than this
+_lwork_cache = {}
+
+
+def _ok(x, ndim, dtype=_F8):
+    return x.__class__ is np.ndarray and x.dtype is dtype and x.ndim >= ndim
+
+
+def _flatten(arrs):
+    """``arrs``: [(array, core ndim)]. Returns (batch shape, B, [(B, *core) views]) or
+    None when nothing is batched, the batch is empty or too big, or shapes do not broadcast."""
+    shapes = [a.shape[:a.ndim - c] for a, c in arrs]
+    if not any(shapes):
+        return None
+    try:
+        batch = np.broadcast_shapes(*shapes)
+    except ValueError:
+        return None
+    B = math.prod(batch)
+    if B == 0 or any(B * math.prod(a.shape[a.ndim - c:]) * 8 > _MAX_BYTES for a, c in arrs):
+        return None
+    return batch, B, [np.broadcast_to(a, batch + a.shape[a.ndim - c:]).reshape((B,) + a.shape[a.ndim - c:])
+                      for a, c in arrs]
+
+
+def _threads(B, n, k=1, scale=1.0):
+    est_us = B * (0.15 + scale * (0.004 * n ** 3 + 0.01 * n * n * k))
+    return max(1, min(get_num_threads(), int(est_us / _MIN_WORK_US)))
+
+
+def _fview(raw, batch, rows, cols):
+    """The stack ``_apply_over_batch`` returns for per-matrix f2py results: each slice Fortran-ordered
+    (C order for vectors), then reshaped to the batch shape."""
+    if rows == 1 or cols == 1:
+        return raw.reshape(batch + (rows, cols))
+    return raw.reshape(-1, cols, rows).swapaxes(1, 2).reshape(batch + (rows, cols))
+
+
+def _rhs(b):
+    """(core ndim of b, (B, n, k) view builder input)."""
+    return 2 if b.ndim >= 2 else 1
+
+
+def _solve_shapes(a, b):
+    n = a.shape[-1]
+    bc = _rhs(b)
+    if n == 0 or a.shape[-2] != n or b.shape[b.ndim - bc] != n or b.size == 0:
+        return None
+    fl = _flatten([(a, 2), (b, bc)])
+    if fl is None:
+        return None
+    batch, B, (av, bv) = fl
+    return n, bc, batch, B, av, (bv if bc == 2 else bv[:, :, None])
+
+
+def _solution(raw, batch, n, bc, k):
+    return _fview(raw, batch, n, k) if bc == 2 else raw.reshape(batch + (n,))
+
+
+def _lu_factor(a, overwrite_a=False, check_finite=True):
+    if not _ok(a, 3) or overwrite_a is not False or check_finite.__class__ is not bool:
+        return NotImplemented
+    n = a.shape[-1]
+    if a.shape[-2] != n or n == 0 or (fl := _flatten([(a, 2)])) is None:
+        return NotImplemented
+    batch, B, (av,) = fl
+    r = _native.linalg.getrf(av, check_finite, _threads(B, n))
+    if r is None:
+        return NotImplemented
+    return [_fview(r[0], batch, n, n), r[1].reshape(batch + (n,))]
+
+
+def _lu_solve(lu_and_piv, b, trans=0, overwrite_b=False, check_finite=True):
+    if lu_and_piv.__class__ not in (tuple, list) or len(lu_and_piv) != 2:
+        return NotImplemented
+    lu, piv = lu_and_piv
+    if not (_ok(lu, 2) and _ok(b, 1) and _ok(piv, 1, _I4)) or not (lu.ndim > 2 or b.ndim > 2 or piv.ndim > 1):
+        return NotImplemented
+    if trans.__class__ is not int or trans not in (0, 1, 2) or overwrite_b is not False \
+            or check_finite.__class__ is not bool:
+        return NotImplemented
+    n = lu.shape[-1]
+    bc = _rhs(b)
+    if n == 0 or lu.shape[-2] != n or piv.shape[-1] != n or b.shape[b.ndim - bc] != n or b.size == 0:
+        return NotImplemented
+    fl = _flatten([(lu, 2), (piv, 1), (b, bc)])
+    if fl is None:
+        return NotImplemented
+    batch, B, (luv, pv, bv) = fl
+    k = bv.shape[2] if bc == 2 else 1
+    x = _native.linalg.getrs(luv, pv, bv if bc == 2 else bv[:, :, None], "NTC"[trans], check_finite,
+                             _threads(B, n, k))
+    return NotImplemented if x is None else _solution(x, batch, n, bc, k)
+
+
+def _cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True):
+    if c_and_lower.__class__ not in (tuple, list) or len(c_and_lower) != 2:
+        return NotImplemented
+    c, lower = c_and_lower
+    if not (_ok(c, 2) and _ok(b, 1)) or not (c.ndim > 2 or b.ndim > 2) or overwrite_b is not False \
+            or check_finite.__class__ is not bool:
+        return NotImplemented
+    if lower.__class__ is not bool:   # cho_factor of a stack returns one flag per matrix
+        if lower.__class__ is not np.ndarray or lower.dtype != np.bool_ or lower.size == 0 \
+                or lower.any() != lower.all():
+            return NotImplemented
+        lower = bool(lower.flat[0])
+    if (s := _solve_shapes(c, b)) is None:
+        return NotImplemented
+    n, bc, batch, B, cv, bv = s
+    k = bv.shape[2]
+    x = _native.linalg.potrs(cv, bv, "L" if lower else "U", check_finite, _threads(B, n, k))
+    return NotImplemented if x is None else _solution(x, batch, n, bc, k)
+
+
+def _solve_triangular(a, b, trans=0, lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True):
+    if not (_ok(a, 2) and _ok(b, 1)) or not (a.ndim > 2 or b.ndim > 2) or overwrite_b is not False \
+            or check_finite.__class__ is not bool or lower.__class__ is not bool \
+            or unit_diagonal.__class__ is not bool:
+        return NotImplemented
+    if trans.__class__ is str:
+        trans = {"N": 0, "T": 1, "C": 2}.get(trans)
+    if trans.__class__ is not int or trans not in (0, 1, 2) or (s := _solve_shapes(a, b)) is None:
+        return NotImplemented
+    n, bc, batch, B, av, bv = s
+    # SciPy hands LAPACK the slice itself when it is F-contiguous (or trans == 2); otherwise it
+    # solves the transposed system on the C-ordered memory with uplo and trans flipped.
+    f_contig = n == 1 or (a.strides[-2] == 8 and a.strides[-1] == 8 * n)
+    tin = not (f_contig or trans == 2)
+    uplo = lower != tin
+    tr = ("N" if trans else "T") if tin else "NTC"[trans]
+    k = bv.shape[2]
+    x = _native.linalg.trtrs(av, bv, "L" if uplo else "U", tr, "U" if unit_diagonal else "N", tin, check_finite,
+                             _threads(B, n, k))
+    return NotImplemented if x is None else _solution(x, batch, n, bc, k)
+
+
+def _syevr_lwork(n, lower):
+    if (key := (n, lower)) not in _lwork_cache:
+        from scipy.linalg.lapack import _compute_lwork, get_lapack_funcs
+        _, lw = get_lapack_funcs(("syevr", "syevr_lwork"), [np.zeros((1, 1))])
+        _lwork_cache[key] = _compute_lwork(lw, n=n, lower=lower)
+    return _lwork_cache[key]
+
+
+def _eigh_fast(a, b, lower, eigvals_only, overwrite_a, overwrite_b, type, check_finite, subset_by_index,
+               subset_by_value, driver):
+    if not _ok(a, 3) or b is not None or overwrite_a is not False or overwrite_b is not False or type != 1 \
+            or subset_by_index is not None or subset_by_value is not None or driver not in (None, "evr") \
+            or lower.__class__ is not bool or eigvals_only.__class__ is not bool or check_finite.__class__ is not bool:
+        return NotImplemented
+    n = a.shape[-1]
+    if a.shape[-2] != n or n == 0 or (fl := _flatten([(a, 2)])) is None:
+        return NotImplemented
+    batch, B, (av,) = fl
+    lwork, liwork = _syevr_lwork(n, lower)
+    r = _native.linalg.syevr(av, "L" if lower else "U", not eigvals_only, lwork, liwork, check_finite,
+                             _threads(B, n, 1, 10.0))
+    if r is None:
+        return NotImplemented
+    w = r[0].reshape(batch + (n,))
+    return w if eigvals_only else [w, _fview(r[1], batch, n, n)]
+
+
+def _eigh(a, b=None, *, lower=True, eigvals_only=False, overwrite_a=False, overwrite_b=False, type=1,
+          check_finite=True, subset_by_index=None, subset_by_value=None, driver=None):
+    return _eigh_fast(a, b, lower, eigvals_only, overwrite_a, overwrite_b, type, check_finite, subset_by_index,
+                      subset_by_value, driver)
+
+
+def _eigvalsh(a, b=None, *, lower=True, overwrite_a=False, overwrite_b=False, type=1, check_finite=True,
+              subset_by_index=None, subset_by_value=None, driver=None):
+    return _eigh_fast(a, b, lower, True, overwrite_a, overwrite_b, type, check_finite, subset_by_index,
+                      subset_by_value, driver)
+
+
+def patch():
+    _patch.require_scipy("1.18.")
+    import scipy.linalg._basic as basic
+    import scipy.linalg._decomp as decomp
+    import scipy.linalg._decomp_cholesky as cholesky
+    import scipy.linalg._decomp_lu as lu
+    _native.linalg.init()
+    for mod, name, fast in ((lu, "lu_factor", _lu_factor), (lu, "lu_solve", _lu_solve),
+                            (cholesky, "cho_solve", _cho_solve), (basic, "solve_triangular", _solve_triangular),
+                            (decomp, "eigh", _eigh), (decomp, "eigvalsh", _eigvalsh)):
+        old = getattr(mod, name)
+        _patch.rebind(old, _patch.wrap(old, fast, name))
+
+
+def smoke():
+    import scipy.linalg as sl
+    rng = np.random.default_rng(0)
+    a = rng.random((4, 3, 3)) + 3 * np.eye(3)
+    s = a + a.transpose(0, 2, 1)
+    b = rng.random((4, 3, 2))
+    lu = sl.lu_factor(a)
+    sl.lu_solve(lu, b)
+    sl.solve_triangular(a, b)
+    sl.cho_solve(sl.cho_factor(s + 6 * np.eye(3)), b)
+    sl.eigh(s)
+    sl.eigvalsh(s)

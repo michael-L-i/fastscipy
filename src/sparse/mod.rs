@@ -293,12 +293,15 @@ fn dense_k<'py, T: Val>(py: Python<'py>, a: Arr, csc: bool, threads: usize) -> O
     let (sh, st) = (a.shape(), a.strides());
     let item = std::mem::size_of::<T>() as isize;
     let (major, minor, sa, sb) = if csc { (sh[1], sh[0], st[1] / item, st[0] / item) } else { (sh[0], sh[1], st[0] / item, st[1] / item) };
-    if minor > i32::MAX as usize {
+    if a.len() > i32::MAX as usize {
         return None;
     }
     let base = ptr(a) as usize;
     let at = move |i: usize, j: usize| unsafe { *(base as *const T).offset(i as isize * sa + j as isize * sb) };
     let zero = T::default();
+    if csc && threads <= 1 && sb.abs() >= sa.abs() {
+        return Some(csc_row_major(py, minor, major, |i, j| at(j, i)));
+    }
     let mut indptr = vec![0i32; major + 1];
     let ranges = split(major, (1 << 16) / minor.max(1) + 1, threads);
     let ipp = Out(indptr.as_mut_ptr());
@@ -335,6 +338,35 @@ fn dense_k<'py, T: Val>(py: Python<'py>, a: Arr, csc: bool, threads: usize) -> O
         }
     });
     Some((PyArray1::from_vec(py, indptr), PyArray1::from_vec(py, indices), PyArray1::from_vec(py, data)))
+}
+
+/// CSC of a row-major array on one thread: scan rows (cache friendly) and append to per-column buckets.
+fn csc_row_major<'py, T: Val>(
+    py: Python<'py>, rows: usize, cols: usize, at: impl Fn(usize, usize) -> T,
+) -> Csr<'py, T> {
+    let zero = T::default();
+    let mut indptr = vec![0i32; cols + 1];
+    for i in 0..rows {
+        for j in 0..cols {
+            indptr[j + 1] += (at(i, j) != zero) as i32;
+        }
+    }
+    for j in 0..cols {
+        indptr[j + 1] += indptr[j];
+    }
+    let total = indptr[cols] as usize;
+    let (mut indices, mut data, mut pos) = (vec![0i32; total], vec![zero; total], indptr.clone());
+    for i in 0..rows {
+        for j in 0..cols {
+            let v = at(i, j);
+            if v != zero {
+                let p = &mut pos[j];
+                (indices[*p as usize], data[*p as usize]) = (i as i32, v);
+                *p += 1;
+            }
+        }
+    }
+    (PyArray1::from_vec(py, indptr), PyArray1::from_vec(py, indices), PyArray1::from_vec(py, data))
 }
 
 #[pyfunction]

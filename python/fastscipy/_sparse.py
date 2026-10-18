@@ -15,7 +15,7 @@ from ._threads import get_num_threads
 _I32MAX = 2**31 - 1
 _IDX, _VALS = "il", "fdil"   # dtype.char: int32/int64 and float32/float64/int32/int64 (not np.dtype ==, which
                               # also equates longdouble with float64 here)
-_PAR = {"argminmax": 1_000_000, "sumdup": 500_000, "dense": 1 << 21}   # entries before threads pay off
+_PAR = {"argminmax": 1_000_000, "sumdup": 100_000, "dense": 1 << 17}   # entries before threads pay off
 _DENSE_MIN = 4096                                                         # smaller dense inputs: SciPy
 
 
@@ -34,10 +34,11 @@ def _small_calls():
 
     orig_gid, orig_cs = _sputils.get_index_dtype, _sputils.check_shape
     orig_prune, orig_check = _compressed._cs_matrix.prune, _compressed._cs_matrix.check_format
+    orig_sgid = _base._spbase._get_index_dtype
     can_cast = {}
 
     def get_index_dtype(arrays=(), maxval=None, check_contents=False):
-        if maxval is not None and (maxval.__class__ is not int or maxval > _I32MAX):
+        if not _patch.enabled or maxval is not None and (maxval.__class__ is not int or maxval > _I32MAX):
             return orig_gid(arrays, maxval, check_contents)
         for arr in (arrays,) if arrays.__class__ is np.ndarray else arrays:
             dt = (arr if arr.__class__ is np.ndarray else np.asarray(arr)).dtype
@@ -48,10 +49,12 @@ def _small_calls():
         return np.int32
 
     def spbase_get_index_dtype(self, arrays=(), maxval=None, check_contents=False):
+        if not _patch.enabled:
+            return orig_sgid(self, arrays, maxval, check_contents)
         return get_index_dtype(arrays, maxval, check_contents and not isinstance(self, _base.sparray))
 
     def check_shape(args, current_shape=None, *, allow_nd=(2,)):
-        if current_shape is None and args.__class__ is tuple and len(args) == 2:
+        if _patch.enabled and current_shape is None and args.__class__ is tuple and len(args) == 2:
             a, b = args
             if a.__class__ is int and b.__class__ is int and a >= 0 and b >= 0 and 2 in allow_nd:
                 return args
@@ -59,7 +62,7 @@ def _small_calls():
 
     def prune(self):
         ip, ind, dat = self.indptr, self.indices, self.data
-        if ip.__class__ is np.ndarray and ind.__class__ is np.ndarray and dat.__class__ is np.ndarray:
+        if _patch.enabled and ip.__class__ is np.ndarray and ind.__class__ is np.ndarray and dat.__class__ is np.ndarray:
             nnz = int(ip[-1])
             if len(ip) == self._swap(self._shape_as_2d)[0] + 1 and len(ind) >= nnz and len(dat) >= nnz:
                 ind, dat = ind[:nnz], dat[:nnz]
@@ -77,13 +80,13 @@ def _small_calls():
                     and len(ind) == len(dat) and ip[-1] <= len(ind)):
                 self.prune()
                 return
-        orig_check(self, full_check)
+        return NotImplemented
 
     _patch.rebind(orig_gid, get_index_dtype)
     _patch.rebind(orig_cs, check_shape)
     _patch.replace(_base._spbase, "_get_index_dtype", spbase_get_index_dtype)
     _patch.replace(_compressed._cs_matrix, "prune", prune)
-    _patch.replace(_compressed._cs_matrix, "check_format", check_format)
+    _patch.replace(_compressed._cs_matrix, "check_format", _patch.wrap(orig_check, check_format, "check_format"))
 
 
 # ---- argmax / argmin ----------------------------------------------------------------------------
@@ -159,6 +162,8 @@ def _find(A):
     from scipy.sparse import csr_array
     from scipy.sparse._base import sparray
     if not (isinstance(A, sparray) and A.ndim == 2 and A.format in ("csr", "csc", "coo")):
+        return NotImplemented
+    if A.format == "coo" and A.has_canonical_format:   # SciPy's own path has nothing to sort
         return NotImplemented
     dtypes = (A.row.dtype, A.col.dtype) if A.format == "coo" else (A.indices.dtype,) * 2
     A = csr_array(A, copy=True)

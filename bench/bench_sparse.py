@@ -1,0 +1,53 @@
+import numpy as np
+import scipy.sparse as sp
+
+
+def cases():
+    rng = np.random.default_rng(0)
+    # many small matrices
+    data, ind, ptr = rng.random(30), rng.integers(0, 10, 30).astype(np.int32), np.array([0, 3, 9, 12, 12, 15, 18, 22, 25, 28, 30], np.int32)
+    r, c = rng.integers(0, 10, 10), rng.integers(0, 10, 10)
+    yield "2000 x csr_array((data, indices, indptr)) 10x10", lambda: [sp.csr_array((data, ind, ptr), shape=(10, 10)) for _ in range(2000)]
+    yield "2000 x csr_array((10, 10))", lambda: [sp.csr_array((10, 10)) for _ in range(2000)]
+    yield "2000 x coo->csr_array((v, (i, j)))", lambda: [sp.csr_array((data[:10], (r, c)), shape=(10, 10)) for _ in range(2000)]
+    small = sp.csr_array((data, ind, ptr), shape=(10, 10))
+    yield "2000 x small A.T + A", lambda: [small.T + small for _ in range(2000)]
+
+    # argmax / argmin on a 1e7-nnz CSR (50000 x 100000, 200 per row, no duplicates)
+    cols = (np.arange(200) * 500 + rng.integers(0, 500, (50_000, 200))).astype(np.int32).ravel()
+    big = sp.csr_array((rng.standard_normal(10_000_000), cols, np.arange(0, 10_000_001, 200, dtype=np.int32)), shape=(50_000, 100_000))
+    del cols
+    yield "csr 1e7 nnz argmax(axis=1)", lambda: big.argmax(axis=1)
+    yield "csr 1e7 nnz argmin(axis=1) explicit", lambda: big.argmin(axis=1, explicit=True)
+    yield "csc 1e7 nnz argmax(axis=0)", lambda: big.tocsc().argmax(axis=0)
+    del big
+
+    # coo.sum_duplicates: 2e6 entries (SciPy needs 9 s at 1e7)
+    n = 2_000_000
+    row, col, val = rng.integers(0, 20_000, n), rng.integers(0, 20_000, n), rng.standard_normal(n)
+
+    def sumdup():
+        m = sp.coo_array((val, (row, col)), shape=(20_000, 20_000))
+        m.sum_duplicates()
+        return m
+    yield "coo 2e6 entries sum_duplicates", sumdup
+    dup = rng.integers(0, 300, 500_000)
+    yield "coo 5e5 entries on 300x300, heavy duplicates", lambda: (lambda m: (m.sum_duplicates(), m)[1])(
+        sp.coo_array((val[:500_000], (dup, dup[::-1].copy())), shape=(300, 300)))
+
+    # find
+    a = sp.random_array((20_000, 20_000), density=0.0045, format="csr", rng=1)
+    yield "find csr 20000^2, 1.8M nnz", lambda: sp.find(a)
+    perm = rng.permutation(a.nnz)
+    o = a.tocoo()
+    shuffled = sp.coo_array((np.concatenate([o.data, o.data[:1000]])[np.r_[perm, np.arange(a.nnz, a.nnz + 1000)]],
+                             (np.concatenate([o.row, o.row[:1000]])[np.r_[perm, np.arange(a.nnz, a.nnz + 1000)]],
+                              np.concatenate([o.col, o.col[:1000]])[np.r_[perm, np.arange(a.nnz, a.nnz + 1000)]])),
+                            shape=a.shape)
+    yield "find coo (shuffled, duplicates) 20000^2, 1.8M nnz", lambda: sp.find(shuffled)
+
+    # dense -> sparse
+    d = rng.standard_normal((4000, 4000)) * (rng.random((4000, 4000)) < 0.16)
+    for f in (sp.csr_array, sp.csc_array, sp.coo_array, sp.csr_matrix):
+        yield f"{f.__name__}(dense 4000^2, 16%)", lambda f=f: f(d)
+    yield "csr_array(dense 100x100)", lambda x=d[:100, :100].copy(): [sp.csr_array(x) for _ in range(200)]

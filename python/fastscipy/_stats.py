@@ -23,6 +23,7 @@ def patch():
 
 
 def smoke():
+    # not gaussian_kde: SciPy's own kernel crashes in a forked child once the parent has run it
     rng = np.random.default_rng(0)
     a, b = rng.normal(size=20), rng.normal(size=20)
     for f in (stats.ttest_1samp, stats.ttest_rel):
@@ -33,4 +34,3 @@ def smoke():
     stats.norm.cdf(0.5), stats.norm(1, 2).ppf(0.3), stats.poisson.pmf(3, 2.0)
     big = rng.integers(0, 50, 5000)
     stats.poisson.cdf(big, 7.0), stats.mode(big)
-    stats.gaussian_kde(rng.normal(size=(2, 2000)))(rng.normal(size=(2, 2000)))

@@ -99,10 +99,9 @@ def _mode(orig):
 
 def _kde_evaluate(self, points):
     """``gaussian_kernel_estimate`` (it releases the GIL) on chunks of the points."""
-    threads = _threads.get_num_threads()
     points = np.atleast_2d(np.asarray(points))
     d, m = points.shape
-    if threads == 1 or m < 2 or d != self.d or m * self.n * d < KDE_WORK:
+    if m < 2 or d != self.d or m * self.n * d < KDE_WORK:
         return NotImplemented
     dtype, spec = _kde._get_output_dtype(self.covariance, points)
     fn = _kde.gaussian_kernel_estimate[spec]
@@ -111,7 +110,7 @@ def _kde_evaluate(self, points):
 
     def run(s):
         res[s] = fn(ds, w, pt[s], self.cho_cov, dtype)
-    _threads.parallel_map(run, _threads.chunks(m, 1000, threads))
+    _threads.parallel_map(run, _threads.chunks(m, 1000))
     return res[:, 0]
 
 

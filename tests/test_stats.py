@@ -253,8 +253,8 @@ def test_gaussian_kde(d, threads):
     pts = rng.standard_normal((d, 2000))
     for weights in (None, rng.uniform(1, 2, 1500)):
         kde = st.gaussian_kde(data, weights=weights)
-        res = check(lambda: kde(pts), fast=threads > 1)
-        check(lambda: kde.evaluate(pts), fast=threads > 1)
-        check(lambda: kde.pdf(pts), fast=threads > 1)
-    check(lambda: kde(pts[:, :3]), fast=False)
-    check(lambda: kde(pts.astype(np.float32)), fast=threads > 1)
+        check(lambda: kde(pts))
+        check(lambda: kde.evaluate(pts))
+        check(lambda: kde.pdf(pts))
+    check(lambda: kde(pts[:, :1]), fast=False)
+    check(lambda: kde(pts.astype(np.float32)))

@@ -35,7 +35,7 @@ def timeit(call, budget):
     return best
 
 
-def run_case(call, budget, threads):
+def run_case(call, budget, threads, threaded_only=False):
     with fastscipy.disabled():
         ref = call()
         t_scipy = timeit(call, budget)
@@ -44,7 +44,8 @@ def run_case(call, budget, threads):
         fastscipy.set_num_threads(n)
         before = fast_calls()
         out = call()
-        row["fast_path"] &= fast_calls() > before
+        if not (threaded_only and n == 1):   # threading-only fast paths decline on 1 thread
+            row["fast_path"] &= fast_calls() > before
         row["identical"] &= identical(ref, out)
         row[f"{label}_ms"] = timeit(call, budget) * 1e3
         row[f"x{label}"] = t_scipy / (row[f"{label}_ms"] / 1e3)
@@ -73,10 +74,13 @@ def main():
     print("|---|---:|---:|---:|---:|---:|---|")
     for area in areas:
         rows = {}
-        for name, call in importlib.import_module(f"bench_{area}").cases():
+        mod = importlib.import_module(f"bench_{area}")
+        for name, call in mod.cases():
             if args.only not in name:
                 continue
-            r = rows[name] = run_case(call, args.budget, threads)
+            r = rows[name] = run_case(call, args.budget, threads, getattr(mod, "THREADED_ONLY", False))
+            if "(declined)" in name:   # small-size control: must match SciPy, not take the fast path
+                r["fast_path"] = True
             flag = "yes" if r["identical"] else "**NO**"
             if not r["fast_path"]:
                 flag += " (no fast path)"

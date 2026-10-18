@@ -51,7 +51,8 @@ def _small_calls():
     def spbase_get_index_dtype(self, arrays=(), maxval=None, check_contents=False):
         if not _patch.enabled:
             return orig_sgid(self, arrays, maxval, check_contents)
-        return get_index_dtype(arrays, maxval, check_contents and not isinstance(self, _base.sparray))
+        # looked up at call time: SciPy's tests swap it out in _sputils
+        return _sputils.get_index_dtype(arrays, maxval, check_contents and not isinstance(self, _base.sparray))
 
     def check_shape(args, current_shape=None, *, allow_nd=(2,)):
         if _patch.enabled and current_shape is None and args.__class__ is tuple and len(args) == 2:

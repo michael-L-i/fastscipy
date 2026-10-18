@@ -11,7 +11,7 @@ def cases():
     spl = si.make_interp_spline(t, r.standard_normal(1000), k=3)
     q = r.uniform(t[0], t[-1], 1_000_000)
     yield "BSpline 1000 knots, 1e6 random queries", lambda: spl(q)
-    yield "BSpline 1000 knots, 1e6 sorted queries", lambda qs=np.sort(q): spl(qs)
+    yield "BSpline 1000 knots, 1e6 sorted queries", lambda qs=np.sort(q): spl(qs), False
     yield "splev 1000 knots, 1e6 random queries", lambda: si.splev(q, spl.tck)
     yield "interp1d cubic, 1e6 random queries", lambda f=si.interp1d(t, spl.c, kind="cubic"): f(q)
     spl3 = si.make_interp_spline(t, r.standard_normal((1000, 3)), k=3)
@@ -25,10 +25,10 @@ def cases():
     row = np.floor(xq[:, 1] * 300)
     xs = xq[np.lexsort((np.where(row % 2 == 0, xq[:, 0], -xq[:, 0]), row))]       # snake raster order
     yield "Delaunay.find_simplex 1e5 points, 1e5 random queries", lambda: tri.find_simplex(xq)
-    yield "Delaunay.find_simplex 1e5 points, 1e5 raster-ordered queries", lambda: tri.find_simplex(xs)
+    yield "Delaunay.find_simplex 1e5 points, 1e5 raster-ordered queries", lambda: tri.find_simplex(xs), False
     lin = si.LinearNDInterpolator(tri, np.sin(5 * pts[:, 0]) + pts[:, 1])
     yield "LinearNDInterpolator 1e5 points, 1e5 random queries", lambda: lin(xq)
-    yield "LinearNDInterpolator raster-ordered queries", lambda: lin(xs)
+    yield "LinearNDInterpolator raster-ordered queries", lambda: lin(xs), False
     ct = si.CloughTocher2DInterpolator(tri, np.sin(5 * pts[:, 0]) + pts[:, 1])
     yield "CloughTocher2DInterpolator 1e5 points, 1e5 random queries", lambda: ct(xq)
 

@@ -273,7 +273,10 @@ def _cont_q(self, q, args, kwds, priv):
     else:
         return NotImplemented
     pargs = [_full(n, p) for p in args0d]
-    vals = getattr(self, priv)(qf, *pargs) * _full(n, scale) + _full(n, loc)
+    try:
+        vals = getattr(self, priv)(qf, *pargs) * _full(n, scale) + _full(n, loc)
+    except OverflowError:       # raised by the kernel; SciPy's own call raises it with its context
+        return NotImplemented
     if n == 1 and shape == () and type(vals) is _ndarray and vals.dtype is _f8 \
             and vals.shape == (1,):
         return vals[0]

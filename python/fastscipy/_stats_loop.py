@@ -466,7 +466,7 @@ def _declining(lean):
             return NotImplemented
         try:
             return lean(*args, **kwargs)
-        except (FloatingPointError, _Decline):
+        except (FloatingPointError, _Decline, TypeError):   # TypeError: bad call, SciPy raises it
             return NotImplemented
     return fast
 

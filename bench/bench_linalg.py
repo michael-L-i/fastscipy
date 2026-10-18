@@ -18,3 +18,5 @@ def cases():
         yield f"solve_triangular {tag}", lambda: sl.solve_triangular(tri, b)
         yield f"eigh {tag}", lambda: sl.eigh(spd)
         yield f"eigvalsh {tag}", lambda: sl.eigvalsh(spd)
+    tall = rng.standard_normal((2000, 500))
+    yield "null_space 2000x500", lambda: sl.null_space(tall)

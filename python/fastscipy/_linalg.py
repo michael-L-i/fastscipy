@@ -1,6 +1,7 @@
 """Batched stacks for the scipy.linalg functions that SciPy still loops over in
 Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
-``solve_triangular``, ``eigh`` and ``eigvalsh``.
+``solve_triangular``, ``eigh`` and ``eigvalsh``; plus ``null_space`` of tall matrices
+(skips the unused (M, M) ``u``).
 
 Tier 1 (faithful port). The Rust kernels call the same LAPACK routines as SciPy's
 f2py wrappers. They commit only if every matrix finishes with ``info == 0`` and
@@ -192,16 +193,32 @@ def _eigvalsh(a, b=None, *, lower=True, overwrite_a=False, overwrite_b=False, ty
                       subset_by_value, driver)
 
 
+def _null_space(A, rcond=None, *, overwrite_a=False, check_finite=True, lapack_driver="gesdd"):
+    """Tall input: ``u`` is never used, so skip the (M, M) one (pure Python, SciPy's own svd)."""
+    if A.__class__ is not np.ndarray or A.ndim != 2 or A.dtype.kind not in "fc" or A.shape[0] <= A.shape[1] \
+            or A.shape[1] == 0:
+        return NotImplemented
+    from scipy.linalg._decomp_svd import svd
+    _, s, vh = svd(A, full_matrices=False, overwrite_a=overwrite_a, check_finite=check_finite,
+                   lapack_driver=lapack_driver)
+    M, N = A.shape
+    if rcond is None:
+        rcond = np.finfo(s.dtype).eps * max(M, N)
+    num = np.sum(s > np.amax(s, initial=0.) * rcond, dtype=int)
+    return vh[num:, :].T.conj()
+
+
 def patch():
     _patch.require_scipy("1.18.")
     import scipy.linalg._basic as basic
     import scipy.linalg._decomp as decomp
     import scipy.linalg._decomp_cholesky as cholesky
     import scipy.linalg._decomp_lu as lu
+    import scipy.linalg._decomp_svd as svdmod
     _native.linalg.init()
     for mod, name, fast in ((lu, "lu_factor", _lu_factor), (lu, "lu_solve", _lu_solve),
                             (cholesky, "cho_solve", _cho_solve), (basic, "solve_triangular", _solve_triangular),
-                            (decomp, "eigh", _eigh), (decomp, "eigvalsh", _eigvalsh)):
+                            (decomp, "eigh", _eigh), (decomp, "eigvalsh", _eigvalsh), (svdmod, "null_space", _null_space)):
         old = getattr(mod, name)
         _patch.rebind(old, _patch.wrap(old, fast, name))
 
@@ -218,3 +235,4 @@ def smoke():
     sl.cho_solve(sl.cho_factor(s + 6 * np.eye(3)), b)
     sl.eigh(s)
     sl.eigvalsh(s)
+    sl.null_space(rng.random((6, 3)))

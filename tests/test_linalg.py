@@ -163,3 +163,21 @@ def test_singular_warning_comes_from_scipy():
     with pytest.warns(sl.LinAlgWarning) as w1:
         sl.lu_factor(a)
     assert [str(x.message) for x in w0] == [str(x.message) for x in w1]
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("shape", [(50, 3), (200, 20), (30, 29)])
+@pytest.mark.parametrize("driver", ["gesdd", "gesvd"])
+def test_null_space_tall(dtype, shape, driver):
+    rng = np.random.default_rng(0)
+    A = rng.standard_normal(shape).astype(dtype)
+    A[:, -2:] = A[:, :2]                                  # rank deficient
+    check(lambda: sl.null_space(A, lapack_driver=driver))
+    check(lambda: sl.null_space(A, rcond=1e-3, check_finite=False))
+
+
+def test_null_space_declines():
+    rng = np.random.default_rng(0)
+    for A in (rng.standard_normal((4, 9)), rng.standard_normal((6, 6)), rng.standard_normal((3, 5, 2)),
+              rng.standard_normal((8, 0)), rng.integers(0, 3, (8, 3)), [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]]):
+        declined(lambda: sl.null_space(A))

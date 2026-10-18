@@ -26,6 +26,43 @@ unchanged.
 Call `patch()` before importing libraries that bind SciPy functions at import
 time (`from scipy.special import expit`), or they keep the original.
 
+## Results
+
+219 benchmark cases, every one byte-identical to SciPy 1.18.1. Geometric-mean
+speedup per area on an 18-core Apple M5 Pro (full table: `bench/RESULTS.md`):
+
+| Area | 1 thread | 18 threads | How | Highlights (1T / 18T) |
+|---|---:|---:|---|---|
+| ndimage | 13.3× | 68× | Rust kernels (fastndimage), labelling, morphology, measurements | median 3×3 u8 496× / 1240×, `generic_filter(np.mean)` 244× / 677× |
+| linalg | 10.0× | 76× | batched small-matrix LAPACK calls without Python loops | `solve_triangular` 10k×3×3 147× / 586× |
+| interpolate | 9.1× | 23× | query reordering, Rust spline and pchip kernels | RGI pchip 659× / 732×, `find_simplex` 69× / 160× |
+| stats | 7.0× | 9.3× | lean small-call paths, Rust `rankdata`, discrete tables | `ttest_ind` n=10 9×, `zipf.cdf` 546× |
+| csgraph | 5.8× | 15.5× | Rust shortest paths and components | `bellman_ford` 311× / 2435× |
+| signal | 4.7× | 12.4× | small-call paths, channel threading, Rust kernels | direct 2-D convolve 49× / 260×, `dlsim` 105× |
+| sparse | 4.7× | 11.9× | Rust argmax, `sum_duplicates`, dense→sparse, `find` | `sum_duplicates` 2e6 25× / 73× |
+| special | 1.0× | 6.6× | threads over SciPy's own ufunc loops (large arrays) | `jv`, `betainc` 1e7 13–16× on 18 threads |
+| spatial | 1.0× | 4.0× | threaded `cdist`/`pdist`, KD-tree queries | |
+| integrate, optimize | 1.6×, 1.1× | same | less Python overhead (`trapezoid`, numerical gradients) | |
+
+Across all cases: 5.2× on one thread and 17.5× on 18 (geometric mean); 102
+cases are at least 5× faster on one thread and 126 at least 10× on 18. Small
+calls a fast path does not cover are not slower. SciPy's own test suite for
+each area gives the same results with fastscipy patched in.
+
+**Not accelerated:** dense linear algebra, FFT, `linprog`, iterative sparse
+solvers, `cluster` and `io` (already near the hardware or
+I/O-bound), and solvers whose time is spent in a Python callback (`minimize`,
+`solve_ivp`, `quad`). Only macOS arm64 with SciPy 1.18 has been validated;
+every component refuses other SciPy versions.
+
+## Known differences
+
+- `isinstance(scipy.special.erf, np.ufunc)` is False while patched (the
+  wrappers forward `nin`, `types`, `reduce`, ...). 684 SciPy tests that check
+  this are not collected under the patch.
+- `scipy.spatial.cKDTree` is a subclass while patched; `isinstance` and
+  pickling behave as before.
+
 ## Development
 
 ```sh

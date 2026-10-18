@@ -139,14 +139,14 @@ def _dense(arg1, shape, dtype, csc):
 def _dense_inits(cs_cls, coo_cls):
     orig_cs, orig_coo = cs_cls.__init__, coo_cls.__init__
 
-    def cs_init(self, arg1, shape=None, dtype=None, copy=False, *, maxprint=None):
-        if self.format not in ("csr", "csc") or (r := _dense(arg1, shape, dtype, self.format == "csc")) is None:
+    def cs_init(self, arg1, shape=None, dtype=None, copy=False, *extra, maxprint=None):
+        if extra or self.format not in ("csr", "csc") or (r := _dense(arg1, shape, dtype, self.format == "csc")) is None:
             return NotImplemented
         indptr, indices, data = r
         orig_cs(self, (data, indices, indptr), shape=arg1.shape, copy=False, maxprint=maxprint)
 
-    def coo_init(self, arg1, shape=None, dtype=None, copy=False, *, maxprint=None):
-        if (r := _dense(arg1, shape, dtype, False)) is None:
+    def coo_init(self, arg1, shape=None, dtype=None, copy=False, *extra, maxprint=None):
+        if extra or (r := _dense(arg1, shape, dtype, False)) is None:
             return NotImplemented
         indptr, indices, data = r
         row = np.repeat(np.arange(arg1.shape[0], dtype=np.int32), np.diff(indptr))

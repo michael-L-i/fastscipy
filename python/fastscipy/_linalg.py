@@ -14,6 +14,7 @@ import numpy as np
 from . import _native, _patch
 from ._threads import get_num_threads
 
+_ND = np.ndarray
 _F8 = np.dtype(np.float64)
 _I4 = np.dtype(np.int32)
 _MAX_BYTES = 1 << 29      # per array; SciPy handles anything bigger
@@ -77,7 +78,8 @@ def _solution(raw, batch, n, bc, k):
 
 
 def _lu_factor(a, overwrite_a=False, check_finite=True):
-    if not _ok(a, 3) or overwrite_a is not False or check_finite.__class__ is not bool:
+    if a.__class__ is not _ND or a.ndim < 3 or not _ok(a, 3) or overwrite_a is not False \
+            or check_finite.__class__ is not bool:
         return NotImplemented
     n = a.shape[-1]
     if a.shape[-2] != n or n == 0 or (fl := _flatten([(a, 2)])) is None:
@@ -93,7 +95,8 @@ def _lu_solve(lu_and_piv, b, trans=0, overwrite_b=False, check_finite=True):
     if lu_and_piv.__class__ not in (tuple, list) or len(lu_and_piv) != 2:
         return NotImplemented
     lu, piv = lu_and_piv
-    if not (_ok(lu, 2) and _ok(b, 1) and _ok(piv, 1, _I4)) or not (lu.ndim > 2 or b.ndim > 2 or piv.ndim > 1):
+    if lu.__class__ is not _ND or b.__class__ is not _ND or piv.__class__ is not _ND \
+            or not (lu.ndim > 2 or b.ndim > 2 or piv.ndim > 1) or not (_ok(lu, 2) and _ok(b, 1) and _ok(piv, 1, _I4)):
         return NotImplemented
     if trans.__class__ is not int or trans not in (0, 1, 2) or overwrite_b is not False \
             or check_finite.__class__ is not bool:
@@ -116,7 +119,8 @@ def _cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True):
     if c_and_lower.__class__ not in (tuple, list) or len(c_and_lower) != 2:
         return NotImplemented
     c, lower = c_and_lower
-    if not (_ok(c, 2) and _ok(b, 1)) or not (c.ndim > 2 or b.ndim > 2) or overwrite_b is not False \
+    if c.__class__ is not _ND or b.__class__ is not _ND or not (c.ndim > 2 or b.ndim > 2) \
+            or not (_ok(c, 2) and _ok(b, 1)) or overwrite_b is not False \
             or check_finite.__class__ is not bool:
         return NotImplemented
     if lower.__class__ is not bool:   # cho_factor of a stack returns one flag per matrix
@@ -133,7 +137,8 @@ def _cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True):
 
 
 def _solve_triangular(a, b, trans=0, lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True):
-    if not (_ok(a, 2) and _ok(b, 1)) or not (a.ndim > 2 or b.ndim > 2) or overwrite_b is not False \
+    if a.__class__ is not _ND or b.__class__ is not _ND or not (a.ndim > 2 or b.ndim > 2) \
+            or not (_ok(a, 2) and _ok(b, 1)) or overwrite_b is not False \
             or check_finite.__class__ is not bool or lower.__class__ is not bool \
             or unit_diagonal.__class__ is not bool:
         return NotImplemented
@@ -164,7 +169,7 @@ def _syevr_lwork(n, lower):
 
 def _eigh_fast(a, b, lower, eigvals_only, overwrite_a, overwrite_b, type, check_finite, subset_by_index,
                subset_by_value, driver):
-    if not _ok(a, 3) or b is not None or overwrite_a is not False or overwrite_b is not False or type != 1 \
+    if a.__class__ is not _ND or a.ndim < 3 or not _ok(a, 3) or b is not None or overwrite_a is not False or overwrite_b is not False or type != 1 \
             or subset_by_index is not None or subset_by_value is not None or driver not in (None, "evr") \
             or lower.__class__ is not bool or eigvals_only.__class__ is not bool or check_finite.__class__ is not bool:
         return NotImplemented

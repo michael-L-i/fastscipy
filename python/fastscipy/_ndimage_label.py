@@ -103,6 +103,8 @@ def _prep(input, labels, index):
         return None
     lab = np.ascontiguousarray(labels, dtype=np.int64)
     idx = np.ascontiguousarray(index.ravel(), dtype=np.int64)
+    if idx.size == 0:
+        return None
     return values, lab, idx, int(lab.min()), int(lab.max()), index.shape, dt
 
 
@@ -139,7 +141,7 @@ def _center_of_mass(input, labels=None, index=None):
     if not (inp.dtype.kind in "iuf" and inp.dtype.itemsize != 2 or inp.dtype == np.bool_):
         return NotImplemented
     p = _prep(input, labels, index)
-    if p is None or len(p[2]) == 0:
+    if p is None:
         return NotImplemented
     r = core.label_com_sums(*p[:5])
     if r is None:

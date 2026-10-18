@@ -177,10 +177,10 @@ def test_rank_filters(seed):
     for _ in range(14):
         x = view_of(rng, array(rng, shape_of(rng, rng.integers(1, 4), 24, 2), pick(rng, DTYPES), rng.random() < 0.2))
         mode = pick(rng, MODES[:7])
-        size = tuple(int(rng.integers(2, 6)) for _ in x.shape)
+        size = tuple(min(int(rng.integers(2, 6)), n) for n in x.shape)   # SciPy corrupts memory when a footprint exceeds the array
         fp = rng.random(size) < 0.7
         fp.flat[rng.integers(fp.size)] = True
-        out = None if rng.random() < 0.7 else pick(rng, DTYPES)
+        out = None if rng.random() < 0.7 or x.ndim == 1 else pick(rng, DTYPES)   # 1-D + output dtype: SciPy bug
         kw = dict(mode=mode, cval=1.0, output=out)
         f1d = x.ndim > 1 and out is None    # 1-D rank filters go to SciPy's own _rank_filter_1d
         check(lambda: ndi.median_filter(x, size=size, **kw), fast=f1d)
@@ -250,6 +250,8 @@ def test_binary_fixed_point(seed):
         x = blobs(rng, tuple(int(rng.integers(8, 40)) for _ in range(ndim)), 0.45)
         st = structure_of(rng, ndim) if rng.random() < 0.5 else ndi.generate_binary_structure(ndim, int(rng.integers(1, ndim + 1)))
         origin = tuple(int(rng.integers(-(f // 2), (f - 1) // 2 + 1)) for f in st.shape)
+        if not ndi._morphology._center_is_true(st, list(origin)):
+            continue    # SciPy's own fixed-point loop may hang or crash on these
         mask = ndi.binary_dilation(x, iterations=2) if rng.random() < 0.7 else None
         check(lambda: ndi.binary_fill_holes(x, structure=st if st.shape == (3,) * ndim else None))
         seeds = x & (rng.random(x.shape) < 0.1)
@@ -349,7 +351,7 @@ def test_find_objects_and_watershed(seed):
         ndim = int(rng.integers(1, 4))
         shape = shape_of(rng, ndim, 20, 2)
         lab = rng.integers(0, 8, shape).astype(pick(rng, [np.int32, np.int64, np.uint8, np.uint16]))
-        check(lambda: ndi.find_objects(lab))
+        check(lambda: ndi.find_objects(lab), fast=lab.max() > 0)
         check(lambda: ndi.find_objects(lab, 12))
         img = rng.integers(0, 256, shape).astype(pick(rng, [np.uint8, np.uint16]))
         mk = np.zeros(shape, pick(rng, [np.int8, np.int16, np.int32, np.int64]))

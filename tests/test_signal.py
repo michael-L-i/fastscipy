@@ -5,6 +5,7 @@ import pytest
 import scipy.signal as sg
 
 import fastscipy
+from fastscipy import _threads
 from fastscipy.testing import identical
 
 THREADS = [1, 8]
@@ -177,6 +178,88 @@ def test_nonfinite_and_odd_inputs_match_scipy():
     cmp("sosfiltfilt", sos, rng.standard_normal((80, 6)), axis=0, fast=False)
     cmp("sosfiltfilt", sos, rng.standard_normal((2, 3, 80)), fast=False)
     cmp("sosfiltfilt", sos, x.tolist(), fast=False)
+
+
+@pytest.fixture
+def pmap(monkeypatch, threads):
+    """Counts the calls that really went to the thread pool."""
+    calls = []
+    real = _threads.parallel_map
+    monkeypatch.setattr(_threads, "parallel_map", lambda fn, items: calls.append(1) or real(fn, items))
+    return lambda: len(calls)
+
+
+def cmp_threaded(pmap, threads, name, *args, expect=True, **kwargs):
+    before = pmap()
+    cmp(name, *args, fast=None, **kwargs)
+    if expect is not None:     # None: not threaded itself, but may call a threaded function inside
+        assert (pmap() > before) == (expect and threads > 1), (name, kwargs)
+
+
+LAYOUTS = [
+    ((6, 80000), lambda x: x), ((6, 80000), np.asfortranarray), ((80000, 6), lambda x: x),
+    ((12, 4, 14000), lambda x: x), ((5, 3, 30000), lambda x: x[:, ::-1]), ((5, 160000), lambda x: x[:, ::2]),
+    ((6, 80000), lambda x: x.astype(np.float32)), ((8, 60000), lambda x: x.astype(np.int16)),
+    ((3, 2, 60000), lambda x: x + 1j * x[::-1]),
+]
+
+
+@pytest.mark.parametrize("shape,prep", LAYOUTS)
+def test_threaded_filters(pmap, threads, shape, prep):
+    x = prep(np.random.default_rng(5).standard_normal(shape) * 100)
+    b, a = sg.butter(6, 0.2)
+    sos = sg.butter(6, 0.2, output="sos")
+    for axis in range(-x.ndim, x.ndim):
+        run = lambda *a, **k: cmp_threaded(pmap, threads, *a, axis=axis, **k)
+        run("lfilter", b, a, x)
+        run("sosfilt", sos, x)
+        if x.shape[axis] > 60:
+            run("filtfilt", b, a, x)
+            run("sosfiltfilt", sos, x)
+            run("filtfilt", b, a, x, method="gust", expect=None)
+    if x.dtype.kind == "c":
+        return
+    for ax in (0, -1):
+        if x.shape[ax] > 60:
+            cmp_threaded(pmap, threads, "decimate", x, 4, axis=ax)
+            cmp_threaded(pmap, threads, "decimate", x, 3, ftype="fir", axis=ax)
+            cmp_threaded(pmap, threads, "decimate", x, 5, zero_phase=False, axis=ax)
+            cmp_threaded(pmap, threads, "resample_poly", x, 3, 2, axis=ax)
+            cmp_threaded(pmap, threads, "resample_poly", x, 3, 2, axis=ax, padtype="line", expect=None)
+            cmp_threaded(pmap, threads, "resample_poly", x, 1, 3, axis=ax, padtype="mean", expect=None)
+            cmp_threaded(pmap, threads, "upfirdn", np.ones(16), x, 2, 3, axis=ax)
+
+
+def test_threaded_initial_conditions(pmap, threads):
+    rng = np.random.default_rng(6)
+    b, a = sg.butter(3, 0.3)
+    sos = sg.butter(3, 0.3, output="sos")
+    x = rng.standard_normal((6, 100000))
+    zi = sg.lfilter_zi(b, a) * x[:, :1]
+    cmp_threaded(pmap, threads, "lfilter", b, a, x, zi=zi)
+    zs = np.broadcast_to(sg.sosfilt_zi(sos)[:, None, :], (sos.shape[0], 6, 2)) * rng.random((1, 6, 1))
+    cmp_threaded(pmap, threads, "sosfilt", sos, x, zi=zs)
+    cmp_threaded(pmap, threads, "lfilter", b, a, np.ascontiguousarray(x.T), axis=0, zi=np.ascontiguousarray(zi.T))
+    sos1 = sg.butter(2, 0.3, output="sos")      # one section: a size-1 dimension in zf
+    x1 = rng.standard_normal((6, 200000))
+    cmp_threaded(pmap, threads, "sosfilt", sos1, x1, zi=rng.standard_normal((1, 6, 2)))
+    x3 = rng.standard_normal((3, 4, 100000))
+    for axis in (0, 1, 2):
+        shape = list(x3.shape)
+        shape[axis] = 2
+        cmp_threaded(pmap, threads, "sosfilt", sos1, x3, axis=axis, zi=rng.standard_normal((1, *shape)))
+    cmp_threaded(pmap, threads, "lfilter", b, a, x, zi=zi[:3], expect=False)     # wrong zi shape: SciPy raises
+    cmp_threaded(pmap, threads, "lfilter", b, a, x, axis=7, expect=False)
+    cmp_threaded(pmap, threads, "sosfiltfilt", sos, x[:, :8], expect=False)      # too short: SciPy raises
+
+
+@pytest.mark.parametrize("dtype", [np.uint8, np.float32, np.float64])
+@pytest.mark.parametrize("ks", [3, 5, [3, 5], [7, 3], 4, [3, 4]])
+def test_threaded_medfilt2d(pmap, threads, dtype, ks):
+    img = (np.random.default_rng(7).random((700, 500)) * 255).astype(dtype)
+    odd = bool(np.all(np.asarray(ks) % 2 == 1))
+    cmp_threaded(pmap, threads, "medfilt2d", img, ks, expect=odd)
+    cmp_threaded(pmap, threads, "medfilt2d", img[:, ::2], ks, expect=odd)
 
 
 def test_unpatch_restores():

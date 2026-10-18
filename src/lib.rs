@@ -5,6 +5,7 @@ use pyo3::prelude::*;
 
 pub mod pool;
 
+mod csgraph;
 mod interp;
 mod linalg;
 mod ndimage;
@@ -17,7 +18,8 @@ type Register = fn(&Bound<'_, PyModule>) -> PyResult<()>;
 #[pymodule]
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     pool::register(m)?;
-    let areas: [(&str, Register); 6] = [
+    let areas: [(&str, Register); 7] = [
+        ("csgraph", csgraph::register),
         ("interp", interp::register),
         ("linalg", linalg::register),
         ("ndimage", ndimage::register),

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["maturin>=1.5,<2"]
+build-backend = "maturin"
+
+[project]
+name = "fastscipy"
+version = "0.1.0"
+description = "Drop-in acceleration for SciPy: same results, faster on one core and on many"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.25", "scipy>=1.15"]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-xdist"]
+
+[tool.maturin]
+python-source = "python"
+module-name = "fastscipy._native"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

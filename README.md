@@ -46,8 +46,14 @@ speedup per area on an 18-core Apple M5 Pro (full table: `bench/RESULTS.md`):
 
 Across all cases: 5.2× on one thread and 17.5× on 18 (geometric mean); 102
 cases are at least 5× faster on one thread and 126 at least 10× on 18. Small
-calls a fast path does not cover are not slower. SciPy's own test suite for
-each area gives the same results with fastscipy patched in.
+calls a fast path does not cover are not slower.
+
+SciPy's full test suite (about 88,000 tests) with every component patched in
+at once gives the same outcome, test by test, as plain SciPy: the same 3
+failures (Accelerate-related, also unpatched), no new ones, and 1.86 million
+fast-path calls with 0 fast-path errors. The only differences are the 684
+tests described under "Known differences" and SciPy's own flaky
+`test_sepfir2d_strided_3` (an out-of-bounds read in code we don't touch).
 
 **Not accelerated:** dense linear algebra, FFT, `linprog`, iterative sparse
 solvers, `cluster` and `io` (already near the hardware or

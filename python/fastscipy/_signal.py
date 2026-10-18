@@ -3,6 +3,8 @@
 * ``_signal_small``: same kernels and arithmetic as SciPy minus the Python layers,
   plus caches of filter designs and initial conditions (identical by construction).
 * ``_signal_threads``: independent channels on several threads (identical by construction).
+* ``_signal_algo``: Rust kernels for peak finding, ``dlsim`` and direct 2-D correlation
+  (faithful ports, checked bit for bit).
 """
 import importlib
 
@@ -41,6 +43,19 @@ def patch():
             old = small.orig[name] = getattr(owner, name)
             fast = _first(threads.make(name, old), getattr(small, name, None))
             _patch.rebind(old, _patch.wrap(old, fast))
+    _patch_algo()
+
+
+def _patch_algo():
+    from scipy.signal import _ltisys, _peak_finding_utils, _sigtools
+
+    from . import _signal_algo as algo
+    for owner, name in ((_peak_finding_utils, "_peak_prominences"), (_peak_finding_utils, "_peak_widths"),
+                        (_ltisys, "dlsim")):
+        old = getattr(owner, name)
+        _patch.rebind(old, _patch.wrap(old, getattr(algo, name.lstrip("_"))))
+    # `_signaltools` calls `_sigtools._correlateND`, so the extension module attribute is the seam
+    _patch.replace(_sigtools, "_correlateND", _patch.wrap(_sigtools._correlateND, algo.correlateND))
 
 
 def smoke():

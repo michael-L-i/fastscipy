@@ -9,7 +9,9 @@ from fastscipy import _threads
 from fastscipy.testing import identical
 
 THREADS = [1, 8]
-ALIAS = {"butter": "iirfilter", "cheby1": "iirfilter"}
+ALIAS = {"butter": "iirfilter", "cheby1": "iirfilter", "peak_prominences": "_peak_prominences",
+         "find_peaks": "_peak_prominences", "peak_widths": "_peak_widths", "convolve": "_correlateND",
+         "correlate": "_correlateND", "dstep": "dlsim", "dimpulse": "dlsim"}
 
 
 def _run(name, args, kwargs):
@@ -268,3 +270,149 @@ def test_unpatch_restores():
     assert sg.sosfiltfilt is not f and not hasattr(sg.sosfiltfilt, "fast")
     fastscipy.patch(["signal"])
     assert hasattr(sg.sosfiltfilt, "fast")
+
+
+# --- Rust kernels -------------------------------------------------------------------------------
+
+@pytest.fixture
+def tiny(monkeypatch):
+    """Let the Rust paths take small inputs, so odd shapes and ties are reachable."""
+    from fastscipy import _signal_algo
+    for name, value in (("MIN_PEAKS", 0), ("MIN_SAMPLES", 0), ("MIN_STEPS", 0), ("MIN_CORR", 0)):
+        monkeypatch.setattr(_signal_algo, name, value)
+
+
+def warned(name, *args, **kwargs):
+    """Same warnings, attributed to the same file and line."""
+    out = []
+    for off in (True, False):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            if off:
+                with fastscipy.disabled():
+                    getattr(sg, name)(*args, **kwargs)
+            else:
+                getattr(sg, name)(*args, **kwargs)
+        out.append([(x.category, str(x.message), x.filename, x.lineno - (0 if True else 0)) for x in w])
+    assert out[0] and [o[:3] for o in out[0]] == [o[:3] for o in out[1]]
+    assert out[0][0][2] == out[1][0][2] == __file__
+
+
+def walk(rng, n):
+    return np.cumsum(rng.standard_normal(n))
+
+
+SIGNALS = {
+    "walk": lambda rng, n: walk(rng, n),
+    "noise": lambda rng, n: rng.standard_normal(n),
+    "ties": lambda rng, n: rng.integers(0, 6, n).astype(float),
+    "plateaus": lambda rng, n: np.repeat(rng.standard_normal(n // 8 + 1), 8)[:n],
+    "sine": lambda rng, n: np.sin(np.linspace(0, 80, n)) + 0.01 * rng.standard_normal(n),
+    "monotone": lambda rng, n: np.arange(n, dtype=float) % 50,
+}
+
+
+@pytest.mark.parametrize("kind", SIGNALS)
+@pytest.mark.parametrize("n", [50, 5000, 70000])
+def test_peaks(tiny, kind, n):
+    rng = np.random.default_rng(n)
+    x = SIGNALS[kind](rng, n)
+    cmp("find_peaks", x, fast=None)
+    cmp("find_peaks", x, prominence=0, fast=None)
+    cmp("find_peaks", x, prominence=(0.5, None), width=0, fast=None)
+    cmp("find_peaks", x, width=(None, 40), rel_height=0.3, wlen=21, fast=None)
+    cmp("find_peaks", x, height=0, distance=3, prominence=0.1, width=1, rel_height=1.0, fast=None)
+    peaks = sg.find_peaks(x)[0]
+    if len(peaks):
+        for wlen in (None, 7, 100, 3000):
+            cmp("peak_prominences", x, peaks, wlen=wlen, fast=None)
+            cmp("peak_prominences", x, peaks[::-1], wlen=wlen, fast=None)
+            cmp("peak_prominences", x, np.concatenate([peaks, peaks[:5]]), wlen=wlen, fast=None)
+            for rel in (0.0, 0.5, 1.0, 1.7):
+                cmp("peak_widths", x, peaks, rel_height=rel, wlen=wlen, fast=None)
+    cmp("argrelextrema", x, np.greater, fast=False)
+
+
+def test_peaks_fast_and_edge_cases(threads):
+    rng = np.random.default_rng(1)
+    x = walk(rng, 300000)
+    peaks = sg.find_peaks(x)[0]
+    cmp("peak_prominences", x, peaks)
+    cmp("find_peaks", x, prominence=0, width=0)
+    cmp("find_peaks", x, prominence=1, width=2, wlen=2000, fast=None)
+    cmp("peak_widths", x, peaks, fast=None)
+    nan = x.copy()
+    nan[::50] = np.nan
+    cmp("find_peaks", nan, prominence=0, fast=None)
+    nan2 = np.full(6000, np.nan)
+    cmp("find_peaks", nan2, prominence=0, fast=None)
+    cmp("peak_prominences", x, np.array([0, 5, -1]), fast=False)           # SciPy raises
+    cmp("peak_prominences", x, np.array([len(x)] * 20), fast=False)
+    cmp("peak_widths", x, peaks, prominence_data=(np.zeros(len(peaks)), peaks, peaks), fast=None)
+    cmp("peak_widths", x, peaks, prominence_data=(np.zeros(len(peaks)), peaks + 1, peaks), fast=False)    # SciPy raises
+    cmp("peak_widths", x, peaks, rel_height=-1, fast=False)
+    cmp("peak_prominences", x[::2], peaks[:100] // 2, fast=None)           # SciPy makes it contiguous
+    cmp("find_peaks", np.zeros(5000), prominence=0, fast=None)
+
+
+def test_peak_warnings_match_scipy(tiny):
+    x = np.tile([0.0, 1.0, 0.0, 2.0, 2.0, 1.0], 800)
+    peaks = np.arange(1, len(x) - 1, 3)
+    warned("peak_prominences", x, peaks)
+    warned("peak_widths", x, peaks, prominence_data=(np.zeros(len(peaks)), peaks - 1, peaks + 1))
+    warned("find_peaks", np.tile([0.0, 1.0, 1.0, 1.0, 0.0, 3.0], 900), prominence=0, width=0)
+
+
+STATE_SPACES = [(1, 1, 1), (2, 1, 1), (3, 2, 2), (4, 1, 1), (4, 3, 2), (6, 2, 1), (8, 3, 3), (5, 1, 1), (12, 2, 2)]
+
+
+@pytest.mark.parametrize("ns,ni,no", STATE_SPACES)
+def test_dlsim(tiny, ns, ni, no):
+    rng = np.random.default_rng(ns * 100 + ni)
+    A = rng.standard_normal((ns, ns)) * 0.3 / np.sqrt(ns)
+    B, C, D = rng.standard_normal((ns, ni)), rng.standard_normal((no, ns)), rng.standard_normal((no, ni))
+    for n in (30, 3000):
+        u = rng.standard_normal((n, ni))
+        cmp("dlsim", (A, B, C, D, 0.1), u, fast=None)
+        cmp("dlsim", (A, B, C, D, 0.1), u, x0=rng.standard_normal(ns), fast=None)
+        cmp("dlsim", (A, B, C, D, 0.1), u, t=np.linspace(0, 0.1 * (n - 1) * 1.01, n), fast=None)
+        cmp("dlsim", sg.StateSpace(A, B, C, D, dt=0.5), u, fast=None)
+        cmp("dlsim", (A, B, C, D, 0.1), u[:, 0], fast=None) if ni == 1 else None
+
+
+def test_dlsim_used_and_declined(threads):
+    rng = np.random.default_rng(3)
+    A, B, C, D = np.diag([0.5, 0.3, 0.2, 0.1]), np.ones((4, 1)), np.ones((1, 4)), np.zeros((1, 1))
+    u = rng.standard_normal(5000)
+    cmp("dlsim", (A, B, C, D, 1.0), u)
+    cmp("dstep", (A, B, C, D, 1.0), n=3000)
+    cmp("dimpulse", (A, B, C, D, 1.0), n=3000)
+    cmp("dlsim", ([1.0], [1.0, -0.5], 1.0), u)
+    cmp("dlsim", (A, B, C, D, 1.0), u.astype(np.float32), fast=False)
+    cmp("dlsim", (A, B, C, D, 1.0), u[:100], fast=False)
+    cmp("dlsim", sg.lti([1], [1, 1]), u, fast=False)                       # SciPy raises
+    cmp("dlsim", (A, B, C, D, 1.0), u, x0=np.ones(3), fast=False)
+    cmp("dlsim", (A, B[:3], C, D, 1.0), u, fast=False)
+    cmp("dlsim", (np.asfortranarray(A), B, C, D, 1.0), u, fast=False)
+
+
+@pytest.mark.parametrize("mode", ["full", "same", "valid"])
+@pytest.mark.parametrize("shapes", [((40, 50), (5, 5)), ((64, 33), (4, 6)), ((9, 9), (9, 9)), ((17, 40), (1, 7)),
+                                    ((30, 30), (30, 2)), ((200, 300), (7, 3)), ((12, 15), (1, 1)), ((5, 40), (3, 3))])
+def test_correlate_direct_2d(tiny, mode, shapes):
+    rng = np.random.default_rng(sum(shapes[0]))
+    a, k = rng.standard_normal(shapes[0]), rng.standard_normal(shapes[1])
+    for name in ("convolve", "correlate"):
+        cmp(name, a, k, mode=mode, method="direct", fast=None)
+        cmp(name, k, a, mode=mode, method="direct", fast=None)
+    big = rng.standard_normal((300, 400))
+    cmp("convolve", big, k, mode=mode, method="direct")
+    cmp("correlate", big, k, mode=mode, method="direct")
+    cmp("convolve", big * 1e150, k * 1e150, mode=mode, method="direct", fast=None)
+    k0 = k.copy()
+    k0.flat[0] = np.inf
+    cmp("convolve", big, k0, mode=mode, method="direct", fast=False)
+    cmp("convolve", big, k * np.nan, mode=mode, method="direct", fast=False)
+    cmp("convolve", big.astype(np.float32), k.astype(np.float32), mode=mode, method="direct", fast=None)
+    cmp("convolve", big[:, ::2], k, mode=mode, method="direct", fast=None)
+    cmp("convolve", big.astype(complex), k, mode=mode, method="direct", fast=None)

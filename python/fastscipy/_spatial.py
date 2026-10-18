@@ -23,15 +23,21 @@ _BLOCK = 200_000           # about 100 us per block
 _QUERIES = 2000            # KDTree queries below which threads cost more than they save
 
 
-def _ok(metric, names, kw, out, *arrays):
-    return (not kw and out is None and metric in names and get_num_threads() > 1
+def _metric(args, kw, names, *arrays):
+    """The metric name if only ``metric`` was given and the call is ours to thread, else None."""
+    if len(args) + len(kw) > 1 or (kw and "metric" not in kw) or get_num_threads() <= 1:
+        return None
+    metric = args[0] if args else kw.get("metric", "euclidean")
+    if (isinstance(metric, str) and metric in names
             and all(type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2
-                    and a.flags.c_contiguous for a in arrays))
+                    and a.flags.c_contiguous for a in arrays)):
+        return metric
 
 
 def _cdist_fast(original):
-    def fast(XA, XB, metric="euclidean", *, out=None, **kw):
-        if not _ok(metric, _CDIST, kw, out, XA, XB) or XA.shape[1] != XB.shape[1]:
+    def fast(XA, XB, *args, **kw):
+        metric = _metric(args, kw, _CDIST, XA, XB)
+        if not metric or XA.shape[1] != XB.shape[1]:
             return NotImplemented
         (ma, d), mb = XA.shape, XB.shape[0]
         if ma * mb * d < _WORK:
@@ -46,8 +52,9 @@ def _cdist_fast(original):
 
 
 def _pdist_fast(cdist):
-    def fast(X, metric="euclidean", *, out=None, **kw):
-        if not _ok(metric, _PDIST, kw, out, X):
+    def fast(X, *args, **kw):
+        metric = _metric(args, kw, _PDIST, X)
+        if not metric:
             return NotImplemented
         m, d = X.shape
         if m * m * d < 2 * _WORK:

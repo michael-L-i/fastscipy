@@ -133,10 +133,15 @@ pub fn peak_prominences<'py>(
         // wins below about 5 steps per sample. Estimate the steps from a spread of peaks, and keep a
         // budget in case the estimate was low. The sweeps order NaN differently, so with NaN scan on.
         let stride = (peaks.len() / 4096).max(1);
-        let sample: usize = peaks.iter().step_by(stride).map(|&pk| scan(x, pk as usize, wlen).1).sum();
-        let estimate = sample * stride;
         let sweep_wins = |steps: usize| steps > 5 * x.len() && !x.iter().any(|v| v.is_nan());
-        let mut use_sweeps = sweep_wins(estimate);
+        let mut sample = 0;
+        for &pk in peaks.iter().step_by(stride) {
+            sample += scan(x, pk as usize, wlen).1;
+            if sample * stride > 5 * x.len() {
+                break; // the full estimate is at least this
+            }
+        }
+        let mut use_sweeps = sweep_wins(sample * stride);
         let mut steps = 0;
         if !use_sweeps {
             for (k, &pk) in peaks.iter().enumerate() {

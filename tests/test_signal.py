@@ -278,7 +278,7 @@ def test_unpatch_restores():
 def tiny(monkeypatch):
     """Let the Rust paths take small inputs, so odd shapes and ties are reachable."""
     from fastscipy import _signal_algo
-    for name, value in (("MIN_PEAKS", 0), ("MIN_SAMPLES", 0), ("MIN_STEPS", 0), ("MIN_CORR", 0)):
+    for name, value in (("MIN_PEAKS", 0), ("MIN_SAMPLES", 0), ("MIN_WIDTHS", 0), ("MIN_STEPS", 0), ("MIN_CORR", 0)):
         monkeypatch.setattr(_signal_algo, name, value)
 
 

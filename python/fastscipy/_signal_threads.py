@@ -17,7 +17,8 @@ from numpy.lib.stride_tricks import as_strided
 from . import _signal_small, _threads
 
 NI = NotImplemented
-MIN_WORK = 1 << 20      # about 1 ms of SciPy time; below it thread hand-off does not pay
+# smallest input and estimated multiplications worth threads (about 1 ms of SciPy time); tests lower them
+MIN_SIZE, MIN_WORK, MIN_IMAGE = 4096, 1 << 20, 1 << 16
 _size = np.size
 
 
@@ -59,7 +60,7 @@ def _threaded(orig, xname, axis_default, work, zi_off=None, veto=None):
 
     def fast(*args, **kwargs):
         x = args[xpos] if len(args) > xpos else kwargs.get(xname)
-        if not (type(x) is np.ndarray and x.ndim >= 2 and x.size >= 4096 and x.dtype.kind in "iufc"
+        if not (type(x) is np.ndarray and x.ndim >= 2 and x.size >= MIN_SIZE and x.dtype.kind in "iufc"
                 and 1 not in x.shape and len(args) <= len(params)):
             return NI
         threads = _threads.get_num_threads()
@@ -84,7 +85,11 @@ def _threaded(orig, xname, axis_default, work, zi_off=None, veto=None):
             if zi is not None:
                 b["zi"] = _slab(zi, d + zi_off, s)
             return orig(**b)
-        return _join(_threads.parallel_map(call, slices), (d, d + (zi_off or 0)))
+        try:
+            results = _threads.parallel_map(call, slices)
+        except Exception:
+            return NI    # SciPy raises its own error on the whole input
+        return _join(results, (d, d + (zi_off or 0)))
     return fast
 
 
@@ -93,7 +98,7 @@ def _medfilt2d(orig):
     def fast(input, kernel_size=3):
         x = input
         if not (type(x) is np.ndarray and x.ndim == 2 and x.dtype in (np.uint8, np.float32, np.float64)
-                and x.size >= 1 << 16) or _threads.get_num_threads() < 2 or _threads._busy.locked():
+                and x.size >= MIN_IMAGE) or _threads.get_num_threads() < 2 or _threads._busy.locked():
             return NI
         ks = np.asarray(kernel_size)
         if ks.dtype.kind != "i" or ks.ndim > 1 or ks.size not in (1, 2) or (ks % 2 == 0).any() or (ks < 1).any():
@@ -109,7 +114,11 @@ def _medfilt2d(orig):
             r0, r1 = bounds[i], bounds[i + 1]
             a0, a1 = max(r0 - h, 0), min(r1 + h, n)
             return orig(np.ascontiguousarray(x[a0:a1]), kernel_size)[r0 - a0:r1 - a0]
-        return np.concatenate(_threads.parallel_map(band, range(len(bounds) - 1)), axis=0)
+        try:
+            bands = _threads.parallel_map(band, range(len(bounds) - 1))
+        except Exception:
+            return NI
+        return np.concatenate(bands, axis=0)
     return fast
 
 

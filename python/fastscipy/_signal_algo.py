@@ -12,7 +12,7 @@ from . import _native, _threads
 NI = NotImplemented
 F8 = np.dtype(np.float64)
 # smallest calls worth a Rust call; tests lower them to reach tiny shapes
-MIN_PEAKS, MIN_SAMPLES, MIN_STEPS, MIN_CORR = 16, 4096, 2000, 1 << 14
+MIN_PEAKS, MIN_SAMPLES, MIN_WIDTHS, MIN_STEPS, MIN_CORR = 16, 4096, 1 << 15, 2000, 1 << 14
 _sig = _native.signal
 
 
@@ -42,7 +42,7 @@ def peak_prominences(x, peaks, wlen):
 def peak_widths(x, peaks, rel_height, prominences, left_bases, right_bases):
     if not (_arr(x, F8) and _arr(peaks, np.intp) and _arr(prominences, F8) and _arr(left_bases, np.intp)
             and _arr(right_bases, np.intp) and rel_height.__class__ in (float, int)
-            and peaks.size >= 1 << 15 and _threads.get_num_threads() > 1):
+            and peaks.size >= MIN_WIDTHS and _threads.get_num_threads() > 1):
         return NI    # serial, it is SciPy's own scan
     res = _sig.peak_widths(x, peaks, rel_height, prominences, left_bases, right_bases)
     if res is None or rel_height < 0:

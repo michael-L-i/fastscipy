@@ -67,6 +67,23 @@ def correlateND(in1, in2, out, val):
     return out
 
 
+def convolve2d(in1, in2, flip=1, mode=2, boundary=0, fillvalue=None):
+    """``_sigtools._convolve2d``, the kernel of ``convolve2d`` and ``correlate2d`` (flip=0)."""
+    if not (type(in1) is np.ndarray and type(in2) is np.ndarray and in1.dtype == F8 == in2.dtype
+            and in1.ndim == in2.ndim == 2 and flip.__class__ is int and mode in (0, 1, 2)
+            and boundary in (0, 4, 8) and in1.size * in2.size >= MIN_CORR):
+        return NI
+    if fillvalue is not None and boundary == 0 and fillvalue.__class__ not in (int, float, np.float64):
+        return NI
+    shape = [(a - b + 1, a, a + b - 1)[mode] for a, b in zip(in1.shape, in2.shape)]
+    if min(shape) <= 0 or not in2.size:
+        return NI
+    out = np.empty(shape)
+    fill = float(fillvalue) if fillvalue is not None and boundary == 0 else 0.0
+    _sig.convolve2d(np.ascontiguousarray(in1), np.ascontiguousarray(in2), out, flip != 0, mode, boundary, fill)
+    return out
+
+
 _gemv = {}
 
 

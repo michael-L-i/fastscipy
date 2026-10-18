@@ -11,5 +11,6 @@ pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(peaks::peak_widths, m)?)?;
     m.add_function(wrap_pyfunction!(dlsim::gemv_matches, m)?)?;
     m.add_function(wrap_pyfunction!(dlsim::dlsim_loop, m)?)?;
-    m.add_function(wrap_pyfunction!(correlate::correlate2d, m)?)
+    m.add_function(wrap_pyfunction!(correlate::correlate2d, m)?)?;
+    m.add_function(wrap_pyfunction!(correlate::convolve2d, m)?)
 }

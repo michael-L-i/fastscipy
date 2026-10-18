@@ -11,7 +11,7 @@ from fastscipy.testing import identical
 THREADS = [1, 8]
 ALIAS = {"butter": "iirfilter", "cheby1": "iirfilter", "peak_prominences": "_peak_prominences",
          "find_peaks": "_peak_prominences", "peak_widths": "_peak_widths", "convolve": "_correlateND",
-         "correlate": "_correlateND", "dstep": "dlsim", "dimpulse": "dlsim"}
+         "correlate": "_correlateND", "convolve2d": "_convolve2d", "correlate2d": "_convolve2d", "dstep": "dlsim", "dimpulse": "dlsim"}
 
 
 def _run(name, args, kwargs):
@@ -416,3 +416,47 @@ def test_correlate_direct_2d(tiny, mode, shapes):
     cmp("convolve", big.astype(np.float32), k.astype(np.float32), mode=mode, method="direct", fast=None)
     cmp("convolve", big[:, ::2], k, mode=mode, method="direct", fast=None)
     cmp("convolve", big.astype(complex), k, mode=mode, method="direct", fast=None)
+
+
+@pytest.mark.parametrize("mode", ["full", "same", "valid"])
+@pytest.mark.parametrize("boundary", ["fill", "symm", "wrap"])
+@pytest.mark.parametrize("shapes", [((40, 50), (5, 5)), ((64, 33), (4, 6)), ((9, 9), (9, 9)), ((17, 40), (1, 7)),
+                                    ((30, 30), (30, 2)), ((200, 300), (7, 3)), ((12, 15), (1, 1)), ((5, 40), (3, 3)),
+                                    ((8, 8), (11, 13)), ((3, 70), (2, 9)), ((50, 50), (8, 8))])
+def test_convolve2d_correlate2d(tiny, mode, boundary, shapes):
+    rng = np.random.default_rng(sum(shapes[0]) + len(boundary))
+    a, k = rng.standard_normal(shapes[0]), rng.standard_normal(shapes[1])
+    for name in ("convolve2d", "correlate2d"):
+        for fillvalue in (0, 0.37, -2.0) if boundary == "fill" else (0,):
+            cmp(name, a, k, mode=mode, boundary=boundary, fillvalue=fillvalue, fast=None)
+    big = rng.standard_normal((300, 400))
+    cmp("convolve2d", big, k, mode=mode, boundary=boundary, fast=None)
+    cmp("correlate2d", big, k, mode=mode, boundary=boundary, fillvalue=1.5, fast=None)
+
+
+def test_convolve2d_edge_cases(threads):
+    rng = np.random.default_rng(8)
+    a, k = rng.standard_normal((300, 400)), rng.standard_normal((5, 7))
+    cmp("convolve2d", a, k)
+    cmp("correlate2d", a, k, mode="same", boundary="symm")
+    cmp("convolve2d", a, k, mode="valid", boundary="wrap")
+    cmp("convolve2d", a, k, fillvalue=np.nan)
+    cmp("convolve2d", a, k, fillvalue=np.float64(2.5))
+    kinf = k.copy()
+    kinf[2, 3] = np.inf
+    for fillvalue in (0, 1.0):
+        cmp("convolve2d", a, kinf, fillvalue=fillvalue)
+        cmp("convolve2d", a, kinf * np.nan, mode="same", fillvalue=fillvalue)
+    cmp("convolve2d", a, k, fillvalue=[1.0], fast=False)
+    cmp("convolve2d", a, k, fillvalue=[1.0, 2.0], fast=False)
+    cmp("convolve2d", a, k, fillvalue=1j, fast=False)
+    cmp("convolve2d", a, k, mode="bogus", fast=False)
+    cmp("convolve2d", a, k, boundary="bogus", fast=False)
+    cmp("convolve2d", a[:3], k, mode="valid", fast=False)
+    cmp("convolve2d", a, k[0], fast=False)
+    cmp("convolve2d", a.astype(np.float32), k.astype(np.float32), fast=False)
+    cmp("convolve2d", a.astype(complex), k, fast=False)
+    cmp("convolve2d", a[:, ::2], k[::-1], fast=True)
+    cmp("correlate2d", np.asfortranarray(a), k, mode="same")
+    cmp("convolve2d", a[:0], k, fast=False)
+    cmp("convolve2d", a * 1e200, k * 1e200, mode="same", fast=True)

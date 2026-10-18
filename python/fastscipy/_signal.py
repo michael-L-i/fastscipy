@@ -54,8 +54,9 @@ def _patch_algo():
                         (_ltisys, "dlsim")):
         old = getattr(owner, name)
         _patch.rebind(old, _patch.wrap(old, getattr(algo, name.lstrip("_"))))
-    # `_signaltools` calls `_sigtools._correlateND`, so the extension module attribute is the seam
-    _patch.replace(_sigtools, "_correlateND", _patch.wrap(_sigtools._correlateND, algo.correlateND))
+    # `_signaltools` calls `_sigtools._correlateND` and `_convolve2d`, so the extension module attributes are the seam
+    for name, fast in (("_correlateND", algo.correlateND), ("_convolve2d", algo.convolve2d)):
+        _patch.replace(_sigtools, name, _patch.wrap(getattr(_sigtools, name), fast))
 
 
 def smoke():

@@ -293,9 +293,8 @@ def warned(name, *args, **kwargs):
                     getattr(sg, name)(*args, **kwargs)
             else:
                 getattr(sg, name)(*args, **kwargs)
-        out.append([(x.category, str(x.message), x.filename, x.lineno - (0 if True else 0)) for x in w])
-    assert out[0] and [o[:3] for o in out[0]] == [o[:3] for o in out[1]]
-    assert out[0][0][2] == out[1][0][2] == __file__
+        out.append([(x.category, str(x.message), x.filename, x.lineno) for x in w])
+    assert out[0] and out[0] == out[1]
 
 
 def walk(rng, n):
@@ -357,10 +356,11 @@ def test_peaks_fast_and_edge_cases(threads):
 
 def test_peak_warnings_match_scipy(tiny):
     x = np.tile([0.0, 1.0, 0.0, 2.0, 2.0, 1.0], 800)
+    valleys = np.flatnonzero(x == 0)[1:-1]
+    warned("peak_prominences", x, valleys)                  # prominence 0
     peaks = np.arange(1, len(x) - 1, 3)
-    warned("peak_prominences", x, peaks)
-    warned("peak_widths", x, peaks, prominence_data=(np.zeros(len(peaks)), peaks - 1, peaks + 1))
-    warned("find_peaks", np.tile([0.0, 1.0, 1.0, 1.0, 0.0, 3.0], 900), prominence=0, width=0)
+    warned("peak_widths", x, peaks, prominence_data=(np.zeros(len(peaks)), peaks - 1, peaks + 1))   # width 0
+    warned("find_peaks", x, width=0, rel_height=0)
 
 
 STATE_SPACES = [(1, 1, 1), (2, 1, 1), (3, 2, 2), (4, 1, 1), (4, 3, 2), (6, 2, 1), (8, 3, 3), (5, 1, 1), (12, 2, 2)]

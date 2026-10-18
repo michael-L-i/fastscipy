@@ -54,7 +54,7 @@ def _patch_algo():
                         (_ltisys, "dlsim")):
         old = getattr(owner, name)
         _patch.rebind(old, _patch.wrap(old, getattr(algo, name.lstrip("_"))))
-    # `_signaltools` calls `_sigtools._correlateND` and `_convolve2d`, so the extension module attributes are the seam
+    # `_signaltools` calls these through the extension module, so its attributes are the seam
     for name, fast in (("_correlateND", algo.correlateND), ("_convolve2d", algo.convolve2d)):
         _patch.replace(_sigtools, name, _patch.wrap(getattr(_sigtools, name), fast))
 
@@ -79,3 +79,10 @@ def smoke():
     sg.resample_poly(big, 3, 2, axis=-1)
     sg.upfirdn(np.ones(16), big, 2)
     sg.medfilt2d(rng.random((512, 512)), 5)
+    sg.find_peaks(np.cumsum(rng.standard_normal(100_000)), prominence=0, width=0)
+    sg.find_peaks(rng.standard_normal(100_000), prominence=0, width=0)
+    sg.dlsim((np.diag([0.5, 0.2]), np.ones((2, 1)), np.ones((1, 2)), np.zeros((1, 1)), 1.0), rng.standard_normal(3000))
+    img = rng.standard_normal((128, 128))
+    sg.convolve(img, rng.standard_normal((5, 5)), method="direct")
+    sg.convolve2d(img, rng.standard_normal((5, 5)))
+    sg.correlate2d(img, rng.standard_normal((5, 5)), mode="same", boundary="wrap")

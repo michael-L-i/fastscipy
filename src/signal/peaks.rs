@@ -1,12 +1,12 @@
 //! `scipy.signal._peak_finding_utils._peak_prominences` and `_peak_widths`.
 //!
 //! Prominence without a window is found by scanning outward from each peak, as
-//! SciPy does, until the scans have walked more than a few passes over the
+//! SciPy does, unless the scans would walk more than a few passes over the
 //! signal (a random walk makes them quadratic); then two monotonic-stack sweeps
 //! give every peak's bases in O(n). Ties go to the nearest index, as in the scan.
 //! Both functions return `None` for input SciPy would raise on.
 
-use numpy::{PyArray1, PyReadonlyArray1};
+use numpy::{PyArray1, PyArrayMethods, PyReadonlyArray1};
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
@@ -94,11 +94,21 @@ fn sweeps(x: &[f64], peaks: &[isize]) -> Vec<Prom> {
 }
 
 /// Per-peak scans of at most `wlen` samples, on all threads when there is enough work.
-fn windowed(x: &[f64], peaks: &[isize], wlen: isize) -> Vec<Prom> {
+fn windowed(x: &[f64], peaks: &[isize], wlen: isize, out: (&mut [f64], &mut [isize], &mut [isize])) {
+    const BLOCK: usize = 1024;
+    let (prom, left, right) = out;
+    let block = |(b, ((p, l), r)): (usize, ((&mut [f64], &mut [isize]), &mut [isize]))| {
+        for k in 0..p.len() {
+            (p[k], l[k], r[k]) = scan(x, peaks[b * BLOCK + k] as usize, wlen).0;
+        }
+    };
     if pool::num_threads() > 1 && peaks.len() as isize * wlen >= 1 << 20 {
-        pool::pool().install(|| peaks.par_iter().with_min_len(256).map(|&p| scan(x, p as usize, wlen).0).collect())
+        pool::pool().install(|| {
+            prom.par_chunks_mut(BLOCK).zip(left.par_chunks_mut(BLOCK)).zip(right.par_chunks_mut(BLOCK))
+                .enumerate().for_each(block)
+        });
     } else {
-        peaks.iter().map(|&p| scan(x, p as usize, wlen).0).collect()
+        prom.chunks_mut(BLOCK).zip(left.chunks_mut(BLOCK)).zip(right.chunks_mut(BLOCK)).enumerate().for_each(block);
     }
 }
 
@@ -111,29 +121,41 @@ pub fn peak_prominences<'py>(
     if peaks.iter().any(|&p| p < 0 || p as usize >= x.len()) {
         return Ok(None);
     }
-    let res = py.detach(|| {
+    let m = peaks.len();
+    let (prom, left, right) = (PyArray1::<f64>::zeros(py, m, false), PyArray1::<isize>::zeros(py, m, false), PyArray1::<isize>::zeros(py, m, false));
+    // SAFETY: freshly created, contiguous, and only written inside this call.
+    let (p, l, r) = unsafe { (prom.as_slice_mut()?, left.as_slice_mut()?, right.as_slice_mut()?) };
+    py.detach(|| {
         if wlen >= 2 {
-            return windowed(x, peaks, wlen);
+            return windowed(x, peaks, wlen, (p, l, r));
         }
-        let budget = 6 * x.len() + 4096;
+        // A scan step costs about 2.5 ns, a sweep pass over the signal about 7 ns per sample: scanning
+        // wins below about 5 steps per sample. Estimate the steps from a spread of peaks, and keep a
+        // budget in case the estimate was low. The sweeps order NaN differently, so with NaN scan on.
+        let stride = (peaks.len() / 4096).max(1);
+        let sample: usize = peaks.iter().step_by(stride).map(|&pk| scan(x, pk as usize, wlen).1).sum();
+        let estimate = sample * stride;
+        let sweep_wins = |steps: usize| steps > 5 * x.len() && !x.iter().any(|v| v.is_nan());
+        let mut use_sweeps = sweep_wins(estimate);
         let mut steps = 0;
-        let mut out = Vec::with_capacity(peaks.len());
-        for &p in peaks {
-            let (r, s) = scan(x, p as usize, wlen);
-            steps += s;
-            out.push(r);
-            // The sweeps order NaN differently; with NaN keep scanning as SciPy does.
-            if steps > budget && !x.iter().any(|v| v.is_nan()) {
-                return sweeps(x, peaks);
+        if !use_sweeps {
+            for (k, &pk) in peaks.iter().enumerate() {
+                let (res, s) = scan(x, pk as usize, wlen);
+                (p[k], l[k], r[k]) = res;
+                steps += s;
+                if steps > 12 * x.len() && sweep_wins(steps) {
+                    use_sweeps = true;
+                    break;
+                }
             }
         }
-        out
+        if use_sweeps {
+            for (k, res) in sweeps(x, peaks).into_iter().enumerate() {
+                (p[k], l[k], r[k]) = res;
+            }
+        }
     });
-    Ok(Some((
-        PyArray1::from_iter(py, res.iter().map(|r| r.0)),
-        PyArray1::from_iter(py, res.iter().map(|r| r.1)),
-        PyArray1::from_iter(py, res.iter().map(|r| r.2)),
-    )))
+    Ok(Some((prom, left, right)))
 }
 
 fn width(x: &[f64], peak: usize, rel: f64, prom: f64, lo: usize, hi: usize) -> [f64; 4] {

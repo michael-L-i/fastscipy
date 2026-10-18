@@ -40,33 +40,34 @@ def _jump(x, nknots, span):
     return float(np.abs(x[i + 1] - x[i]).mean()) / span * nknots if span > 0 else 0.0
 
 
-def _scatter(order, r, shape, axis):
-    """Undo the sort of the leading axis of ``r`` (x at ``axis``), laid out as SciPy does."""
-    r = np.moveaxis(r, axis, 0)
-    pre = np.empty(r.shape, r.dtype)
-    pre[order] = r
-    out = pre.reshape(shape + pre.shape[1:])
-    if axis:
-        nd = len(shape)
-        perm = list(range(out.ndim))
-        return out.transpose(perm[nd:nd + axis] + perm[:nd] + perm[nd + axis:])
-    return out
+def _on_axis(out, nd, axis):
+    """Move the ``nd`` query axes of ``out`` (leading) to ``axis``, as BSpline does."""
+    if not axis:
+        return out
+    perm = list(range(out.ndim))
+    return out.transpose(perm[nd:nd + axis] + perm[:nd] + perm[nd + axis:])
 
 
 def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
-    """Evaluate at the flat float64 queries by the Rust kernel, or by ``call`` on sorted queries."""
+    """Evaluate at the flat float64 queries by the Rust kernel, or by ``call`` on sorted queries.
+    ``c`` has the coefficient axis first; the kernel gets it as (n, columns) float64."""
     n = len(flat)
     if n < SPLINE_MIN_QUERIES:
         return NotImplemented
     jump = _jump(flat, len(t), t[-k - 1] - t[k])
     if kernel_ok and (jump >= KERNEL_MIN_JUMP or (n >= KERNEL_PARALLEL_FROM and _threads.get_num_threads() > 1)):
-        out = _k.bspline_eval(t, c, k, flat)
+        cc = c.reshape(len(c), -1)
+        out = _k.bspline_eval(t, cc.view(np.float64) if c.dtype.kind == "c" else cc, k, flat)
         if out is not None:
-            return out.reshape(shape)
+            out = out.view(complex) if c.dtype.kind == "c" else out
+            return _on_axis(out.reshape(shape + c.shape[1:]), len(shape), axis)
     if len(t) < SPLINE_MIN_KNOTS or not jump >= SPLINE_MIN_JUMP:
         return NotImplemented
     order = np.argsort(flat)
-    return _scatter(order, np.asarray(call(flat[order])), shape, axis)
+    r = np.moveaxis(np.asarray(call(flat[order])), axis, 0)
+    pre = np.empty(r.shape, r.dtype)
+    pre[order] = r
+    return _on_axis(pre.reshape(shape + pre.shape[1:]), len(shape), axis)
 
 
 def _bspline_call(self, x, nu=0, extrapolate=None):
@@ -77,7 +78,7 @@ def _bspline_call(self, x, nu=0, extrapolate=None):
     t, c, k = d.t, d.c, d.k
     if not isinstance(ext, (bool, np.bool_)) or not _is_array(t, "f") or not _is_array(c, "fc"):
         return NotImplemented
-    kernel_ok = (nu == 0 and ext and c.ndim == 1 and c.dtype == t.dtype == np.float64
+    kernel_ok = (nu == 0 and ext and c.dtype in (np.float64, np.complex128) and t.dtype == np.float64
                  and t.flags.c_contiguous and c.flags.c_contiguous)
     flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
     return _spline(flat, x.shape, t, c, k, kernel_ok, d.axis, lambda xs: _orig["bspline"](self, xs, nu, extrapolate))
@@ -229,7 +230,7 @@ def smoke():
     rng = np.random.default_rng(0)
     x = np.sort(rng.random(400))
     spl = si.make_interp_spline(x, np.sin(x * 6), k=3)
-    q = rng.random(1000)
+    q = rng.uniform(x[0], x[-1], 1000)
     spl(q)
     si.splev(q, spl.tck)
     si.interp1d(x, np.sin(x * 6), kind="cubic")(q)

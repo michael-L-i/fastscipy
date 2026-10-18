@@ -5,7 +5,7 @@
 //! query and the knots, so the result is the same. clang fuses the two
 //! multiply-adds below on arm64, hence `mul_add`.
 
-use numpy::{PyArray1, PyArrayMethods, PyReadonlyArray1};
+use numpy::{PyArray2, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 
 /// The largest `l` in `[k, n)` with `t[l] <= x` (the last interval for `x >= t[n]`).
@@ -24,39 +24,46 @@ fn interval(t: &[f64], k: usize, n: usize, x: f64) -> usize {
     lo
 }
 
-fn eval(t: &[f64], c: &[f64], k: usize, n: usize, x: f64) -> f64 {
+/// Write the spline value of every column of `c` (n, m) at `x` into `out`.
+fn eval(t: &[f64], c: &[f64], m: usize, k: usize, n: usize, x: f64, out: &mut [f64]) {
     let l = interval(t, k, n, x);
     let (mut h, mut hh) = ([0.0f64; 6], [0.0f64; 6]);
     h[0] = 1.0;
     for j in 1..=k {
         hh[..j].copy_from_slice(&h[..j]);
         h[0] = 0.0;
-        for m in 1..=j {
-            let (xb, xa) = (t[l + m], t[l + m - j]);
+        for r in 1..=j {
+            let (xb, xa) = (t[l + r], t[l + r - j]);
             if xb == xa {
-                h[m] = 0.0;
+                h[r] = 0.0;
                 continue;
             }
-            let w = hh[m - 1] / (xb - xa);
-            h[m - 1] = w.mul_add(xb - x, h[m - 1]);
-            h[m] = w * (x - xa);
+            let w = hh[r - 1] / (xb - xa);
+            h[r - 1] = w.mul_add(xb - x, h[r - 1]);
+            h[r] = w * (x - xa);
         }
     }
-    (0..=k).fold(0.0, |acc, a| c[l + a - k].mul_add(h[a], acc))
+    out.fill(0.0);
+    for a in 0..=k {
+        for (o, &c) in out.iter_mut().zip(&c[(l + a - k) * m..][..m]) {
+            *o = c.mul_add(h[a], *o);
+        }
+    }
 }
 
-/// Values of the spline `(t, c, k)` at `x` with `extrapolate=True`; `None` if the
-/// knots (not sorted, degenerate end intervals), `k`, `c` or `x` (not finite) are unusual.
+/// Values of the spline `(t, c, k)` at `x` (shape (len(x), m)) with `extrapolate=True`; `None`
+/// if the knots (not sorted, degenerate end intervals), `k`, `c` or `x` (not finite) are unusual.
 #[pyfunction]
 pub fn bspline_eval<'py>(
-    py: Python<'py>, t: PyReadonlyArray1<'py, f64>, c: PyReadonlyArray1<'py, f64>, k: usize, x: PyReadonlyArray1<'py, f64>,
-) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
+    py: Python<'py>, t: PyReadonlyArray1<'py, f64>, c: PyReadonlyArray2<'py, f64>, k: usize, x: PyReadonlyArray1<'py, f64>,
+) -> PyResult<Option<Bound<'py, PyArray2<f64>>>> {
+    let m = c.shape()[1];
     let (t, c, x) = (t.as_slice()?, c.as_slice()?, x.as_slice()?);
-    if !(1..=5).contains(&k) || t.len() < 2 * k + 2 {
+    if !(1..=5).contains(&k) || t.len() < 2 * k + 2 || m == 0 {
         return Ok(None);
     }
     let n = t.len() - k - 1;
-    let ok = c.len() >= n
+    let ok = c.len() >= n * m
         && t.windows(2).all(|w| w[0] <= w[1])
         && t[k] < t[k + 1]
         && t[n - 1] < t[n]
@@ -66,12 +73,12 @@ pub fn bspline_eval<'py>(
     if !ok {
         return Ok(None);
     }
-    let out = PyArray1::<f64>::zeros(py, x.len(), false);
+    let out = PyArray2::<f64>::zeros(py, (x.len(), m), false);
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
-    py.detach(|| super::fill(o, 1, 1 << 15, |i, o| {
-        for (o, &x) in o.iter_mut().zip(&x[i..]) {
-            *o = eval(t, c, k, n, x);
+    py.detach(|| super::fill(o, m, 1 << 15, |i, o| {
+        for (o, &x) in o.chunks_mut(m).zip(&x[i..]) {
+            eval(t, c, m, k, n, x, o);
         }
     }));
     Ok(Some(out))

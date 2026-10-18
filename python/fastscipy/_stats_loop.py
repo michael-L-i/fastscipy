@@ -457,6 +457,8 @@ def _declining(lean):
     """Floating-point events and precision-loss cases decline instead of raising."""
     @functools.wraps(lean)
     def fast(*args, **kwargs):
+        if kwargs and "_no_deco" in kwargs:      # SciPy's internal calls want the undecorated function
+            return NotImplemented
         try:
             return lean(*args, **kwargs)
         except (FloatingPointError, _Decline):

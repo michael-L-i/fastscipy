@@ -6,6 +6,7 @@ reproduces SciPy's arithmetic op for op (array ``**2`` squares, a numpy scalar's
 loss, constant input or too-small sample declines, so SciPy decides every warning.
 """
 import functools
+import inspect
 import math
 
 import numpy as np
@@ -455,9 +456,13 @@ def _mannwhitneyu(x, y, use_continuity=True, alternative='two-sided', axis=0, me
 
 def _declining(lean):
     """Floating-point events and precision-loss cases decline instead of raising."""
+    params = inspect.signature(lean).parameters
+    names, npos = frozenset(params), sum(p.kind != p.KEYWORD_ONLY for p in params.values())
+
     @functools.wraps(lean)
     def fast(*args, **kwargs):
-        if kwargs and "_no_deco" in kwargs:      # SciPy's internal calls want the undecorated function
+        # unknown keywords (keepdims, _no_deco, ...) and extra arguments are SciPy's to handle
+        if len(args) > npos or (kwargs and not names.issuperset(kwargs)):
             return NotImplemented
         try:
             return lean(*args, **kwargs)

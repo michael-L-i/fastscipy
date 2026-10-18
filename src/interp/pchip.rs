@@ -77,7 +77,8 @@ fn cell(x: &[f64], q: f64) -> usize {
 }
 
 /// `v` is the C-contiguous values array with `grids.len()` (1 to 3) axes, `q` is (m, ndim).
-/// Returns `None` unless every grid has 4 or more nodes and all values are finite.
+/// Returns `None` unless every grid has 4 or more nodes and all values and queries are finite,
+/// and no intermediate result is not (SciPy refits `PchipInterpolator` on those and may raise).
 #[pyfunction]
 pub fn pchip_eval<'py>(
     py: Python<'py>, grids: Vec<PyReadonlyArray1<'py, f64>>, v: PyReadonlyArray1<'py, f64>, q: PyReadonlyArray2<'py, f64>,
@@ -87,7 +88,9 @@ pub fn pchip_eval<'py>(
     let nd = g.len();
     let m = q.len() / nd.max(1);
     let size: usize = g.iter().map(|x| x.len()).product();
-    if !(1..=3).contains(&nd) || g.iter().any(|x| x.len() < 4) || v.len() != size || !v.iter().all(|v| v.is_finite()) {
+    if !(1..=3).contains(&nd) || g.iter().any(|x| x.len() < 4) || v.len() != size
+        || !v.iter().all(|v| v.is_finite()) || !q.iter().all(|v| v.is_finite())
+    {
         return Ok(None);
     }
     let mut stride = [1usize; 3];
@@ -125,9 +128,12 @@ pub fn pchip_eval<'py>(
                     buf[p] = hermite(g[d], cl[d], lo[d], &buf[p * w[d]..(p + 1) * w[d]], q[d]);
                 }
                 len /= w[d];
+                if d > 0 && !buf[..len].iter().all(|v| v.is_finite()) {
+                    break;
+                }
             }
-            *o = buf[0];
+            *o = if len == 1 { buf[0] } else { f64::NAN };
         }
     }));
-    Ok(Some(out))
+    Ok((!o.iter().any(|v| v.is_nan())).then_some(out))
 }

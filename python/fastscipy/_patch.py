@@ -21,6 +21,14 @@ def stats():
     return dict(counts)
 
 
+def require_scipy(*prefixes):
+    """Refuse to patch unless SciPy's version starts with one of ``prefixes``
+    (the versions a component was validated on). ``FASTSCIPY_ANY_VERSION=1`` overrides."""
+    import scipy
+    if not scipy.__version__.startswith(prefixes) and not os.environ.get("FASTSCIPY_ANY_VERSION"):
+        raise RuntimeError(f"validated on SciPy {', '.join(prefixes)}, found {scipy.__version__}")
+
+
 def replace(owner, attr, new):
     """Set ``owner.attr = new`` and remember the old value. Returns the old value."""
     old = getattr(owner, attr)

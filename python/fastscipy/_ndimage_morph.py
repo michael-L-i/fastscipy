@@ -16,6 +16,13 @@ from ._ndimage_seam import accelerated, core
 _BYTE = (np.dtype(bool), np.dtype(np.uint8), np.dtype(np.int8))
 
 
+@functools.lru_cache(maxsize=3)
+def _default_structure(ndim):
+    structure = _morphology.generate_binary_structure(ndim, 1)
+    structure.flags.writeable = False
+    return structure
+
+
 def _as_bytes(a):
     """C-contiguous uint8 array holding (a != 0), or None."""
     if a.dtype.kind == "c":
@@ -161,9 +168,9 @@ def _fixed_point_dilation(erode):
             return NotImplemented
         ndim = input.ndim
         if structure is None:
-            structure = _morphology.generate_binary_structure(ndim, 1)
+            structure = _default_structure(ndim) if ndim <= 3 else _morphology.generate_binary_structure(ndim, 1)
         structure = np.asarray(structure, dtype=bool)
-        if structure.ndim != ndim or structure.size < 1 or not np.all(np.array(structure.shape) <= 9):
+        if structure.ndim != ndim or structure.size < 1 or any(s > 9 for s in structure.shape):
             return NotImplemented
         try:
             org = tuple(operator.index(o) for o in _ni_support._normalize_sequence(origin, ndim))
@@ -187,7 +194,7 @@ def _fixed_point_dilation(erode):
                 return NotImplemented
             out = output
         else:
-            out = np.zeros(input.shape, dtype=bool)
+            out = np.empty(input.shape, dtype=bool)
         inp = np.ascontiguousarray(input if input.dtype == np.bool_ else input != 0).view(np.uint8)
         direct = (
             out.dtype in _BYTE

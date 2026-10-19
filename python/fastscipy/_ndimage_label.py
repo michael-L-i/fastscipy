@@ -23,11 +23,13 @@ def _label(input, structure, output):
     k, sz = input.dtype.kind, input.dtype.itemsize
     if not input.dtype.isnative or k not in "biuf" or (k == "f" and sz not in (4, 8)):
         return NotImplemented
-    st = np.asarray(structure)
-    if st.ndim != input.ndim or set(st.shape) > {3}:
+    st = np.asarray(structure, dtype=np.bool_)
+    if st.shape != (3,) * input.ndim:
         return NotImplemented
-    st = st.astype(np.bool_)
-    if not np.array_equal(st, st[(np.s_[::-1],) * st.ndim]):
+    # Reversing C-order elements reverses every axis of the structure.
+    # tolist also normalizes noncanonical True bytes to Python bools.
+    neighbors = st.ravel().tolist()
+    if neighbors != neighbors[::-1]:
         return NotImplemented
     if input.size >= 2**32 - 8 or input.shape[-1] >= 2**31:
         return NotImplemented
@@ -36,7 +38,7 @@ def _label(input, structure, output):
         inp = inp.view(np.uint8)
     if np.may_share_memory(inp, output):
         inp = inp.copy()
-    n = core.label_core(inp, st.astype(np.uint8).ravel().tolist(), output)
+    n = core.label_core(inp, neighbors, output)
     return NotImplemented if n is None else int(n)
 
 

@@ -34,17 +34,19 @@ def _flatten(arrs):
     if not any(shapes):
         return None
     try:
-        batch = np.broadcast_shapes(*shapes)
+        batch = shapes[0] if all(s == shapes[0] for s in shapes[1:]) else np.broadcast_shapes(*shapes)
     except ValueError:
         return None
     B = math.prod(batch)
     if B == 0 or any(B * math.prod(a.shape[a.ndim - c :]) * 8 > _MAX_BYTES for a, c in arrs):
         return None
-    return (
-        batch,
-        B,
-        [np.broadcast_to(a, batch + a.shape[a.ndim - c :]).reshape((B,) + a.shape[a.ndim - c :]) for a, c in arrs],
-    )
+    flat = []
+    for (a, c), shape in zip(arrs, shapes):
+        core = a.shape[-c:]
+        if shape != batch:
+            a = np.broadcast_to(a, batch + core)
+        flat.append(a.reshape((B,) + core))
+    return batch, B, flat
 
 
 def _threads(B, n, k=1, scale=1.0):

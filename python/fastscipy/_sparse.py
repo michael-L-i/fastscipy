@@ -213,9 +213,12 @@ def _find(A):
     if A.format == "coo" and A.has_canonical_format:  # SciPy's own path has nothing to sort
         return NotImplemented
     dtypes = (A.row.dtype, A.col.dtype) if A.format == "coo" else (A.indices.dtype,) * 2
-    A = csr_array(A, copy=True)
-    A.sum_duplicates()
-    A = A.tocoo()
+    if A.format != "csr" or not A.has_canonical_format:
+        A = csr_array(A, copy=True)
+        A.sum_duplicates()
+    # The final masks already copy the outputs. Canonical CSR needs no
+    # intermediate copies, and noncanonical inputs were detached above.
+    A = A.tocoo(copy=False)
     row, col = A.row.astype(dtypes[0], copy=False), A.col.astype(dtypes[1], copy=False)
     keep = A.data != 0
     return row[keep], col[keep], A.data[keep]

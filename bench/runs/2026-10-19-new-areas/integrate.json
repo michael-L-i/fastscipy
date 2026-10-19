@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "threads": 2,
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "date_utc": "2026-10-19T20:21:49.540625+00:00",
+    "budget_seconds": 0.1,
+    "native_profile": "release",
+    "blas_threads": 1
+  },
+  "cases": {
+    "simpson 101 uniform points": {
+      "scipy_ms": 0.004875008016824722,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.003249995643272996,
+      "x1t": 1.5000044775183803,
+      "nt_ms": 0.0032919924706220627,
+      "xnt": 1.4808685196972913
+    },
+    "simpson (101, 30) uniform axis=0": {
+      "scipy_ms": 0.007915979949757457,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.006084010237827897,
+      "x1t": 1.3011122007223326,
+      "nt_ms": 0.006083020707592368,
+      "xnt": 1.301323853768462
+    },
+    "fixed_quad cosine 5 nodes": {
+      "scipy_ms": 0.005875015631318092,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.003249995643272996,
+      "x1t": 1.807699540606614,
+      "nt_ms": 0.0031249946914613247,
+      "xnt": 1.880008195652579
+    },
+    "fixed_quad vector 16 nodes": {
+      "scipy_ms": 0.008000002708286047,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.005415990017354488,
+      "x1t": 1.4771080970702664,
+      "nt_ms": 0.005415990017354488,
+      "xnt": 1.4771080970702664
+    }
+  }
+}

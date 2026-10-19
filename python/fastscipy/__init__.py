@@ -11,6 +11,8 @@ Call ``patch()`` before importing libraries that do ``from scipy.x import f``.
 import contextlib
 import importlib
 import logging
+import os
+import threading
 
 from . import _patch
 from ._patch import stats
@@ -25,15 +27,28 @@ COMPONENTS = (
     "stats",
     "signal",
     "sparse",
+    "sparse_linalg",
     "linalg",
     "interpolate",
     "spatial",
     "csgraph",
+    "cluster",
     "integrate",
     "optimize",
 )
 _status = {}
+_disabled_lock = threading.Lock()
+_disabled_count = 0
+_disabled_old = True
 log = logging.getLogger("fastscipy")
+
+
+def _after_fork():
+    global _disabled_lock
+    _disabled_lock = threading.Lock()
+
+
+os.register_at_fork(after_in_child=_after_fork)
 
 
 def patch(components=None, threads=None):
@@ -78,8 +93,16 @@ def status():
 @contextlib.contextmanager
 def disabled():
     """Run SciPy's own code inside the block without unpatching (for comparisons)."""
-    old, _patch.enabled = _patch.enabled, False
+    global _disabled_count, _disabled_old
+    with _disabled_lock:
+        if _disabled_count == 0:
+            _disabled_old = _patch.enabled
+            _patch.enabled = False
+        _disabled_count += 1
     try:
         yield
     finally:
-        _patch.enabled = old
+        with _disabled_lock:
+            _disabled_count -= 1
+            if _disabled_count == 0:
+                _patch.enabled = _disabled_old

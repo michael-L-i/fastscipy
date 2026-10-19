@@ -368,6 +368,50 @@ def test_label_large_and_declined():
     check(lambda: ndi.label(np.zeros((0, 4), bool)), fast=False)
 
 
+def test_label_structure_truth_values_and_mutation():
+    x = np.eye(5, dtype=bool)
+    # Bool arrays can contain different nonzero bytes with identical truth values.
+    storage = np.array([[0, 2, 0], [1, 255, 3], [0, 7, 0]], dtype=np.uint8)
+    structure = storage.view(np.bool_)
+    check(lambda: ndi.label(x, structure))
+    structure[0, 0] = structure[2, 2] = True
+    check(lambda: ndi.label(x, structure))
+    structure = structure[::-1, ::-1]
+    structure.flags.writeable = False
+    check(lambda: ndi.label(x, structure))
+    asymmetric = np.eye(3, dtype=bool)
+    asymmetric[0, 0] = False
+    check(lambda: ndi.label(x, asymmetric), fast=False)
+
+
+@pytest.mark.parametrize("origin", [[0, -1], (0, -1), np.array([0, -1]), [np.int64(0), np.int64(-1)]])
+def test_rank_filter_origin_sequence_types(origin):
+    x = np.arange(42, dtype=np.float64).reshape(6, 7)
+    footprint = np.array([[1, 1, 0], [1, 1, 1], [0, 1, 1]], dtype=bool)
+    for fn in (ndi.median_filter, ndi.minimum_filter, ndi.maximum_filter):
+        check(lambda: fn(x, footprint=footprint, origin=origin))
+
+
+@pytest.mark.parametrize("shape", [(17,), (7, 9), (3, 5, 7)])
+@pytest.mark.parametrize("border", [0, 1])
+def test_fixed_point_default_structure_and_outputs(shape, border):
+    x = np.zeros(shape, dtype=bool)
+    x[(slice(1, -1),) * len(shape)] = True
+    x[tuple(s // 2 for s in shape)] = False
+    check(lambda: ndi.binary_fill_holes(x))
+    for kind in ("default", "int32", "strided"):
+
+        def run():
+            output = None
+            if kind == "int32":
+                output = np.empty(shape, np.int32)
+            elif kind == "strided":
+                output = np.empty(tuple(2 * s for s in shape), bool)[(slice(None, None, 2),) * len(shape)]
+            return ndi.binary_dilation(x, iterations=0, border_value=border, output=output)
+
+        check(run)
+
+
 @pytest.mark.parametrize("seed", SEEDS)
 def test_find_objects_and_watershed(seed):
     rng = np.random.default_rng(1100 + seed)

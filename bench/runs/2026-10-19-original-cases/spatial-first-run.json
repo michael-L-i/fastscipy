@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "started_utc": "2026-10-19T19:58:08.551166+00:00",
+    "threads": 18,
+    "cpu": 18,
+    "platform": "darwin",
+    "python": "3.13.6 (main, Aug 13 2025, 12:14:09) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_profile": "release",
+    "native_sha256": "e87281f11391f3dc3a9164d99e325559d3a80746f0c2f38e828a45cc72b42072",
+    "budget_seconds": 0.3,
+    "selection": "exact names from previously published bench/results/*.json",
+    "status": {
+      "ndimage": "on",
+      "special": "on",
+      "stats": "on",
+      "signal": "on",
+      "sparse": "on",
+      "linalg": "on",
+      "interpolate": "on",
+      "spatial": "on",
+      "csgraph": "on",
+      "integrate": "on",
+      "optimize": "on"
+    }
+  },
+  "cases": {
+    "cdist euclidean 4000x2000x16": {
+      "scipy_ms": 23.68895898689516,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 23.417957971105352,
+      "x1t": 1.011572358961622,
+      "nt_ms": 2.3676250129938126,
+      "xnt": 10.005367765962635,
+      "control": false
+    },
+    "cdist cityblock 4000x2000x16": {
+      "scipy_ms": 17.97866600099951,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 17.268374998820946,
+      "x1t": 1.0411324749565065,
+      "nt_ms": 1.730915973894298,
+      "xnt": 10.386793046083135,
+      "control": false
+    },
+    "cdist cosine 4000x2000x16": {
+      "scipy_ms": 42.076165991602466,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 39.24941600416787,
+      "x1t": 1.0720201795393447,
+      "nt_ms": 3.258709009969607,
+      "xnt": 12.911912620266422,
+      "control": false
+    },
+    "pdist euclidean 3000x16": {
+      "scipy_ms": 12.333416991168633,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 12.516083021182567,
+      "x1t": 0.985405495496891,
+      "nt_ms": 9.176541003398597,
+      "xnt": 1.3440158973409333,
+      "control": false
+    },
+    "pdist cityblock 3000x16": {
+      "scipy_ms": 9.74079201114364,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 9.511292009847239,
+      "x1t": 1.024129214102437,
+      "nt_ms": 9.098833979805931,
+      "xnt": 1.0705538789654232,
+      "control": false
+    },
+    "cKDTree.query 1M pts, 200k queries, k=1": {
+      "scipy_ms": 271.0246249916963,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 241.2495409953408,
+      "x1t": 1.1234202721112352,
+      "nt_ms": 27.259708993369713,
+      "xnt": 9.942315417146116,
+      "control": false
+    },
+    "cKDTree.query 1M pts, 200k queries, k=8": {
+      "scipy_ms": 476.6859999799635,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 485.8185409975704,
+      "x1t": 0.9812017445878984,
+      "nt_ms": 40.735249989666045,
+      "xnt": 11.70205166534861,
+      "control": false
+    },
+    "cKDTree.query_ball_point 200k, r=0.01": {
+      "scipy_ms": 369.34974999167025,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 352.16062498511747,
+      "x1t": 1.0488104682551582,
+      "nt_ms": 34.26695801317692,
+      "xnt": 10.778597558897452,
+      "control": false
+    },
+    "cdist 300x100x16 (control)": {
+      "scipy_ms": 0.08004100527614355,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.08024999988265336,
+      "x1t": 0.9973957058340759,
+      "nt_ms": 0.07841599290259182,
+      "xnt": 1.0207229713404293,
+      "control": true
+    },
+    "pdist 100x16 (control)": {
+      "scipy_ms": 0.016584002878516912,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.01683298614807427,
+      "x1t": 0.9852086096093032,
+      "nt_ms": 0.01754099503159523,
+      "xnt": 0.9454425389577636,
+      "control": true
+    },
+    "cKDTree.query 100 queries (control)": {
+      "scipy_ms": 0.055665994295850396,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.06600000779144466,
+      "x1t": 0.8434240564296748,
+      "nt_ms": 0.0663330138195306,
+      "xnt": 0.8391898858583222,
+      "control": true
+    }
+  }
+}

@@ -94,6 +94,18 @@ def test_bspline_sorted_queries():
     check(lambda: spl(q), fast=False)  # SciPy's walk wins on one thread; either way identical
 
 
+@pytest.mark.parametrize("nknots", [12, 90, 100])
+def test_short_knot_vectors(nknots):
+    r = rng(nknots)
+    x = np.linspace(0, 1, nknots)
+    spl = si.make_interp_spline(x, r.standard_normal(nknots))
+    for n in (1000, 70000):
+        q = r.uniform(-0.1, 1.1, n)
+        check(lambda: spl(q), fast=False)
+        check(lambda: spl(np.sort(q)), fast=False)
+        check(lambda: spl(q, nu=1), fast=False)
+
+
 @pytest.mark.parametrize("kind", ["cubic", "quadratic", "slinear", "zero", "linear", "nearest"])
 def test_interp1d(kind):
     r = rng(4)
@@ -238,6 +250,21 @@ def test_clough_tocher():
     check(lambda: si.CloughTocher2DInterpolator(pts, np.c_[v, v**2], fill_value=0.5)(q))
     check(lambda: si.CloughTocher2DInterpolator(pts, v * (1 - 2j))(q))
     check(lambda: si.CloughTocher2DInterpolator(pts, v, tol=1e-4, maxiter=50)(q))
+
+
+@pytest.mark.parametrize("complex_values", [False, True])
+def test_clough_tocher_many_outputs(complex_values):
+    r, pts, v = scattered()
+    values = (v[:, None] * np.arange(1, 25)).reshape(-1, 4, 6)
+    if complex_values:
+        values = values * (1 - 2j)
+    f = si.CloughTocher2DInterpolator(pts, values, fill_value=-1.5)
+    # Uneven chunks, multiple output axes, extrapolation, NaNs, and tie replay.
+    q = r.uniform(-0.1, 1.1, (8501, 2))
+    q[:50] = pts[:50]
+    q[50:53] = np.nan
+    r.shuffle(q)
+    check(lambda: f(q))
 
 
 @pytest.mark.parametrize("method", ["linear", "cubic"])

@@ -1,0 +1,26 @@
+{
+  "started_utc": "2026-10-19T19:58:08.551166+00:00",
+  "threads": 18,
+  "cpu": 18,
+  "platform": "darwin",
+  "python": "3.13.6 (main, Aug 13 2025, 12:14:09) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "native_profile": "release",
+  "native_sha256": "e87281f11391f3dc3a9164d99e325559d3a80746f0c2f38e828a45cc72b42072",
+  "budget_seconds": 0.3,
+  "selection": "exact names from previously published bench/results/*.json",
+  "status": {
+    "ndimage": "on",
+    "special": "on",
+    "stats": "on",
+    "signal": "on",
+    "sparse": "on",
+    "linalg": "on",
+    "interpolate": "on",
+    "spatial": "on",
+    "csgraph": "on",
+    "integrate": "on",
+    "optimize": "on"
+  }
+}

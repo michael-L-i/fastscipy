@@ -108,11 +108,14 @@ About 130 functions have their own fast path, plus all 322 `scipy.special`
 ufuncs, which are threaded for large arrays. [docs/coverage.md](docs/coverage.md)
 lists them by area, with the cases each one hands back to SciPy.
 
-Not covered, by design:
+Sparse iterative solvers and clustering also have targeted Python dispatch
+fast paths; their numerical algorithms remain SciPy's own.
+
+Outside the current fast paths:
 
 - **Already near the hardware limit:** large dense linear algebra and FFT
-  (they call tuned BLAS/LAPACK and FFT libraries), `linprog`, iterative
-  sparse solvers, `cluster`, `io`.
+  (they call tuned BLAS/LAPACK and FFT libraries).
+- **Other areas:** `linprog`/HiGHS and scientific `io`.
 - **Time spent in your code:** `minimize`, `solve_ivp`, `quad`, `root` and
   similar solvers spend most of their time calling your Python function.
 

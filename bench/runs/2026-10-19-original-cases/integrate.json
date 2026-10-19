@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "started_utc": "2026-10-19T19:58:08.551166+00:00",
+    "threads": 18,
+    "cpu": 18,
+    "platform": "darwin",
+    "python": "3.13.6 (main, Aug 13 2025, 12:14:09) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_profile": "release",
+    "native_sha256": "e87281f11391f3dc3a9164d99e325559d3a80746f0c2f38e828a45cc72b42072",
+    "budget_seconds": 0.3,
+    "selection": "exact names from previously published bench/results/*.json",
+    "status": {
+      "ndimage": "on",
+      "special": "on",
+      "stats": "on",
+      "signal": "on",
+      "sparse": "on",
+      "linalg": "on",
+      "interpolate": "on",
+      "spatial": "on",
+      "csgraph": "on",
+      "integrate": "on",
+      "optimize": "on"
+    }
+  },
+  "cases": {
+    "trapezoid 100 points with x, x100 calls": {
+      "scipy_ms": 0.3049589868169278,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.15566599904559553,
+      "x1t": 1.959059709163614,
+      "nt_ms": 0.15941698802635074,
+      "xnt": 1.912964173971972,
+      "control": false
+    },
+    "trapezoid 100 points dx, x100 calls": {
+      "scipy_ms": 0.2685000072233379,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.1388340024277568,
+      "x1t": 1.9339643209022492,
+      "nt_ms": 0.13904200750403106,
+      "xnt": 1.9310711348550806,
+      "control": false
+    },
+    "trapezoid (1000, 30) axis=0 x100 calls": {
+      "scipy_ms": 2.125667000655085,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 2.001583983656019,
+      "x1t": 1.0619924110166092,
+      "nt_ms": 2.0032920001540333,
+      "xnt": 1.0610869511242704,
+      "control": false
+    }
+  }
+}

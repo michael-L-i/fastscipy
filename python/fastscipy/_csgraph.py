@@ -27,14 +27,18 @@ def _csr(g, directed, **kw):
 
 
 def _arrays(g):
+    if g.indices.dtype == I32 and g.indptr.dtype == I32:
+        return g.indices, g.indptr
     ix, ip = safely_cast_index_arrays(g, I32, msg="csgraph")
     return (ix, ip) if ix.dtype == I32 and ip.dtype == I32 else (None, None)
 
 
-def _sources(indices, n, wrap_negative=True):
+def _sources(indices, n):
     """SciPy's ``indices`` handling: (flat int32 sources, output shape), or None to decline."""
     if indices is None:
         return np.arange(n, dtype=I32), (n,)
+    if indices.__class__ is int and -n <= indices < n:
+        return np.array([indices if indices >= 0 else indices + n], dtype=I32), ()
     indices = np.array(indices, order="C", dtype=I32)
     shape = indices.shape
     indices = np.atleast_1d(indices).reshape(-1)
@@ -44,10 +48,11 @@ def _sources(indices, n, wrap_negative=True):
     return indices, shape
 
 
-def _transposed(g, unweighted):
+def _transposed(g):
     t = g.T.tocsr()
     ix, ip = _arrays(t)
-    return (ip, ix, np.ones(t.data.shape) if unweighted else t.data) if ix is not None else None
+    # Unit-weight kernels ignore the data buffer, including the transpose.
+    return (ip, ix, t.data) if ix is not None else None
 
 
 def _dijkstra(
@@ -60,7 +65,7 @@ def _dijkstra(
     n = g.shape[0]
     ix, ip = _arrays(g)
     src = _sources(indices, n)
-    t = _transposed(g, unweighted) if not directed and ix is not None else (_EMPTY_I, _EMPTY_I, _EMPTY_F)
+    t = _transposed(g) if not directed and ix is not None else (_EMPTY_I, _EMPTY_I, _EMPTY_F)
     if ix is None or src is None or t is None:
         return NotImplemented
     srcs, shape = src

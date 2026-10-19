@@ -19,6 +19,12 @@ def cases():
         yield f"describe n={n}", lambda a=a: st.describe(a)
         yield f"mannwhitneyu n={n}", lambda a=a, b=b: st.mannwhitneyu(a, b)
 
+    for n in (100_000, 1_000_000):
+        a = np.random.default_rng(74).standard_normal(n)
+        yield f"zscore n={n}", lambda a=a: st.zscore(a)
+        yield f"describe n={n}", lambda a=a: st.describe(a)
+        yield f"describe n={n} bias=False", lambda a=a: st.describe(a, bias=False)
+
     pairs = [(rng.standard_normal(20), rng.standard_normal(20)) for _ in range(1000)]
     yield "loop: 1000 ttest_ind + pearsonr n=20", lambda: [(st.ttest_ind(x, y), st.pearsonr(x, y)) for x, y in pairs]
 

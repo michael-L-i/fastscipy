@@ -112,6 +112,21 @@ def test_out_buffer_written():
     assert r is out and np.array_equal(out, sc.erf.__wrapped__(x))
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_passthrough_arguments_and_small_shapes():
+    for a in (0.5, np.float32(-0.0), np.nan, np.empty(0), np.array(0.5), np.array([0.0, -0.0, np.inf])):
+        check(lambda: sc.erf(a), fast=False)
+    x = np.linspace(-2.0, 2.0, 17)
+    out = np.zeros_like(x)
+    assert sc.erf(x, out) is out
+    assert np.array_equal(out, sc.erf.__wrapped__(x))
+    check(lambda: sc.erf(x, where=x > 0, out=np.zeros_like(x)), fast=False)
+    check(lambda: sc.erf(x, dtype=np.float32), fast=False)
+    check(lambda: sc.jv(1.5, x, out=np.zeros_like(x)), fast=False)
+    check(lambda: sc.erf(x, invalid_option=True), fast=False)
+    check(lambda: sc.erf(), fast=False)
+
+
 def test_errstate_propagates(threads):
     x = x64()
     x[::5000] = 0.0

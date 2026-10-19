@@ -1,0 +1,490 @@
+{
+  "meta": {
+    "started_utc": "2026-10-19T19:58:08.551166+00:00",
+    "threads": 18,
+    "cpu": 18,
+    "platform": "darwin",
+    "python": "3.13.6 (main, Aug 13 2025, 12:14:09) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_profile": "release",
+    "native_sha256": "e87281f11391f3dc3a9164d99e325559d3a80746f0c2f38e828a45cc72b42072",
+    "budget_seconds": 0.3,
+    "selection": "exact names from previously published bench/results/*.json",
+    "status": {
+      "ndimage": "on",
+      "special": "on",
+      "stats": "on",
+      "signal": "on",
+      "sparse": "on",
+      "linalg": "on",
+      "interpolate": "on",
+      "spatial": "on",
+      "csgraph": "on",
+      "integrate": "on",
+      "optimize": "on"
+    }
+  },
+  "cases": {
+    "ttest_1samp n=10": {
+      "scipy_ms": 0.12795798829756677,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.011916010407730937,
+      "x1t": 10.738324650551618,
+      "nt_ms": 0.0118750031106174,
+      "xnt": 10.775406718265192,
+      "control": false
+    },
+    "ttest_ind n=10": {
+      "scipy_ms": 0.188584002899006,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.018332997569814324,
+      "x1t": 10.286588550555074,
+      "nt_ms": 0.0186669931281358,
+      "xnt": 10.102537757661839,
+      "control": false
+    },
+    "ttest_rel n=10": {
+      "scipy_ms": 0.11074999929405749,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.013790995581075549,
+      "x1t": 8.030602188433171,
+      "nt_ms": 0.013790995581075549,
+      "xnt": 8.030602188433171,
+      "control": false
+    },
+    "pearsonr n=10": {
+      "scipy_ms": 0.0652919989079237,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.018457998521625996,
+      "x1t": 3.5373282120174325,
+      "nt_ms": 0.018291000742465258,
+      "xnt": 3.5696242008420396,
+      "control": false
+    },
+    "linregress n=10": {
+      "scipy_ms": 0.11408401769585907,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.013124983524903655,
+      "x1t": 8.692126544722388,
+      "nt_ms": 0.012916018022224307,
+      "xnt": 8.83275460746162,
+      "control": false
+    },
+    "zscore n=10": {
+      "scipy_ms": 0.03858297714032233,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.00654099858365953,
+      "x1t": 5.898637134199789,
+      "nt_ms": 0.006415997631847858,
+      "xnt": 6.013558507067298,
+      "control": false
+    },
+    "skew n=10": {
+      "scipy_ms": 0.09633300942368805,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.008958973921835423,
+      "x1t": 10.752683316657354,
+      "nt_ms": 0.008874980267137289,
+      "xnt": 10.854447731043937,
+      "control": false
+    },
+    "kurtosis n=10": {
+      "scipy_ms": 0.09966699872165918,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.008833012543618679,
+      "x1t": 11.283466227347612,
+      "nt_ms": 0.008833012543618679,
+      "xnt": 11.283466227347612,
+      "control": false
+    },
+    "sem n=10": {
+      "scipy_ms": 0.062000006437301636,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.004749977961182594,
+      "x1t": 13.052693495416891,
+      "nt_ms": 0.004665984306484461,
+      "xnt": 13.287658587093475,
+      "control": false
+    },
+    "entropy n=10": {
+      "scipy_ms": 0.04512499435804784,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0034580007195472717,
+      "x1t": 13.049446202531646,
+      "nt_ms": 0.0034999975468963385,
+      "xnt": 12.89286456730889,
+      "control": false
+    },
+    "describe n=10": {
+      "scipy_ms": 0.2329580020159483,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.014833000022917986,
+      "x1t": 15.705386749545774,
+      "nt_ms": 0.01487502595409751,
+      "xnt": 15.661014826786042,
+      "control": false
+    },
+    "mannwhitneyu n=10": {
+      "scipy_ms": 0.13550001312978566,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.006499991286545992,
+      "x1t": 20.846183811084543,
+      "nt_ms": 0.006415997631847858,
+      "xnt": 21.119087148222743,
+      "control": false
+    },
+    "ttest_1samp n=1000": {
+      "scipy_ms": 0.13120900257490575,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.01362498733215034,
+      "x1t": 9.630027491129999,
+      "nt_ms": 0.01362498733215034,
+      "xnt": 9.630027491129999,
+      "control": false
+    },
+    "ttest_ind n=1000": {
+      "scipy_ms": 0.19512497237883508,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.021791987819597125,
+      "x1t": 8.953977672627133,
+      "nt_ms": 0.021499989088624716,
+      "xnt": 9.075584716555621,
+      "control": false
+    },
+    "ttest_rel n=1000": {
+      "scipy_ms": 0.11304099461995065,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.015833997167646885,
+      "x1t": 7.139131921213413,
+      "nt_ms": 0.01591601176187396,
+      "xnt": 7.102344250004571,
+      "control": false
+    },
+    "pearsonr n=1000": {
+      "scipy_ms": 0.07008397369645536,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.02304100780747831,
+      "x1t": 3.0417060869059966,
+      "nt_ms": 0.02329199924133718,
+      "xnt": 3.0089290734680567,
+      "control": false
+    },
+    "linregress n=1000": {
+      "scipy_ms": 0.11908300803042948,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.01591700129210949,
+      "x1t": 7.48149766686658,
+      "nt_ms": 0.015915982658043504,
+      "xnt": 7.481976487970611,
+      "control": false
+    },
+    "zscore n=1000": {
+      "scipy_ms": 0.04108299617655575,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.007374997949227691,
+      "x1t": 5.5705773017683295,
+      "nt_ms": 0.007208000170066953,
+      "xnt": 5.699638624755214,
+      "control": false
+    },
+    "skew n=1000": {
+      "scipy_ms": 0.10441700578667223,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.014582998119294643,
+      "x1t": 7.160187838776373,
+      "nt_ms": 0.01462499494664371,
+      "xnt": 7.13962679423933,
+      "control": false
+    },
+    "kurtosis n=1000": {
+      "scipy_ms": 0.10587499127723277,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.014666002243757248,
+      "x1t": 7.219076440704874,
+      "nt_ms": 0.014749995898455381,
+      "xnt": 7.177967506304188,
+      "control": false
+    },
+    "sem n=1000": {
+      "scipy_ms": 0.06287498399615288,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.005290989065542817,
+      "x1t": 11.88340841708059,
+      "nt_ms": 0.005290989065542817,
+      "xnt": 11.88340841708059,
+      "control": false
+    },
+    "entropy n=1000": {
+      "scipy_ms": 0.04741700831800699,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.006332993507385254,
+      "x1t": 7.487297794117647,
+      "nt_ms": 0.006499991286545992,
+      "xnt": 7.294934135704627,
+      "control": false
+    },
+    "describe n=1000": {
+      "scipy_ms": 0.2561250003054738,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.02562499139457941,
+      "x1t": 9.995125319716333,
+      "nt_ms": 0.02520799171179533,
+      "xnt": 10.160468284572932,
+      "control": false
+    },
+    "mannwhitneyu n=1000": {
+      "scipy_ms": 0.17537499661557376,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.03233397728763521,
+      "x1t": 5.423860945267586,
+      "nt_ms": 0.0322920095641166,
+      "xnt": 5.430909967599331,
+      "control": false
+    },
+    "loop: 1000 ttest_ind + pearsonr n=20": {
+      "scipy_ms": 295.1658329984639,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 40.96145898802206,
+      "x1t": 7.205940420354075,
+      "nt_ms": 40.750374988419935,
+      "xnt": 7.243266671345758,
+      "control": false
+    },
+    "norm.cdf scalar": {
+      "scipy_ms": 0.012582982890307903,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0015409896150231361,
+      "x1t": 8.165520888418826,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 8.388754147344729,
+      "control": false
+    },
+    "norm.ppf scalar": {
+      "scipy_ms": 0.017457990907132626,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002749991836026311,
+      "x1t": 6.348379176412069,
+      "nt_ms": 0.0027909991331398487,
+      "xnt": 6.255104381738931,
+      "control": false
+    },
+    "t.sf scalar": {
+      "scipy_ms": 0.013208016753196716,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002249988028779626,
+      "x1t": 5.870260901059385,
+      "nt_ms": 0.002249988028779626,
+      "xnt": 5.870260901059385,
+      "control": false
+    },
+    "poisson.pmf scalar": {
+      "scipy_ms": 0.012750009773299098,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0042079773265868425,
+      "x1t": 3.0299616142753396,
+      "nt_ms": 0.004250003257766366,
+      "xnt": 3.0,
+      "control": false
+    },
+    "frozen norm(1, 2) + cdf": {
+      "scipy_ms": 0.10025000665336847,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.007458002073690295,
+      "x1t": 13.441938693879143,
+      "nt_ms": 0.007374997949227691,
+      "xnt": 13.593225021013957,
+      "control": false
+    },
+    "loop: 1000 frozen t(5).cdf": {
+      "scipy_ms": 93.33458301261999,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 11.423708987422287,
+      "x1t": 8.170252158505006,
+      "nt_ms": 11.241833999520168,
+      "xnt": 8.30243383922977,
+      "control": false
+    },
+    "norm.cdf 1e6": {
+      "scipy_ms": 12.015041982522234,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 8.771708002313972,
+      "x1t": 1.3697494238696355,
+      "nt_ms": 1.6044169897213578,
+      "xnt": 7.488727718227984,
+      "control": false
+    },
+    "norm.ppf 1e6": {
+      "scipy_ms": 11.17462498950772,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 7.418624998535961,
+      "x1t": 1.506293280993849,
+      "nt_ms": 1.963999995496124,
+      "xnt": 5.689727604446817,
+      "control": false
+    },
+    "t.cdf 1e6 (df=7)": {
+      "scipy_ms": 96.75358299864456,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 94.68958299839869,
+      "x1t": 1.0217975402878348,
+      "nt_ms": 8.058750012423843,
+      "xnt": 12.006028583773357,
+      "control": false
+    },
+    "poisson.ppf 3e5": {
+      "scipy_ms": 209.89158400334418,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 7.449834025464952,
+      "x1t": 28.17399465355802,
+      "nt_ms": 7.449958997312933,
+      "xnt": 28.17352203938952,
+      "control": false
+    },
+    "poisson.pmf 1e6 ints": {
+      "scipy_ms": 16.537916992092505,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.6664169777650386,
+      "x1t": 24.816169971472945,
+      "nt_ms": 0.6818340043537319,
+      "xnt": 24.255048716392153,
+      "control": false
+    },
+    "zipf.cdf 1e5 ints": {
+      "scipy_ms": 294.28991698659956,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.599374994635582,
+      "x1t": 490.99465213013576,
+      "nt_ms": 0.5958330002613366,
+      "xnt": 493.91342348866533,
+      "control": false
+    },
+    "rankdata 1e6": {
+      "scipy_ms": 78.37454101536423,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 8.890124998288229,
+      "x1t": 8.815909903455244,
+      "nt_ms": 4.583458008710295,
+      "xnt": 17.099434720777,
+      "control": false
+    },
+    "rankdata 1e6 ties": {
+      "scipy_ms": 50.90375000145286,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 7.751208002446219,
+      "x1t": 6.567202168408853,
+      "nt_ms": 4.586458002449945,
+      "xnt": 11.09870622913404,
+      "control": false
+    },
+    "rankdata 3000x300 axis=1": {
+      "scipy_ms": 26.426666998304427,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 8.716208016267046,
+      "x1t": 3.0318995311934245,
+      "nt_ms": 0.9190830169245601,
+      "xnt": 28.753297048979825,
+      "control": false
+    },
+    "spearmanr 1e6": {
+      "scipy_ms": 184.24245898495428,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 29.0299589978531,
+      "x1t": 6.346631733051358,
+      "nt_ms": 20.625166012905538,
+      "xnt": 8.932895806495349,
+      "control": false
+    },
+    "mannwhitneyu 1e6": {
+      "scipy_ms": 81.58345799893141,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 10.826084006112069,
+      "x1t": 7.535823475309441,
+      "nt_ms": 6.458375020883977,
+      "xnt": 12.632195828690795,
+      "control": false
+    },
+    "wilcoxon 1e6": {
+      "scipy_ms": 87.64379200874828,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 14.278584014391527,
+      "x1t": 6.138129097423892,
+      "nt_ms": 8.984665997559205,
+      "xnt": 9.754819158837712,
+      "control": false
+    },
+    "kruskal 3 x 1e5": {
+      "scipy_ms": 19.831167010124773,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 3.7220839876681566,
+      "x1t": 5.327974080066037,
+      "nt_ms": 2.2684580180794,
+      "xnt": 8.742135341307712,
+      "control": false
+    },
+    "mode 1e7 ints": {
+      "scipy_ms": 48.23979100910947,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 11.444250005297363,
+      "x1t": 4.215198985235383,
+      "nt_ms": 13.124249991960824,
+      "xnt": 3.6756226861465184,
+      "control": false
+    },
+    "gaussian_kde 2-D 2000 x 20000": {
+      "scipy_ms": 98.50983301294036,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 100.56808299850672,
+      "x1t": 0.9795337653438524,
+      "nt_ms": 11.767667019739747,
+      "xnt": 8.371228795622311,
+      "control": false
+    }
+  }
+}

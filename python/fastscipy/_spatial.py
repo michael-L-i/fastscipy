@@ -48,9 +48,7 @@ def _metric(args, kw, names, *arrays):
     if (
         isinstance(metric, str)
         and metric in names
-        and all(
-            type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2 and a.flags.c_contiguous for a in arrays
-        )
+        and all(type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2 for a in arrays)
     ):
         return metric
 
@@ -66,6 +64,7 @@ def _cdist_fast(original):
         blocks = chunks(ma, -(-_BLOCK // max(1, mb * d)))
         if len(blocks) < 2:
             return NotImplemented
+        XA, XB = np.ascontiguousarray(XA), np.ascontiguousarray(XB)
         res = np.empty((ma, mb))
         parallel_map(lambda s: original(XA[s], XB, metric, out=res[s]), blocks)
         return res
@@ -81,6 +80,7 @@ def _pdist_fast(cdist):
         m, d = X.shape
         if m * m * d < 2 * _WORK:
             return NotImplemented
+        X = np.ascontiguousarray(X)
         # Block [a, b) owns condensed entries of rows a..b-1; weight rows by their pair count.
         rows = np.cumsum(m - 1 - np.arange(m))
         res = np.empty(m * (m - 1) // 2)

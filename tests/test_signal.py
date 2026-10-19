@@ -132,6 +132,44 @@ def test_detrend_options():
     cmp("detrend", np.array([1.0]), fast=False)
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("n", [1, 2, 17, 200])
+def test_lfilter_fir(n):
+    rng = np.random.default_rng(618 + n)
+    for taps in (1, 3, 12):
+        b = rng.standard_normal(taps)
+        for a in (np.array([1.0]), np.array([2.5])):
+            for x in (rng.standard_normal(n), rng.standard_normal(2 * n)[::2], np.zeros(n)):
+                for axis in (0, -1):
+                    cmp("lfilter", b, a, x, axis=axis)
+                    cmp("lfilter", b, a, x, axis=axis, zi=rng.standard_normal(taps - 1))
+    for bad in (np.nan, np.inf, -np.inf, 1e308):
+        cmp("lfilter", np.array([1.0, -2.0, bad]), np.ones(1), np.arange(n, dtype=float), fast=None)
+    cmp("lfilter", b[::-1], np.ones(1), np.array([-0.0, 0.0, -0.0]))
+    cmp("lfilter", b, np.zeros(1), np.arange(n, dtype=float), fast=False)
+    cmp("lfilter", b, np.ones(1), np.empty(0), fast=False)
+    cmp("lfilter", b, np.ones(1), np.arange(n, dtype=float), axis=1, fast=False)
+    cmp("lfilter", b, np.ones(1), np.arange(n, dtype=float), zi=np.zeros(taps), fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_hilbert_sizes_and_dtypes(dtype):
+    rng = np.random.default_rng(619)
+    for n in (1, 2, 17, 64, 257):
+        x = rng.standard_normal((3, n)).astype(dtype)
+        for data in (x, x[:, ::-1], np.zeros_like(x), np.asfortranarray(x)):
+            for axis in (0, -1):
+                for size in (None, 1, 2, 13, 32):
+                    cmp("hilbert", data, N=size, axis=axis)
+    for size in (0, -1, 1.5):
+        cmp("hilbert", x, N=size, fast=False)
+    for bad in (np.nan, np.inf, -np.inf):
+        data = np.array([0.0, bad, 1.0, -0.0], dtype=dtype)
+        for size in (None, 3, 8):
+            cmp("hilbert", data, N=size, fast=None)
+
+
 def test_welch_csd_coherence():
     before = fastscipy.stats()
     rng = np.random.default_rng(3)

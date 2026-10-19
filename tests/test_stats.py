@@ -148,7 +148,73 @@ def test_functions_decline_odd_input():
         assert same(lambda: f(*args)) is False
 
 
+@pytest.mark.parametrize("num_threads", [1, 2])
+@pytest.mark.parametrize("n", [2, 3, 4, 17, 257, 1000])
+@pytest.mark.parametrize("bias", [True, False])
+def test_describe_shared_moments(n, bias, num_threads):
+    local_rng = np.random.default_rng(510 + n)
+    values = local_rng.standard_normal(2 * n)
+    arrays = [values[:n], values[::2], values[:n][::-1], np.round(values[:n]), np.zeros(n)]
+    readonly = values[:n].copy()
+    readonly.flags.writeable = False
+    arrays.append(readonly)
+    old = fastscipy.get_num_threads()
+    fastscipy.set_num_threads(num_threads)
+    try:
+        for a in arrays:
+            before = a.tobytes()
+            for axis in (0, -1):
+                for ddof in (0, 1):
+                    assert same(lambda: st.describe(a, axis=axis, ddof=ddof, bias=bias))
+            assert a.tobytes() == before
+    finally:
+        fastscipy.set_num_threads(old)
+
+
+@pytest.mark.parametrize(
+    "a,kw",
+    [
+        (np.empty(0), {}),
+        (np.ones(10), {}),
+        (1e8 + np.arange(10) * 1e-8, {}),
+        (np.array([1.0, np.nan, 3.0]), {}),
+        (np.array([1.0, np.inf, 3.0]), {}),
+        (np.array([1e200, -1e200, 0.0]), {}),
+        (np.arange(10, dtype=np.float32), {}),
+        (np.arange(10, dtype=np.int64), {}),
+        (np.arange(10.0).reshape(2, 5), {}),
+        (np.arange(10.0), {"ddof": 10}),
+        (np.arange(10.0), {"ddof": -1}),
+        (np.arange(10.0), {"ddof": 1.0}),
+        (np.arange(10.0), {"bias": 1}),
+        (np.arange(10.0), {"axis": None}),
+        (np.arange(10.0), {"nan_policy": "omit"}),
+    ],
+)
+def test_describe_shared_moments_declines(a, kw):
+    from fastscipy._stats_loop import _declining, _describe
+
+    assert _declining(_describe)(a, **kw) is NotImplemented
+    # The original describe may still reach patched skew/kurtosis helpers.
+    same(lambda: st.describe(a, **kw))
+
+
 # ----------------------------------------------------------------------------------------- rankdata
+@pytest.mark.parametrize("name", ["skew", "kurtosis", "zscore", "ttest_1samp", "ttest_ind"])
+@pytest.mark.parametrize("n", [2, 17, 257])
+def test_reused_means_and_centered_data(name, n):
+    r = np.random.default_rng(n + 891)
+    values = r.standard_normal(2 * n)
+    f = getattr(st, name)
+    for a in (values[:n], values[::2], values[:n][::-1], np.zeros(n)):
+        a.flags.writeable = False
+        before = a.tobytes()
+        args = (a, 0.1) if name == "ttest_1samp" else (a, values[1::2]) if name == "ttest_ind" else (a,)
+        for axis in (0, -1):
+            same(lambda: f(*args, axis=axis))
+        assert a.tobytes() == before
+
+
 RANK_KINDS = {
     "float": lambda n: rng.standard_normal(n),
     "ties": lambda n: rng.integers(0, 6, n).astype(float),

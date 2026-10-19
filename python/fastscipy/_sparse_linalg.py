@@ -1,0 +1,80 @@
+"""NumPy vector calls through LinearOperator, including sparse iterative solvers.
+
+The unbatched case needs no array conversion or broadcast-shape calculation.
+The operator itself and its output reshape remain SciPy's, so the arithmetic,
+callback arguments, exceptions and iteration histories are unchanged.
+"""
+
+import functools
+
+import numpy as np
+from scipy import sparse
+from scipy._lib._array_api import array_namespace
+from scipy.sparse.linalg import LinearOperator, _interface
+
+from . import _patch
+
+_NP = array_namespace(np.empty(0))
+_OPERATORS = frozenset(
+    cls for cls in vars(_interface).values() if isinstance(cls, type) and issubclass(cls, LinearOperator)
+)
+_COMPRESSED = (sparse.csr_array, sparse.csc_array, sparse.csr_matrix, sparse.csc_matrix)
+
+
+def patch():
+    _patch.require_validated("1.18.")
+    original = LinearOperator._shared_matvec
+    original_matvec = LinearOperator._matvec
+
+    # A callback must never run twice, even when it raises or returns a bad shape.
+    @functools.wraps(original)
+    def matvec(self, x, adjoint=False):
+        if (
+            not _patch.enabled
+            or type(self) not in _OPERATORS
+            or self._xp is not _NP
+            or len(self.shape) != 2
+            or type(x) is not np.ndarray
+            or x.dtype.kind not in "fc"
+            or type(adjoint) is not bool
+        ):
+            return original(self, x, adjoint)
+        m, n = self.shape
+        inner, outer = (m, n) if adjoint else (n, m)
+        if x.shape != (inner,):
+            return original(self, x, adjoint)
+        _patch.counts["LinearOperator._shared_matvec", "fast"] += 1
+        y = self._rmatvec(x) if adjoint else self._matvec(x)
+        return _NP.reshape(y, (outer,))
+
+    _patch.replace(LinearOperator, "_shared_matvec", matvec)
+
+    @functools.wraps(original_matvec)
+    def matrix_matvec(self, x):
+        if (
+            not _patch.enabled
+            or type(self) is not _interface.MatrixLinearOperator
+            or self._xp is not _NP
+            or type(self.A) not in _COMPRESSED
+            or self.A.ndim != 2
+            or not self.A.shape[0]
+            or type(x) is not np.ndarray
+            or x.ndim != 1
+            or not x.size
+            or x.shape[0] != self.A.shape[1]
+        ):
+            return original_matvec(self, x)
+        # The default inserts a column axis, dispatches A @ column, and removes
+        # that axis again. Its CSR/CSC branch calls this exact kernel on ravel().
+        _patch.counts["MatrixLinearOperator sparse matvec", "fast"] += 1
+        return self.A._matmul_vector(x.ravel())
+
+    _patch.replace(LinearOperator, "_matvec", matrix_matvec)
+
+
+def smoke():
+    from scipy.sparse import diags_array
+    from scipy.sparse.linalg import cg
+
+    a = diags_array([np.full(5, -1.0), np.full(6, 3.0), np.full(5, -1.0)], offsets=[-1, 0, 1])
+    cg(a, np.arange(6.0))

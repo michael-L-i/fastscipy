@@ -13,6 +13,10 @@ def cases():
     X = rng.random((3000, 16))
     for metric in ("euclidean", "cityblock"):
         yield f"pdist {metric} 3000x16", lambda m=metric: dist.pdist(X, m)
+    af, bf, xf = np.asfortranarray(A), np.asfortranarray(B), np.asfortranarray(X)
+    yield "cdist euclidean Fortran 4000x2000x16", lambda: dist.cdist(af, bf)
+    yield "pdist euclidean Fortran 3000x16", lambda: dist.pdist(xf)
+    yield "cdist euclidean strided 4000x2000x8", lambda: dist.cdist(A[:, ::2], B[:, ::2])
     pts = rng.random((1_000_000, 3))
     tree, q = sp.cKDTree(pts), rng.random((200_000, 3))
     for k in (1, 8):

@@ -53,8 +53,13 @@ def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
     n = len(flat)
     if n < SPLINE_MIN_QUERIES:
         return NotImplemented
+    parallel = kernel_ok and n >= KERNEL_PARALLEL_FROM and _threads.get_num_threads() > 1
+    # A searchsorted index is in [0, len(t)], so short knot vectors cannot
+    # have a mean jump large enough to justify reordering.
+    if len(t) < SPLINE_MIN_JUMP and not parallel:
+        return NotImplemented
     jump = _jump(flat, t)
-    if kernel_ok and (jump >= SPLINE_MIN_JUMP or (n >= KERNEL_PARALLEL_FROM and _threads.get_num_threads() > 1)):
+    if kernel_ok and (jump >= SPLINE_MIN_JUMP or parallel):
         cc = c.reshape(len(c), -1)
         out = _k.bspline_eval(t, cc.view(np.float64) if c.dtype.kind == "c" else cc, k, flat)
         if out is not None:
@@ -200,11 +205,13 @@ def _make_evaluate(cls, name):
                 res[a : b + 1] = _orig["find_simplex"](tri, x[a : b + 1])
             return _k.linear_eval(res, tri.transform, tri.simplices, np.ascontiguousarray(v), x, float(self.fill_value))
         xs = x[order]
-        parts = _threads.parallel_map(
-            lambda s: original(self, xs[s]), _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))]
-        )
-        out = np.empty_like(parts[0] if len(parts) == 1 else np.concatenate(parts))
-        out[order] = parts[0] if len(parts) == 1 else np.concatenate(parts)
+        slices = _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))]
+        parts = _threads.parallel_map(lambda s: original(self, xs[s]), slices)
+        first = np.asarray(parts[0])
+        out = np.empty((len(x),) + first.shape[1:], dtype=first.dtype)
+        # Scatter chunks directly: concatenating would copy the full output.
+        for s, part in zip(slices, parts):
+            out[order[s]] = part
         for a, b in ranges:
             out[a : b + 1] = original(self, x[a : b + 1])
         return out

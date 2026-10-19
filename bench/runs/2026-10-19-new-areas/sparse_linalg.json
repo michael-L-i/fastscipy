@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "threads": 2,
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "date_utc": "2026-10-19T20:21:49.540625+00:00",
+    "budget_seconds": 0.1,
+    "native_profile": "release",
+    "blas_threads": 1
+  },
+  "cases": {
+    "LinearOperator CSR matvec n=32 x100 calls": {
+      "scipy_ms": 0.27166600921191275,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.16925000818446279,
+      "x1t": 1.605116668093915,
+      "nt_ms": 0.17204100731760263,
+      "xnt": 1.579077066843684
+    },
+    "cg tridiagonal n=32": {
+      "scipy_ms": 0.18950001685880125,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.14520800323225558,
+      "x1t": 1.3050246036074333,
+      "nt_ms": 0.14525000005960464,
+      "xnt": 1.3046472756009515
+    },
+    "bicgstab tridiagonal n=32": {
+      "scipy_ms": 0.27091699303127825,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.20775001030415297,
+      "x1t": 1.3040528500318567,
+      "nt_ms": 0.21225001546554267,
+      "xnt": 1.2764050567301832
+    },
+    "gmres tridiagonal n=32": {
+      "scipy_ms": 1.2027500197291374,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 1.1331250134389848,
+      "x1t": 1.061445123410385,
+      "nt_ms": 1.1194590188097209,
+      "xnt": 1.074402903116522
+    },
+    "LinearOperator CSR matvec n=256 x100 calls": {
+      "scipy_ms": 0.3022909804712981,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.20312497508712113,
+      "x1t": 1.4882019325375635,
+      "nt_ms": 0.2028339949902147,
+      "xnt": 1.4903368662924648
+    },
+    "cg tridiagonal n=256": {
+      "scipy_ms": 0.6120839971117675,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.4646669840440154,
+      "x1t": 1.317253039552705,
+      "nt_ms": 0.46087498776614666,
+      "xnt": 1.328091159987936
+    },
+    "bicgstab tridiagonal n=256": {
+      "scipy_ms": 0.9202910005114973,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.7087920093908906,
+      "x1t": 1.2983935884129971,
+      "nt_ms": 0.6958339945413172,
+      "xnt": 1.3225726361905308
+    },
+    "gmres tridiagonal n=256": {
+      "scipy_ms": 5.1904589927289635,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 4.940833023283631,
+      "x1t": 1.050523053150951,
+      "nt_ms": 5.002500023692846,
+      "xnt": 1.0375730071256184
+    }
+  }
+}

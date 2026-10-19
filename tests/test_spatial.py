@@ -64,14 +64,25 @@ def test_declined_still_correct():
         lambda: dist.cdist(A[:5], B[:5], lambda u, v: 1.0),
         lambda: dist.cdist(A.astype(np.float32), B),
         lambda: dist.cdist(A.T, A.T),
-        lambda: dist.cdist(A[::2], B[::2]),
         lambda: dist.cdist(A[:10], B[:10]),
         lambda: dist.cdist(A.tolist(), B.tolist()),
         lambda: dist.pdist(A, "dice"),
-        lambda: dist.pdist(np.asfortranarray(A)),
         lambda: dist.pdist(A[:20]),
     ):
         check(call, fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("metric", sorted(_spatial._CDIST))
+def test_distance_noncontiguous(metric, threads):
+    rng = np.random.default_rng(810)
+    A, B = rng.random((800, 16)), rng.random((600, 16))
+    A[::7] = np.round(A[::7])
+    for a, b in ((np.asfortranarray(A), np.asfortranarray(B)), (A[::-1], B[::-1]), (A[:, ::2], B[:, ::2])):
+        before_a, before_b = a.tobytes(), b.tobytes()
+        check(lambda: dist.cdist(a, b, metric), fast=threads > 1)
+        check(lambda: dist.pdist(a, metric), fast=threads > 1 and metric in _spatial._PDIST)
+        assert a.tobytes() == before_a and b.tobytes() == before_b
 
 
 @pytest.fixture(scope="module")

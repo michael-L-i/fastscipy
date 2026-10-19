@@ -185,6 +185,28 @@ def test_find(fmt, dtype, index):
     check(lambda: sp.find(sp.csc_array(coo)))
 
 
+@pytest.mark.parametrize("dtype", [np.float64, np.complex128, np.bool_, np.int64])
+@pytest.mark.parametrize("index", [np.int32, np.int64])
+@pytest.mark.parametrize("canonical", [True, False])
+def test_find_preserves_input_and_returns_detached_arrays(dtype, index, canonical):
+    data = np.array([0, 2, -1, 3, 0, 4], dtype=dtype)
+    if np.dtype(dtype).kind in "fc":
+        data[2] = np.nan
+    columns = np.array([0, 1, 2, 0, 1, 2] if canonical else [2, 0, 2, 1, 1, 0], dtype=index)
+    a = sp.csr_array((data, columns, np.array([0, 3, 6], dtype=index)), shape=(2, 3))
+    original = tuple(x.copy() for x in (a.data, a.indices, a.indptr))
+    for arr in (a.data, a.indices, a.indptr):
+        arr.flags.writeable = False
+    result = check(lambda: sp.find(a))
+    for before, after in zip(original, (a.data, a.indices, a.indptr)):
+        assert_identical(before, after)
+        assert not after.flags.writeable
+    for output in result:
+        assert output.flags.writeable
+        assert output.flags.c_contiguous
+        assert not any(np.shares_memory(output, arr) for arr in (a.data, a.indices, a.indptr))
+
+
 def test_small_calls_match_scipy():
     rng = np.random.default_rng(7)
     d, i, p = rng.random(9), np.array([0, 2, 1, 1, 0, 3, 2, 3, 3], np.int32), np.array([0, 3, 5, 9], np.int32)

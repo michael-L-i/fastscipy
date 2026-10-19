@@ -185,3 +185,24 @@ def test_declined_cases_match_scipy():
     check(lambda: cg.connected_components(big, connection="strong"))
     check(lambda: cg.dijkstra(big, indices=[0, 1], return_predecessors=True))
     assert_identical(cg.connected_components(sp.csr_matrix((3, 3))), (3, np.arange(3, dtype=np.int32)))
+
+
+@pytest.mark.parametrize("source", [0, -1, 3, -4, np.int32(0), [0]])
+def test_scalar_sources_preserve_output_shape(source):
+    g = graph(0, n=4, density=0.5)
+    for f in (cg.dijkstra, cg.bellman_ford, cg.johnson):
+        check(lambda: f(g, indices=source, return_predecessors=True))
+
+
+def test_unweighted_transpose_ignores_stored_weights():
+    g = sp.csr_array(
+        (np.array([np.nan, np.inf, 0.0, 7.0]), (np.array([0, 1, 2, 3]), np.array([1, 2, 3, 0]))), shape=(4, 4)
+    )
+    original = g.data.copy()
+    for sources, min_only in ((0, False), ([0, 3], True)):
+        check(
+            lambda: cg.dijkstra(
+                g, directed=False, indices=sources, unweighted=True, min_only=min_only, return_predecessors=True
+            )
+        )
+    assert_identical(original, g.data)

@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "threads": 2,
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "date_utc": "2026-10-19T20:21:49.540625+00:00",
+    "budget_seconds": 0.1,
+    "native_profile": "release",
+    "blas_threads": 1
+  },
+  "cases": {
+    "vq 200x8, 10 centroids": {
+      "scipy_ms": 0.010707997716963291,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.008499977411702275,
+      "x1t": 1.259767785055657,
+      "nt_ms": 0.008333998266607523,
+      "xnt": 1.284857204718635
+    },
+    "vq 200x8, finite check disabled": {
+      "scipy_ms": 0.008875009370967746,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0072499969974160194,
+      "x1t": 1.2241397305586332,
+      "nt_ms": 0.007291004294529557,
+      "xnt": 1.2172547172447379
+    },
+    "whiten 200x8": {
+      "scipy_ms": 0.011791009455919266,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.010249990737065673,
+      "x1t": 1.1503434255097433,
+      "nt_ms": 0.01058299676515162,
+      "xnt": 1.1141465614678698
+    },
+    "kmeans 200x8, explicit centroids": {
+      "scipy_ms": 0.15116698341444135,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.136125017888844,
+      "x1t": 1.1105011096335002,
+      "nt_ms": 0.13041700003668666,
+      "xnt": 1.1591048971523472
+    },
+    "is_valid_linkage 20 merges": {
+      "scipy_ms": 0.026249996153637767,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.005457986844703555,
+      "x1t": 4.809464899885355,
+      "nt_ms": 0.005582987796515226,
+      "xnt": 4.701782828546109
+    },
+    "leaves_list 20 merges": {
+      "scipy_ms": 0.03083399496972561,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.00958298915065825,
+      "x1t": 3.2175759029850974,
+      "nt_ms": 0.009499985026195645,
+      "xnt": 3.2456887968457524
+    },
+    "is_valid_linkage 2000 merges": {
+      "scipy_ms": 0.1176249934360385,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.036500015994533896,
+      "x1t": 3.222601147726992,
+      "nt_ms": 0.036874989746138453,
+      "xnt": 3.189831217467828
+    },
+    "leaves_list 2000 merges": {
+      "scipy_ms": 0.1305829791817814,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.04641700070351362,
+      "x1t": 2.8132575824076604,
+      "nt_ms": 0.04674997762776911,
+      "xnt": 2.793220142724008
+    }
+  }
+}

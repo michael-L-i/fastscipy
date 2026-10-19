@@ -8,7 +8,6 @@ def cases():
     sos, (b, a) = sg.butter(4, 0.2, output="sos"), sg.butter(4, 0.2)
     voxels = rng.standard_normal((1000, 150))
     epochs = rng.standard_normal((200, 500))
-    multi = rng.standard_normal((64, 250_000))
     sos8, (b8, a8) = sg.butter(8, 0.1, output="sos"), sg.butter(8, 0.1)
 
     yield (
@@ -20,9 +19,17 @@ def cases():
     yield "detrend, 1000 samples", lambda: sg.detrend(x1000)
     yield "decimate q=4, 1000 samples", lambda: sg.decimate(x1000, 4)
     yield "hilbert, 1000 samples", lambda: sg.hilbert(x1000)
+    x200_f32 = x200.astype(np.float32)
+    yield "hilbert float32, 200 samples", lambda: sg.hilbert(x200_f32)
+    yield "hilbert N=256, 200 samples", lambda: sg.hilbert(x200, N=256)
+    fir = np.array([0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05])
+    fir_a, fir_zi = np.ones(1), np.zeros(fir.size - 1)
+    yield "lfilter FIR 7 taps, 200 samples", lambda: sg.lfilter(fir, fir_a, x200)
+    yield "lfilter FIR 7 taps with zi, 200 samples", lambda: sg.lfilter(fir, fir_a, x200, zi=fir_zi)
     yield "welch, 1000 samples", lambda: sg.welch(x1000, nperseg=256)
     yield "per-voxel loop, 1000 x sosfiltfilt(150)", lambda: [sg.sosfiltfilt(sos, v) for v in voxels]
     yield "per-epoch loop, 200 x (detrend, welch)", lambda: [sg.welch(sg.detrend(e), nperseg=128) for e in epochs]
+    multi = rng.standard_normal((64, 250_000))
     yield "sosfilt 64 x 250k (butter 8)", lambda: sg.sosfilt(sos8, multi)
     yield "lfilter 64 x 250k (butter 8)", lambda: sg.lfilter(b8, a8, multi)
     yield "filtfilt 64 x 250k (butter 8)", lambda: sg.filtfilt(b8, a8, multi)

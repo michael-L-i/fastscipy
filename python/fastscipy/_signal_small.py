@@ -173,10 +173,26 @@ def sosfiltfilt(sos, x, axis=-1, padtype="odd", padlen=None):
 
 
 def lfilter(b, a, x, axis=-1, zi=None):
-    if not (_f8(b) and _f8(a) and _f8(x) and b.ndim == 1 and a.ndim == 1 and b.size and a.size > 1):
+    if not (_f8(b) and _f8(a) and _f8(x) and b.ndim == 1 and a.ndim == 1 and b.size and a.size):
         return NI
     if zi is not None and not _f8(zi):
         return NI
+    if a.size == 1:
+        if not (x.ndim == 1 and x.size and type(axis) is int and axis in (0, -1)):
+            return NI
+        if zi is not None and zi.shape != (b.size - 1,):
+            return NI
+        try:
+            with np.errstate(**_RAISE):
+                coefficients = b.copy()
+                coefficients /= a[0]
+                full = np.convolve(coefficients, x)
+                if zi is not None:
+                    full[: zi.size] += zi
+        except FloatingPointError:
+            return NI
+        out = full[: x.size]
+        return out if zi is None else (out, full[x.size :])
     try:
         return _linear_filter(b, a, x, axis, *(() if zi is None else (zi,)))
     except Exception:  # bad axis, shapes or coefficients: SciPy raises its own error
@@ -311,9 +327,17 @@ def detrend(data, axis=-1, type="linear", bp=0, overwrite_data=False):
 
 
 def hilbert(x, N=None, axis=-1):
-    if not (_f8(x) and x.ndim and N is None and axis.__class__ is int and -x.ndim <= axis < x.ndim and x.size):
+    if not (
+        type(x) is ndarray
+        and x.dtype in (F8, F4)
+        and x.ndim
+        and (N is None or (type(N) is int and N > 0))
+        and axis.__class__ is int
+        and -x.ndim <= axis < x.ndim
+        and x.size
+    ):
         return NI
-    N = x.shape[axis]
+    N = x.shape[axis] if N is None else N
     Xf = np.moveaxis(scipy.fft.fft(x, N, axis=axis), axis, -1)
     h = (N + 1) // 2
     try:

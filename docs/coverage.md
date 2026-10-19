@@ -33,6 +33,9 @@ labelled position queries; structures with a false centre; `label` with a
 non-contiguous output; `distance_transform_edt` with `distances=` or
 `indices=`.
 
+Very small arrays can still be slower than plain SciPy because Python
+dispatch costs more than the compiled operation; the gains are workload dependent.
+
 ## special
 
 Every `scipy.special` ufunc (322) is wrapped. Large calls are split into
@@ -64,7 +67,11 @@ event, so warnings come from SciPy exactly once.
 | `dlsim` | Rust kernel; checked at run time against SciPy's BLAS summation order and used only where it matches |
 | `convolve`, `correlate` (direct 2-D float64), `convolve2d`, `correlate2d` | Rust kernels |
 
-Handed to SciPy: float32 or complex coefficients, `axis` other than -1,
+The 1-D float64 `lfilter` path also covers FIR filters (`len(a) == 1`),
+including initial state. `hilbert` handles float32 and float64 input,
+any valid axis, and an explicit positive integer FFT length.
+
+For filter paths, handed to SciPy: float32 or complex coefficients, `axis` other than -1,
 `padtype` other than `'odd'`, NaN or inf, `filtfilt(method='gust')`.
 `welch`, `csd`, `coherence` and `stft` are never threaded: on a build with
 the GIL that is slower.
@@ -92,6 +99,18 @@ matrix succeeded; otherwise SciPy reruns the whole call and raises or warns.
 Single matrices, other dtypes, `overwrite_*`, generalized `eigh` and
 eigenvalue subsets go to SciPy.
 
+## sparse linear algebra
+
+The `sparse_linalg` component reduces dispatch around unbatched NumPy
+`LinearOperator.matvec` and `rmatvec` calls. CSR/CSC matrix operators call
+the same SciPy matrix-vector kernel directly instead of inserting and
+removing a column axis. This speeds small iterative solves, including
+`cg`, `bicgstab`, and `gmres`, without changing their numerical algorithms,
+stopping criteria, callback calls or iteration histories.
+
+Custom operator subclasses, non-NumPy backends, batched vectors, and
+deprecated column-vector inputs use SciPy's original dispatch.
+
 ## sparse and csgraph
 
 | Functions | How |
@@ -110,22 +129,51 @@ sparse kernels; negative weights in Dijkstra; negative cycles; Floyd-Warshall.
 
 `cdist` (17 metrics) and `pdist` (16) split rows across threads (*threads
 only*; `mahalanobis`, `seuclidean` and custom callables go to SciPy).
+Large float64 Fortran-order and strided inputs are copied once to contiguous
+storage before splitting; small inputs keep SciPy's own path.
 `KDTree`/`cKDTree` `query` and `query_ball_point` use several workers when
 the caller left `workers` at its default and there are at least 2000
 queries; SciPy's results do not depend on the worker count.
 
+## cluster
+
+| Functions | How |
+|---|---|
+| `vq`, including calls inside `kmeans` and `kmeans2` | float32/float64 NumPy inputs of matching dtype go to SciPy's own compiled vector-quantization kernel |
+| `whiten` | 2-D float32/float64 NumPy standard deviation and scaling without array-API dispatch; warnings and exceptional cases go to SciPy |
+| `is_valid_linkage`, and validation inside `leaves_list`, `fcluster`, `cophenet`, and other hierarchy operations | valid NumPy float64 linkage tables use direct checks and counting rather than array-API sorting |
+
+Integer or mixed-dtype quantization, other backends, and invalid or unusual
+linkage tables use SciPy. Linkage construction and the clustering algorithms
+themselves remain SciPy's implementations.
+
 ## integrate and optimize
 
-`integrate.trapezoid` on float64 arrays skips the array-API dispatch.
+`integrate.trapezoid` on float64 arrays and `cumulative_trapezoid` on 1-D
+float64 arrays skip the array-API dispatch. Cumulative integration covers
+uniform spacing or matching 1-D float64 coordinates, with `initial=None`
+or zero. Other dtypes, shapes and options go to SciPy.
+
+`simpson` covers uniformly spaced float64 arrays with an odd sample count
+of at least three along any valid axis. Gaussian `fixed_quad` skips generic
+dispatch for ordinary finite scalar limits; it uses SciPy's cached nodes
+and weights and calls the integrand exactly once. Callback exceptions and
+malformed results propagate without retrying the callback.
+
+`optimize.lsq_linear` covers dense float64 inputs with unbounded limits and
+the exact solver, retaining the complete SciPy result object. `rosen_hess`
+fills the Hessian in one output allocation for ordinary 1-D float64 inputs.
+Constrained least squares and unusual dtypes or options go to SciPy.
+
 `optimize`'s numerical differentiation (used by `approx_fprime` and by
 `minimize` and `least_squares` without an analytic gradient) skips a
-per-call namespace lookup and copy. Both gains are small: these functions
-spend their time in the user's own Python function.
+per-call namespace lookup and copy. Numerical differentiation still spends
+most of its time in the user's own Python function.
 
 ## Not accelerated
 
 Large dense linear algebra and FFT already run in tuned libraries
-(Accelerate or OpenBLAS, and DUCC). `linprog`/HiGHS, iterative sparse solvers,
-`cluster` and `io` showed no headroom in measurements. Solvers such as
+(Accelerate or OpenBLAS, and DUCC). `linprog`/HiGHS, scientific `io`, and
+most other functions still use SciPy. Solvers such as
 `minimize`, `solve_ivp`, `quad` and `root` spend their time in the user's
 function, which only compiling that function would speed up.

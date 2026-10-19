@@ -84,6 +84,8 @@ def _small(*values):
 
 
 def _origins(origins, ndim):
+    if type(origins) in (list, tuple) and all(type(v) is int for v in origins):
+        return origins if len(origins) == ndim and _small(*origins) else None
     try:
         o = [int(v) for v in np.atleast_1d(np.asarray(origins)).tolist()]
     except (TypeError, ValueError, OverflowError):

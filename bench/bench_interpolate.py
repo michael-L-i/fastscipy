@@ -8,6 +8,12 @@ import scipy.spatial as sp
 def cases():
     r = np.random.default_rng(0)
 
+    short_rng = np.random.default_rng(51)
+    short_x = np.linspace(0, 1, 30)
+    short_spline = si.make_interp_spline(short_x, short_rng.standard_normal(30))
+    short_q = short_rng.random(1000)
+    yield "BSpline 30 knots, 1000 random queries", lambda: short_spline(short_q), False
+
     t = np.sort(r.random(1000))
     spl = si.make_interp_spline(t, r.standard_normal(1000), k=3)
     q = r.uniform(t[0], t[-1], 1_000_000)
@@ -32,6 +38,12 @@ def cases():
     yield "LinearNDInterpolator raster-ordered queries", lambda: lin(xs), False
     ct = si.CloughTocher2DInterpolator(tri, np.sin(5 * pts[:, 0]) + pts[:, 1])
     yield "CloughTocher2DInterpolator 1e5 points, 1e5 random queries", lambda: ct(xq)
+
+    many_rng = np.random.default_rng(32)
+    many_pts = many_rng.random((6000, 2))
+    many_q = many_rng.random((24001, 2))
+    many = si.CloughTocher2DInterpolator(many_pts, many_rng.standard_normal((6000, 128)))
+    yield "CloughTocher2DInterpolator 128 outputs, 24001 queries", lambda: many(many_q)
 
     p2, v2 = pts[:20_000], np.sin(5 * pts[:20_000, 0])
     yield "griddata linear 2e4 points, 1e5 queries", lambda: si.griddata(p2, v2, xq, method="linear")

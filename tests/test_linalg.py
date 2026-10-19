@@ -101,6 +101,25 @@ def test_solve_triangular_broadcast_and_negative_strides():
     check(lambda: sl.solve_triangular(a, b2))
 
 
+@pytest.mark.parametrize("broadcast", [False, True])
+@pytest.mark.parametrize("readonly", [False, True])
+def test_small_stacks_preserve_inputs(broadcast, readonly):
+    rng = np.random.default_rng(49)
+    a = mats(rng, (2, 3), 3)
+    b = rng.standard_normal((3, 3, 2) if broadcast else (2, 3, 3, 2))
+    a, b = a[::-1], b[..., ::-1]
+    if readonly:
+        a.flags.writeable = b.flags.writeable = False
+    before = a.tobytes(), b.tobytes()
+    lu = check(lambda: sl.lu_factor(a))
+    check(lambda: sl.lu_solve(lu, b))
+    check(lambda: sl.solve_triangular(a, b))
+    spd = a @ a.swapaxes(-1, -2) + 3 * np.eye(3)
+    check(lambda: sl.cho_solve(sl.cho_factor(spd), b))
+    check(lambda: sl.eigh(spd))
+    assert (a.tobytes(), b.tobytes()) == before
+
+
 @pytest.mark.parametrize("n", SIZES)
 @pytest.mark.parametrize("batch", BATCHES)
 @pytest.mark.parametrize("lower", [True, False])

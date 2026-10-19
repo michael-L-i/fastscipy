@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "started_utc": "2026-10-19T19:58:08.551166+00:00",
+    "threads": 18,
+    "cpu": 18,
+    "platform": "darwin",
+    "python": "3.13.6 (main, Aug 13 2025, 12:14:09) [Clang 16.0.0 (clang-1600.0.26.6)]",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_profile": "release",
+    "native_sha256": "e87281f11391f3dc3a9164d99e325559d3a80746f0c2f38e828a45cc72b42072",
+    "budget_seconds": 0.3,
+    "selection": "exact names from previously published bench/results/*.json",
+    "status": {
+      "ndimage": "on",
+      "special": "on",
+      "stats": "on",
+      "signal": "on",
+      "sparse": "on",
+      "linalg": "on",
+      "interpolate": "on",
+      "spatial": "on",
+      "csgraph": "on",
+      "integrate": "on",
+      "optimize": "on"
+    }
+  },
+  "cases": {
+    "approx_fprime rosen n=1000": {
+      "scipy_ms": 9.726291988044977,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 9.76787498802878,
+      "x1t": 0.9957428816365109,
+      "nt_ms": 9.156875021290034,
+      "xnt": 1.062184638911313,
+      "control": false
+    },
+    "approx_fprime cheap sum-of-squares n=1000": {
+      "scipy_ms": 3.2309580128639936,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 2.580542000941932,
+      "x1t": 1.2520462800778482,
+      "nt_ms": 2.598083985503763,
+      "xnt": 1.2435925978110818,
+      "control": false
+    },
+    "minimize BFGS rosen n=10 (numerical gradient)": {
+      "scipy_ms": 14.298875001259148,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 12.657584011321887,
+      "x1t": 1.129668583551898,
+      "nt_ms": 12.858999980380759,
+      "xnt": 1.1119741055350523,
+      "control": false
+    }
+  }
+}

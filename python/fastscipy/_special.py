@@ -8,6 +8,7 @@ floating-point event NumPy would report is rerun serially by SciPy, so warnings
 and errors are SciPy's own; so is any call while ``sc.errstate`` reports errors.
 """
 
+import math
 import time
 
 import numpy as np
@@ -57,7 +58,7 @@ def _threaded(uf, st, args):
         elif not isinstance(a, _SCALARS):
             return NotImplemented
     shape = np.broadcast_shapes(*shapes)
-    n, nd = int(np.prod(shape)), len(shape)
+    n, nd = math.prod(shape), len(shape)
     if n < st[0]:
         return NotImplemented
     ax = shape.index(max(shape))
@@ -98,7 +99,9 @@ def _make(uf, module):
     st, nin, name = [1024], uf.nin, uf.__name__
 
     def fast(*args, **kw):
-        if not kw and _patch.enabled and len(args) == nin:
+        if kw:
+            return uf(*args, **kw)
+        if _patch.enabled and len(args) == nin:
             for a in args:
                 if type(a) is np.ndarray and a.size >= st[0]:
                     try:
@@ -112,7 +115,7 @@ def _make(uf, module):
                             _patch.counts[name, "fast"] += 1
                             return r
                     break
-        return uf(*args, **kw)
+        return uf(*args)
 
     fast.__name__, fast.__qualname__, fast.__module__, fast.__doc__ = name, name, module, uf.__doc__
     fast.__wrapped__ = uf

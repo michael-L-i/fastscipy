@@ -25,7 +25,6 @@ EPSF = np.finfo(np.float64).eps  # np.float64, like xp.finfo(...).eps
 EPS10 = f64(EPSF) * 10
 ORD2, ORD3, ORD4 = (np.asarray(float(k)) for k in (2, 3, 4))
 NAN = float("nan")
-_ADD = np.add.reduce
 _stdtr, _betainc, _betaincc, _entr, _ndtr = special.stdtr, special.betainc, special.betaincc, special.entr, special.ndtr
 _ESTATE = dict(divide="raise", over="raise", invalid="raise")
 _ALT = {"less": -1, "two-sided": 0, "greater": 1}
@@ -70,8 +69,8 @@ def _skew(a, axis=0, bias=True, nan_policy="propagate"):
         return NotImplemented
     n = a.shape[0]
     with np.errstate(**_ESTATE):
-        mean = _ADD(a) / n
         mean_k = np.mean(a, keepdims=True)
+        mean = mean_k[0]
         d = a - mean_k
         if not _demean_ok(d, mean):
             return NotImplemented
@@ -94,8 +93,8 @@ def _kurtosis(a, axis=0, fisher=True, bias=True, nan_policy="propagate"):
         return NotImplemented
     n = a.shape[0]
     with np.errstate(**_ESTATE):
-        mean = _ADD(a) / n
         mean_k = np.mean(a, keepdims=True)
+        mean = mean_k[0]
         d = a - mean_k
         if not _demean_ok(d, mean):
             return NotImplemented
@@ -140,10 +139,8 @@ def _zscore(a, axis=0, ddof=0, nan_policy="propagate"):
         return NotImplemented
     with np.errstate(**_ESTATE):
         mn = np.mean(a, axis=axis, keepdims=True)
-        # _xp_var(compare, axis, correction=ddof, keepdims=True)
-        mean2 = np.mean(a, axis=axis, keepdims=True)
-        xm = a - mean2
-        if not _demean_ok(xm, mean2[0]):
+        xm = a - mn
+        if not _demean_ok(xm, mn[0]):
             return NotImplemented
         var = np.mean(xm * xm, axis=axis, keepdims=True)
         if ddof != 0:
@@ -151,7 +148,7 @@ def _zscore(a, axis=0, ddof=0, nan_policy="propagate"):
             nc = nn - ddof
             var *= nn / nc
         std = var**0.5
-        z = (a - mn) / std
+        z = xm / std
         if std[0] <= abs(EPSF * mn[0]):
             return NotImplemented  # constant input -> SciPy warns/NaNs
     return z
@@ -174,10 +171,10 @@ def _ttest_1samp(a, popmean, axis=0, nan_policy="propagate", alternative="two-si
     if n < 2:
         return NotImplemented
     with np.errstate(**_ESTATE):
-        mean = np.mean(a, axis=-1)
-        d = mean - popmean
         # _var(a, axis, ddof=1)
         mean_k = np.mean(a, keepdims=True)
+        mean = mean_k[0]
+        d = mean - popmean
         dd = a - mean_k
         if not _demean_ok(dd, mean_k[0]):
             return NotImplemented
@@ -222,19 +219,19 @@ def _ttest_ind(a, b, *, axis=0, equal_var=True, nan_policy="propagate", alternat
     with np.errstate(**_ESTATE):
         # _var(a, axis, ddof=1)
         mk = np.mean(a, keepdims=True)
+        m1 = mk[0]
         dd = a - mk
         if not _demean_ok(dd, mk[0]):
             return NotImplemented
         v1 = np.mean(dd**ORD2, axis=-1, keepdims=True).reshape(())
         v1 *= np.asarray(n1, dtype=a.dtype) / (n1 - 1)
         mk = np.mean(b, keepdims=True)
+        m2 = mk[0]
         dd = b - mk
         if not _demean_ok(dd, mk[0]):
             return NotImplemented
         v2 = np.mean(dd**ORD2, axis=-1, keepdims=True).reshape(())
         v2 *= np.asarray(n2, dtype=b.dtype) / (n2 - 1)
-        m1 = np.mean(a, axis=-1)
-        m2 = np.mean(b, axis=-1)
         if equal_var:
             # n1 == 1 / n2 == 1 excluded above
             df = n1 + n2 - 2.0
@@ -261,8 +258,7 @@ def _ttest_ind(a, b, *, axis=0, equal_var=True, nan_policy="propagate", alternat
         t = t[()] if t.ndim == 0 else t
         dfo = np.broadcast_to(df, t.shape)
         dfo = dfo[()] if dfo.ndim == 0 else dfo
-        est = m1 - m2
-    return _pack_ttest(t, prob, dfo, alternative, denom, est)
+    return _pack_ttest(t, prob, dfo, alternative, denom, d)
 
 
 def _ttest_rel(a, b, axis=0, nan_policy="propagate", alternative="two-sided"):
@@ -387,23 +383,38 @@ def _entropy(pk, qk=None, base=None, axis=0):
 def _describe(a, axis=0, ddof=1, bias=True, nan_policy="propagate"):
     if axis not in (0, -1) or type(axis) is not int or nan_policy != "propagate" or not _clean(a):
         return NotImplemented
-    if type(ddof) is not int or ddof < 0:
+    if type(ddof) is not int or ddof < 0 or (bias is not True and bias is not False):
         return NotImplemented
     n = a.shape[0]
     if n <= ddof:
         return NotImplemented
-    sk = _skew(a, 0, bias)
-    ku = _kurtosis(a, 0, True, bias)
-    if sk is NotImplemented or ku is NotImplemented:
-        return NotImplemented
     with np.errstate(**_ESTATE):
-        mm = (np.min(a, axis=axis), np.max(a, axis=axis))
-        m = np.mean(a, axis=axis)
+        # All three statistics use the same centered data and second moment.
+        # Keep the individual formulas (including scalar vs array powers) in
+        # lockstep with _skew/_kurtosis and SciPy's variance calculation.
         mk = np.mean(a, keepdims=True)
+        m = mk[0]
         dd = a - mk
         if not _demean_ok(dd, mk[0]):
             return NotImplemented
-        v = np.mean(dd**ORD2, axis=-1, keepdims=True).reshape(())
+        m2 = np.mean(dd**ORD2, axis=-1, keepdims=True).reshape(())
+        m3 = np.mean(dd**ORD3, axis=-1, keepdims=True).reshape(())
+        m4 = np.mean(dd**ORD4, axis=-1, keepdims=True).reshape(())
+        if m2 <= (EPSF * m) ** 2:
+            sk = f64(NAN)
+            ku = f64(NAN)
+        else:
+            sk = m3 / np.power(m2, 1.5)
+            ku = m4 / np.square(m2)
+            if not bias:
+                if n > 2:
+                    sk = ((n - 1.0) * n) ** 0.5 / (n - 2.0) * m3 / np.power(m2, 1.5)
+                if n > 3:
+                    ku = 1.0 / (n - 2) / (n - 3) * ((n**2 - 1.0) * m4 / np.square(m2) - 3 * (n - 1) ** 2.0)
+                    ku = ku + 3.0
+        sk, ku = f64(sk), f64(ku - 3)
+        mm = (np.min(a, axis=axis), np.max(a, axis=axis))
+        v = m2
         if ddof != 0:
             nn = np.asarray(n, dtype=a.dtype)
             v *= nn / (nn - ddof)

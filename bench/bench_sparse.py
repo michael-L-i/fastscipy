@@ -23,6 +23,9 @@ def cases():
     small = sp.csr_array((data, ind, ptr), shape=(10, 10))
     yield "2000 x small A.T + A", lambda: [small.T + small for _ in range(2000)]
 
+    canonical = sp.random_array((2000, 2000), density=0.025, format="csr", rng=9)
+    yield "find canonical CSR 100k nnz", lambda: sp.find(canonical)
+
     # argmax / argmin on a 1e7-nnz CSR (50000 x 100000, 200 per row, no duplicates)
     cols = (np.arange(200) * 500 + rng.integers(0, 500, (50_000, 200))).astype(np.int32).ravel()
     big = sp.csr_array(

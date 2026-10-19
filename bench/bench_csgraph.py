@@ -18,6 +18,22 @@ def random_graph(n, m, seed=0, weights=True):
 
 
 def cases():
+    scalar_graph = random_graph(200, 400)
+    scalar_graph.indices = scalar_graph.indices.astype(np.int32)
+    scalar_graph.indptr = scalar_graph.indptr.astype(np.int32)
+    yield (
+        "dijkstra int32 CSR, scalar source, 200 nodes x100 calls",
+        lambda: [cg.dijkstra(scalar_graph, indices=0) for _ in range(100)],
+    )
+    yield (
+        "connected_components int32 CSR, 200 nodes x100 calls",
+        lambda: [cg.connected_components(scalar_graph) for _ in range(100)],
+    )
+    unit_graph = grid(100)
+    yield (
+        "dijkstra unweighted undirected, grid 100^2, scalar source",
+        lambda: cg.dijkstra(unit_graph, directed=False, unweighted=True, indices=0),
+    )
     g = grid(600)
     yield "shortest_path unweighted BFS, grid 600^2, 1 source", lambda: cg.shortest_path(g, unweighted=True, indices=0)
     yield (

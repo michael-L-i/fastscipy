@@ -15,6 +15,8 @@ current = None  # component being patched; set by fastscipy.patch()
 counts = collections.Counter()  # (function, "fast" | "scipy" | "error") -> calls
 STRICT = os.environ.get("FASTSCIPY_STRICT", "") not in ("", "0")  # re-raise fast-path errors
 _records = []  # (component, owner, attr, old value)
+_identity_records = []  # (component, table, key, old value)
+_MISSING = object()
 
 
 def stats():
@@ -69,6 +71,17 @@ def restore(component):
         else:
             keep.append(rec)
     _records[:] = reversed(keep)
+    keep = []
+    for rec in reversed(_identity_records):
+        comp, table, key, old = rec
+        if comp == component:
+            if old is _MISSING:
+                table.pop(key, None)
+            else:
+                table[key] = old
+        else:
+            keep.append(rec)
+    _identity_records[:] = reversed(keep)
 
 
 def wrap(original, fast, name=None):
@@ -107,6 +120,7 @@ def _copy_identity_entries(old, new):
         from scipy._lib._array_api import xp_capabilities_table as table
 
         if old in table:
+            _identity_records.append((current, table, new, table.get(new, _MISSING)))
             table[new] = table[old]
     except (ImportError, TypeError):
         pass

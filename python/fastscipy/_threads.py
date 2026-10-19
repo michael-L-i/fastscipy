@@ -9,7 +9,7 @@ serially instead of oversubscribing. Both pools are rebuilt after ``fork``.
 
 import os
 import threading
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 
 from . import _native
 
@@ -56,6 +56,20 @@ def parallel_map(fn, items):
     try:
         if _pool is None:
             _pool = ThreadPoolExecutor(threads, thread_name_prefix="fastscipy")
-        return list(_pool.map(fn, items))
+        futures = []
+        completed = False
+        try:
+            for item in items:
+                futures.append(_pool.submit(fn, item))
+            results = [future.result() for future in futures]
+            completed = True
+            return results
+        finally:
+            if not completed:
+                # Running chunks can still write their outputs. Drain them before
+                # a wrapper falls back to SciPy or another call reuses the pool.
+                for future in futures:
+                    future.cancel()
+                wait(futures)
     finally:
         _busy.release()

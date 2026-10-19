@@ -46,15 +46,21 @@ def check(call, fast=True):
     """
     import fastscipy
 
+    expected_error = None
     with fastscipy.disabled():
         try:
             expected = call()
         except Exception as error:
-            try:
-                call()
-            except type(error):
-                return None
-            raise AssertionError(f"SciPy raised {error!r}; the patched call did not") from None
+            expected_error = error
+    if expected_error is not None:
+        try:
+            call()
+        except Exception as error:
+            assert type(error) is type(expected_error), (
+                f"SciPy raised {expected_error!r}; the patched call raised {error!r}"
+            )
+            return None
+        raise AssertionError(f"SciPy raised {expected_error!r}; the patched call did not") from None
     before = fast_calls()
     got = call()
     assert_identical(expected, got)

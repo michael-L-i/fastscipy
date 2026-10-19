@@ -2,8 +2,8 @@
 
 ``cdist`` and ``pdist`` run SciPy's own GIL-releasing kernel on blocks of rows;
 every output element comes from the same per-pair loop, so bytes are identical
-(checked per metric; mahalanobis and seuclidean estimate statistics from the
-whole input, and pdist/dice differs, so they are left to SciPy). KDTree
+(checked per metric; mahalanobis and seuclidean estimate statistics once from
+the whole input, and pdist/dice differs, so it is left to SciPy). KDTree
 queries pass ``workers`` when the caller left the default.
 """
 
@@ -33,24 +33,50 @@ _CDIST = {
     "russellrao",
     "sokalsneath",
     "rogerstanimoto",
+    "seuclidean",
+    "mahalanobis",
 }
 _PDIST = _CDIST - {"dice"}
+_STATISTICS = {"seuclidean": "V", "mahalanobis": "VI"}
 _WORK = 1_000_000  # pair-coordinates below which a block split loses to hand-off cost
 _BLOCK = 200_000  # about 100 us per block
 _QUERIES = 2000  # KDTree queries below which threads cost more than they save
 
 
 def _metric(args, kw, names, *arrays):
-    """The metric name if only ``metric`` was given and the call is ours to thread, else None."""
-    if len(args) + len(kw) > 1 or (kw and "metric" not in kw) or get_num_threads() <= 1:
+    """The metric name when the call has supported options and NumPy inputs."""
+    if len(args) > 1 or (args and "metric" in kw) or get_num_threads() <= 1:
         return None
     metric = args[0] if args else kw.get("metric", "euclidean")
     if (
         isinstance(metric, str)
         and metric in names
+        and kw.keys() <= {"metric", _STATISTICS.get(metric)}
         and all(type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2 for a in arrays)
     ):
         return metric
+
+
+def _parameters(metric, kw, *arrays):
+    """Use SciPy's full-input statistics before splitting either distance kernel."""
+    key = _STATISTICS.get(metric)
+    if key is None:
+        return {}
+    value = kw.get(key)
+    d = arrays[0].shape[1]
+    if value is not None:
+        shape = (d,) if key == "V" else (d, d)
+        if type(value) is not np.ndarray or value.dtype != np.float64 or value.shape != shape:
+            return None
+        return {key: value}
+    if sum(a.shape[0] for a in arrays) <= max(d, 1) or not all(np.isfinite(a).all() for a in arrays):
+        return None
+    validator = dist._validate_seuclidean_kwargs if key == "V" else dist._validate_mahalanobis_kwargs
+    try:
+        with np.errstate(all="raise"):
+            return validator(arrays if len(arrays) > 1 else arrays[0], sum(a.shape[0] for a in arrays), d)
+    except (FloatingPointError, np.linalg.LinAlgError):
+        return None
 
 
 def _cdist_fast(original):
@@ -65,8 +91,11 @@ def _cdist_fast(original):
         if len(blocks) < 2:
             return NotImplemented
         XA, XB = np.ascontiguousarray(XA), np.ascontiguousarray(XB)
+        params = _parameters(metric, kw, XA, XB)
+        if params is None:
+            return NotImplemented
         res = np.empty((ma, mb))
-        parallel_map(lambda s: original(XA[s], XB, metric, out=res[s]), blocks)
+        parallel_map(lambda s: original(XA[s], XB, metric, out=res[s], **params), blocks)
         return res
 
     return fast
@@ -81,6 +110,9 @@ def _pdist_fast(cdist):
         if m * m * d < 2 * _WORK:
             return NotImplemented
         X = np.ascontiguousarray(X)
+        params = _parameters(metric, kw, X)
+        if params is None:
+            return NotImplemented
         # Block [a, b) owns condensed entries of rows a..b-1; weight rows by their pair count.
         rows = np.cumsum(m - 1 - np.arange(m))
         res = np.empty(m * (m - 1) // 2)
@@ -90,7 +122,7 @@ def _pdist_fast(cdist):
 
         def block(ab):
             a, b = ab
-            D = cdist(X[a:b], X[a:], metric)
+            D = cdist(X[a:b], X[a:], metric, **params)
             # One masked copy, not a Python loop over rows: a loop holds the GIL and serialises the blocks.
             res[starts[a] : starts[b]] = D[np.arange(D.shape[1]) > np.arange(b - a)[:, None]]
 

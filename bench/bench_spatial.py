@@ -17,6 +17,11 @@ def cases():
     yield "cdist euclidean Fortran 4000x2000x16", lambda: dist.cdist(af, bf)
     yield "pdist euclidean Fortran 3000x16", lambda: dist.pdist(xf)
     yield "cdist euclidean strided 4000x2000x8", lambda: dist.cdist(A[:, ::2], B[:, ::2])
+    extra = np.random.default_rng(817)
+    sa, sb = extra.normal(size=(1500, 12)), extra.normal(size=(1000, 12))
+    for metric in ("seuclidean", "mahalanobis"):
+        yield f"cdist {metric} 1500x1000x12", lambda m=metric: dist.cdist(sa, sb, m)
+        yield f"pdist {metric} 1500x12", lambda m=metric: dist.pdist(sa, m)
     pts = rng.random((1_000_000, 3))
     tree, q = sp.cKDTree(pts), rng.random((200_000, 3))
     for k in (1, 8):

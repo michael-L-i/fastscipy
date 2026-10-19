@@ -1,0 +1,45 @@
+{
+ "meta": {
+  "threads": 2,
+  "budget_seconds": 0.1,
+  "blas_threads": 1
+ },
+ "cases": {
+  "cdist seuclidean 1500x1000x12": {
+   "scipy_ms": 4.227792000165209,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 4.202582989819348,
+   "x1t": 1.0059984562843682,
+   "nt_ms": 2.28283298201859,
+   "xnt": 1.851993568284086
+  },
+  "pdist seuclidean 1500x12": {
+   "scipy_ms": 3.172666998580098,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.155457990942523,
+   "x1t": 1.005453727378711,
+   "nt_ms": 2.6367919926997274,
+   "xnt": 1.2032299124709134
+  },
+  "cdist mahalanobis 1500x1000x12": {
+   "scipy_ms": 70.54283400066197,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 70.38349998765625,
+   "x1t": 1.0022637978082032,
+   "nt_ms": 36.46270799799822,
+   "xnt": 1.9346570201131172
+  },
+  "pdist mahalanobis 1500x12": {
+   "scipy_ms": 50.43924998608418,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 51.85587500454858,
+   "x1t": 0.9726814942696437,
+   "nt_ms": 32.98800002085045,
+   "xnt": 1.5290181264157712
+  }
+ }
+}

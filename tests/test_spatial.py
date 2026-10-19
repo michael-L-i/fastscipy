@@ -57,8 +57,6 @@ def test_declined_still_correct():
     r = dist.cdist(A, B, out=out)
     assert r is out and np.array_equal(out, dist.cdist.__wrapped__(A, B))
     for call in (
-        lambda: dist.cdist(A, B, "mahalanobis"),
-        lambda: dist.cdist(A, B, "seuclidean"),
         lambda: dist.cdist(A, B, "minkowski", p=3.0),
         lambda: dist.cdist(A, B, "euclidean", w=np.ones(16)),
         lambda: dist.cdist(A[:5], B[:5], lambda u, v: 1.0),
@@ -70,6 +68,44 @@ def test_declined_still_correct():
         lambda: dist.pdist(A[:20]),
     ):
         check(call, fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("metric,key", [("seuclidean", "V"), ("mahalanobis", "VI")])
+@pytest.mark.parametrize("layout", ["C", "F", "reversed"])
+def test_distance_statistics(metric, key, layout, threads):
+    rng = np.random.default_rng(812)
+    a, b = rng.normal(size=(850, 7)), rng.normal(size=(650, 7))
+    if layout == "F":
+        a, b = np.asfortranarray(a), np.asfortranarray(b)
+    elif layout == "reversed":
+        a, b = a[::-1], b[::-1]
+    v = np.arange(1, 8, dtype=np.float64)
+    supplied = v if key == "V" else np.diag(v)
+    supplied.flags.writeable = False
+    for options in ({}, {key: None}, {key: supplied}):
+        check(lambda: dist.cdist(a, b, metric=metric, **options), fast=threads > 1)
+        check(lambda: dist.pdist(a, metric, **options), fast=threads > 1)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_distance_statistics_declined(threads):
+    import warnings
+
+    rng = np.random.default_rng(813)
+    a, b = rng.random((850, 7)), rng.random((650, 7))
+    for metric, key in (("seuclidean", "V"), ("mahalanobis", "VI")):
+        for value in ([1.0] * 7, np.ones((7, 7, 1)), np.ones(7, dtype=np.float32)):
+            check(lambda: dist.cdist(a, b, metric, **{key: value}), fast=False)
+        check(lambda: dist.cdist(a, b, metric, unexpected=True), fast=False)
+    singular = np.ones((850, 7))
+    check(lambda: dist.pdist(singular, "mahalanobis"), fast=False)
+    for bad in (np.nan, np.inf, 1e308):
+        aa = a.copy()
+        aa[0] = bad
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            check(lambda: dist.cdist(aa, b, "seuclidean"), fast=False)
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

@@ -457,3 +457,27 @@ def test_piecewise_signaling_nan_conversion_warning(cls):
     assert messages[0] == messages[1]
     assert len(messages[0]) == 1
     assert q.tobytes() == before
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+@pytest.mark.parametrize("mode", ["call", "log"])
+def test_piecewise_raising_seterr_handler_once(cls, mode):
+    p = cls(np.ones((4, 3)), np.arange(4.0))
+    q = np.array([0x7F800001], dtype=np.uint32).view(np.float32)
+    calls = []
+
+    def handler(*args):
+        calls.append(args)
+        raise RuntimeError("conversion handler")
+
+    class Logger:
+        write = staticmethod(handler)
+
+    old = np.seterrcall(handler if mode == "call" else Logger())
+    try:
+        with np.errstate(invalid=mode):
+            with pytest.raises(RuntimeError, match="conversion handler"):
+                p(q)
+    finally:
+        np.seterrcall(old)
+    assert len(calls) == 1

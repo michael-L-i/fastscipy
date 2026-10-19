@@ -8,6 +8,7 @@ lies on a shared face, so queries are visited in grid-cell order and the
 queries near a face are replayed in their original order (``_locate``).
 """
 
+import functools
 import math
 
 import numpy as np
@@ -154,6 +155,22 @@ def _ppoly_call(self, x, nu=0, extrapolate=None):
     return _on_axis(out.reshape(x.shape + c.shape[2:]), x.ndim, d.axis)
 
 
+def _ppoly_wrapper(original, name):
+    @functools.wraps(original)
+    def call(self, x, nu=0, extrapolate=None):
+        if _patch.enabled:
+            # A NumPy cast can call a user-installed seterr handler. Once
+            # accepted, propagate errors without invoking that handler twice.
+            result = _ppoly_call(self, x, nu, extrapolate)
+            if result is not NotImplemented:
+                _patch.counts[name, "fast"] += 1
+                return result
+        _patch.counts[name, "scipy"] += 1
+        return original(self, x, nu, extrapolate)
+
+    return call
+
+
 # ---------------------------------------------------------------- Delaunay
 def _grid(tri):
     g = max(int(np.ceil(max(tri.nsimplex // 2, 1) ** (1 / tri.ndim))), 2)
@@ -289,7 +306,7 @@ def patch():
         numpy_ppoly_types=(_interpolate._PPoly, _interpolate._BPoly),
     )
     for cls in (si.PPoly, si.BPoly):
-        _patch.replace(cls, "__call__", _patch.wrap(cls.__call__, _ppoly_call, f"{cls.__name__}.__call__"))
+        _patch.replace(cls, "__call__", _ppoly_wrapper(cls.__call__, f"{cls.__name__}.__call__"))
     _patch.replace(si.BSpline, "__call__", _patch.wrap(_orig["bspline"], _bspline_call, "BSpline.__call__"))
     _patch.replace(Delaunay, "find_simplex", _patch.wrap(_orig["find_simplex"], _find_simplex, "Delaunay.find_simplex"))
     rgi = si.RegularGridInterpolator

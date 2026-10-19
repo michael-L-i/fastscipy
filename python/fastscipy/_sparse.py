@@ -227,6 +227,69 @@ def _find(A):
 # ---- structured construction -----------------------------------------------------------------
 
 
+def _compressed_buffers_ok(block, major):
+    """Bounds needed before handing plain compressed buffers to SciPy kernels."""
+    minor = 1 - major
+    return (
+        _contig(block.indptr, block.indices, block.data)
+        and block.dtype.char in "?bBhHiIlLqQfdFD"
+        and block.dtype.isnative
+        and block.indices.dtype.char in _IDX
+        and block.indices.dtype.isnative
+        and block.indptr.dtype == block.indices.dtype
+        and len(block.data) == len(block.indices)
+        and len(block.indptr) == block.shape[major] + 1
+        and len(block.indptr) > 0
+        and block.indptr[0] == 0
+        and len(block.data) == block.indptr[-1]
+        and not (block.indptr[1:] < block.indptr[:-1]).any()
+        and block.indices.min(initial=0) >= 0
+        and block.indices.max(initial=-1) < block.shape[minor]
+    )
+
+
+def _stack(blocks, axis, format, dtype):
+    from scipy.sparse import _construct, csc_array, csc_matrix, csr_array, csr_matrix
+
+    if type(blocks) not in (list, tuple) or not blocks or dtype is not None:
+        return NotImplemented
+    first = blocks[0]
+    if type(first) not in (csr_array, csr_matrix, csc_array, csc_matrix):
+        return NotImplemented
+    fmt = first.format
+    if format is not None and (type(format) is not str or format != fmt):
+        return NotImplemented
+    types = (csr_array, csr_matrix) if fmt == "csr" else (csc_array, csc_matrix)
+    major = 0 if fmt == "csr" else 1
+    if axis == major or len(blocks) != 2:
+        return NotImplemented
+    for block in blocks:
+        if (
+            type(block) not in types
+            or block.ndim != 2
+            or not _compressed_buffers_ok(block, major)
+            or block.shape[1 - axis] != first.shape[1 - axis]
+        ):
+            return NotImplemented
+    shape = list(first.shape)
+    shape[axis] = sum(b.shape[axis] for b in blocks)
+    if max(*shape, sum(len(b.data) for b in blocks)) > _I32MAX:
+        return NotImplemented
+    matrix = all(type(b) is types[1] for b in blocks)
+    result = _construct._stack_along_minor_axis(blocks, axis)
+    if matrix or type(result) is types[0]:
+        return result
+    return types[0]((result.data, result.indices, result.indptr), shape=result.shape)
+
+
+def _hstack(blocks, format=None, dtype=None):
+    return _stack(blocks, 1, format, dtype)
+
+
+def _vstack(blocks, format=None, dtype=None):
+    return _stack(blocks, 0, format, dtype)
+
+
 def _block_diag(mats, format=None, dtype=None):
     from scipy.sparse import csc_array, csc_matrix, csr_array, csr_matrix
     from scipy.sparse._sparsetools import csr_has_canonical_format
@@ -240,34 +303,25 @@ def _block_diag(mats, format=None, dtype=None):
     ):
         return NotImplemented
     types = (csr_array, csr_matrix) if format == "csr" else (csc_array, csc_matrix)
+    all_types = (csr_array, csr_matrix, csc_array, csc_matrix)
     major, minor = (0, 1) if format == "csr" else (1, 0)
     for block in mats:
+        bmajor = 0 if type(block) in (csr_array, csr_matrix) else 1
         if (
-            type(block) not in types
+            type(block) not in all_types
             or block.ndim != 2
-            or not _contig(block.indptr, block.indices, block.data)
-            or block.dtype.char not in "?bBhHiIlLqQfdFD"
-            or not block.dtype.isnative
-            or block.indices.dtype.char not in _IDX
-            or not block.indices.dtype.isnative
-            or block.indptr.dtype != block.indices.dtype
-            or type(block) is types[1]
+            or not _compressed_buffers_ok(block, bmajor)
+            or type(block) in (csr_matrix, csc_matrix)
             and block.indices.dtype != np.int32
-            or len(block.data) != len(block.indices)
-            or len(block.indptr) != block.shape[major] + 1
-            or len(block.indptr) == 0
-            or block.indptr[0] != 0
-            or len(block.data) != block.indptr[-1]
-            or (block.indptr[1:] < block.indptr[:-1]).any()
-            or block.indices.min(initial=0) < 0
-            or block.indices.max(initial=-1) >= block.shape[minor]
-            or not csr_has_canonical_format(block.shape[major], block.indptr, block.indices)
+            or not csr_has_canonical_format(block.shape[bmajor], block.indptr, block.indices)
         ):
             return NotImplemented
     shape = tuple(sum(b.shape[d] for b in mats) for d in (0, 1))
     nnz = sum(len(b.data) for b in mats)
     if max(*shape, nnz) > _I32MAX:
         return NotImplemented
+    if any(b.format != format for b in mats):
+        mats = [b.asformat(format) for b in mats]
     is_array = any(type(b) is types[0] for b in mats)
     constructor = types[0] if is_array else types[1]
     if nnz == 0:
@@ -309,6 +363,9 @@ def patch():
     _patch.rebind(old, _patch.wrap(old, _find, "find"))
     old = _construct.block_diag
     _patch.rebind(old, _patch.wrap(old, _block_diag, "block_diag"))
+    for name, fast in (("hstack", _hstack), ("vstack", _vstack)):
+        old = getattr(_construct, name)
+        _patch.rebind(old, _patch.wrap(old, fast, name))
 
 
 def smoke():
@@ -326,3 +383,5 @@ def smoke():
     for fmt in ("csr", "csc"):
         block = sp.csr_array(d).asformat(fmt)
         sp.block_diag([block, block], format=fmt)
+        sp.hstack([block, block])
+        sp.vstack([block, block])

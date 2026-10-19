@@ -308,6 +308,107 @@ def test_block_diag_preserves_uncached_inputs_and_nan_payloads():
     assert_identical(result, expected)
 
 
+@pytest.mark.parametrize("fmt,axis", [("csr", 1), ("csc", 0)])
+@pytest.mark.parametrize("kind", ["array", "matrix", "matrix_first", "array_first"])
+@pytest.mark.parametrize("index", [np.int32, np.int64])
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128, np.int64, np.bool_])
+def test_pair_stack_preserves_noncanonical_inputs(fmt, axis, kind, index, dtype):
+    blocks = []
+    for i, (width, columns, pointers, values) in enumerate(
+        ((4, [2, 0, 2, 1, 3], [0, 3, 3, 5], [0, 1, 2, -1, 0]), (5, [4, 0, 2], [0, 2, 3, 3], [3, 0, 1]))
+    ):
+        matrix = kind == "matrix" or kind == "matrix_first" and i == 0 or kind == "array_first" and i == 1
+        cls = getattr(sp, fmt + ("_matrix" if matrix else "_array"))
+        shape = (3, width) if axis == 1 else (width, 3)
+        data = np.array(values, dtype=dtype)
+        if data.dtype.kind in "fc":
+            data[0] = -0.0
+            data[-1] = np.nan
+        block = cls((data, np.array(columns, dtype=index), np.array(pointers, dtype=index)), shape=shape)
+        block.indices, block.indptr = block.indices.astype(index), block.indptr.astype(index)
+        block.has_canonical_format = True  # Deliberately stale; stacking must preserve duplicates.
+        for a in (block.data, block.indices, block.indptr):
+            a.flags.writeable = False
+        blocks.append(block)
+    before = [(b.data.tobytes(), b.indices.tobytes(), b.indptr.tobytes(), set(vars(b))) for b in blocks]
+    name = "hstack" if axis == 1 else "vstack"
+    fast_before = fastscipy.stats().get((name, "fast"), 0)
+    result = check(lambda: getattr(sp, name)(blocks))
+    assert fastscipy.stats().get((name, "fast"), 0) > fast_before
+    assert before == [(b.data.tobytes(), b.indices.tobytes(), b.indptr.tobytes(), set(vars(b))) for b in blocks]
+    for b in blocks:
+        assert b._has_canonical_format is True and b._has_sorted_indices is True
+        assert all(not a.flags.writeable for a in (b.data, b.indices, b.indptr))
+        assert not any(
+            np.shares_memory(x, y)
+            for x in (b.data, b.indices, b.indptr)
+            for y in (result.data, result.indices, result.indptr)
+        )
+
+
+@pytest.mark.parametrize("fmt,axis", [("csr", 1), ("csc", 0)])
+def test_pair_stack_empty_and_fallbacks(fmt, axis):
+    cls = getattr(sp, fmt + "_array")
+    name = "hstack" if axis == 1 else "vstack"
+    fast = _sparse._hstack if axis == 1 else _sparse._vstack
+    for shapes in (((0, 2), (0, 3)), ((3, 0), (3, 0)), ((0, 0), (0, 0))):
+        if axis == 0:
+            shapes = tuple(s[::-1] for s in shapes)
+        blocks = [cls(s) for s in shapes]
+        check(lambda: getattr(sp, name)(blocks))
+    block = cls(np.eye(3))
+    for blocks, options in (
+        ([block], {}),
+        ([block] * 5, {}),
+        ([block, block], {"dtype": np.float32}),
+        ([block, block], {"format": "coo"}),
+    ):
+        assert fast(blocks, **options) is NotImplemented
+        check(lambda: getattr(sp, name)(blocks, **options), fast=False)
+    bad = block.copy()
+    bad.indptr[1] = 99
+    assert fast([bad, block]) is NotImplemented
+    mismatch = cls(np.ones((2, 2)))
+    assert fast([block, mismatch]) is NotImplemented
+    check(lambda: getattr(sp, name)([block, mismatch]), fast=False)
+
+
+@pytest.mark.parametrize("fmt", ["csr", "csc"])
+@pytest.mark.parametrize("kind", ["array", "matrix", "mixed"])
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128, np.int64])
+def test_block_diag_mixed_compressed_formats(fmt, kind, dtype):
+    rng = np.random.default_rng(24)
+    blocks = []
+    for i in range(4):
+        block_fmt = "csr" if i % 2 else "csc"
+        cls = getattr(sp, block_fmt + ("_matrix" if kind == "matrix" or kind == "mixed" and i % 2 else "_array"))
+        data = rng.integers(-3, 4, (3 + i, 2 + i)).astype(dtype)
+        block = cls(data)
+        if block.nnz and block.dtype.kind in "fc":
+            block.data[0] = -0.0
+            block.data[-1] = np.nan
+        if kind == "array":
+            block.indices, block.indptr = block.indices.astype(np.int64), block.indptr.astype(np.int64)
+        assert block.has_canonical_format
+        for a in (block.data, block.indices, block.indptr):
+            a.flags.writeable = False
+        blocks.append(block)
+    before = [(b.data.tobytes(), b.indices.tobytes(), b.indptr.tobytes(), set(vars(b))) for b in blocks]
+    fast_before = fastscipy.stats().get(("block_diag", "fast"), 0)
+    check(lambda: sp.block_diag(blocks, format=fmt))
+    assert fastscipy.stats().get(("block_diag", "fast"), 0) > fast_before
+    assert before == [(b.data.tobytes(), b.indices.tobytes(), b.indptr.tobytes(), set(vars(b))) for b in blocks]
+
+
+@pytest.mark.parametrize("fmt,axis", [("csr", 1), ("csc", 0)])
+def test_pair_stack_mixed_value_dtypes(fmt, axis):
+    cls = getattr(sp, fmt + "_array")
+    a = cls(np.array([[0.0, -0.0], [1.0, 3.0]], dtype=np.float32))
+    b = cls(np.array([[1j, 2.0], [3.0, np.nan]], dtype=np.complex128))
+    name = "hstack" if axis == 1 else "vstack"
+    check(lambda: getattr(sp, name)([a, b]))
+
+
 def test_small_calls_match_scipy():
     rng = np.random.default_rng(7)
     d, i, p = rng.random(9), np.array([0, 2, 1, 1, 0, 3, 2, 3, 3], np.int32), np.array([0, 3, 5, 9], np.int32)

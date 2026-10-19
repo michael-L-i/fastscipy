@@ -1,0 +1,62 @@
+{
+ "meta": {
+  "threads": 2,
+  "note": "Wave1 new stacking and mixed compressed block_diag cases only"
+ },
+ "cases": {
+  "hstack pair of CSR arrays 8x8": {
+   "scipy_ms": 0.023917004000395536,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.012458011042326689,
+   "x1t": 1.9198091829535526,
+   "nt_ms": 0.012374977814033628,
+   "xnt": 1.93269065688933
+  },
+  "hstack pair of CSR arrays 300x300": {
+   "scipy_ms": 0.0363329891115427,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.026875000912696123,
+   "x1t": 1.3519251303310094,
+   "nt_ms": 0.022416003048419952,
+   "xnt": 1.620850471560929
+  },
+  "vstack pair of CSC arrays 8x8": {
+   "scipy_ms": 0.024457986000925303,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.012458971468731761,
+   "x1t": 1.963082270659936,
+   "nt_ms": 0.01262497971765697,
+   "xnt": 1.9372693301612989
+  },
+  "vstack pair of CSC arrays 300x300": {
+   "scipy_ms": 0.03758398815989494,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.023125001462176442,
+   "x1t": 1.6252534392859526,
+   "nt_ms": 0.022374995751306415,
+   "xnt": 1.6797316333658083
+  },
+  "block_diag mixed CSR/CSC to CSR": {
+   "scipy_ms": 0.14116699458099902,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.07650000043213367,
+   "x1t": 1.8453201801774382,
+   "nt_ms": 0.0757500238250941,
+   "xnt": 1.8635901013965608
+  },
+  "block_diag mixed CSR/CSC to CSC": {
+   "scipy_ms": 0.14237500727176666,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.07662497228011489,
+   "x1t": 1.8580758078618542,
+   "nt_ms": 0.07650000043213367,
+   "xnt": 1.861111195653828
+  }
+ }
+}

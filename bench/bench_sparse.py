@@ -3,6 +3,18 @@ import scipy.sparse as sp
 
 
 def cases():
+    sweep_rng = np.random.default_rng(23)
+    for fmt, name in (("csr", "hstack"), ("csc", "vstack")):
+        cls = getattr(sp, fmt + "_array")
+        for side in (8, 300):
+            pair = [cls(sweep_rng.random((side, side)) * (sweep_rng.random((side, side)) < 0.1)) for _ in range(2)]
+            yield (
+                f"{name} pair of {fmt.upper()} arrays {side}x{side}",
+                lambda pair=pair, name=name: getattr(sp, name)(pair),
+            )
+    mixed = [getattr(sp, ("csr" if i % 2 else "csc") + "_array")(sweep_rng.random((20, 20))) for i in range(10)]
+    for fmt in ("csr", "csc"):
+        yield f"block_diag mixed CSR/CSC to {fmt.upper()}", lambda fmt=fmt: sp.block_diag(mixed, format=fmt)
     construction_rng = np.random.default_rng(22)
     for fmt in ("csr", "csc"):
         cls = getattr(sp, fmt + "_array")

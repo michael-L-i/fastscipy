@@ -123,7 +123,11 @@ multiply-adds the compiler fused, and in what order the BLAS sums. fastscipy
 reproduces the macOS arm64 wheels. On other platforms `patch()` turns
 nothing on; `FASTSCIPY_ANY_PLATFORM=1` overrides that, for testing ports. A
 [Linux workflow](.github/workflows/linux.yml) runs the identity tests there
-to track what still differs.
+to track what still differs. On Linux arm64, 4,875 of the 5,060 identity
+tests pass; the rest are ndimage filters and interpolation, `find_peaks`,
+the distance transform, `splev`, `LinearNDInterpolator` and `dlsim`, whose
+last bits depend on how SciPy's Linux wheels fuse multiply-adds and sum in
+BLAS.
 
 Each component also refuses SciPy versions other than 1.18
 (`FASTSCIPY_ANY_VERSION=1` overrides).

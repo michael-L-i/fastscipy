@@ -20,14 +20,14 @@ jobs:
     name: Identity tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     continue-on-error: true
-    timeout-minutes: 30
+    timeout-minutes: 60   # the x86-64 build alone takes over 30 minutes on hosted runners
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, ubuntu-24.04-arm]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - uses: dtolnay/rust-toolchain@1.97.1

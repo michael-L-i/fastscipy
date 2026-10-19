@@ -1,10 +1,12 @@
+import warnings
+
 import numpy as np
 import pytest
 import scipy.interpolate as si
 import scipy.spatial as sp
 
 import fastscipy
-from fastscipy.testing import check
+from fastscipy.testing import assert_identical, check
 
 ALL = fastscipy.get_num_threads()
 
@@ -376,8 +378,10 @@ def test_piecewise_derived_evaluation(cls):
 @pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
 def test_piecewise_declined_options(cls):
     p = cls(np.ones((4, 3)), np.arange(4.0))
-    for q in ([0.2, 0.8], np.array([0.2], dtype=np.float32), np.arange(8.0)[::2]):
+    for q in ([0.2, 0.8], np.array([0.2], dtype=np.longdouble)):
         check(lambda: p(q), fast=False)
+    with pytest.warns(np.exceptions.ComplexWarning):
+        check(lambda: p(np.array([0.2 + 0.1j])), fast=False)
     for opts in ({"nu": -1}, {"nu": 0.5}, {"extrapolate": "periodic"}, {"extrapolate": np.bool_(False)}):
         check(lambda: p(np.array([0.2, 3.2]), **opts), fast=False)
     p._xp = np
@@ -397,3 +401,59 @@ def test_piecewise_custom_evaluator_not_retried(cls):
     with pytest.raises(RuntimeError, match="custom evaluator"):
         p(np.array([0.2]))
     assert calls == [1]
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+@pytest.mark.parametrize("dtype", [np.float16, np.float32, np.float64, np.int8, np.int32, np.uint64])
+@pytest.mark.parametrize("axis", [0, 1])
+def test_piecewise_query_conversion(cls, dtype, axis):
+    r = rng(301)
+    c = r.standard_normal((4, 13, 2)) + 1j * r.standard_normal((4, 13, 2))
+    p = cls(np.moveaxis(c, (0, 1), (axis, axis + 1)), np.linspace(-2, 3, 14), axis=axis)
+    q = r.uniform(0, 4, (12, 16)).astype(dtype)
+    for query in (q, q[::-1, ::-2], np.asfortranarray(q), q[:0]):
+        query.flags.writeable = False
+        before = query.copy()
+        for nu in (0, 1, 5):
+            check(lambda: p(query, nu=nu))
+        assert np.array_equal(query, before)
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+@pytest.mark.parametrize("scalar", [0.0, -0.0, 0.25, np.float32(0.25), np.float64(0.25), np.nan, np.inf, -np.inf])
+def test_piecewise_scalar_queries(cls, scalar):
+    p = cls(rng(302).standard_normal((4, 13, 2)), np.linspace(-2, 3, 14))
+    check(lambda: p(scalar))
+    check(lambda: p(scalar, nu=1, extrapolate=False))
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+def test_piecewise_queries_and_coefficients_not_cached(cls):
+    p = cls(rng(303).standard_normal((4, 13)), np.linspace(-2, 3, 14))
+    q = np.array([0.25, 0.5, 0.75], dtype=np.float32)
+    check(lambda: p(q))
+    q[:] += 0.25
+    p.c[:] *= 2
+    check(lambda: p(q))
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+def test_piecewise_signaling_nan_conversion_warning(cls):
+    p = cls(np.ones((4, 3)), np.arange(4.0))
+    q = np.array([0x7F800001, 0x3F000000], dtype=np.uint32).view(np.float32)
+    before = q.tobytes()
+    results, messages = [], []
+    for enabled in (False, True):
+        with warnings.catch_warnings(record=True) as seen:
+            warnings.simplefilter("always")
+            if enabled:
+                result = p(q)
+            else:
+                with fastscipy.disabled():
+                    result = p(q)
+        results.append(result)
+        messages.append([(type(w.message), str(w.message)) for w in seen])
+    assert_identical(*results)
+    assert messages[0] == messages[1]
+    assert len(messages[0]) == 1
+    assert q.tobytes() == before

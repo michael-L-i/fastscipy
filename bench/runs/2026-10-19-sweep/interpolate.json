@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "new and existing PPoly/BPoly dispatch cases"
+  },
+  "cases": {
+    "PPoly 100 knots, 1 queries": {
+      "scipy_ms": 0.0019580184016376734,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.001374981366097927,
+      "x1t": 1.424032681398696,
+      "nt_ms": 0.001374981366097927,
+      "xnt": 1.424032681398696
+    },
+    "PPoly 100 knots, 10 queries": {
+      "scipy_ms": 0.002082990249618888,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014579854905605316,
+      "x1t": 1.4286769402746726,
+      "nt_ms": 0.0014579854905605316,
+      "xnt": 1.4286769402746726
+    },
+    "PPoly 100 knots, 100 queries": {
+      "scipy_ms": 0.0027919886633753777,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0021669839043170214,
+      "x1t": 1.2884215050297487,
+      "nt_ms": 0.002167013008147478,
+      "xnt": 1.2884042010260819
+    },
+    "PPoly 100 knots, 10 float32 queries": {
+      "scipy_ms": 0.002249988028779626,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0017079873941838741,
+      "x1t": 1.3173329243771938,
+      "nt_ms": 0.0017079873941838741,
+      "xnt": 1.3173329243771938
+    },
+    "PPoly 100 knots, 10 strided queries": {
+      "scipy_ms": 0.0021669839043170214,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0016669800970703363,
+      "x1t": 1.2999458770536165,
+      "nt_ms": 0.0016669800970703363,
+      "xnt": 1.2999458770536165
+    },
+    "PPoly 100 knots, Python scalar query": {
+      "scipy_ms": 0.0021249870769679546,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014999823179095984,
+      "x1t": 1.4166747511593163,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 1.4166747511593163
+    },
+    "PPoly 100 knots, float32 scalar query": {
+      "scipy_ms": 0.002415996277704835,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0018329883459955454,
+      "x1t": 1.3180641780854543,
+      "nt_ms": 0.0018329883459955454,
+      "xnt": 1.3180641780854543
+    },
+    "BPoly 100 knots, 1 queries": {
+      "scipy_ms": 0.002040993422269821,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014169781934469938,
+      "x1t": 1.4403844968882864,
+      "nt_ms": 0.0013750104699283838,
+      "xnt": 1.4843475500052916
+    },
+    "BPoly 100 knots, 10 queries": {
+      "scipy_ms": 0.002082990249618888,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014999823179095984,
+      "x1t": 1.3886765362152933,
+      "nt_ms": 0.0014580145943909883,
+      "xnt": 1.4286484220612012
+    },
+    "BPoly 100 knots, 100 queries": {
+      "scipy_ms": 0.0031659728847444057,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024999899324029684,
+      "x1t": 1.2663942537165742,
+      "nt_ms": 0.0024999899324029684,
+      "xnt": 1.2663942537165742
+    },
+    "BPoly 100 knots, 10 float32 queries": {
+      "scipy_ms": 0.0022909953258931637,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0017079873941838741,
+      "x1t": 1.341342057730975,
+      "nt_ms": 0.0017079873941838741,
+      "xnt": 1.341342057730975
+    },
+    "BPoly 100 knots, 10 strided queries": {
+      "scipy_ms": 0.0021659943740814924,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0017079873941838741,
+      "x1t": 1.268155948607845,
+      "nt_ms": 0.0017079873941838741,
+      "xnt": 1.268155948607845
+    },
+    "BPoly 100 knots, Python scalar query": {
+      "scipy_ms": 0.0021249870769679546,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0015409896150231361,
+      "x1t": 1.3789755987006118,
+      "nt_ms": 0.001500011421740055,
+      "xnt": 1.4166472642607684
+    },
+    "BPoly 100 knots, float32 scalar query": {
+      "scipy_ms": 0.0024579931050539017,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0018329883459955454,
+      "x1t": 1.3409758498594815,
+      "nt_ms": 0.0018329883459955454,
+      "xnt": 1.3409758498594815
+    }
+  }
+}

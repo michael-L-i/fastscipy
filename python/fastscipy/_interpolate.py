@@ -127,9 +127,6 @@ def _ppoly_call(self, x, nu=0, extrapolate=None):
         type(d) not in _orig["numpy_ppoly_types"]
         or self._xp is not _NP
         or self._xp_internal is not _NP
-        or type(x) is not np.ndarray
-        or x.dtype != np.float64
-        or not x.flags.c_contiguous
         or type(nu) is not int
         or not 0 <= nu <= 2**31 - 1
         or d.__dict__
@@ -138,10 +135,22 @@ def _ppoly_call(self, x, nu=0, extrapolate=None):
     ext = d.extrapolate if extrapolate is None else extrapolate
     if type(ext) is not bool:
         return NotImplemented
+    if type(x) is np.ndarray:
+        if x.dtype == np.float64 and x.flags.c_contiguous:
+            flat = x.reshape(-1)
+        elif x.dtype.kind in "fiu" and x.dtype.itemsize <= 8:
+            flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
+        else:
+            return NotImplemented
+    elif type(x) in (float, np.float64, np.float32):
+        x = np.asarray(x)
+        flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
+    else:
+        return NotImplemented
     c = d.c
     out = np.empty((x.size, math.prod(c.shape[2:])), dtype=c.dtype)
     d._ensure_c_contiguous()
-    d._evaluate(x.reshape(-1), nu, ext, out)
+    d._evaluate(flat, nu, ext, out)
     return _on_axis(out.reshape(x.shape + c.shape[2:]), x.ndim, d.axis)
 
 

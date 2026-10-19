@@ -21,6 +21,12 @@ def cases():
         for nq in (1, 10, 100):
             piece_q = piece_rng.random(nq)
             yield f"{cls.__name__} 100 knots, {nq} queries", lambda p=piece, q=piece_q: p(q)
+        piece_q32 = piece_rng.random(10).astype(np.float32)
+        piece_stride = piece_rng.random(20)[::2]
+        yield f"{cls.__name__} 100 knots, 10 float32 queries", lambda p=piece, q=piece_q32: p(q)
+        yield f"{cls.__name__} 100 knots, 10 strided queries", lambda p=piece, q=piece_stride: p(q)
+        yield f"{cls.__name__} 100 knots, Python scalar query", lambda p=piece: p(0.25)
+        yield f"{cls.__name__} 100 knots, float32 scalar query", lambda p=piece: p(np.float32(0.25))
 
     t = np.sort(r.random(1000))
     spl = si.make_interp_spline(t, r.standard_normal(1000), k=3)

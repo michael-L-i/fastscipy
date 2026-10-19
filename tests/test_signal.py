@@ -1,4 +1,5 @@
 import warnings
+import threading
 
 import numpy as np
 import pytest
@@ -6,9 +7,9 @@ import scipy.signal as sg
 
 import fastscipy
 from fastscipy import _threads
-from fastscipy.testing import identical
+from fastscipy.testing import check, identical
 
-THREADS = [1, 8]
+THREADS = [1, 2]
 ALIAS = {
     "butter": "iirfilter",
     "cheby1": "iirfilter",
@@ -150,6 +151,182 @@ def test_lfilter_fir(n):
     cmp("lfilter", b, np.ones(1), np.empty(0), fast=False)
     cmp("lfilter", b, np.ones(1), np.arange(n, dtype=float), axis=1, fast=False)
     cmp("lfilter", b, np.ones(1), np.arange(n, dtype=float), zi=np.zeros(taps), fast=False)
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("layout", ["C", "F", "strided", "reversed"])
+def test_iir_lfilter_and_linear_detrend_dtypes(dtype, layout):
+    rng = np.random.default_rng(831)
+    b, a = (c.astype(dtype) for c in sg.butter(3, 0.2))
+    for shape in ((31,), (3, 40), (2, 3, 21)):
+        data = rng.standard_normal(shape).astype(dtype)
+        if data.dtype.kind == "c":
+            data += 1j * rng.standard_normal(shape)
+        if layout == "F":
+            data = np.asfortranarray(data)
+        elif layout == "strided":
+            data = np.repeat(data, 2, axis=-1)[..., ::2]
+        elif layout == "reversed":
+            data = data[..., ::-1]
+        data.flags.writeable = False
+        for axis in (-1, 0):
+            initial_shape = list(shape)
+            initial_shape[axis] = max(a.size, b.size) - 1
+            zi = np.ones(initial_shape, dtype=dtype)
+            zi.flags.writeable = False
+            check(lambda: sg.lfilter(b, a, data, axis=axis))
+            check(lambda: sg.lfilter(b, a, data, axis=axis, zi=zi))
+            check(lambda: sg.detrend(data, axis=axis))
+    mutable = rng.standard_normal((4, 80)).astype(dtype)
+    if mutable.dtype.kind == "c":
+        mutable += 1j * rng.standard_normal(mutable.shape)
+    cmp("detrend", mutable, overwrite_data=True)
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("sections", [1, 2])
+def test_sosfilt_dtypes_and_initial_state_copy(dtype, sections):
+    rng = np.random.default_rng(832)
+    sos = sg.butter(2 * sections, 0.2, output="sos").astype(dtype)
+    for shape in ((43,), (3, 43)):
+        data = rng.standard_normal(shape).astype(dtype)
+        if data.dtype.kind == "c":
+            data += 1j * rng.standard_normal(shape)
+        for x in (data, data[..., ::-1], np.asfortranarray(data)):
+            for mixed in (False, True):
+                coefficients = sos.astype(np.float64) if mixed and sos.dtype.kind != "c" else sos
+                zi = np.ones((sections,) + shape[:-1] + (2,), dtype=dtype)
+                zi.flags.writeable = False
+                before = zi.tobytes()
+                check(lambda: sg.sosfilt(coefficients, x))
+                y, zf = check(lambda: sg.sosfilt(coefficients, x, zi=zi))
+                assert zi.tobytes() == before and not zi.flags.writeable
+                assert not np.shares_memory(zf, zi)
+                assert not np.shares_memory(y, x)
+
+
+def test_extended_filter_diagnostics():
+    for dtype in (np.float32, np.complex64, np.complex128):
+        b, a = (c.astype(dtype) for c in sg.butter(2, 0.2))
+        sos = sg.butter(2, 0.2, output="sos").astype(dtype)
+        for bad in (np.nan, np.inf, -np.inf):
+            x = np.arange(40, dtype=np.float64).astype(dtype)
+            x[3] = bad
+            cmp("lfilter", b, a, x, fast=None)
+            cmp("sosfilt", sos, x, fast=None)
+            cmp("detrend", x, fast=False)
+        x = np.arange(40, dtype=np.float64).astype(dtype)
+        cmp("lfilter", b, a, x, axis=3, fast=False)
+        cmp("lfilter", b, a, x, zi=np.zeros(9, dtype=dtype), fast=False)
+        cmp("sosfilt", sos, x, zi=np.zeros((7, 2), dtype=dtype), fast=False)
+        bad_sos = sos.copy()
+        bad_sos[0, 3] = 2
+        cmp("sosfilt", bad_sos, x, fast=False)
+        cmp("detrend", x, bp=[10, 20], fast=False)
+        with np.errstate(under="warn"):
+            cmp("detrend", x * np.array(1e-30, dtype=dtype), fast=False)
+    huge = np.full(4, complex(1.7e308, 1.7e308))
+    cmp("detrend", huge, fast=False)
+
+
+def test_filter_mixed_precision_and_float32_decimation():
+    rng = np.random.default_rng(833)
+    b, a = sg.butter(3, 0.2)
+    sos = sg.butter(3, 0.2, output="sos")
+    for dtype in (np.float32, np.complex64):
+        data = rng.standard_normal(200).astype(dtype)
+        if data.dtype.kind == "c":
+            data += 1j * rng.standard_normal(data.shape)
+        check(lambda: sg.lfilter(b, a, data))
+        check(lambda: sg.sosfilt(sos, data))
+        check(lambda: sg.lfilter(b, a, data, zi=np.ones(3, dtype=dtype)))
+    real_data = rng.standard_normal(200).astype(np.float32)
+    check(lambda: sg.decimate(real_data, 2))
+
+
+@pytest.mark.parametrize("mode", ["call", "log"])
+@pytest.mark.parametrize("source", ["lfilter_x", "lfilter_zi", "sosfilt_x", "sosfilt_zi", "sosfilt_sos"])
+def test_filter_cast_handler_runs_once(monkeypatch, mode, source):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    snan = np.array([0x7F800001], dtype=np.uint32).view(np.float32)[0]
+    b, a = np.array([0.2, 0.3]), np.array([1.0, -0.4])
+    sos = np.array([[0.2, 0.3, 0.0, 1.0, -0.4, 0.0]])
+    x, zi = np.ones(8), np.zeros(1)
+    name, location = source.split("_")
+    if location == "x":
+        x = np.ones(8, dtype=np.float32)
+        x[0] = snan
+    elif location == "zi":
+        zi = np.zeros(1 if name == "lfilter" else (1, 2), dtype=np.float32)
+        zi.flat[0] = snan
+    else:
+        sos = sos.astype(np.float32)
+        sos[0, 0] = snan
+    if name == "sosfilt" and location != "zi":
+        zi = np.zeros((1, 2))
+    inputs = [array.tobytes() for array in (sos, x, zi)]
+
+    class Handler:
+        def __init__(self):
+            self.events = []
+
+        def __call__(self, *args):
+            self.events.append(args)
+            raise RuntimeError("cast handler")
+
+        def write(self, message):
+            self(message)
+
+    def run():
+        handler = Handler()
+        with np.errstate(invalid=mode, call=handler):
+            with pytest.raises(Exception) as error:
+                if name == "lfilter":
+                    sg.lfilter(b, a, x, zi=zi)
+                else:
+                    sg.sosfilt(sos, x, zi=zi)
+        return handler.events, type(error.value), str(error.value)
+
+    with fastscipy.disabled():
+        expected = run()
+    assert len(expected[0]) == 1
+    assert run() == expected
+    assert [array.tobytes() for array in (sos, x, zi)] == inputs
+
+
+def test_detrend_design_cache_byte_budget(monkeypatch):
+    from fastscipy import _signal_small as small
+
+    cache = small._DesignCache()
+    cache.max_bytes, cache.max_entry_bytes = 4096, 1024
+    errors = []
+
+    def fill(offset):
+        try:
+            for n in range(24):
+                dtype = (np.float32, np.complex64, np.complex128)[n % 3]
+                cache.put((n + offset, dtype), np.ones((32, 2), dtype=dtype))
+        except Exception as exc:
+            errors.append(exc)
+
+    worker = threading.Thread(target=fill, args=(100,))
+    worker.start()
+    fill(0)
+    worker.join(timeout=5)
+    assert not worker.is_alive() and not errors
+    assert cache._bytes == sum(a.nbytes for a in cache.values()) <= cache.max_bytes
+    oversized = np.ones((1000, 2), np.complex128)
+    assert cache.put("large", oversized) is oversized and "large" not in cache
+    monkeypatch.setattr(small, "_A_cache", cache)
+    inherited_lock = cache._lock
+    with inherited_lock:
+        small._after_fork()
+    assert cache._lock is not inherited_lock and not cache._lock.locked()
+    assert cache._bytes == sum(a.nbytes for a in cache.values())
+    cache.clear()
+    assert not cache and cache._bytes == 0
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

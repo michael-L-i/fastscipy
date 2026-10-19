@@ -9,6 +9,8 @@ Caches are keyed on the exact bytes of their inputs and filled by SciPy's own
 code, only when it emitted no warning, so a hit returns SciPy's own value.
 """
 
+import os
+import threading
 import warnings
 
 import numpy as np
@@ -19,6 +21,8 @@ from scipy.signal._sosfilt import _sosfilt
 
 NI = NotImplemented
 F8, F4 = np.dtype(np.float64), np.dtype(np.float32)
+_FC = frozenset(np.dtype(t) for t in (np.float32, np.float64, np.complex64, np.complex128))
+_EPS = {dtype: float(np.finfo(dtype).eps) for dtype in _FC}
 ndarray = np.ndarray
 _linear_filter = _sigtools._linear_filter
 orig = {}  # name -> SciPy's function, set by _signal.patch()
@@ -37,7 +41,43 @@ class _Cache(dict):
         return val
 
 
-_zi_cache, _sos_cache, _iir_cache, _sft_cache, _A_cache = (_Cache() for _ in range(5))
+class _DesignCache(_Cache):
+    max_bytes, max_entry_bytes = 8 << 20, 1 << 20
+
+    def __init__(self):
+        super().__init__()
+        self._bytes = 0
+        self._lock = threading.Lock()
+
+    def put(self, key, val):
+        if val.nbytes > self.max_entry_bytes:
+            return val
+        with self._lock:
+            previous = self.pop(key, None)
+            if previous is not None:
+                self._bytes -= previous.nbytes
+            while self and (len(self) >= 256 or self._bytes + val.nbytes > self.max_bytes):
+                self._bytes -= self.pop(next(iter(self))).nbytes
+            self[key] = val
+            self._bytes += val.nbytes
+        return val
+
+    def clear(self):
+        with self._lock:
+            super().clear()
+            self._bytes = 0
+
+
+_zi_cache, _sos_cache, _iir_cache, _sft_cache = (_Cache() for _ in range(4))
+_A_cache = _DesignCache()
+
+
+def _after_fork():
+    _A_cache._lock = threading.Lock()
+    _A_cache._bytes = sum(a.nbytes for a in _A_cache.values())
+
+
+os.register_at_fork(after_in_child=_after_fork)
 
 
 def _quiet(fn, *a):
@@ -95,6 +135,16 @@ def _f8(x):
     return type(x) is ndarray and x.dtype == F8
 
 
+def _fc(x):
+    return type(x) is ndarray and x.dtype in _FC
+
+
+def _filter_copy(x, dtype):
+    # A signaling NaN cast must not call a user handler before falling back.
+    with np.errstate(all="raise"):
+        return np.array(x, dtype=dtype, order="C", copy=True)
+
+
 def _last_axis(x, axis):
     return x.ndim in (1, 2) and type(axis) is int and axis in (-1, x.ndim - 1)
 
@@ -112,30 +162,43 @@ def _odd_ext(x, edge):
 # --------------------------------------------------------------------- filters
 def sosfilt(sos, x, axis=-1, zi=None):
     if not (
-        type(x) is ndarray
-        and x.dtype in (F8, F4)
-        and _f8(sos)
+        _fc(x)
+        and _fc(sos)
         and x.size
         and _last_axis(x, axis)
         and sos.ndim == 2
         and sos.shape[1] == 6
         and sos.flags.c_contiguous
-        and _sos_info(sos)[0]
     ):
         return NI
     ns = sos.shape[0]
-    y = np.array(x, F8, order="C")  # the copy SciPy makes, filtered in place
-    if zi is None:
-        _sosfilt(sos, y.reshape(-1, x.shape[-1]), np.zeros((y.size // x.shape[-1], ns, 2)))
-        return y
-    if not (_f8(zi) and zi.shape == (ns,) + x.shape[:-1] + (2,)):
+    if ns == 0 or (not _sos_info(sos)[0] if _f8(sos) else not np.all(sos[:, 3] == 1)):
         return NI
+    if zi is not None and not (_fc(zi) and zi.shape == (ns,) + x.shape[:-1] + (2,)):
+        return NI
+    dtype = (
+        F8
+        if _f8(sos) and x.dtype in (F8, F4) and (zi is None or _f8(zi))
+        else np.result_type(sos, x, *(() if zi is None else (zi,)))
+    )
+    try:
+        coefficients = sos if sos.dtype == dtype else _filter_copy(sos, dtype)
+        y = np.array(x, order="C") if x.dtype == dtype else _filter_copy(x, dtype)
+        z = None
+        if zi is not None:
+            state = zi if x.ndim == 1 else np.moveaxis(zi, (0, 2), (-2, -1))
+            z = np.array(state, order="C") if zi.dtype == dtype else _filter_copy(state, dtype)
+    except FloatingPointError:
+        return NI
+    if zi is None:
+        _sosfilt(coefficients, y.reshape(-1, x.shape[-1]), np.zeros((y.size // x.shape[-1], ns, 2), dtype=dtype))
+        return y
     if x.ndim == 1:
-        z = zi.copy().reshape(1, ns, 2)
-        _sosfilt(sos, y.reshape(1, -1), z)
+        z = z.reshape(1, ns, 2)
+        _sosfilt(coefficients, y.reshape(1, -1), z)
         return y, z.reshape(ns, 2)
-    z = np.ascontiguousarray(np.moveaxis(zi, (0, 2), (-2, -1))).reshape(-1, ns, 2)
-    _sosfilt(sos, y, z)
+    z = z.reshape(-1, ns, 2)
+    _sosfilt(coefficients, y, z)
     return y, np.moveaxis(z.reshape(x.shape[0], ns, 2), (-2, -1), (0, 2))
 
 
@@ -173,11 +236,13 @@ def sosfiltfilt(sos, x, axis=-1, padtype="odd", padlen=None):
 
 
 def lfilter(b, a, x, axis=-1, zi=None):
-    if not (_f8(b) and _f8(a) and _f8(x) and b.ndim == 1 and a.ndim == 1 and b.size and a.size):
+    if not (_fc(b) and _fc(a) and _fc(x) and b.ndim == 1 and a.ndim == 1 and b.size and a.size):
         return NI
-    if zi is not None and not _f8(zi):
+    if zi is not None and not _fc(zi):
         return NI
     if a.size == 1:
+        if not (_f8(b) and _f8(a) and _f8(x) and (zi is None or _f8(zi))):
+            return NI  # FIR promotion and convolve semantics are matched only for float64.
         if not (x.ndim == 1 and x.size and type(axis) is int and axis in (0, -1)):
             return NI
         if zi is not None and zi.shape != (b.size - 1,):
@@ -194,6 +259,9 @@ def lfilter(b, a, x, axis=-1, zi=None):
         out = full[: x.size]
         return out if zi is None else (out, full[x.size :])
     try:
+        if b.dtype != a.dtype or b.dtype != x.dtype or (zi is not None and b.dtype != zi.dtype):
+            with np.errstate(all="raise"):
+                return _linear_filter(b, a, x, axis, *(() if zi is None else (zi,)))
         return _linear_filter(b, a, x, axis, *(() if zi is None else (zi,)))
     except Exception:  # bad axis, shapes or coefficients: SciPy raises its own error
         return NI
@@ -293,7 +361,7 @@ def iirfilter(N, Wn, rp=None, rs=None, btype="band", analog=False, ftype="butter
 # ---------------------------------------------------------- detrend / hilbert
 def detrend(data, axis=-1, type="linear", bp=0, overwrite_data=False):
     if not (
-        _f8(data)
+        _fc(data)
         and data.size
         and data.ndim
         and (_is(type, "linear") or _is(type, "l"))
@@ -306,20 +374,32 @@ def detrend(data, axis=-1, type="linear", bp=0, overwrite_data=False):
     N = data.shape[axis]
     if N < 2:
         return NI
-    A = _A_cache.get(N)
+    dtype = data.dtype
+    key = N, dtype
+    A = _A_cache.get(key)
     if A is None:
-        A = np.ones((N, 2))
-        A[:, 0] = np.arange(1, N + 1, dtype="d") / N
-        A = _A_cache.put(N, _ro(A))
+        A = np.ones((N, 2), dtype=dtype)
+        # SciPy subtracts NumPy integer breakpoints. Its divisor promotes
+        # low-precision complex values before rounding back into A.
+        A[:, 0] = np.arange(1, N + 1, dtype=dtype) / np.intp(N)
+        A = _A_cache.put(key, _ro(A))
     axis %= data.ndim
     moved = np.moveaxis(data, axis, 0)
     shape = moved.shape
     b = moved.reshape(N, -1)
     if not overwrite_data:
         b = b.copy()
-    if not np.abs(b).max() < 1e100:  # NaN/inf: lstsq raises; huge: its residual check can warn
+    if np.geterr()["under"] != "ignore":
         return NI
-    x, _, _, err = _batched_linalg._lstsq(A, b, 2.220446049250313e-16, "gelsd", False, False)
+    bound = 1e10 if dtype.char in "fF" else 1e100
+    if dtype.kind == "c":
+        # Complex absolute values can overflow even when both components are
+        # finite. Check components separately so only SciPy emits diagnostics.
+        if not (np.abs(b.real).max() < bound / 2 and np.abs(b.imag).max() < bound / 2):
+            return NI
+    elif not np.abs(b).max() < bound:
+        return NI
+    x, _, _, err = _batched_linalg._lstsq(A, b, _EPS[dtype], "gelsd", False, False)
     if err:
         return NI
     b[...] = b - A @ x[..., :2, :]

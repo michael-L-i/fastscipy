@@ -1,0 +1,116 @@
+{
+ "meta": {
+  "threads": 2,
+  "design_cache_max_bytes": 8388608,
+  "design_cache_max_entry_bytes": 1048576
+ },
+ "cases": {
+  "lfilter IIR float32, 200 samples": {
+   "scipy_ms": 0.0024579931050539017,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0019160215742886066,
+   "x1t": 1.2828629583497888,
+   "nt_ms": 0.0019579892978072166,
+   "xnt": 1.2553659551697485
+  },
+  "sosfilt float32, 200 samples": {
+   "scipy_ms": 0.008332979632541537,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0032910029403865337,
+   "x1t": 2.5320486743663664,
+   "nt_ms": 0.0032919924706220627,
+   "xnt": 2.531287573378598
+  },
+  "detrend float32, 200 samples": {
+   "scipy_ms": 0.02579198917374015,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.008208007784560323,
+   "x1t": 3.1422958957539224,
+   "nt_ms": 0.008291011909022927,
+   "xnt": 3.1108373087332426
+  },
+  "lfilter IIR complex64, 200 samples": {
+   "scipy_ms": 0.003374996595084667,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.002874992787837982,
+   "x1t": 1.1739148040168448,
+   "nt_ms": 0.002874992787837982,
+   "xnt": 1.1739148040168448
+  },
+  "sosfilt complex64, 200 samples": {
+   "scipy_ms": 0.00866700429469347,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0036249984987080097,
+   "x1t": 2.390898726656711,
+   "nt_ms": 0.003583991201594472,
+   "xnt": 2.4182549027569125
+  },
+  "detrend complex64, 200 samples": {
+   "scipy_ms": 0.028790993383154273,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.011750002158805728,
+   "x1t": 2.450296859016117,
+   "nt_ms": 0.011415977496653795,
+   "xnt": 2.5219910771191842
+  },
+  "lfilter IIR complex128, 200 samples": {
+   "scipy_ms": 0.0034580007195472717,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0029999937396496534,
+   "x1t": 1.1526693118869993,
+   "nt_ms": 0.0029579969123005867,
+   "xnt": 1.1690345940414815
+  },
+  "sosfilt complex128, 200 samples": {
+   "scipy_ms": 0.009332987247034907,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0040000013541430235,
+   "x1t": 2.333246021871521,
+   "nt_ms": 0.003999972250312567,
+   "xnt": 2.3332629985884545
+  },
+  "detrend complex128, 200 samples": {
+   "scipy_ms": 0.030625000363215804,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.013249984476715326,
+   "x1t": 2.3113234900036463,
+   "nt_ms": 0.013290991773828864,
+   "xnt": 2.3041922592653417
+  },
+  "sosfilt one section with readonly zi, 3x80": {
+   "scipy_ms": 0.010707997716963291,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005332985892891884,
+   "x1t": 2.0078803754638725,
+   "nt_ms": 0.005374982720240951,
+   "xnt": 1.9921920263370207
+  }
+ },
+ "legacy_float64": {
+  "lfilter": {
+   "previous_ms": 0.002210166014265269,
+   "current_ms": 0.002272416022606194,
+   "speedup": 0.9726062447537527
+  },
+  "sosfilt": {
+   "previous_ms": 0.002271584002301097,
+   "current_ms": 0.002434668014757335,
+   "speedup": 0.9330159136819758
+  },
+  "detrend": {
+   "previous_ms": 0.008610915974713862,
+   "current_ms": 0.009333333990070969,
+   "speedup": 0.922598075229534
+  }
+ }
+}

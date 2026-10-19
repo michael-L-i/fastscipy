@@ -3,6 +3,22 @@ import scipy.signal as sg
 
 
 def cases():
+    sweep_rng = np.random.default_rng(30)
+    for dtype in (np.float32, np.complex64, np.complex128):
+        data = sweep_rng.standard_normal(200).astype(dtype)
+        if data.dtype.kind == "c":
+            data += 1j * sweep_rng.standard_normal(data.size)
+        b_new, a_new = (c.astype(dtype) for c in sg.butter(3, 0.2))
+        sos_new = sg.butter(3, 0.2, output="sos").astype(dtype)
+        label = np.dtype(dtype).name
+        yield f"lfilter IIR {label}, 200 samples", lambda b=b_new, a=a_new, x=data: sg.lfilter(b, a, x)
+        yield f"sosfilt {label}, 200 samples", lambda sos=sos_new, x=data: sg.sosfilt(sos, x)
+        yield f"detrend {label}, 200 samples", lambda x=data: sg.detrend(x)
+    state_sos = sg.butter(2, 0.2, output="sos")
+    state_data = sweep_rng.standard_normal((3, 80))
+    readonly_state = np.ones((1, 3, 2))
+    readonly_state.flags.writeable = False
+    yield "sosfilt one section with readonly zi, 3x80", lambda: sg.sosfilt(state_sos, state_data, zi=readonly_state)
     rng = np.random.default_rng(0)
     x200, x1000 = rng.standard_normal(200), rng.standard_normal(1000)
     sos, (b, a) = sg.butter(4, 0.2, output="sos"), sg.butter(4, 0.2)

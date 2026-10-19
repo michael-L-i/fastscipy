@@ -329,6 +329,174 @@ def test_detrend_design_cache_byte_budget(monkeypatch):
     assert not cache and cache._bytes == 0
 
 
+@pytest.mark.parametrize("layout", ["C", "F", "strided", "reversed"])
+def test_float32_welch_csd_frames(layout):
+    rng = np.random.default_rng(834)
+    for shape in ((35,), (3, 35)):
+        x, y = (rng.standard_normal(shape).astype(np.float32) for _ in range(2))
+        if layout == "F":
+            x, y = np.asfortranarray(x), np.asfortranarray(y)
+        elif layout == "strided":
+            x, y = (np.repeat(a, 2, axis=-1)[..., ::2] for a in (x, y))
+        elif layout == "reversed":
+            x, y = x[..., ::-1], y[..., ::-1]
+        x.flags.writeable = y.flags.writeable = False
+        for nperseg, nfft, noverlap, detrend, scaling in (
+            (8, 8, 4, "constant", "density"),
+            (9, 17, 0, False, "spectrum"),
+            (35, 35, 17, "constant", "spectrum"),
+            (1, 3, 0, False, "density"),
+        ):
+            options = dict(nperseg=nperseg, nfft=nfft, noverlap=noverlap, detrend=detrend, scaling=scaling)
+            for name, args in (("welch", (x,)), ("csd", (x, y)), ("csd", (x, y.astype(np.float64)))):
+                expected_fast = x.ndim == 1 or x.flags.c_contiguous
+                before = fastscipy.stats().get((name, "fast"), 0)
+                check(lambda: getattr(sg, name)(*args, **options), fast=expected_fast)
+                assert (fastscipy.stats().get((name, "fast"), 0) > before) == expected_fast
+    for value in (np.nan, np.inf, 1e25, 1e-25):
+        data = np.full(35, value, dtype=np.float32)
+        for mode in ("warn", "raise"):
+            with np.errstate(all=mode):
+                cmp("welch", data, nperseg=9, fast=None)
+                cmp("csd", data, np.ones_like(data), nperseg=9, fast=None)
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.complex64, np.complex128])
+@pytest.mark.parametrize("layout", ["C", "F", "strided", "reversed"])
+def test_typed_sosfiltfilt(dtype, layout):
+    from fastscipy import _signal_small as small
+
+    rng = np.random.default_rng(835)
+    for sections in (1, 2):
+        sos = sg.butter(2 * sections, 0.2, output="sos").astype(dtype)
+        if sos.dtype.kind == "c":
+            sos[:, :3] += 0.01j
+        for shape in ((80,), (3, 80)):
+            x = rng.standard_normal(shape).astype(dtype)
+            if x.dtype.kind == "c":
+                x += 1j * rng.standard_normal(shape)
+            if layout == "F":
+                x = np.asfortranarray(x)
+            elif layout == "strided":
+                x = np.repeat(x, 2, axis=-1)[..., ::2]
+            elif layout == "reversed":
+                x = x[..., ::-1]
+            x.flags.writeable = False
+            for _ in range(2):  # cold then cached original initial conditions
+                before = fastscipy.stats().get(("sosfiltfilt", "fast"), 0)
+                check(lambda: sg.sosfiltfilt(sos, x))
+                assert fastscipy.stats().get(("sosfiltfilt", "fast"), 0) > before
+            sos[0, 0] *= 0.75
+            check(lambda: sg.sosfiltfilt(sos, x))
+        assert all(key[0] == info[2].dtype for key, info in small._sos_cache.items() if info[0])
+    cmp("sosfiltfilt", sos, np.ones(80, dtype=dtype), padlen=5, fast=False)
+    cmp("sosfiltfilt", sos, np.ones(80, dtype=dtype), padtype="even", fast=False)
+    cmp("sosfiltfilt", sos, np.ones(3, dtype=dtype), fast=False)
+    cmp("sosfiltfilt", sos, np.ones(80, dtype=np.float64), fast=False)
+
+
+@pytest.mark.parametrize("mode", ["call", "log"])
+@pytest.mark.parametrize("name", ["welch", "csd", "sosfiltfilt"])
+def test_typed_spectral_and_sos_callback_once(monkeypatch, mode, name):
+    from fastscipy import _patch, _signal_small as small
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    events = []
+
+    class Handler:
+        def __call__(self, *args):
+            events.append(args)
+            raise RuntimeError("numeric handler")
+
+        def write(self, message):
+            self(message)
+
+    x = np.ones(80, dtype=np.float32)
+    sos = sg.butter(2, 0.2, output="sos").astype(np.float32)
+    sos[0, 0] = np.array([0x7F800001], np.uint32).view(np.float32)[0]
+    if name == "sosfiltfilt":
+        args, kwargs = (sos, x), {}
+    else:
+        x *= 1e25  # spectrum overflows only when cast back to float32
+        args, kwargs = (x,) if name == "welch" else (x, x.copy()), dict(nperseg=9, detrend=False)
+
+    def run():
+        events.clear()
+        with np.errstate(all=mode, call=Handler()):
+            with pytest.raises(Exception) as error:
+                getattr(sg, name)(*args, **kwargs)
+        return list(events), type(error.value), str(error.value)
+
+    with fastscipy.disabled():
+        expected = run()
+    assert len(expected[0]) == 1
+    small._sos_cache.clear()
+    assert run() == expected
+
+
+def test_typed_sosfiltfilt_nonfinite_and_extreme_data():
+    for dtype in (np.float32, np.complex64, np.complex128):
+        sos = sg.butter(2, 0.2, output="sos").astype(dtype)
+        for value in (np.nan, np.inf, -np.inf, -0.0, 1e35, 1e-35):
+            data = np.full(80, value, dtype=dtype)
+            for mode in ("warn", "raise"):
+                with np.errstate(all=mode):
+                    cmp("sosfiltfilt", sos, data, fast=None)
+
+
+@pytest.mark.parametrize("mode", ["call", "log"])
+@pytest.mark.parametrize(
+    "case",
+    ["sos_underflow", "filtfilt_underflow", "fir_underflow", "zi_cache", "sft_cache", "window_cache", "iir_cache"],
+)
+def test_filter_preflight_callback_once(monkeypatch, mode, case):
+    from fastscipy import _patch, _signal_small as small
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    sos = sg.butter(2, 0.2, output="sos").astype(np.float32)
+    b, a = sg.butter(2, 0.2)
+    if case == "sos_underflow":
+        name, args, kwargs = "sosfiltfilt", (sos, np.full(1000, 1e-40, np.float32)), {}
+    elif case == "filtfilt_underflow":
+        name, args, kwargs = "filtfilt", (b, a, np.full(1000, 1e-320)), {}
+    elif case == "fir_underflow":
+        name, args, kwargs = "lfilter", (np.full(2, 1e-300), np.array([1e10]), np.ones(80)), {}
+    elif case == "zi_cache":
+        b[0] = np.array([0x7FF0000000000001], np.uint64).view(np.float64)[0]
+        name, args, kwargs = "filtfilt", (b, a, np.ones(80)), {}
+    elif case == "sft_cache":
+        name, args, kwargs = "welch", (np.ones(1000),), dict(window=np.full(256, 1e-320))
+    elif case == "window_cache":
+        name, args, kwargs = "welch", (np.ones(1000),), dict(window=("kaiser", 1e308))
+    else:
+        name, args, kwargs = "butter", (2, 0.2), dict(fs=1e-320)
+    events = []
+
+    class Handler:
+        def __call__(self, *args):
+            events.append(args)
+            raise RuntimeError("preflight handler")
+
+        def write(self, message):
+            self(message)
+
+    err_options = {"under": mode} if "underflow" in case else {"all": mode}
+
+    def run():
+        events.clear()
+        with np.errstate(call=Handler(), **err_options):
+            with pytest.raises(Exception) as error:
+                getattr(sg, name)(*args, **kwargs)
+        return list(events), type(error.value), str(error.value)
+
+    with fastscipy.disabled():
+        expected = run()
+    assert len(expected[0]) == 1
+    for cache in (small._zi_cache, small._sos_cache, small._sft_cache, small._iir_cache):
+        cache.clear()
+    assert run() == expected
+
+
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_hilbert_sizes_and_dtypes(dtype):

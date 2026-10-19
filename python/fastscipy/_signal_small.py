@@ -26,7 +26,7 @@ _EPS = {dtype: float(np.finfo(dtype).eps) for dtype in _FC}
 ndarray = np.ndarray
 _linear_filter = _sigtools._linear_filter
 orig = {}  # name -> SciPy's function, set by _signal.patch()
-_RAISE = dict(divide="raise", over="raise", invalid="raise")  # overflow: let SciPy warn from its own frame
+_RAISE = dict(all="raise")  # let SciPy emit diagnostics from its own frame
 
 
 class _Uncacheable(Exception):
@@ -84,7 +84,11 @@ def _quiet(fn, *a):
     """``fn(*a)`` and whether it emitted no warning (only then is the value cacheable)."""
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
-        r = fn(*a)
+        try:
+            with np.errstate(all="raise"):
+                r = fn(*a)
+        except FloatingPointError:
+            return False, None
     return not w, r
 
 
@@ -109,18 +113,19 @@ def _lf_zi(b, a):
 
 
 def _sos_info(sos):
-    """(usable, ntaps, read-only sosfilt_zi) for a C-contiguous float64 (n, 6) sos."""
-    key = sos.shape, sos.tobytes()
+    """(usable, ntaps, read-only sosfilt_zi) for C-contiguous (n, 6) coefficients."""
+    key = sos.dtype, sos.shape, sos.tobytes()
     info = _sos_cache.get(key)
     if info is None:
         info = False, 0, None
         try:
-            _filter_design._validate_sos(sos)
-            ns = sos.shape[0]
-            ntaps = 2 * ns + 1 - min((sos[:, 2] == 0).sum(), (sos[:, 5] == 0).sum())
-            ok, zi = _quiet(orig["sosfilt_zi"], sos)
-            if ok and zi.dtype == F8 and zi.shape == (ns, 2):
-                info = True, int(ntaps), _ro(zi)
+            with np.errstate(all="raise"):
+                _filter_design._validate_sos(sos)
+                ns = sos.shape[0]
+                ntaps = 2 * ns + 1 - min((sos[:, 2] == 0).sum(), (sos[:, 5] == 0).sum())
+                ok, zi = _quiet(orig["sosfilt_zi"], sos)
+                if ok and zi.dtype == sos.dtype and zi.shape == (ns, 2):
+                    info = True, int(ntaps), _ro(zi)
         except Exception:
             pass
         _sos_cache.put(key, info)
@@ -204,9 +209,9 @@ def sosfilt(sos, x, axis=-1, zi=None):
 
 def sosfiltfilt(sos, x, axis=-1, padtype="odd", padlen=None):
     if not (
-        type(x) is ndarray
-        and x.dtype in (F8, F4)
-        and _f8(sos)
+        _fc(x)
+        and _fc(sos)
+        and (x.dtype == sos.dtype or (sos.dtype == F8 and x.dtype == F4))
         and _last_axis(x, axis)
         and padlen is None
         and _is(padtype, "odd")
@@ -224,8 +229,8 @@ def sosfiltfilt(sos, x, axis=-1, padtype="odd", padlen=None):
         with np.errstate(**_RAISE):
             y = _odd_ext(x, edge)
             z = zi * y[:1] if one_d else zi[None] * y[:, :1, None]
-            if y.dtype != F8:
-                y = y.astype(F8)
+            if y.dtype != sos.dtype:
+                y = y.astype(sos.dtype)
             _sosfilt(sos, y.reshape(1, -1) if one_d else y, z.reshape(-1, ns, 2))
             z = zi * y[..., -1:] if one_d else zi[None] * y[:, -1:, None]
             yr = y[..., ::-1].copy()
@@ -445,20 +450,23 @@ def _sft(window, nperseg, hop, fs, nfft, scaling):
     key = _window_key(window), nperseg, hop, _key(fs), nfft, scaling
     e = _sft_cache.get(key)
     if e is None:
-        win = get_window(window, nperseg) if isinstance(window, (str, tuple)) else np.asarray(window)
-        scale = {"spectrum": "magnitude", "density": "psd"}[scaling]
-        ok, sft = _quiet(
-            lambda: ShortTimeFFT(win, hop, fs, fft_mode="onesided", mfft=nfft, scale_to=scale, phase_shift=None)
-        )
-        if not ok or sft.win.dtype != F8:
+
+        def build():
+            win = get_window(window, nperseg) if isinstance(window, (str, tuple)) else np.asarray(window)
+            scale = {"spectrum": "magnitude", "density": "psd"}[scaling]
+            sft = ShortTimeFFT(win, hop, fs, fft_mode="onesided", mfft=nfft, scale_to=scale, phase_shift=None)
+            return (sft, sft.win.conj(), _ro(sft.f.copy()), _Cache()) if sft.win.dtype == F8 else None
+
+        ok, e = _quiet(build)
+        if not ok or e is None:
             return None
-        e = _sft_cache.put(key, (sft, sft.win.conj(), _ro(sft.f.copy()), _Cache()))
+        _sft_cache.put(key, e)
     return e
 
 
 def _frames(e, x, nperseg, p1, detr):
     """``ShortTimeFFT.stft_detrend(x, detr, 0, p1, k_offset=nperseg // 2)`` for C-contiguous
-    float64 x. One FFT per frame: a batched rfft is not bit-identical."""
+    real x. One FFT per frame: a batched rfft is not bit-identical."""
     sft, wc, f, p_ranges = e
     n, m, hop = x.shape[-1], sft.m_num, sft.hop
     pr = p_ranges.get((n, p1))
@@ -470,7 +478,7 @@ def _frames(e, x, nperseg, p1, detr):
     k1 = k0 + n1 + m
     lo, hi = -min(k0, 0), max(k1 - n, 0)
     if lo or hi:
-        x1 = np.zeros(x.shape[:-1] + (lo + min(k1, n) - max(k0, 0) + hi,))
+        x1 = np.zeros(x.shape[:-1] + (lo + min(k1, n) - max(k0, 0) + hi,), dtype=x.dtype)
         x1[..., lo : x1.shape[-1] - hi] = x[..., max(k0, 0) : min(k1, n)]
     else:
         x1 = x[..., k0:k1]
@@ -520,8 +528,9 @@ def welch(
 def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, scaling, axis, average):
     same = y is x
     if not (
-        _f8(x)
-        and (same or (_f8(y) and y.shape == x.shape))
+        type(x) is ndarray
+        and x.dtype in (F8, F4)
+        and (same or (type(y) is ndarray and y.dtype in (F8, F4) and y.shape == x.shape))
         and x.size
         and _last_axis(x, axis)
         and return_onesided is True
@@ -529,6 +538,12 @@ def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, sc
         and (_is(scaling, "density") or _is(scaling, "spectrum"))
         and (detrend is False or _is(detrend, "constant"))
         and type(window) in (str, tuple, ndarray)
+    ):
+        return NI
+    # np.pad preserves column-major traversal; float32 detrending then rounds
+    # differently from the row-contiguous frames used here.
+    if (x.dtype == F4 and x.ndim == 2 and not x.flags.c_contiguous) or (
+        not same and y.dtype == F4 and y.ndim == 2 and not y.flags.c_contiguous
     ):
         return NI
     n = x.shape[-1]
@@ -570,5 +585,12 @@ def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, sc
             P = P.mean(axis=-1) if P.shape[-1] > 1 else P.reshape(P.shape[:-1])
     except FloatingPointError:
         return NI
-    P = P.astype(np.complex128)
+    if x.dtype == F4 and y.dtype == F4:
+        try:
+            with np.errstate(all="raise"):
+                P = P.astype(np.complex64)
+        except FloatingPointError:
+            return NI
+    else:
+        P = P.astype(np.complex128)
     return e[2].copy(), P.real if same else P

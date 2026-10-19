@@ -19,6 +19,19 @@ def cases():
     readonly_state = np.ones((1, 3, 2))
     readonly_state.flags.writeable = False
     yield "sosfilt one section with readonly zi, 3x80", lambda: sg.sosfilt(state_sos, state_data, zi=readonly_state)
+    spectral_x = sweep_rng.standard_normal(1000).astype(np.float32)
+    spectral_y = sweep_rng.standard_normal(1000).astype(np.float32)
+    yield "welch float32, 1000 samples", lambda: sg.welch(spectral_x, nperseg=256)
+    yield "csd float32, 1000 samples", lambda: sg.csd(spectral_x, spectral_y, nperseg=256)
+    for dtype in (np.float32, np.complex64, np.complex128):
+        typed_sos = sg.butter(4, 0.2, output="sos").astype(dtype)
+        typed_x = spectral_x.astype(dtype)
+        if typed_x.dtype.kind == "c":
+            typed_x += 1j * spectral_y
+        yield (
+            f"sosfiltfilt {np.dtype(dtype).name}, 1000 samples",
+            lambda sos=typed_sos, x=typed_x: sg.sosfiltfilt(sos, x),
+        )
     rng = np.random.default_rng(0)
     x200, x1000 = rng.standard_normal(200), rng.standard_normal(1000)
     sos, (b, a) = sg.butter(4, 0.2, output="sos"), sg.butter(4, 0.2)

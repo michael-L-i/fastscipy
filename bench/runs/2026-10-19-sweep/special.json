@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "threads": 2,
+  "blas_threads": 1,
+  "budget_s": 0.1
+ },
+ "cases": {
+  "erf Fortran 512x1024 float64": {
+   "scipy_ms": 3.5213750088587403,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.5471250012051314,
+   "x1t": 0.9927406019416731,
+   "nt_ms": 1.923750009154901,
+   "xnt": 1.8304743298770263
+  },
+  "gammaln Fortran 512x1024 float64": {
+   "scipy_ms": 5.316124996170402,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.383625015383586,
+   "x1t": 0.9874619760811154,
+   "nt_ms": 2.8761250141542405,
+   "xnt": 1.84836367334807
+  },
+  "airy Fortran 512x1024 float64": {
+   "scipy_ms": 31.337209016783163,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 31.398791004903615,
+   "x1t": 0.9980387146718218,
+   "nt_ms": 16.096375009510666,
+   "xnt": 1.9468488400815298
+  }
+ }
+}

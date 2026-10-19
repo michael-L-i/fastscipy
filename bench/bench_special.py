@@ -6,6 +6,9 @@ rng = np.random.default_rng(0)
 
 
 def cases():
+    fortran = np.asfortranarray(np.random.default_rng(840).uniform(0.1, 2, (512, 1024)))
+    for name in ("erf", "gammaln", "airy"):
+        yield f"{name} Fortran 512x1024 float64", lambda n=name: getattr(sc, n)(fortran)
     for n in (10**5, 10**6, 10**7):
         for dt in (np.float64, np.float32):
             x = rng.uniform(0.1, 5, n).astype(dt)

@@ -68,6 +68,45 @@ def test_shapes(shape, threads):
     go(lambda: sc.jv(1.5, x), threads)
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128])
+@pytest.mark.parametrize("shape", [(512, 1024), (48, 64, 96)])
+def test_fortran_unary(shape, dtype, threads):
+    rng = np.random.default_rng(840)
+    x = rng.uniform(0.1, 2, shape).astype(dtype, order="F")
+    if np.iscomplexobj(x):
+        x += 1j * rng.uniform(0.1, 1, shape)
+    x.flags.writeable = False
+    before = x.tobytes()
+    for name in ("erf", "airy"):
+        go(lambda: getattr(sc, name)(x), threads)
+    assert x.tobytes() == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_fortran_warning_and_fallback(threads):
+    x = np.asfortranarray(np.linspace(-2, 2, 524288).reshape(512, 1024))
+    for settings in ({}, {"invalid": "warn"}, {"invalid": "raise"}):
+
+        def outcome():
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                try:
+                    result = sc.logit(x)
+                except Exception as e:
+                    result = type(e), str(e)
+            return result, [(w.category, str(w.message)) for w in caught]
+
+        with np.errstate(**settings):
+            with fastscipy.disabled():
+                expected = outcome()
+            from fastscipy.testing import assert_identical
+
+            assert_identical(expected, outcome())
+    check(lambda: sc.erf(x[:, ::2]), fast=False)
+    check(lambda: sc.jv(1.5, x), fast=False)  # Multiple arguments retain the original path.
+
+
 def test_broadcast(threads):
     a, b = x64(1000)[:, None], x64(500)[None, :]
     c = x64(300_000).reshape(300, 1000)

@@ -50,10 +50,15 @@ def _threaded(uf, st, args):
     if get_num_threads() <= 1 or any(v != "ignore" for k, v in sc.geterr().items() if k != "memory"):
         return NotImplemented
     shapes = []
+    order = "C"
     for a in args:
         if type(a) is np.ndarray:
-            if a.dtype.char not in _OK or not a.flags.c_contiguous:
+            if a.dtype.char not in _OK:
                 return NotImplemented
+            if not a.flags.c_contiguous:
+                if len(args) != 1 or not a.flags.f_contiguous:
+                    return NotImplemented
+                order = "F"  # A unary ufunc preserves the input's Fortran layout.
             shapes.append(a.shape)
         elif not isinstance(a, _SCALARS):
             return NotImplemented
@@ -81,7 +86,7 @@ def _threaded(uf, st, args):
     if ns * n < 2 * _CHUNK_NS:
         return NotImplemented
     first = first if isinstance(first, tuple) else (first,)
-    outs = tuple(np.empty(shape, f.dtype) for f in first)
+    outs = tuple(np.empty(shape, f.dtype, order=order) for f in first)
     sel = lambda s: (slice(None),) * ax + (s,)
     for o, f in zip(outs, first):
         o[sel(slice(0, probe))] = f

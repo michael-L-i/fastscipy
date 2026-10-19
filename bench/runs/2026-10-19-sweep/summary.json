@@ -1,0 +1,212 @@
+{
+ "scope": "Completed optimization sweep across 13 project areas. Includes retained new variants and control cases, not comprehensive SciPy coverage or a claim of universal optimality.",
+ "baseline": "Unpatched SciPy 1.18.1, same process and inputs. Per-area artifacts preserve incremental comparisons against earlier fastscipy revisions where measured.",
+ "measurement": {
+  "native_threads": [
+   1,
+   2
+  ],
+  "blas_threads": 1,
+  "serial_benchmark_processes": true,
+  "note": "These 117 cases are a targeted sweep, not a replacement for the earlier 18-thread published benchmark table. Small timing differences around 1x are noise or memory/coverage improvements."
+ },
+ "validation": {
+  "retained_benchmark_cases": 117,
+  "benchmark_failures": [],
+  "all_results_identical": true,
+  "all_expected_fast_paths_used": true,
+  "full_suite_passed": 6929,
+  "full_suite_warnings": 57,
+  "full_suite_seconds": 102.06,
+  "full_suite_peak_rss_bytes": 525336576,
+  "full_suite_swaps": 0,
+  "benchmark_peak_rss_bytes": 265420800,
+  "lint": "ruff check python tests bench tools passed",
+  "format": "ruff format --check python tests bench tools passed",
+  "upstream": "Targeted paired upstream comparisons unchanged; runs overlap and are not a unique-test count. Final signal run: 284 unchanged outcomes (282 passed, 2 skipped), 804 fast calls and zero fast errors.",
+  "independent_review": "No actionable witnessed issues in integration, spatial, stats, special, cluster and no-retry hook review; final signal underflow callback duplication found and fixed with call/log regressions."
+ },
+ "areas": {
+  "cluster": {
+   "cases": 4,
+   "one_thread": {
+    "min": 1.1194304337219267,
+    "geomean": 1.1907518461126396,
+    "max": 1.3099878439606587
+   },
+   "two_threads": {
+    "min": 1.1194304337219267,
+    "geomean": 1.1985844367747112,
+    "max": 1.3101905477695743
+   }
+  },
+  "csgraph": {
+   "cases": 4,
+   "one_thread": {
+    "min": 0.9933436646866727,
+    "geomean": 1.239963068210143,
+    "max": 1.4928739398892985
+   },
+   "two_threads": {
+    "min": 0.9945462464334738,
+    "geomean": 1.2456559822961666,
+    "max": 1.5077499750263095
+   }
+  },
+  "integrate": {
+   "cases": 16,
+   "one_thread": {
+    "min": 0.9956077641383375,
+    "geomean": 2.1201835360547383,
+    "max": 4.153093714174321
+   },
+   "two_threads": {
+    "min": 1.0324459355673228,
+    "geomean": 2.1321031892877804,
+    "max": 4.194581430888516
+   }
+  },
+  "interpolate": {
+   "cases": 14,
+   "one_thread": {
+    "min": 1.258682375049691,
+    "geomean": 1.34344032269922,
+    "max": 1.5479692744351587
+   },
+   "two_threads": {
+    "min": 1.25817910339928,
+    "geomean": 1.3528844131567113,
+    "max": 1.5003820877273422
+   }
+  },
+  "linalg": {
+   "cases": 24,
+   "one_thread": {
+    "min": 1.2469565883163616,
+    "geomean": 1.7025720718728043,
+    "max": 2.40057090386458
+   },
+   "two_threads": {
+    "min": 1.2640013969867772,
+    "geomean": 1.7040072568190734,
+    "max": 2.470043338057387
+   }
+  },
+  "ndimage": {
+   "cases": 2,
+   "one_thread": {
+    "min": 3.1800344962560105,
+    "geomean": 3.183847180706201,
+    "max": 3.1876644363529416
+   },
+   "two_threads": {
+    "min": 3.1725785021374677,
+    "geomean": 3.187385931835218,
+    "max": 3.2022624725018867
+   }
+  },
+  "optimize": {
+   "cases": 5,
+   "one_thread": {
+    "min": 1.2044506477535237,
+    "geomean": 1.41676101854204,
+    "max": 1.575472781563433
+   },
+   "two_threads": {
+    "min": 1.2104502101748615,
+    "geomean": 1.4260064179720464,
+    "max": 1.5749602954401944
+   }
+  },
+  "signal": {
+   "cases": 15,
+   "one_thread": {
+    "min": 1.1471938854131352,
+    "geomean": 2.4426114973757724,
+    "max": 6.67389192653568
+   },
+   "two_threads": {
+    "min": 1.1644559844835138,
+    "geomean": 2.4465866043697644,
+    "max": 6.67389192653568
+   }
+  },
+  "sparse": {
+   "cases": 6,
+   "one_thread": {
+    "min": 1.4974636202343965,
+    "geomean": 1.7742606074591911,
+    "max": 1.975914010722072
+   },
+   "two_threads": {
+    "min": 1.5367354789075522,
+    "geomean": 1.7895578827143925,
+    "max": 1.9757516434648106
+   }
+  },
+  "sparse_linalg": {
+   "cases": 12,
+   "one_thread": {
+    "min": 1.1533308267858597,
+    "geomean": 1.2937017649693674,
+    "max": 1.536562277867081
+   },
+   "two_threads": {
+    "min": 1.1667296502730902,
+    "geomean": 1.3008493800851622,
+    "max": 1.5831602989356592
+   }
+  },
+  "spatial": {
+   "cases": 6,
+   "one_thread": {
+    "min": 0.997139511894162,
+    "geomean": 1.0009205187740349,
+    "max": 1.0050284338388369
+   },
+   "two_threads": {
+    "min": 1.134565490810517,
+    "geomean": 1.5915087185091514,
+    "max": 1.9801604920175089
+   }
+  },
+  "special": {
+   "cases": 3,
+   "one_thread": {
+    "min": 0.9791621637940988,
+    "geomean": 0.9994212568974307,
+    "max": 1.010665622723681
+   },
+   "two_threads": {
+    "min": 1.8167621455405523,
+    "geomean": 1.8517878285808598,
+    "max": 1.887893607896457
+   }
+  },
+  "stats": {
+   "cases": 6,
+   "one_thread": {
+    "min": 1.2487117958249874,
+    "geomean": 7.039255335321283,
+    "max": 15.08504545818114
+   },
+   "two_threads": {
+    "min": 1.2565766092257626,
+    "geomean": 7.039747121460092,
+    "max": 15.317998949551393
+   }
+  }
+ },
+ "known_tradeoffs": [
+  "Earlier float64 signal controls measured approximately 3\u20138% slower (0.06\u20130.72 microseconds) after dtype and safety guards; detailed prior measurements retained in signal.json.",
+  "New fast paths are guarded. Unsupported options, exceptional inputs and unproven variants retain SciPy fallback.",
+  "Spatial and special gains in this sweep primarily require multiple threads."
+ ],
+ "remaining_work": "Rejected measured candidates and unproven algorithm/kernel ideas are listed in candidate-audit.json. The number of public exports does not count guaranteed remaining speedups.",
+ "artifacts": {
+  "final_benchmarks": "final-checks.json",
+  "candidate_triage": "candidate-audit.json",
+  "public_export_inventory": "coverage-inventory.json",
+  "coverage_documentation": "../../../docs/coverage.md"
+ }
+}

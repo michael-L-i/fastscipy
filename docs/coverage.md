@@ -27,24 +27,30 @@ multiply-adds.
 | `distance_transform_edt` | one fused pass |
 | `generic_filter` with `np.mean`, `sum`, `min`, `max`, `median`, `std`, `var`, `ptp` | reducer kernels instead of a Python callback per pixel |
 
-Handed to SciPy: complex, float16, bool or byte-swapped inputs to filters and
-interpolation; Python callbacks other than the reducers above; ties in
+The native seam declines complex, float16, bool or byte-swapped buffers for
+filters and interpolation. Some SciPy wrappers split complex inputs into real
+and imaginary arrays that can use the existing kernels. Other cases handed
+to SciPy include Python callbacks other than the reducers above; ties in
 labelled position queries; structures with a false centre; `label` with a
 non-contiguous output; `distance_transform_edt` with `distances=` or
 `indices=`.
 
 Very small arrays can still be slower than plain SciPy because Python
 dispatch costs more than the compiled operation; the gains are workload dependent.
+Labelled `center_of_mass` includes int16 and uint16 images. Zero-mass labels
+use SciPy's own division so warnings and error handlers run once.
 
 ## special
 
 Every `scipy.special` ufunc (322) is wrapped. Large calls are split into
 chunks that run SciPy's own loops on several threads (*threads only*); a
 short probe sets each function's size threshold. Calls with keyword
-arguments (`out=`, `where=`, `dtype=`, ...), non-contiguous or object
+arguments (`out=`, `where=`, `dtype=`, ...), unsupported strided or object
 inputs, or small sizes go straight to SciPy. So does any call while
 `scipy.special.errstate` reports errors, or that raises a floating-point
 event, so warnings come from SciPy exactly once.
+Unary calls also support Fortran-contiguous inputs and preserve the output's
+Fortran layout, including functions with several outputs.
 
 ## stats
 
@@ -56,6 +62,9 @@ event, so warnings come from SciPy exactly once.
 | discrete `pmf`/`cdf`/`ppf` (for example `poisson.ppf`, `zipf.cdf`) | table lookups |
 | `mode` | counting instead of sorting, for small integer ranges |
 | `gaussian_kde.evaluate` | threads only |
+
+`sem` additionally supports float32 and complex128 arrays, arbitrary single
+axes and `axis=None`, with SciPy's same standard-deviation arithmetic.
 
 ## signal
 
@@ -71,8 +80,17 @@ The 1-D float64 `lfilter` path also covers FIR filters (`len(a) == 1`),
 including initial state. `hilbert` handles float32 and float64 input,
 any valid axis, and an explicit positive integer FFT length.
 
-For filter paths, handed to SciPy: float32 or complex coefficients, `axis` other than -1,
-`padtype` other than `'odd'`, NaN or inf, `filtfilt(method='gust')`.
+IIR `lfilter`, linear `detrend`, and last-axis 1-D/2-D `sosfilt` additionally
+support float32/float64 and complex64/complex128 inputs. Filter coefficient
+and initial-state promotion uses SciPy's same dtype rules. The detrending
+design-matrix cache retains at most 8 MiB, with entries above 1 MiB uncached.
+`sosfiltfilt` supports matching float32 or complex coefficients and data,
+using SciPy's own dtype-specific cached initial conditions. Real float32
+`welch`/`csd` use typed padding and the same per-frame FFT pipeline; unsupported
+non-C-contiguous 2-D float32 spectra and complex two-sided spectra use SciPy.
+Other forward/backward filter shortcuts retain narrower float64/default-axis
+guards. Unsupported padding, `filtfilt(method='gust')`, and exceptional inputs
+use SciPy.
 `welch`, `csd`, `coherence` and `stft` are never threaded: on a build with
 the GIL that is slower.
 
@@ -81,7 +99,7 @@ the GIL that is slower.
 | Functions | How |
 |---|---|
 | `BSpline.__call__`, `splev`, `interp1d` (spline kinds) | Rust de Boor kernel with binary search for queries in random order; threads |
-| `PPoly`, `BPoly`, and derived spline evaluation | contiguous float64 NumPy queries bypass namespace adapters and use SciPy's own evaluator, including small query batches |
+| `PPoly`, `BPoly`, and derived spline evaluation | NumPy numeric queries, including strided/float32 arrays and floating scalars, bypass namespace adapters and use SciPy's own evaluator |
 | `Delaunay.find_simplex`, `LinearNDInterpolator`, `CloughTocher2DInterpolator`, `griddata` | queries sorted into grid-cell order, then SciPy's own search on chunks (threads); Rust barycentric kernel for real-valued `LinearNDInterpolator`. Points near a face are replayed in the original order, so ties resolve as in SciPy |
 | `RegularGridInterpolator(method="pchip")`, `interpn(method="pchip")` | local-window Rust kernel for 1 to 3 dimensions |
 
@@ -99,8 +117,11 @@ loop, and spread the batch over threads. A result is used only if every
 matrix succeeded; otherwise SciPy reruns the whole call and raises or warns.
 `null_space` skips computing the unused half of the SVD.
 
-Single matrices, other dtypes, `overwrite_*`, generalized `eigh` and
-eigenvalue subsets go to SciPy.
+Single-matrix `solve_triangular`, `cho_solve`, and `lu_solve` also support
+float32/float64 and complex64/complex128 NumPy inputs through SciPy's own
+LAPACK dispatcher and validation. Single `lu_solve` accepts int32 pivots.
+Other single matrices, unsupported dtypes, `overwrite_*`, generalized
+`eigh` and eigenvalue subsets go to SciPy.
 
 ## sparse linear algebra
 
@@ -108,8 +129,9 @@ The `sparse_linalg` component reduces dispatch around unbatched NumPy
 `LinearOperator.matvec` and `rmatvec` calls. CSR/CSC matrix operators call
 the same SciPy matrix-vector kernel directly instead of inserting and
 removing a column axis. This speeds small iterative solves, including
-`cg`, `bicgstab`, and `gmres`, without changing their numerical algorithms,
-stopping criteria, callback calls or iteration histories.
+`cg`, `bicgstab`, and `gmres`; exact adjoint matrix operators use the same
+shortcut for transpose products inside `lsqr` and `lsmr`. This preserves their
+numerical algorithms, stopping criteria, callback calls and iteration histories.
 
 Custom operator subclasses, non-NumPy backends, batched vectors, and
 deprecated column-vector inputs use SciPy's original dispatch.
@@ -122,12 +144,15 @@ deprecated column-vector inputs use SciPy's original dispatch.
 | COO `sum_duplicates` | counting sort in Rust, threads |
 | `csr_array`/`csc_array`/`coo_array` (and `*_matrix`) from dense arrays | Rust scan, threads |
 | `find` | canonicalises through CSR instead of a lexsort |
-| `block_diag` with canonical CSR blocks and `format="csr"`, or CSC blocks and `format="csc"` | joins compressed buffers directly, preserving sparse array/matrix classes, explicit zeros and index dtypes |
+| `block_diag` with canonical CSR/CSC blocks and `format="csr"` or `"csc"` | converts only blocks in the opposite format, then joins compressed buffers, preserving sparse classes, explicit zeros and index dtypes |
+| Two-block CSR `hstack` and CSC `vstack` | same SciPy stacking kernel without generic block dispatch and an extra compressed-buffer copy |
 | small constructors and format checks | less per-call overhead |
 | `csgraph.dijkstra`, `bellman_ford`, `johnson`, `shortest_path`, `connected_components` | Rust ports with SciPy's tie-breaking; many sources run in parallel; Bellman-Ford stops when a pass changes nothing |
 
 Handed to SciPy: float16, bool, complex and small integer dtypes for the
 sparse kernels; negative weights in Dijkstra; negative cycles; Floyd-Warshall.
+Unweighted Dijkstra on supported canonical integer/bool CSR graphs omits
+unused float64 weight buffers, including the reverse graph's weights.
 
 ## spatial
 
@@ -136,8 +161,11 @@ only*; custom callables go to SciPy). `mahalanobis` and `seuclidean` use
 SciPy's own whole-input covariance or variance calculation once, before
 splitting. Explicit float64 NumPy `VI` matrices and `V` vectors are supported;
 exceptional statistics and unsupported options keep SciPy's own path.
-Large float64 Fortran-order and strided inputs are copied once to contiguous
-storage before splitting; small inputs keep SciPy's own path.
+Large float32/float64 Fortran-order and strided inputs are converted once to
+contiguous float64 storage before splitting; small inputs keep SciPy's own
+path. Compiled weighted metrics accept float64 NumPy weights; Minkowski also
+accepts positive scalar `p`. Python-based weighted cosine/correlation keep
+SciPy's own path.
 `KDTree`/`cKDTree` `query` and `query_ball_point` use several workers when
 the caller left `workers` at its default and there are at least 2000
 queries; SciPy's results do not depend on the worker count.
@@ -147,7 +175,7 @@ queries; SciPy's results do not depend on the worker count.
 | Functions | How |
 |---|---|
 | `vq`, including calls inside `kmeans` and `kmeans2` | float32/float64 NumPy inputs of matching dtype go to SciPy's own compiled vector-quantization kernel |
-| `whiten` | 2-D float32/float64 NumPy standard deviation and scaling without array-API dispatch; warnings and exceptional cases go to SciPy |
+| `whiten` | float32/float64 and complex64/complex128 NumPy standard deviation and scaling along the observation axis, including 1-D and N-D arrays; warnings and exceptional cases go to SciPy |
 | `is_valid_linkage`, and validation inside `leaves_list`, `fcluster`, `cophenet`, and other hierarchy operations | valid NumPy float64 linkage tables use direct checks and counting rather than array-API sorting |
 
 Integer or mixed-dtype quantization, other backends, and invalid or unusual
@@ -162,22 +190,31 @@ Cumulative trapezoid integration supports arbitrary axes, uniform spacing,
 or float32/float64 coordinates matching the integration axis or full input
 shape, with `initial=None` or zero. Unsupported options go to SciPy.
 
-`simpson` covers uniformly spaced float64 arrays with an odd sample count
-of at least three along any valid axis. Gaussian `fixed_quad` skips generic
+`simpson` covers uniformly spaced float32/float64 and complex64/complex128
+arrays with at least two samples, including the even-length end correction,
+along any valid axis. Real float32/float64 arrays also support bounded,
+strictly increasing or decreasing real coordinate arrays; mixed coordinate
+dtypes follow SciPy's same promotion before taking differences. Zero or
+mixed-sign coordinate intervals and complex explicit coordinates use SciPy.
+Gaussian `fixed_quad` skips generic
 dispatch for ordinary finite scalar limits; it uses SciPy's cached nodes
 and weights and calls the integrand exactly once. Callback exceptions and
 malformed results propagate without retrying the callback.
 
-`cumulative_simpson` on uniformly spaced float64 arrays evaluates only the
-interval estimates SciPy retains. Extreme inputs and unusual underflow
+`cumulative_simpson` on float64 arrays evaluates only the interval estimates
+SciPy retains, for uniform spacing or supported strictly increasing float64
+coordinates. Extreme inputs and unusual underflow
 reporting use SciPy so discarded arithmetic still produces its warnings.
-`romb` on float64 arrays retains two rows of the same Richardson table,
-preserving its extrapolation arithmetic; `show=True` uses SciPy.
+`romb` on float32/float64 and complex128 arrays retains two rows of the same
+Richardson table, preserving its extrapolation arithmetic; `show=True` uses SciPy.
 
 `optimize.lsq_linear` covers dense float64 inputs with unbounded limits and
 the exact solver, retaining the complete SciPy result object. `rosen_hess`
 fills the Hessian in one output allocation for ordinary 1-D float64 inputs.
 Constrained least squares and unusual dtypes or options go to SciPy.
+`rosen_der` and `rosen_hess_prod` use the same NumPy expressions without
+namespace dispatch; accepted numerical errors and handlers propagate once.
+This also reduces overhead in Newton workflows using these functions.
 
 `optimize`'s numerical differentiation (used by `approx_fprime` and by
 `minimize` and `least_squares` without an analytic gradient) skips a
@@ -188,6 +225,16 @@ most of its time in the user's own Python function.
 
 Large dense linear algebra and FFT already run in tuned libraries
 (Accelerate or OpenBLAS, and DUCC). `linprog`/HiGHS, scientific `io`, and
-most other functions still use SciPy. Solvers such as
-`minimize`, `solve_ivp`, `quad` and `root` spend their time in the user's
-function, which only compiling that function would speed up.
+most other functions still use SciPy. Callback-heavy `minimize`, `solve_ivp`,
+`quad` and `root` workloads often spend their time in the user's function;
+the helper shortcuts above do not accelerate arbitrary user callbacks.
+
+## Coverage inventory
+
+`python tools/coverage_inventory.py --output inventory.json` lists public
+callable exports in the selected SciPy namespaces and the actual patch hooks.
+An unchanged public export may benefit from patched internals; a patched
+export can still decline most input variants. These counts are not a count
+of guaranteed speedups or a percentage of SciPy covered. Benchmark run
+artifacts also record measured rejected candidates and remaining algorithmic
+opportunities, so unsupported variants are not mistaken for proven wins.

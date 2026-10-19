@@ -1,0 +1,265 @@
+{
+ "scope": "Closure of the discussed candidate families and targeted source audit across the project components; not a claim of universal SciPy optimality. All retained measured candidates were implemented and tested.",
+ "triage": [
+  {
+   "candidate": "Periodic PPoly/BPoly evaluation",
+   "decision": "rejected measured regression",
+   "evidence": "Prototype 0.93\u20130.94x plain SciPy; preserve original dispatch."
+  },
+  {
+   "candidate": "Caching repeated mutable interpolation queries",
+   "decision": "rejected semantics",
+   "evidence": "Queries, knots and coefficients can change in place; no immutable-input API contract."
+  },
+  {
+   "candidate": "Major-axis and many-small-block sparse stacking shortcut",
+   "decision": "rejected measured regression",
+   "evidence": "Validation cost: major axis 0.68\u20130.85x prior fastscipy; 20 small blocks 0.46\u20130.60x; four small blocks only 1.03x."
+  },
+  {
+   "candidate": "Diagonal sparse construction shortcut",
+   "decision": "rejected marginal gain",
+   "evidence": "Earlier round: 1.00\u20131.07x before adding further guards; prototype removed."
+  },
+  {
+   "candidate": "Bounded lsq_linear dispatch",
+   "decision": "rejected measured marginal gains/regressions",
+   "evidence": "Feasible scalar bounds ~1.08x; active TRF/BVLS ~0.99\u20131.04x; vector bounds ~0.90\u20130.97x. Details in optimize.json."
+  },
+  {
+   "candidate": "Constant detrend shortcut",
+   "decision": "rejected marginal gain",
+   "evidence": "Only ~1.07x before guards and wrapper overhead."
+  },
+  {
+   "candidate": "Non-C-contiguous 2-D float32 Welch/CSD",
+   "decision": "declined after numerical mismatch",
+   "evidence": "One-ULP difference from NumPy padding/traversal and detrending order; original SciPy path retained."
+  },
+  {
+   "candidate": "Float16 direct LAPACK dispatch",
+   "decision": "declined warning incompatibility",
+   "evidence": "SciPy batch adapter owns dtype deprecation warnings; original path retained."
+  },
+  {
+   "candidate": "Float32 graph weight-copy elimination",
+   "decision": "declined warning incompatibility",
+   "evidence": "Conversion can report signaling-NaN cast events; optimization restricted to validated integer/bool CSR."
+  },
+  {
+   "candidate": "Automatic FFT worker override",
+   "decision": "source-reviewed; no blanket patch",
+   "evidence": "DUCC already provides worker controls. An automatic override needs explicit handling of set_workers contexts, alternate backends and shared thread budgets."
+  },
+  {
+   "candidate": "Large dense linear algebra and interpolative routines",
+   "decision": "source-reviewed; no demonstrated general replacement",
+   "evidence": "Existing BLAS/LAPACK kernels dominate large operations. New single-factor and triangular dispatch paths cover demonstrated small-call gains."
+  },
+  {
+   "candidate": "Scientific IO, datasets and constants",
+   "decision": "source-reviewed; no numerical fast-path target established",
+   "evidence": "File-format parsing/native libraries, filesystem/network activity or simple lookups require workload-specific evidence; no IO or download side effects introduced."
+  },
+  {
+   "candidate": "Generic differentiation/callback-heavy solvers",
+   "decision": "source-reviewed; further specialization unproven",
+   "evidence": "Callbacks, cached weights and stopping/error behavior require workload-specific profiling. Existing numerical-gradient and analytic Rosenbrock paths retained."
+  }
+ ],
+ "unproven_remaining_ideas": [
+  {
+   "area": "native algorithms",
+   "ideas": [
+    "float32/complex batched LAPACK kernels",
+    "labelled median/reducer algorithms",
+    "additional graph traversal/MST kernels"
+   ],
+   "status": "Require algorithm/kernel work and new profiling; no guaranteed speedup claimed."
+  },
+  {
+   "area": "signal",
+   "ideas": [
+    "complex two-sided spectral pipeline",
+    "mixed-type SOS forward-backward filtering"
+   ],
+   "status": "Additional precision, FFT-mode and promotion matching needed; existing fallbacks preserved."
+  },
+  {
+   "area": "integration",
+   "ideas": [
+    "complex explicit coordinates",
+    "NumPy scalar spacing variants",
+    "broader cumulative-Simpson coordinate dtypes"
+   ],
+   "status": "Separate dtype/exception semantics and profiling required; existing fallbacks preserved."
+  },
+  {
+   "area": "other input variants/functions",
+   "ideas": [
+    "block matmat dispatch",
+    "other unbatched solve families",
+    "custom axes/options and array backends"
+   ],
+   "status": "Not exhaustively profiled. Public export counts are not counts of guaranteed remaining wins."
+  }
+ ],
+ "artifact_ledgers": {
+  "csgraph": {
+   "retained": [
+    "Canonical compact integer/bool CSR unweighted Dijkstra omits float64 weight copies; same Rust unit kernel"
+   ],
+   "rejected": [
+    "Float32 unweighted conversion elimination: could suppress signaling-NaN conversion warnings",
+    "Trusting CSR canonical flags: stale after caller mutation; validate actual buffers instead"
+   ],
+   "remaining": [
+    "New traversal/order algorithms and median labelled reductions require native kernels/build and exact-order validation",
+    "Weighted graph kernels already native; no mutable graph/query cache"
+   ]
+  },
+  "integrate": {
+   "rejected_candidates": [],
+   "notes": [
+    "Small irregular 1-D cumulative Simpson has marginal improvement; retained as the same implementation gives larger gains for long arrays and multiple channels.",
+    "Wave 3 adds explicit real-coordinate Simpson and float32/complex64/complex128 uniform Simpson; original eight wave-1 measurements and baseline are preserved."
+   ],
+   "remaining_opportunities": [
+    "Complex Simpson with explicit coordinates and exact promoted complex arithmetic",
+    "NumPy scalar dx promotion for Simpson",
+    "Repeated/mixed-sign irregular grids currently delegated to SciPy",
+    "float32 coordinates for cumulative Simpson"
+   ]
+  },
+  "linalg": {
+   "rejected": [
+    {
+     "candidate": "float16 single-matrix dispatch",
+     "reason": "SciPy batch decorator emits dtype deprecation warning; retain original warning behavior via fallback"
+    }
+   ],
+   "remaining": [
+    "float32 and complex native batch kernels require Rust LAPACK support/build"
+   ],
+   "legacy_batch_checks": {
+    "lu_solve batch=4, broadcast_rhs=False": {
+     "incremental_speedup": 1.0017024737721647,
+     "identical": true
+    },
+    "cho_solve batch=4, broadcast_rhs=False": {
+     "incremental_speedup": 0.9858339430260042,
+     "identical": true
+    },
+    "lu_solve batch=32, broadcast_rhs=False": {
+     "incremental_speedup": 0.9667824420077404,
+     "identical": true
+    },
+    "cho_solve batch=32, broadcast_rhs=False": {
+     "incremental_speedup": 1.0646591297396002,
+     "identical": true
+    },
+    "lu_solve batch=32, broadcast_rhs=True": {
+     "incremental_speedup": 0.9948999366582025,
+     "identical": true
+    },
+    "cho_solve batch=32, broadcast_rhs=True": {
+     "incremental_speedup": 1.0164337265571555,
+     "identical": true
+    }
+   },
+   "retained": [
+    "Single cho_solve and lu_solve call original SciPy nonbatch core, preserving validation and LAPACK arithmetic; no-retry accepted branches",
+    "LU checks only RHS finiteness, and pivot ranges are guarded before LAPACK",
+    "Typed wrappers retain prior native-batch try/fallback dispatch without stacking another public wrapper"
+   ]
+  },
+  "ndimage": {
+   "retained": [
+    "Center of mass now accepts int16 and uint16 through existing exact native sums",
+    "Zero-mass sums decline before numpy division so raising seterr handler runs once"
+   ],
+   "rejected": [
+    "Broad float16 support: SciPy/kernel dtype and warning behavior not matched"
+   ],
+   "remaining": [
+    "Labelled median and new reducers need native algorithms and summation-order tests",
+    "Float32 filtering/interpolation and layouts already handled by existing native paths",
+    "Complex filters use SciPy wrappers splitting real/imaginary data to the existing real kernels"
+   ]
+  },
+  "optimize": {
+   "rejected_candidates": [
+    {
+     "candidate": "bounded dense lsq_linear dispatch",
+     "observations": "Scalar feasible ~1.08x; active TRF/BVLS ~0.99\u20131.04x; vector bounds ~0.90\u20130.97x versus prior fastscipy.",
+     "reason": "Added validation/allocation/dispatch complexity was not justified; prototype fully reverted."
+    }
+   ],
+   "remaining_opportunities": [
+    "Numerical-gradient vectorization requires preserving callback order, side effects, and mutation semantics.",
+    "Specialized linear-solver kernels would require native work and strict arithmetic validation."
+   ]
+  },
+  "signal": {
+   "legacy_float64": {
+    "lfilter": {
+     "previous_ms": 0.002210166014265269,
+     "current_ms": 0.002272416022606194,
+     "speedup": 0.9726062447537527
+    },
+    "sosfilt": {
+     "previous_ms": 0.002271584002301097,
+     "current_ms": 0.002434668014757335,
+     "speedup": 0.9330159136819758
+    },
+    "detrend": {
+     "previous_ms": 0.008610915974713862,
+     "current_ms": 0.009333333990070969,
+     "speedup": 0.922598075229534
+    }
+   }
+  },
+  "sparse_linalg": {
+   "retained": [
+    "Existing no-retry MatrixLinearOperator sparse vector shortcut now also accepts exact SciPy _AdjointMatrixOperator class",
+    "Same stored conjugate-transpose matrix and sparse kernel; namespace/custom-subclass guards unchanged"
+   ],
+   "incremental_prototype": {
+    "rmatvec_vs_previous_fastscipy": "1.25-1.37x",
+    "lsqr_vs_previous_fastscipy": "1.04-1.14x",
+    "lsmr_vs_previous_fastscipy": "0.98-1.11x; solver arithmetic dominates and timing is noisy"
+   },
+   "remaining": [
+    "Block matmat wrappers and additional solver setup need independent profiling",
+    "Native sparse kernels remain SciPy; no changed iteration arithmetic"
+   ]
+  }
+ },
+ "independent_review": {
+  "scope": [
+   "integration",
+   "spatial",
+   "stats_loop",
+   "special",
+   "cluster",
+   "no-retry hooks"
+  ],
+  "result": "No actionable witnessed issues; small numeric-payload/spacing/layout probes matched SciPy."
+ },
+ "resource_policy": {
+  "max_active_subagents": 3,
+  "benchmark_processes_at_once": 1,
+  "benchmark_threads": [
+   1,
+   2
+  ],
+  "blas_threads": 1,
+  "rust_builds": 0,
+  "benchmark_rss_guard_bytes": 2147483648
+ },
+ "signal_callback_review": {
+  "finding": "Speculative underflow and cold-cache computations could invoke NumPy handlers before retrying SciPy.",
+  "resolution": "All floating-point preflight events become internal FloatingPointError and decline before invoking the original. Full SFT cache construction is included. Raising call/log handlers execute once.",
+  "validation": "558 signal tests passed; 284 unchanged paired upstream outcomes, 804 fast calls and zero fast errors."
+ }
+}

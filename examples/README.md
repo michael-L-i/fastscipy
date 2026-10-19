@@ -1,4 +1,4 @@
-# Eight everyday SciPy tasks, faster
+# Nine everyday SciPy tasks, faster
 
 Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
 
@@ -6,6 +6,7 @@ Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
 
 | Task | SciPy area | Speedup |
 |---|---|---:|
+| [Bellman-Ford on a 50,000-node graph](#bellman) | `csgraph` | **11,156.8×** |
 | [Fill in a temperature map](#temperature) | `interpolate` | **779.3×** |
 | [Clean noisy sensor recordings](#sensors) | `signal` | **6.4×** |
 | [Calibrate 8,000 3D points](#calibration) | `linalg` | **105.9×** |
@@ -15,9 +16,21 @@ Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
 | [Build independent sparse systems](#systems) | `sparse` | **3.3×** |
 | [Map walking distances to depots](#routes) | `csgraph` | **5.2×** |
 
+<a id="bellman"></a>
+
+## 1. Bellman-Ford on a 50,000-node graph
+
+Find routes from two origins through a 50,000-node, 100,000-edge network with negative costs and no negative cycles.
+
+```python
+csgraph.bellman_ford(network, indices=origin)
+```
+
+![Bellman-Ford on a 50,000-node graph: SciPy and fastscipy](assets/bellman.gif)
+
 <a id="temperature"></a>
 
-## 1. Fill in a temperature map
+## 2. Fill in a temperature map
 
 Resample a 64 x 64 weather grid to 160 x 160 with shape-preserving PCHIP interpolation.
 
@@ -29,7 +42,7 @@ model(points)  # prebuilt RegularGridInterpolator(method="pchip")
 
 <a id="sensors"></a>
 
-## 2. Clean noisy sensor recordings
+## 3. Clean noisy sensor recordings
 
 Low-pass filter 128 four-second sensor epochs, preserving phase with forward-backward filtering.
 
@@ -41,7 +54,7 @@ signal.sosfiltfilt(sos, epoch)
 
 <a id="calibration"></a>
 
-## 3. Calibrate 8,000 3D points
+## 4. Calibrate 8,000 3D points
 
 Correct scale and cross-axis coupling with a different 3 x 3 calibration system for each point.
 
@@ -53,7 +66,7 @@ linalg.solve_triangular(calibration_matrices, observed_points)
 
 <a id="uncertainty"></a>
 
-## 4. Put uncertainty around measurements
+## 5. Put uncertainty around measurements
 
 Compute standard errors for 128 sensor channels, each measured 30 times.
 
@@ -65,7 +78,7 @@ stats.sem(repeated_measurements, axis=0)
 
 <a id="expression"></a>
 
-## 5. Order clustered gene-expression panels
+## 6. Order clustered gene-expression panels
 
 Arrange 128 genes in each of eight expression panels using precomputed hierarchical clusters.
 
@@ -77,7 +90,7 @@ hierarchy.leaves_list(linkage)
 
 <a id="peaks"></a>
 
-## 6. Measure chromatography peak areas
+## 7. Measure chromatography peak areas
 
 Integrate 128 chromatograms with different, irregularly sampled time coordinates.
 
@@ -89,7 +102,7 @@ integrate.simpson(intensity, x=retention_time)
 
 <a id="systems"></a>
 
-## 7. Build independent sparse systems
+## 8. Build independent sparse systems
 
 Assemble eight block-diagonal models from 192 small local coupling matrices.
 
@@ -101,7 +114,7 @@ sparse.block_diag(local_models, format="csr")
 
 <a id="routes"></a>
 
-## 8. Map walking distances to depots
+## 9. Map walking distances to depots
 
 Find unweighted shortest paths from eight depots through a 120 x 120 warehouse with aisle barriers.
 

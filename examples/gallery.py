@@ -1,4 +1,4 @@
-"""Measure and render the eight-task gallery. Run from the repository root.
+"""Measure and render the nine-task gallery. Run from the repository root.
 
 pip install 'pillow>=10.1' matplotlib
 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 python examples/gallery.py
@@ -13,6 +13,7 @@ from contextlib import nullcontext
 from datetime import datetime, timezone
 import gc
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -90,17 +91,21 @@ def render(task, results, record, path):
     pictures = previews(task, results)
     fonts = {n: ImageFont.load_default(size=n) for n in (15, 17, 19, 23, 29)}
     totals = record["scipy_seconds"], record["fastscipy_seconds"]
-    # All animations last 3.6 s plus a final hold. Both lanes share one time scale.
-    slow = 3.6 / max(totals)
-    if slow < 1:
-        raise RuntimeError("Task exceeds the 3.6-second replay window; increase the window instead of speeding it up")
+    # Short tasks are slowed down; long tasks keep real time. Encode only
+    # completion events, rounded up to the GIF clock's 10 ms resolution.
+    replay_ms = max(3600, math.ceil(max(totals) * 100) * 10)
+    slow = replay_ms / 1000 / max(totals)
+    events = record["scipy_completed_seconds"] + record["fastscipy_completed_seconds"]
+    ticks = sorted({0, replay_ms, *(min(replay_ms, math.ceil(t * slow * 100) * 10) for t in events)})
+    durations = np.diff(ticks).tolist() + [1400]
     frames = []
-    for index in range(46):
-        elapsed = max(totals) * index / 45
+    namespace = "sparse.csgraph" if task.area == "csgraph" else task.area
+    for tick in ticks:
+        elapsed = max(totals) if tick == replay_ms else tick / 1000 / slow
         image = Image.new("RGB", (1000, 550), BG)
         draw = ImageDraw.Draw(image)
         draw.text((32, 23), task.title, font=fonts[29], fill=INK)
-        draw.text((32, 67), f"scipy.{task.area}  /  same inputs, same SciPy calls", font=fonts[17], fill=MUTED)
+        draw.text((32, 67), f"scipy.{namespace}  /  same inputs, same SciPy calls", font=fonts[17], fill=MUTED)
         for left, label, key in zip(
             (24, 512),
             ("SciPy", f"fastscipy / {record['threads']} threads"),
@@ -109,32 +114,47 @@ def render(task, results, record, path):
             done = sum(t <= elapsed for t in record[key])
             draw.rounded_rectangle((left, 105, left + 464, 445), radius=14, fill=PANEL)
             draw.text((left + 16, 118), label, font=fonts[23], fill=INK)
-            draw.text((left + 16, 153), f"{done}/8 {task.unit}", font=fonts[17], fill=ACCENT if done == 8 else MUTED)
+            draw.text(
+                (left + 16, 153),
+                f"{done}/{record['jobs']} {task.unit}",
+                font=fonts[17],
+                fill=ACCENT if done == record["jobs"] else MUTED,
+            )
             image.paste(pictures[done], (left + 12, 179))
-        draw.text((32, 463), f"{record['speedup']:.1f}x faster", font=fonts[29], fill=ACCENT)
-        draw.text((285, 472), f"{totals[0] * 1000:,.2f} ms  ->  {totals[1] * 1000:,.2f} ms", font=fonts[19], fill=INK)
+        speed = f"{record['speedup']:,.1f}x faster"
+        draw.text((32, 463), speed, font=fonts[29], fill=ACCENT)
+        timing_x = max(285, 60 + draw.textlength(speed, font=fonts[29]))
+        label = lambda t: f"{t:.2f} s" if t >= 1 else f"{t * 1000:,.2f} ms"
+        draw.text((timing_x, 472), f"{label(totals[0])}  ->  {label(totals[1])}", font=fonts[19], fill=INK)
+        replay = (
+            "Real-time replay of measured completion times."
+            if slow < 1.01
+            else f"Measured completion times replayed {slow:,.1f}x slower."
+        )
         draw.text(
             (32, 509),
-            f"Measured completion times replayed {slow:,.1f}x slower on a shared clock. Identical outputs.",
+            f"{replay} Shared clock. Identical outputs.",
             font=fonts[15],
             fill=MUTED,
         )
         frames.append(image)
     # One palette for stable plot colors and legible text across the loop.
     sample = Image.new("RGB", (1000, 1650))
-    for i, frame in enumerate((frames[0], frames[23], frames[-1])):
+    for i, frame in enumerate((frames[0], frames[len(frames) // 2], frames[-1])):
         sample.paste(frame, (0, i * 550))
     palette = sample.quantize(colors=128)
     indexed = [frame.quantize(palette=palette, dither=Image.Dither.NONE) for frame in frames]
     path.parent.mkdir(parents=True, exist_ok=True)
-    indexed[0].save(path, save_all=True, append_images=indexed[1:], duration=[80] * 45 + [1400], loop=0, optimize=True)
+    indexed[0].save(path, save_all=True, append_images=indexed[1:], duration=durations, loop=0, optimize=True)
     record["replay_slowdown"] = slow
+    record["replay_seconds"] = replay_ms / 1000
+    record["replay_quantum_ms"] = 10
     record["gif_bytes"] = path.stat().st_size
 
 
 def readme(records):
     rows = [
-        "# Eight everyday SciPy tasks, faster",
+        "# Nine everyday SciPy tasks, faster",
         "",
         "Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.",
         "",
@@ -145,7 +165,7 @@ def readme(records):
     ]
     for factory in TASKS:
         r = records[factory.__name__]
-        rows.append(f"| [{r['title']}](#{r['slug']}) | `{r['area']}` | **{r['speedup']:.1f}×** |")
+        rows.append(f"| [{r['title']}](#{r['slug']}) | `{r['area']}` | **{r['speedup']:,.1f}×** |")
     for i, factory in enumerate(TASKS, 1):
         r = records[factory.__name__]
         rows += [

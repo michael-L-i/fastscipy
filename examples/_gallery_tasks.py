@@ -25,6 +25,66 @@ def heatmap(ax, data, **kw):
     ax.imshow(data, origin="lower", aspect="auto", interpolation="nearest", **kw)
 
 
+def bellman():
+    height, width = 200, 250
+    ids = np.arange(height * width).reshape(height, width)
+    x, y = np.meshgrid(np.linspace(0, 1, width, endpoint=False), np.linspace(0, 1, height, endpoint=False))
+    potential = np.rint(150 * np.sin(2 * np.pi * x) * np.cos(2 * np.pi * y)).astype(np.int64).ravel()
+    rows = np.repeat(ids.ravel(), 2)
+    cols = np.stack((np.roll(ids, -1, axis=1), np.roll(ids, -1, axis=0)), axis=-1).ravel()
+    base_cost = np.random.default_rng(79).integers(1, 5, cols.size)
+    # The potential differences telescope to zero around every cycle. Positive
+    # base costs therefore rule out negative cycles, despite negative edges.
+    cost = base_cost + potential[cols] - potential[rows]
+    graph = sparse.csr_matrix((cost.astype(float), (rows, cols)), shape=(ids.size, ids.size))
+    origins = np.array([[0, 0], [135, 165]])
+    jobs = [lambda source=int(ids[y, x]): csgraph.bellman_ford(graph, indices=source) for y, x in origins]
+
+    def plot(ax, results):
+        if results:
+            costs = np.minimum.reduce(results).reshape(height, width)
+            heatmap(ax, costs, cmap="magma", vmin=-100, vmax=650)
+            ax.scatter(origins[: len(results), 1], origins[: len(results), 0], c="#68e2c2", s=32, edgecolors="#101824")
+        else:
+            ax.scatter(
+                np.tile(np.arange(width), height)[::10],
+                np.repeat(np.arange(height), width)[::10],
+                c="#506179",
+                s=0.25,
+                linewidths=0,
+            )
+        ax.set(
+            xlim=(0, width - 1),
+            ylim=(0, height - 1),
+            xticks=[],
+            yticks=[],
+            xlabel="50,000 nodes / 100,000 directed edges",
+            ylabel="Minimum route cost, including credits",
+        )
+        ax.text(
+            0.03,
+            0.94,
+            "11,571 negative edges / no negative cycles",
+            transform=ax.transAxes,
+            color="#f1f5fa",
+            fontsize=8,
+            va="top",
+            bbox={"facecolor": "#101824", "alpha": 0.7, "edgecolor": "none"},
+        )
+
+    return Task(
+        "bellman",
+        "Bellman-Ford on a 50,000-node graph",
+        "csgraph",
+        "Find routes from two origins through a 50,000-node, 100,000-edge network "
+        "with negative costs and no negative cycles.",
+        "csgraph.bellman_ford(network, indices=origin)",
+        "origins",
+        jobs,
+        plot,
+    )
+
+
 def temperature():
     axis = np.linspace(0, 1, 64)
     x, y = np.meshgrid(axis, axis)
@@ -288,4 +348,4 @@ def routes():
     )
 
 
-TASKS = (temperature, sensors, calibration, uncertainty, expression, peaks, systems, routes)
+TASKS = (bellman, temperature, sensors, calibration, uncertainty, expression, peaks, systems, routes)

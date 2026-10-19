@@ -9,28 +9,38 @@ use numpy::{PyArrayDyn, PyUntypedArray};
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
-use crate::ndimage::common::{pool, slice, slice_mut, typed, Elem};
+use crate::ndimage::common::{Elem, pool, slice, slice_mut, typed};
 
 trait Nz: Copy + Send + Sync {
     fn nz(self) -> bool;
 }
 macro_rules! nz_int { ($($t:ty),*) => {$(impl Nz for $t { #[inline(always)] fn nz(self) -> bool { self != 0 } })*}; }
 nz_int!(u8, i8, u16, i16, u32, i32, u64, i64);
-impl Nz for f32 { #[inline(always)] fn nz(self) -> bool { self != 0.0 } }
-impl Nz for f64 { #[inline(always)] fn nz(self) -> bool { self != 0.0 } }
+impl Nz for f32 {
+    #[inline(always)]
+    fn nz(self) -> bool {
+        self != 0.0
+    }
+}
+impl Nz for f64 {
+    #[inline(always)]
+    fn nz(self) -> bool {
+        self != 0.0
+    }
+}
 
 pub(crate) type Run = [u32; 2];
-pub(crate) static PAR_MIN: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(1 << 18);
+pub(crate) static PAR_MIN: std::sync::atomic::AtomicUsize =
+    std::sync::atomic::AtomicUsize::new(1 << 18);
 
 #[pyfunction]
 fn set_par_min(n: usize) {
     PAR_MIN.store(n, std::sync::atomic::Ordering::Relaxed);
 }
 
-
 pub(crate) struct Nbr {
-    pub(crate) off: usize,          // backwards distance in line index
-    pub(crate) delta: Vec<i64>,     // per non-last dim offset (-1..1)
+    pub(crate) off: usize,      // backwards distance in line index
+    pub(crate) delta: Vec<i64>, // per non-last dim offset (-1..1)
     adj: bool,
     prev: bool,
     next: bool,
@@ -78,7 +88,11 @@ impl Geo {
             if !matches!(first, Some(-1)) {
                 continue;
             }
-            let (p, a, n) = (st[sidx(&o, 0)] != 0, st[sidx(&o, 1)] != 0, st[sidx(&o, 2)] != 0);
+            let (p, a, n) = (
+                st[sidx(&o, 0)] != 0,
+                st[sidx(&o, 1)] != 0,
+                st[sidx(&o, 2)] != 0,
+            );
             if !(p || a || n) {
                 continue;
             }
@@ -89,9 +103,21 @@ impl Geo {
             if off >= 0 {
                 continue; // unrealisable when a size-1 dimension is involved
             }
-            nbrs.push(Nbr { off: (-off) as usize, delta: o, adj: a, prev: p, next: n });
+            nbrs.push(Nbr {
+                off: (-off) as usize,
+                delta: o,
+                adj: a,
+                prev: p,
+                next: n,
+            });
         }
-        Geo { w, nlines, dims, use_prev, nbrs }
+        Geo {
+            w,
+            nlines,
+            dims,
+            use_prev,
+            nbrs,
+        }
     }
 }
 
@@ -220,7 +246,11 @@ fn extract_block<T: Nz>(g: &Geo, data: &[T], start: usize, end: usize) -> Block 
         extract_line(&data[l * g.w..(l + 1) * g.w], !g.use_prev, &mut runs);
     }
     line_start.push(runs.len() as u32);
-    Block { start, runs, line_start }
+    Block {
+        start,
+        runs,
+        line_start,
+    }
 }
 
 struct Uf<'a> {
@@ -333,11 +363,11 @@ fn union_block(g: &Geo, blk: &Block, base: u32, parent: &mut [u32]) {
         }
         coords(g, l, &mut c);
         for n in &g.nbrs {
-            if let Some(nl_) = nbr_line(g, n, l, &c) {
-                if nl_ >= blk.start {
-                    let (nb, na) = blk.line_runs(nl_);
-                    link(cur, base + ca as u32, nb, base + na as u32, n, &mut uf);
-                }
+            if let Some(nl_) = nbr_line(g, n, l, &c)
+                && nl_ >= blk.start
+            {
+                let (nb, na) = blk.line_runs(nl_);
+                link(cur, base + ca as u32, nb, base + na as u32, n, &mut uf);
             }
         }
     }
@@ -368,10 +398,15 @@ pub trait FromU32 {
 macro_rules! from_u32 { ($($t:ty),*) => {$(impl FromU32 for $t { #[inline(always)] fn from_u32(v: u32) -> Self { v as $t } const MAXV: u64 = <$t>::MAX as u64; })*}; }
 from_u32!(u8, i8, u16, i16, u32, i32, u64, i64);
 
-
 /// Union-find over all runs: unions inside blocks in parallel, then stitches block borders.
 /// Returns the parent array (roots are the smallest run id of each component).
-pub(crate) fn connect(g: &Geo, blocks: &[Block], bounds: &[(usize, usize)], bases: &[u32], total: usize) -> Vec<u32> {
+pub(crate) fn connect(
+    g: &Geo,
+    blocks: &[Block],
+    bounds: &[(usize, usize)],
+    bases: &[u32],
+    total: usize,
+) -> Vec<u32> {
     let nblocks = blocks.len();
     let mut parent = vec![0u32; total];
     {
@@ -382,15 +417,22 @@ pub(crate) fn connect(g: &Geo, blocks: &[Block], bounds: &[(usize, usize)], base
             slices.push(h);
             rest = t;
         }
-        slices.par_iter_mut().zip(blocks.par_iter()).zip(bases.par_iter()).for_each(|((sl, blk), &base)| {
-            for (i, p) in sl.iter_mut().enumerate() {
-                *p = base + i as u32;
-            }
-            union_block(g, blk, base, sl);
-        });
+        slices
+            .par_iter_mut()
+            .zip(blocks.par_iter())
+            .zip(bases.par_iter())
+            .for_each(|((sl, blk), &base)| {
+                for (i, p) in sl.iter_mut().enumerate() {
+                    *p = base + i as u32;
+                }
+                union_block(g, blk, base, sl);
+            });
     }
     if nblocks > 1 {
-        let mut uf = Uf { p: &mut parent, base: 0 };
+        let mut uf = Uf {
+            p: &mut parent,
+            base: 0,
+        };
         let maxback = g.nbrs.iter().map(|n| n.off).max().unwrap_or(0);
         let mut c = vec![0i64; g.dims.len()];
         for b in 1..nblocks {
@@ -403,12 +445,19 @@ pub(crate) fn connect(g: &Geo, blocks: &[Block], bounds: &[(usize, usize)], base
                 }
                 coords(g, l, &mut c);
                 for n in &g.nbrs {
-                    if let Some(nl) = nbr_line(g, n, l, &c) {
-                        if nl < s {
-                            let nbk = bounds.partition_point(|&(_, be)| be <= nl);
-                            let (nb, na) = blocks[nbk].line_runs(nl);
-                            link(cur, bases[b] + ca as u32, nb, bases[nbk] + na as u32, n, &mut uf);
-                        }
+                    if let Some(nl) = nbr_line(g, n, l, &c)
+                        && nl < s
+                    {
+                        let nbk = bounds.partition_point(|&(_, be)| be <= nl);
+                        let (nb, na) = blocks[nbk].line_runs(nl);
+                        link(
+                            cur,
+                            bases[b] + ca as u32,
+                            nb,
+                            bases[nbk] + na as u32,
+                            n,
+                            &mut uf,
+                        );
                     }
                 }
             }
@@ -428,19 +477,33 @@ pub(crate) fn find_root(p: &mut [u32], mut x: u32) -> u32 {
 }
 
 fn label_impl<I: Nz + Elem, O: Elem + FromU32>(
-    shape: &[usize], st: &[u8], data: &[I], out: &mut [O], nthreads: usize,
+    shape: &[usize],
+    st: &[u8],
+    data: &[I],
+    out: &mut [O],
+    nthreads: usize,
 ) -> Option<u64> {
     let g = Geo::new(shape, st);
     if g.w >= u32::MAX as usize / 2 || data.len() >= (u32::MAX as usize) - 2 {
         return None;
     }
-    let nblocks = if nthreads <= 1 || data.len() < PAR_MIN.load(std::sync::atomic::Ordering::Relaxed) { 1 } else { (nthreads * 4).min(g.nlines) };
+    let nblocks =
+        if nthreads <= 1 || data.len() < PAR_MIN.load(std::sync::atomic::Ordering::Relaxed) {
+            1
+        } else {
+            (nthreads * 4).min(g.nlines)
+        };
     let bl = g.nlines.div_ceil(nblocks);
     let nblocks = g.nlines.div_ceil(bl);
-    let bounds: Vec<(usize, usize)> = (0..nblocks).map(|b| (b * bl, ((b + 1) * bl).min(g.nlines))).collect();
+    let bounds: Vec<(usize, usize)> = (0..nblocks)
+        .map(|b| (b * bl, ((b + 1) * bl).min(g.nlines)))
+        .collect();
 
     let run = || -> Option<u64> {
-        let blocks: Vec<Block> = bounds.par_iter().map(|&(s, e)| extract_block(&g, data, s, e)).collect();
+        let blocks: Vec<Block> = bounds
+            .par_iter()
+            .map(|&(s, e)| extract_block(&g, data, s, e))
+            .collect();
         let mut bases = Vec::with_capacity(nblocks);
         let mut total = 0usize;
         for b in &blocks {
@@ -470,9 +533,13 @@ fn label_impl<I: Nz + Elem, O: Elem + FromU32>(
             chunks.push(h);
             rest = t;
         }
-        chunks.par_iter_mut().zip(blocks.par_iter()).zip(bases.par_iter()).for_each(|((o, blk), &base)| {
-            write_block(&g, blk, base, lab, o);
-        });
+        chunks
+            .par_iter_mut()
+            .zip(blocks.par_iter())
+            .zip(bases.par_iter())
+            .for_each(|((o, blk), &base)| {
+                write_block(&g, blk, base, lab, o);
+            });
         Some(next as u64)
     };
     pool().install(run)
@@ -506,15 +573,25 @@ fn label_core<'py>(
                     return Ok(py.detach(|| label_impl::<$I, $O>(sh, st, data, os, nthreads)));
                 }};
             }
-            if od.is_equiv_to(&numpy::dtype::<i32>(py)) { go!(i32) }
-            else if od.is_equiv_to(&numpy::dtype::<u32>(py)) { go!(u32) }
-            else if od.is_equiv_to(&numpy::dtype::<i64>(py)) { go!(i64) }
-            else if od.is_equiv_to(&numpy::dtype::<u64>(py)) { go!(u64) }
-            else if od.is_equiv_to(&numpy::dtype::<i16>(py)) { go!(i16) }
-            else if od.is_equiv_to(&numpy::dtype::<u16>(py)) { go!(u16) }
-            else if od.is_equiv_to(&numpy::dtype::<i8>(py)) { go!(i8) }
-            else if od.is_equiv_to(&numpy::dtype::<u8>(py)) { go!(u8) }
-            else { return Ok(None); }
+            if od.is_equiv_to(&numpy::dtype::<i32>(py)) {
+                go!(i32)
+            } else if od.is_equiv_to(&numpy::dtype::<u32>(py)) {
+                go!(u32)
+            } else if od.is_equiv_to(&numpy::dtype::<i64>(py)) {
+                go!(i64)
+            } else if od.is_equiv_to(&numpy::dtype::<u64>(py)) {
+                go!(u64)
+            } else if od.is_equiv_to(&numpy::dtype::<i16>(py)) {
+                go!(i16)
+            } else if od.is_equiv_to(&numpy::dtype::<u16>(py)) {
+                go!(u16)
+            } else if od.is_equiv_to(&numpy::dtype::<i8>(py)) {
+                go!(i8)
+            } else if od.is_equiv_to(&numpy::dtype::<u8>(py)) {
+                go!(u8)
+            } else {
+                return Ok(None);
+            }
         }};
     }
     crate::dispatch_elem!(py, input.dtype(), T => { with_out!(T, input) } else Ok(None))

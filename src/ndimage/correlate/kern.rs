@@ -10,7 +10,7 @@
 //! per column); along the last axis, `stride == 1` and row `t` is the
 //! extended line shifted by `t` (one output per position).
 
-use super::simd::{load_k, store_k, Lane, V};
+use super::simd::{Lane, V, load_k, store_k};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Kind {
@@ -65,11 +65,21 @@ impl Prog {
             SCHEME_UNFUSED => iters,
             SCHEME_FUSED => 0,
             SCHEME_CLANG_ARM64 => {
-                if kind != Kind::Gen && size1 >= 10 { size1 & !7 } else { 0 }
+                if kind != Kind::Gen && size1 >= 10 {
+                    size1 & !7
+                } else {
+                    0
+                }
             }
             _ => return None,
         };
-        Some(Prog { kind, fs, size1, w: w.to_vec(), n_unfused })
+        Some(Prog {
+            kind,
+            fs,
+            size1,
+            w: w.to_vec(),
+            n_unfused,
+        })
     }
 }
 
@@ -87,7 +97,11 @@ fn comb<L: Lane, const K: usize, const ANTI: bool>(a: &[L; K], b: &[L; K]) -> [L
 #[inline(always)]
 fn madd<L: Lane, const K: usize, const FUSED: bool>(acc: &mut [L; K], s: &[L; K], w: L) {
     for k in 0..K {
-        acc[k] = if FUSED { acc[k].fma(s[k], w) } else { acc[k].add(s[k].mul(w)) };
+        acc[k] = if FUSED {
+            acc[k].fma(s[k], w)
+        } else {
+            acc[k].add(s[k].mul(w))
+        };
     }
 }
 
@@ -350,7 +364,11 @@ unsafe fn corr1_spec<R: Rows, const S1: usize, const NU: usize, const ANTI: bool
     lanes: usize,
     out: *mut f64,
 ) {
-    unsafe { lanes!(lanes, |j, L, K| pair1::<R, L, K, ANTI>(w, S1, NU, rows, j, out)) }
+    unsafe {
+        lanes!(lanes, |j, L, K| pair1::<R, L, K, ANTI>(
+            w, S1, NU, rows, j, out
+        ))
+    }
 }
 
 unsafe fn corr2_spec<R: Rows, const S1: usize, const NU: usize, const ANTI: bool>(
@@ -360,7 +378,11 @@ unsafe fn corr2_spec<R: Rows, const S1: usize, const NU: usize, const ANTI: bool
     out0: *mut f64,
     out1: *mut f64,
 ) {
-    unsafe { lanes!(lanes, |j, L, K| pair2::<R, L, K, ANTI>(w, S1, NU, rows, j, out0, out1)) }
+    unsafe {
+        lanes!(lanes, |j, L, K| pair2::<R, L, K, ANTI>(
+            w, S1, NU, rows, j, out0, out1
+        ))
+    }
 }
 
 /// Call `$f::<_, S1, NU, ANTI>($args)` for the specialized (size1, scheme)
@@ -403,7 +425,13 @@ pub unsafe fn correlate_spec<R: Rows>(p: &Prog, rows: R, lanes: usize, out: *mut
 }
 
 /// Two output rows through a specialized kernel; false if there is none.
-pub unsafe fn correlate2_spec<R: Rows>(p: &Prog, rows: R, lanes: usize, out0: *mut f64, out1: *mut f64) -> bool {
+pub unsafe fn correlate2_spec<R: Rows>(
+    p: &Prog,
+    rows: R,
+    lanes: usize,
+    out0: *mut f64,
+    out1: *mut f64,
+) -> bool {
     let w = p.w.as_ptr();
     spec_match!(corr2_spec, p, (w, rows, lanes, out0, out1), [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16])
 }
@@ -415,8 +443,22 @@ pub unsafe fn correlate2_spec<R: Rows>(p: &Prog, rows: R, lanes: usize, out0: *m
 pub unsafe fn correlate<R: Rows>(p: &Prog, rows: R, lanes: usize, out: *mut f64) {
     unsafe {
         match p.kind {
-            Kind::Sym => lanes!(lanes, |j, L, K| pair1::<R, L, K, false>(p.w.as_ptr(), p.size1, p.n_unfused, rows, j, out)),
-            Kind::Anti => lanes!(lanes, |j, L, K| pair1::<R, L, K, true>(p.w.as_ptr(), p.size1, p.n_unfused, rows, j, out)),
+            Kind::Sym => lanes!(lanes, |j, L, K| pair1::<R, L, K, false>(
+                p.w.as_ptr(),
+                p.size1,
+                p.n_unfused,
+                rows,
+                j,
+                out
+            )),
+            Kind::Anti => lanes!(lanes, |j, L, K| pair1::<R, L, K, true>(
+                p.w.as_ptr(),
+                p.size1,
+                p.n_unfused,
+                rows,
+                j,
+                out
+            )),
             Kind::Gen => lanes!(lanes, |j, L, K| gen1::<R, L, K>(p, rows, j, out)),
         }
     }
@@ -430,8 +472,24 @@ pub unsafe fn correlate<R: Rows>(p: &Prog, rows: R, lanes: usize, out: *mut f64)
 pub unsafe fn correlate2<R: Rows>(p: &Prog, rows: R, lanes: usize, out0: *mut f64, out1: *mut f64) {
     unsafe {
         match p.kind {
-            Kind::Sym => lanes!(lanes, |j, L, K| pair2::<R, L, K, false>(p.w.as_ptr(), p.size1, p.n_unfused, rows, j, out0, out1)),
-            Kind::Anti => lanes!(lanes, |j, L, K| pair2::<R, L, K, true>(p.w.as_ptr(), p.size1, p.n_unfused, rows, j, out0, out1)),
+            Kind::Sym => lanes!(lanes, |j, L, K| pair2::<R, L, K, false>(
+                p.w.as_ptr(),
+                p.size1,
+                p.n_unfused,
+                rows,
+                j,
+                out0,
+                out1
+            )),
+            Kind::Anti => lanes!(lanes, |j, L, K| pair2::<R, L, K, true>(
+                p.w.as_ptr(),
+                p.size1,
+                p.n_unfused,
+                rows,
+                j,
+                out0,
+                out1
+            )),
             Kind::Gen => lanes!(lanes, |j, L, K| gen2::<R, L, K>(p, rows, j, out0, out1)),
         }
     }
@@ -493,7 +551,16 @@ pub unsafe fn uniform_step(
 ) {
     assert!(tmp.len() >= lanes);
     let tmp = tmp.as_mut_ptr();
-    unsafe { lanes!(lanes, |j, L, K| uni_block::<L, K>(enter, leave, tmp, L::splat(size), out, j)) }
+    unsafe {
+        lanes!(lanes, |j, L, K| uni_block::<L, K>(
+            enter,
+            leave,
+            tmp,
+            L::splat(size),
+            out,
+            j
+        ))
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -521,7 +588,11 @@ unsafe fn nd_block<L: Lane, const K: usize, const FUSED: bool>(
             let w = L::splat(t.w);
             for k in 0..K {
                 // `_res += _weights[_ii] * value`
-                acc[k] = if FUSED { acc[k].fma(w, v[k]) } else { acc[k].add(w.mul(v[k])) };
+                acc[k] = if FUSED {
+                    acc[k].fma(w, v[k])
+                } else {
+                    acc[k].add(w.mul(v[k]))
+                };
             }
         }
         store_k(out.add(j), acc);
@@ -530,7 +601,13 @@ unsafe fn nd_block<L: Lane, const K: usize, const FUSED: bool>(
 
 /// `out[j] = sum over taps of w * rows[row][j + off]`, accumulated in tap
 /// order from 0.0, for `j < lanes`.
-pub unsafe fn nd_correlate(taps: &[Tap], rows: &[*const f64], lanes: usize, fused: bool, out: *mut f64) {
+pub unsafe fn nd_correlate(
+    taps: &[Tap],
+    rows: &[*const f64],
+    lanes: usize,
+    fused: bool,
+    out: *mut f64,
+) {
     unsafe {
         if fused {
             lanes!([16, 4, 1]; lanes, |j, L, K| nd_block::<L, K, true>(taps, rows, j, out))
@@ -566,15 +643,35 @@ unsafe fn nd_pair_block<const M: usize, const K: usize, const FUSED: bool>(
         let n_odd = if M > 1 { K + (M - 2) / 2 } else { 0 };
         for g in 0..=k0 {
             let r = (*rows.add(g)).add(j);
-            let e: [V; SET] = std::array::from_fn(|i| if i < n_even { V::load(r.add(2 * i)) } else { V::splat(0.0) });
-            let o: [V; SET] = std::array::from_fn(|i| if i < n_odd { V::load(r.add(1 + 2 * i)) } else { V::splat(0.0) });
+            let e: [V; SET] = std::array::from_fn(|i| {
+                if i < n_even {
+                    V::load(r.add(2 * i))
+                } else {
+                    V::splat(0.0)
+                }
+            });
+            let o: [V; SET] = std::array::from_fn(|i| {
+                if i < n_odd {
+                    V::load(r.add(1 + 2 * i))
+                } else {
+                    V::splat(0.0)
+                }
+            });
             let apply = |acc: &mut [V; K], wr: *const f64| {
                 for t in 0..M {
                     let wt = V::splat(*wr.add(t));
                     for k in 0..K {
-                        let v = if t % 2 == 0 { e[t / 2 + k] } else { o[t / 2 + k] };
+                        let v = if t % 2 == 0 {
+                            e[t / 2 + k]
+                        } else {
+                            o[t / 2 + k]
+                        };
                         // `_res += _weights[_ii] * value`
-                        acc[k] = if FUSED { acc[k].fma(wt, v) } else { acc[k].add(wt.mul(v)) };
+                        acc[k] = if FUSED {
+                            acc[k].fma(wt, v)
+                        } else {
+                            acc[k].add(wt.mul(v))
+                        };
                     }
                 }
             };

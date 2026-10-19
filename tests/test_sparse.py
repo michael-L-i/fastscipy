@@ -69,7 +69,7 @@ def test_argminmax_duplicates_unsorted_and_implicit_zero_rules(dtype):
         ip = np.sort(rng.integers(0, 60, n + 1))
         ip[0] = 0
         nnz = ip[-1]
-        ind = rng.integers(0, 12, nnz).astype(np.int32)       # unsorted, with duplicates
+        ind = rng.integers(0, 12, nnz).astype(np.int32)  # unsorted, with duplicates
         data = rng.integers(-3, 4, nnz).astype(dtype)
         for fmt in (sp.csr_array, sp.csr_matrix):
             for f in ("argmax", "argmin"):
@@ -91,12 +91,15 @@ def test_argminmax_other_dtypes_run_in_scipy(dtype):
 @pytest.mark.parametrize("fmt", [sp.coo_array, sp.coo_matrix])
 def test_coo_sum_duplicates(dtype, index, fmt):
     rng = np.random.default_rng(3)
-    for n, side in ((1, 5), (50, 8), (3000, 40), (20000, 6), (5000, 3000)):    # 20000 over 36 cells: segments > 128
+    for n, side in ((1, 5), (50, 8), (3000, 40), (20000, 6), (5000, 3000)):  # 20000 over 36 cells: segments > 128
         shape = (side, side + 3)
         row = rng.integers(0, side, n).astype(index)
         col = rng.integers(0, side + 3, n).astype(index)
-        data = (rng.standard_normal(n) * 10.0 ** rng.integers(-3, 4, n)).astype(dtype) \
-            if np.dtype(dtype).kind == "f" else rng.integers(-2**30, 2**30, n).astype(dtype)
+        data = (
+            (rng.standard_normal(n) * 10.0 ** rng.integers(-3, 4, n)).astype(dtype)
+            if np.dtype(dtype).kind == "f"
+            else rng.integers(-(2**30), 2**30, n).astype(dtype)
+        )
         if np.dtype(dtype).kind == "f":
             data[rng.integers(0, n, 2)] = [-0.0, np.nan]
 
@@ -104,13 +107,18 @@ def test_coo_sum_duplicates(dtype, index, fmt):
             m = fmt((data.copy(), (row.copy(), col.copy())), shape=shape)
             m.sum_duplicates()
             return m
+
         check(run)
 
 
 def test_coo_sum_duplicates_declines():
     rng = np.random.default_rng(4)
     row, col = rng.integers(0, 9, 100), rng.integers(0, 9, 100)
-    for data in (rng.random(100) + 1j * rng.random(100), rng.random(100) > 0.5, rng.integers(0, 9, 100).astype(np.int16)):
+    for data in (
+        rng.random(100) + 1j * rng.random(100),
+        rng.random(100) > 0.5,
+        rng.integers(0, 9, 100).astype(np.int16),
+    ):
         before = fast_calls()
         m = sp.coo_array((data, (row, col)), shape=(9, 9))
         with fastscipy.disabled():
@@ -118,7 +126,7 @@ def test_coo_sum_duplicates_declines():
             e.sum_duplicates()
         m.sum_duplicates()
         assert_identical(e, m) and fast_calls() == before
-    m = sp.coo_array((rng.random(5), (row[:5], col[:5])), shape=(10**9, 10))     # huge row count: declined
+    m = sp.coo_array((rng.random(5), (row[:5], col[:5])), shape=(10**9, 10))  # huge row count: declined
     check(lambda: (m.sum_duplicates(), m)[1], fast=False)
     m = sp.coo_array((np.ones(2), (np.array([0, 1], np.int32), np.array([1, 2], np.int64))), shape=(3, 3))
     check(lambda: (m.sum_duplicates(), m)[1], fast=False)
@@ -144,12 +152,18 @@ def test_dense_to_sparse(fmt, dtype, shape, layout):
 def test_dense_declines(fmt):
     rng = np.random.default_rng(5)
     d = dense(rng, (80, 80), np.float64, 0.2)
-    for call in (lambda: fmt(d[:3, :3]), lambda: fmt(d, shape=(80, 80)), lambda: fmt(d, dtype=np.float32),
-                 lambda: fmt(d.astype(np.complex128)), lambda: fmt(d > 0.5), lambda: fmt(d.astype(np.int16)),
-                 lambda: fmt(np.zeros((0, 90)))):
+    for call in (
+        lambda: fmt(d[:3, :3]),
+        lambda: fmt(d, shape=(80, 80)),
+        lambda: fmt(d, dtype=np.float32),
+        lambda: fmt(d.astype(np.complex128)),
+        lambda: fmt(d > 0.5),
+        lambda: fmt(d.astype(np.int16)),
+        lambda: fmt(np.zeros((0, 90))),
+    ):
         with fastscipy.disabled():
             e = call()
-        assert_identical(e, call())      # (CSR/CSC may still use the COO fast path inside SciPy's own conversion)
+        assert_identical(e, call())  # (CSR/CSC may still use the COO fast path inside SciPy's own conversion)
 
 
 @pytest.mark.parametrize("fmt", [sp.csr_array, sp.csc_array, sp.coo_array, sp.csr_matrix, sp.coo_matrix, sp.lil_array])
@@ -158,8 +172,10 @@ def test_dense_declines(fmt):
 def test_find(fmt, dtype, index):
     rng = np.random.default_rng(6)
     n, shape = 400, (30, 25)
-    data = rng.integers(-2, 3, n).astype(dtype)          # explicit zeros, and sums that cancel
-    coo = sp.coo_array((data, (rng.integers(0, 30, n).astype(index), rng.integers(0, 25, n).astype(index))), shape=shape)
+    data = rng.integers(-2, 3, n).astype(dtype)  # explicit zeros, and sums that cancel
+    coo = sp.coo_array(
+        (data, (rng.integers(0, 30, n).astype(index), rng.integers(0, 25, n).astype(index))), shape=shape
+    )
     a = fmt(coo.tocsr()) if fmt is sp.lil_array else fmt(coo)
     check(lambda: sp.find(a), fast=isinstance(a, sp.sparray) and a.format in ("csr", "coo"))
     # unsorted CSR with duplicate columns in a row
@@ -181,16 +197,27 @@ def test_small_calls_match_scipy():
             m2 = f((d, i.astype(np.int64), p.astype(np.int64)), shape=shape)
             z = f((5, 6))
             out += [m, m2, z, m.T, m + m, m @ m.T, m.tocsc(), m * 2, f((d[:3], (i[:3], i[3:6])))]
-        out += [sp.eye_array(7, format="csr"), sp.diags_array([[1.0] * 9, [2.0] * 8], offsets=[0, 1]),
-                sp.get_index_dtype(maxval=2**31 - 1), sp.get_index_dtype(maxval=2**31), sp.get_index_dtype((i,)),
-                sp.get_index_dtype((i.astype(np.int64),), check_contents=True)]
+        out += [
+            sp.eye_array(7, format="csr"),
+            sp.diags_array([[1.0] * 9, [2.0] * 8], offsets=[0, 1]),
+            sp.get_index_dtype(maxval=2**31 - 1),
+            sp.get_index_dtype(maxval=2**31),
+            sp.get_index_dtype((i,)),
+            sp.get_index_dtype((i.astype(np.int64),), check_contents=True),
+        ]
         return out
+
     assert_identical(unpatched(run), run())
-    for bad in (lambda: sp.csr_array((-1, 2)), lambda: sp.csr_array((d, i, p[:2]), shape=(3, 4)),
-                lambda: sp.csr_array((d, i, np.array([1, 3, 5, 9], np.int32)), shape=(3, 4))):
+    for bad in (
+        lambda: sp.csr_array((-1, 2)),
+        lambda: sp.csr_array((d, i, p[:2]), shape=(3, 4)),
+        lambda: sp.csr_array((d, i, np.array([1, 3, 5, 9], np.int32)), shape=(3, 4)),
+    ):
+
         def msg(f):
             try:
                 f()
             except Exception as e:
                 return type(e), str(e)
+
         assert msg(bad) == unpatched(lambda: msg(bad)) is not None

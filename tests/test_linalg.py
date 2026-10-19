@@ -27,6 +27,7 @@ def mats(rng, batch, n, spd=False):
 
 def declined(call):
     """``call`` gives SciPy's result (or raises SciPy's exception) without a fast path."""
+
     def run():
         try:
             with warnings.catch_warnings(record=True) as w:
@@ -34,6 +35,7 @@ def declined(call):
                 return call(), [str(x.message) for x in w]
         except Exception as e:
             return type(e), str(e)
+
     before = fast_calls()
     with fastscipy.disabled():
         expected = run()
@@ -80,7 +82,7 @@ def test_cho_solve(n, batch, lower):
 def test_solve_triangular(n, batch, trans, lower, unit, order):
     rng = np.random.default_rng(n)
     a = (np.tril if lower else np.triu)(mats(rng, batch, n))
-    if order == "F":                     # each matrix Fortran-ordered inside the stack
+    if order == "F":  # each matrix Fortran-ordered inside the stack
         a = a.swapaxes(-1, -2).copy().swapaxes(-1, -2)
     elif order == "strided":
         big = np.zeros(batch + (2 * n, 2 * n))
@@ -125,7 +127,7 @@ def test_declined_cases_match_scipy():
     a = mats(rng, (6,), 4)
     b = rng.standard_normal((6, 4, 2))
     sing = a.copy()
-    sing[2] = 0                                   # singular: SciPy warns or raises
+    sing[2] = 0  # singular: SciPy warns or raises
     nan = a.copy()
     nan[1, 0, 0] = np.nan
     declined(lambda: sl.lu_factor(sing))
@@ -141,7 +143,7 @@ def test_declined_cases_match_scipy():
     declined(lambda: sl.eigh(a.astype(complex)))
     declined(lambda: sl.solve_triangular(sing, b, overwrite_b=True))
     declined(lambda: sl.solve_triangular(np.triu(sing), b))
-    check(lambda: sl.cho_solve((a, True), b))      # potrs does not check positive definiteness
+    check(lambda: sl.cho_solve((a, True), b))  # potrs does not check positive definiteness
     for f in (lambda: sl.lu_factor(nan), lambda: sl.eigh(nan), lambda: sl.solve_triangular(nan, b)):
         with fastscipy.disabled():
             with pytest.raises(ValueError) as e0:
@@ -151,8 +153,9 @@ def test_declined_cases_match_scipy():
         assert str(e0.value) == str(e1.value)
     check(lambda: sl.lu_factor(nan, check_finite=False), fast=False)
     with pytest.raises(ValueError):
-        sl.lu_solve(lu, np.ones((5, 4, 2)))      # incompatible batch: SciPy's error
-    from fastscipy import _native      # SciPy itself would run LAPACK on this; only check the kernel declines
+        sl.lu_solve(lu, np.ones((5, 4, 2)))  # incompatible batch: SciPy's error
+    from fastscipy import _native  # SciPy itself would run LAPACK on this; only check the kernel declines
+
     assert _native.linalg.getrs(lu[0], np.full((6, 4), 9, np.int32), b, "N", True, 1) is None
 
 
@@ -171,13 +174,19 @@ def test_singular_warning_comes_from_scipy():
 def test_null_space_tall(dtype, shape, driver):
     rng = np.random.default_rng(0)
     A = rng.standard_normal(shape).astype(dtype)
-    A[:, -2:] = A[:, :2]                                  # rank deficient
+    A[:, -2:] = A[:, :2]  # rank deficient
     check(lambda: sl.null_space(A, lapack_driver=driver))
     check(lambda: sl.null_space(A, rcond=1e-3, check_finite=False))
 
 
 def test_null_space_declines():
     rng = np.random.default_rng(0)
-    for A in (rng.standard_normal((4, 9)), rng.standard_normal((6, 6)), rng.standard_normal((3, 5, 2)),
-              rng.standard_normal((8, 0)), rng.integers(0, 3, (8, 3)), [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]]):
+    for A in (
+        rng.standard_normal((4, 9)),
+        rng.standard_normal((6, 6)),
+        rng.standard_normal((3, 5, 2)),
+        rng.standard_normal((8, 0)),
+        rng.integers(0, 3, (8, 3)),
+        [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]],
+    ):
         declined(lambda: sl.null_space(A))

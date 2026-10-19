@@ -23,7 +23,7 @@
 use numpy::{PyUntypedArray, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 
-use super::cast::{self, for_each_task, LoadFn, Ptr, Raw, StoreFn};
+use super::cast::{self, LoadFn, Ptr, Raw, StoreFn, for_each_task};
 use super::ext::{self, CONST};
 use super::kern::{self, Prog};
 use crate::ndimage::common::Mode;
@@ -190,8 +190,19 @@ pub fn corr_correlate1d(
         return Ok(false);
     }
     let w = unsafe { std::slice::from_raw_parts(wr.ptr as *const f64, weights.len()) };
-    let Some(prog) = Prog::new(w, scheme) else { return Ok(false) };
-    let Some(job) = setup(py, input, axis, output, mode, cval, origin, Op::Correlate(prog)) else {
+    let Some(prog) = Prog::new(w, scheme) else {
+        return Ok(false);
+    };
+    let Some(job) = setup(
+        py,
+        input,
+        axis,
+        output,
+        mode,
+        cval,
+        origin,
+        Op::Correlate(prog),
+    ) else {
         return Ok(false);
     };
     run(py, job);
@@ -213,8 +224,16 @@ pub fn corr_uniform_filter1d(
     if size < 1 {
         return Ok(false);
     }
-    let Some(job) = setup(py, input, axis, output, mode, cval, origin, Op::Uniform(size as usize))
-    else {
+    let Some(job) = setup(
+        py,
+        input,
+        axis,
+        output,
+        mode,
+        cval,
+        origin,
+        Op::Uniform(size as usize),
+    ) else {
         return Ok(false);
     };
     run(py, job);
@@ -256,12 +275,12 @@ struct Snapshot {
 impl Block {
     /// Pointer to element `c` of source row `m`.
     fn src_row(&self, job: &Job, m: usize, c: usize) -> *const u8 {
-        if let Some(s) = &self.snap {
-            if m < self.r0 || m >= self.r1 {
-                let k = s.rows.binary_search(&m).expect("foreign row in snapshot");
-                let isz = job.src.dt.size();
-                return s.data[(k * job.inner + c) * isz..].as_ptr();
-            }
+        if let Some(s) = &self.snap
+            && (m < self.r0 || m >= self.r1)
+        {
+            let k = s.rows.binary_search(&m).expect("foreign row in snapshot");
+            let isz = job.src.dt.size();
+            return s.data[(k * job.inner + c) * isz..].as_ptr();
         }
         job.src_at(self.o, m, c)
     }
@@ -300,7 +319,12 @@ fn strips(job: &Job) {
     let mut blocks: Vec<Block> = (0..job.outer * nblocks)
         .map(|k| {
             let (o, b) = (k / nblocks, k % nblocks);
-            Block { o, r0: b * per, r1: ((b + 1) * per).min(job.len), snap: None }
+            Block {
+                o,
+                r0: b * per,
+                r1: ((b + 1) * per).min(job.len),
+                snap: None,
+            }
         })
         .collect();
     if job.inplace && nblocks > 1 {
@@ -335,7 +359,8 @@ fn snapshot(job: &Job, blocks: &mut [Block], threads: usize) {
             let mut rows: Vec<usize> = (blk.r0..blk.r1 + fs - 1)
                 .filter_map(|q| {
                     let m = job.map.get(q);
-                    (m != CONST && ((m as usize) < blk.r0 || m as usize >= blk.r1)).then_some(m as usize)
+                    (m != CONST && ((m as usize) < blk.r0 || m as usize >= blk.r1))
+                        .then_some(m as usize)
                 })
                 .collect();
             rows.sort_unstable();
@@ -343,7 +368,11 @@ fn snapshot(job: &Job, blocks: &mut [Block], threads: usize) {
             let mut data = vec![0u8; rows.len() * row_bytes];
             for (i, &m) in rows.iter().enumerate() {
                 unsafe {
-                    std::ptr::copy_nonoverlapping(job.src_at(blk.o, m, 0), data.as_mut_ptr().add(i * row_bytes), row_bytes)
+                    std::ptr::copy_nonoverlapping(
+                        job.src_at(blk.o, m, 0),
+                        data.as_mut_ptr().add(i * row_bytes),
+                        row_bytes,
+                    )
                 };
             }
             blk.snap = Some(Snapshot { rows, data });
@@ -477,7 +506,14 @@ unsafe fn strip(job: &Job, blk: &Block, scr: &mut Scratch, c0: usize, cw: usize)
             for i in 1..r1 {
                 ensure(i + fs);
                 unsafe {
-                    kern::uniform_step(ringp.add(enter * w), ringp.add(leave * w), w, &mut scr.tmp, size, out0)
+                    kern::uniform_step(
+                        ringp.add(enter * w),
+                        ringp.add(leave * w),
+                        w,
+                        &mut scr.tmp,
+                        size,
+                        out0,
+                    )
                 };
                 store(i, out0);
                 leave = if leave + 1 == pr { 0 } else { leave + 1 };
@@ -497,7 +533,11 @@ unsafe fn fill_line(job: &Job, l: usize, ext: &mut [f64]) {
     unsafe { (job.load)(job.src_at(l, 0, 0), len, ext.as_mut_ptr().add(before)) };
     for q in (0..before).chain(before + len..job.lext()) {
         let m = job.map.get(q);
-        ext[q] = if m == CONST { job.cval } else { ext[before + m as usize] };
+        ext[q] = if m == CONST {
+            job.cval
+        } else {
+            ext[before + m as usize]
+        };
     }
 }
 
@@ -516,7 +556,10 @@ fn last_axis_correlate(job: &Job, p: &Prog) {
                 for l in chunk * per..((chunk + 1) * per).min(lines) {
                     unsafe {
                         fill_line(job, l, ext);
-                        let rows = kern::Strided { base: ext.as_ptr(), stride: 1 };
+                        let rows = kern::Strided {
+                            base: ext.as_ptr(),
+                            stride: 1,
+                        };
                         if !kern::correlate_spec(p, rows, len, out.as_mut_ptr()) {
                             kern::correlate(p, rows, len, out.as_mut_ptr());
                         }
@@ -541,7 +584,10 @@ fn last_axis_correlate(job: &Job, p: &Prog) {
                     let n = CH.min(len - a);
                     let e = e;
                     unsafe {
-                        let rows = kern::Strided { base: e.0.add(a), stride: 1 };
+                        let rows = kern::Strided {
+                            base: e.0.add(a),
+                            stride: 1,
+                        };
                         if !kern::correlate_spec(p, rows, n, out.as_mut_ptr()) {
                             kern::correlate(p, rows, n, out.as_mut_ptr());
                         }
@@ -621,8 +667,14 @@ fn uniform_line(ext: &[f64], out: &mut [f64], fs: usize, size: f64) {
 /// slowest operation, run two at a time); steps are taken two at a time so
 /// the pairing is a 2x2 transpose of contiguous loads.
 #[inline(never)]
-unsafe fn uniform_lines(ext: &[*const f64; R], out: &[*mut f64; R], fs: usize, len: usize, size: f64) {
-    use super::simd::{zip, Lane, V};
+unsafe fn uniform_lines(
+    ext: &[*const f64; R],
+    out: &[*mut f64; R],
+    fs: usize,
+    len: usize,
+    size: f64,
+) {
+    use super::simd::{Lane, V, zip};
     const P: usize = R / 2;
     unsafe {
         let mut t = [0.0f64; R];
@@ -641,7 +693,10 @@ unsafe fn uniform_lines(ext: &[*const f64; R], out: &[*mut f64; R], fs: usize, l
             for p in 0..P {
                 let (r0, r1) = (2 * p, 2 * p + 1);
                 // Steps i and i + 1: enter ext[i-1+fs], ext[i+fs]; leave ext[i-1], ext[i].
-                let (e0, e1) = zip(V::load(ext[r0].add(i - 1 + fs)), V::load(ext[r1].add(i - 1 + fs)));
+                let (e0, e1) = zip(
+                    V::load(ext[r0].add(i - 1 + fs)),
+                    V::load(ext[r1].add(i - 1 + fs)),
+                );
                 let (l0, l1) = zip(V::load(ext[r0].add(i - 1)), V::load(ext[r1].add(i - 1)));
                 tmp[p] = tmp[p].add(e0.sub(l0));
                 let o0 = tmp[p].div(vsize);

@@ -81,15 +81,24 @@ fn cell(x: &[f64], q: f64) -> usize {
 /// and no intermediate result is not (SciPy refits `PchipInterpolator` on those and may raise).
 #[pyfunction]
 pub fn pchip_eval<'py>(
-    py: Python<'py>, grids: Vec<PyReadonlyArray1<'py, f64>>, v: PyReadonlyArray1<'py, f64>, q: PyReadonlyArray2<'py, f64>,
+    py: Python<'py>,
+    grids: Vec<PyReadonlyArray1<'py, f64>>,
+    v: PyReadonlyArray1<'py, f64>,
+    q: PyReadonlyArray2<'py, f64>,
 ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
-    let g: Vec<&[f64]> = grids.iter().map(|a| a.as_slice()).collect::<Result<_, _>>()?;
+    let g: Vec<&[f64]> = grids
+        .iter()
+        .map(|a| a.as_slice())
+        .collect::<Result<_, _>>()?;
     let (v, q) = (v.as_slice()?, q.as_slice()?);
     let nd = g.len();
     let m = q.len() / nd.max(1);
     let size: usize = g.iter().map(|x| x.len()).product();
-    if !(1..=3).contains(&nd) || g.iter().any(|x| x.len() < 4) || v.len() != size
-        || !v.iter().all(|v| v.is_finite()) || !q.iter().all(|v| v.is_finite())
+    if !(1..=3).contains(&nd)
+        || g.iter().any(|x| x.len() < 4)
+        || v.len() != size
+        || !v.iter().all(|v| v.is_finite())
+        || !q.iter().all(|v| v.is_finite())
     {
         return Ok(None);
     }
@@ -100,40 +109,43 @@ pub fn pchip_eval<'py>(
     let out = PyArray1::<f64>::zeros(py, m, false);
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
-    py.detach(|| super::fill(o, 1, 64, |i0, o| {
-        for (r, o) in o.iter_mut().enumerate() {
-            let q = &q[(i0 + r) * nd..][..nd];
-            let (mut cl, mut lo, mut w) = ([0; 3], [0; 3], [0; 3]);
-            for d in 0..nd {
-                let n = g[d].len();
-                cl[d] = cell(g[d], q[d]);
-                lo[d] = cl[d].saturating_sub(1);
-                w[d] = (cl[d] + 2).min(n - 1) - lo[d] + 1;
-            }
-            // Gather the window (row-major in the window extents), then fold the last axis away repeatedly.
-            let mut buf = [0.0f64; 64];
-            let mut len = 0;
-            for a in 0..w[0] {
-                for b in 0..if nd > 1 { w[1] } else { 1 } {
-                    for c in 0..if nd > 2 { w[2] } else { 1 } {
-                        let idx = (lo[0] + a) * stride[0] + if nd > 1 { (lo[1] + b) * stride[1] } else { 0 }
-                            + if nd > 2 { lo[2] + c } else { 0 };
-                        buf[len] = v[idx];
-                        len += 1;
+    py.detach(|| {
+        super::fill(o, 1, 64, |i0, o| {
+            for (r, o) in o.iter_mut().enumerate() {
+                let q = &q[(i0 + r) * nd..][..nd];
+                let (mut cl, mut lo, mut w) = ([0; 3], [0; 3], [0; 3]);
+                for d in 0..nd {
+                    let n = g[d].len();
+                    cl[d] = cell(g[d], q[d]);
+                    lo[d] = cl[d].saturating_sub(1);
+                    w[d] = (cl[d] + 2).min(n - 1) - lo[d] + 1;
+                }
+                // Gather the window (row-major in the window extents), then fold the last axis away repeatedly.
+                let mut buf = [0.0f64; 64];
+                let mut len = 0;
+                for a in 0..w[0] {
+                    for b in 0..if nd > 1 { w[1] } else { 1 } {
+                        for c in 0..if nd > 2 { w[2] } else { 1 } {
+                            let idx = (lo[0] + a) * stride[0]
+                                + if nd > 1 { (lo[1] + b) * stride[1] } else { 0 }
+                                + if nd > 2 { lo[2] + c } else { 0 };
+                            buf[len] = v[idx];
+                            len += 1;
+                        }
                     }
                 }
-            }
-            for d in (0..nd).rev() {
-                for p in 0..len / w[d] {
-                    buf[p] = hermite(g[d], cl[d], lo[d], &buf[p * w[d]..(p + 1) * w[d]], q[d]);
+                for d in (0..nd).rev() {
+                    for p in 0..len / w[d] {
+                        buf[p] = hermite(g[d], cl[d], lo[d], &buf[p * w[d]..(p + 1) * w[d]], q[d]);
+                    }
+                    len /= w[d];
+                    if d > 0 && !buf[..len].iter().all(|v| v.is_finite()) {
+                        break;
+                    }
                 }
-                len /= w[d];
-                if d > 0 && !buf[..len].iter().all(|v| v.is_finite()) {
-                    break;
-                }
+                *o = if len == 1 { buf[0] } else { f64::NAN };
             }
-            *o = if len == 1 { buf[0] } else { f64::NAN };
-        }
-    }));
+        })
+    });
     Ok((!o.iter().any(|v| v.is_nan())).then_some(out))
 }

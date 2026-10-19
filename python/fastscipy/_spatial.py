@@ -6,6 +6,7 @@ every output element comes from the same per-pair loop, so bytes are identical
 whole input, and pdist/dice differs, so they are left to SciPy). KDTree
 queries pass ``workers`` when the caller left the default.
 """
+
 import numpy as np
 import scipy.spatial as sp
 import scipy.spatial._ckdtree as _ck
@@ -14,13 +15,29 @@ import scipy.spatial.distance as dist
 from . import _patch
 from ._threads import chunks, get_num_threads, parallel_map
 
-_CDIST = {"euclidean", "sqeuclidean", "cityblock", "chebyshev", "cosine", "correlation", "minkowski",
-          "canberra", "braycurtis", "hamming", "jaccard", "jensenshannon", "dice", "yule",
-          "russellrao", "sokalsneath", "rogerstanimoto"}
+_CDIST = {
+    "euclidean",
+    "sqeuclidean",
+    "cityblock",
+    "chebyshev",
+    "cosine",
+    "correlation",
+    "minkowski",
+    "canberra",
+    "braycurtis",
+    "hamming",
+    "jaccard",
+    "jensenshannon",
+    "dice",
+    "yule",
+    "russellrao",
+    "sokalsneath",
+    "rogerstanimoto",
+}
 _PDIST = _CDIST - {"dice"}
-_WORK = 1_000_000          # pair-coordinates below which a block split loses to hand-off cost
-_BLOCK = 200_000           # about 100 us per block
-_QUERIES = 2000            # KDTree queries below which threads cost more than they save
+_WORK = 1_000_000  # pair-coordinates below which a block split loses to hand-off cost
+_BLOCK = 200_000  # about 100 us per block
+_QUERIES = 2000  # KDTree queries below which threads cost more than they save
 
 
 def _metric(args, kw, names, *arrays):
@@ -28,9 +45,13 @@ def _metric(args, kw, names, *arrays):
     if len(args) + len(kw) > 1 or (kw and "metric" not in kw) or get_num_threads() <= 1:
         return None
     metric = args[0] if args else kw.get("metric", "euclidean")
-    if (isinstance(metric, str) and metric in names
-            and all(type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2
-                    and a.flags.c_contiguous for a in arrays)):
+    if (
+        isinstance(metric, str)
+        and metric in names
+        and all(
+            type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2 and a.flags.c_contiguous for a in arrays
+        )
+    ):
         return metric
 
 
@@ -48,6 +69,7 @@ def _cdist_fast(original):
         res = np.empty((ma, mb))
         parallel_map(lambda s: original(XA[s], XB, metric, out=res[s]), blocks)
         return res
+
     return fast
 
 
@@ -70,14 +92,17 @@ def _pdist_fast(cdist):
             a, b = ab
             D = cdist(X[a:b], X[a:], metric)
             # One masked copy, not a Python loop over rows: a loop holds the GIL and serialises the blocks.
-            res[starts[a]:starts[b]] = D[np.arange(D.shape[1]) > np.arange(b - a)[:, None]]
+            res[starts[a] : starts[b]] = D[np.arange(D.shape[1]) > np.arange(b - a)[:, None]]
+
         parallel_map(block, list(zip(bounds, bounds[1:])))
         return res
+
     return fast
 
 
 def _tree_fast(original, workers_pos, rows):
     """Add ``workers`` to a default-workers query; ``rows(tree, x)`` counts the queries."""
+
     def fast(self, x, *args, **kw):
         if "workers" in kw or len(args) > workers_pos or get_num_threads() <= 1:
             return NotImplemented
@@ -85,6 +110,7 @@ def _tree_fast(original, workers_pos, rows):
         if n < _QUERIES:
             return NotImplemented
         return original(self, x, *args, workers=min(get_num_threads(), n // 500), **kw)
+
     return fast
 
 
@@ -95,6 +121,7 @@ def _nq(tree, x):
 
 class _Meta(type):
     """Keep ``isinstance(tree, cKDTree)`` true for trees built from the original class (KDTree)."""
+
     def __instancecheck__(cls, obj):
         return isinstance(obj, cls.__mro__[1])
 
@@ -103,7 +130,7 @@ class _Meta(type):
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     cdist = dist.cdist
     new_cdist = _patch.wrap(cdist, _cdist_fast(cdist), "cdist")
     _patch.rebind(cdist, new_cdist)

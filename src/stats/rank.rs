@@ -6,8 +6,8 @@
 //! sorted copy are then read off the sorted run. NaNs never tie with each other.
 
 use numpy::{PyArray2, PyArrayMethods, PyReadonlyArray2, PyUntypedArrayMethods};
-use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 use rayon::prelude::*;
 
 use crate::pool;
@@ -66,11 +66,19 @@ struct Opts {
 }
 
 fn rank_row(
-    bits: &[u64], o: &Opts, parallel: bool, ranks: &mut [f64],
-    mut ties: Option<&mut [f64]>, sorted: Option<&mut [u64]>,
+    bits: &[u64],
+    o: &Opts,
+    parallel: bool,
+    ranks: &mut [f64],
+    mut ties: Option<&mut [f64]>,
+    sorted: Option<&mut [u64]>,
 ) {
     let n = bits.len();
-    let mut a: Vec<Pair> = bits.iter().enumerate().map(|(i, &b)| (key(b, o.kind), i as u32)).collect();
+    let mut a: Vec<Pair> = bits
+        .iter()
+        .enumerate()
+        .map(|(i, &b)| (key(b, o.kind), i as u32))
+        .collect();
     if parallel {
         a.par_sort_unstable();
     } else if n <= SMALL {
@@ -109,16 +117,27 @@ fn rank_row(
     }
 }
 
-type Out<'py> = (Bound<'py, PyArray2<f64>>, Option<Bound<'py, PyArray2<u64>>>, Option<Bound<'py, PyArray2<f64>>>);
+type Out<'py> = (
+    Bound<'py, PyArray2<f64>>,
+    Option<Bound<'py, PyArray2<u64>>>,
+    Option<Bound<'py, PyArray2<f64>>>,
+);
 
 /// `x` is a C-contiguous (rows, n) view of float64 (`kind` 0), int64 (1) or
 /// uint64 (2) bits. Returns (ranks, sorted bits, tie counts).
 #[pyfunction]
 pub fn rankdata<'py>(
-    py: Python<'py>, x: PyReadonlyArray2<'py, u64>, kind: u8, method: u8, want_sorted: bool, want_ties: bool,
+    py: Python<'py>,
+    x: PyReadonlyArray2<'py, u64>,
+    kind: u8,
+    method: u8,
+    want_sorted: bool,
+    want_ties: bool,
 ) -> PyResult<Out<'py>> {
     let (rows, n) = (x.shape()[0], x.shape()[1]);
-    let xs = x.as_slice().map_err(|_| PyValueError::new_err("x must be C-contiguous"))?;
+    let xs = x
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("x must be C-contiguous"))?;
     if n == 0 || n >= u32::MAX as usize || kind > 2 || method > 4 {
         return Err(PyValueError::new_err("unsupported rank problem"));
     }
@@ -127,23 +146,45 @@ pub fn rankdata<'py>(
     let sorted = want_sorted.then(|| PyArray2::<u64>::zeros(py, (rows, n), false));
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let (rs, ts, ss) = unsafe {
-        (ranks.as_slice_mut()?, ties.as_ref().map(|t| t.as_slice_mut()).transpose()?,
-         sorted.as_ref().map(|s| s.as_slice_mut()).transpose()?)
+        (
+            ranks.as_slice_mut()?,
+            ties.as_ref().map(|t| t.as_slice_mut()).transpose()?,
+            sorted.as_ref().map(|s| s.as_slice_mut()).transpose()?,
+        )
     };
     let o = Opts { kind, method };
     let threads = pool::num_threads();
     py.detach(|| {
-        let mut ts: Vec<_> = match ts { Some(t) => t.chunks_mut(n).map(Some).collect(), None => (0..rows).map(|_| None).collect() };
-        let mut ss: Vec<_> = match ss { Some(s) => s.chunks_mut(n).map(Some).collect(), None => (0..rows).map(|_| None).collect() };
-        let jobs: Vec<_> = xs.chunks(n).zip(rs.chunks_mut(n)).zip(ts.drain(..)).zip(ss.drain(..)).collect();
+        let mut ts: Vec<_> = match ts {
+            Some(t) => t.chunks_mut(n).map(Some).collect(),
+            None => (0..rows).map(|_| None).collect(),
+        };
+        let mut ss: Vec<_> = match ss {
+            Some(s) => s.chunks_mut(n).map(Some).collect(),
+            None => (0..rows).map(|_| None).collect(),
+        };
+        let jobs: Vec<_> = xs
+            .chunks(n)
+            .zip(rs.chunks_mut(n))
+            .zip(ts.drain(..))
+            .zip(ss.drain(..))
+            .collect();
         if threads > 1 && rows > 1 && rows * n >= PARALLEL_ELEMS {
             pool::pool().install(|| {
-                jobs.into_par_iter().for_each(|(((b, r), t), s)| rank_row(b, &o, false, r, t, s));
+                jobs.into_par_iter()
+                    .for_each(|(((b, r), t), s)| rank_row(b, &o, false, r, t, s));
             });
         } else {
             let big = threads > 1 && n >= PARALLEL_ROW;
-            let run = || jobs.into_iter().for_each(|(((b, r), t), s)| rank_row(b, &o, big, r, t, s));
-            if big { pool::pool().install(run) } else { run() }
+            let run = || {
+                jobs.into_iter()
+                    .for_each(|(((b, r), t), s)| rank_row(b, &o, big, r, t, s))
+            };
+            if big {
+                pool::pool().install(run)
+            } else {
+                run()
+            }
         }
     });
     Ok((ranks, sorted, ties))

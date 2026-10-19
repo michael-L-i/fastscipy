@@ -10,9 +10,7 @@
 use std::any::TypeId;
 
 use super::spline::{Init, Lines};
-use super::support::{
-    OutElem, SendConstPtr, SendPtr, for_each_index_init, libm_pow, madd, nmadd,
-};
+use super::support::{OutElem, SendConstPtr, SendPtr, for_each_index_init, libm_pow, madd, nmadd};
 use crate::ndimage::common::Elem;
 
 /// Widest band (columns).
@@ -299,19 +297,38 @@ pub fn run_bands<I: Elem, O: OutElem>(
     for_each_index_init(
         outer * per,
         par,
-        || (vec![0.0f64; MAX_BW], if direct { Vec::new() } else { vec![0.0f64; n * bw] }),
+        || {
+            (
+                vec![0.0f64; MAX_BW],
+                if direct {
+                    Vec::new()
+                } else {
+                    vec![0.0f64; n * bw]
+                },
+            )
+        },
         |(acc, buf), item| {
             let (o, k0) = (item / per, (item % per) * bw);
             let w = bw.min(inner - k0);
             let base = o * n * inner + k0;
             let band = if direct {
-                Band { ptr: dst.get().cast::<f64>().wrapping_add(base), stride: inner, n, bw: w }
+                Band {
+                    ptr: dst.get().cast::<f64>().wrapping_add(base),
+                    stride: inner,
+                    n,
+                    bw: w,
+                }
             } else {
-                Band { ptr: buf.as_mut_ptr(), stride: w, n, bw: w }
+                Band {
+                    ptr: buf.as_mut_ptr(),
+                    stride: w,
+                    n,
+                    bw: w,
+                }
             };
             // Load: convert to double and apply the gain (as
             // NI_ArrayToLineBuffer and _apply_filter_gain do).
-            let in_place = direct && src.get() as usize == dst.get() as usize;
+            let in_place = direct && std::ptr::addr_eq(src.get(), dst.get());
             let mut tame = true;
             for i in 0..n {
                 // SAFETY: rows are in range and distinct; in place, the row is
@@ -320,7 +337,8 @@ pub fn run_bands<I: Elem, O: OutElem>(
                 tame &= if in_place {
                     scale_row(d, gain)
                 } else {
-                    let s = unsafe { std::slice::from_raw_parts(src.get().add(base + i * inner), w) };
+                    let s =
+                        unsafe { std::slice::from_raw_parts(src.get().add(base + i * inner), w) };
                     load_row(s, d, gain)
                 };
             }

@@ -7,16 +7,17 @@
 
 The memory-bound ``csr_*`` kernels are not taken over: on one thread SciPy's C++ is faster.
 """
+
 import numpy as np
 
 from . import _native, _patch
 from ._threads import get_num_threads
 
 _I32MAX = 2**31 - 1
-_IDX, _VALS = "il", "fdil"   # dtype.char: int32/int64 and float32/float64/int32/int64 (not np.dtype ==, which
-                              # also equates longdouble with float64 here)
-_PAR = {"argminmax": 1_000_000, "sumdup": 100_000, "dense": 1 << 17}   # entries before threads pay off
-_DENSE_MIN = 4096                                                         # smaller dense inputs: SciPy
+_IDX, _VALS = "il", "fdil"  # dtype.char: int32/int64 and float32/float64/int32/int64 (not np.dtype ==, which
+# also equates longdouble with float64 here)
+_PAR = {"argminmax": 1_000_000, "sumdup": 100_000, "dense": 1 << 17}  # entries before threads pay off
+_DENSE_MIN = 4096  # smaller dense inputs: SciPy
 
 
 def _threads(work, key):
@@ -28,6 +29,7 @@ def _contig(*arrs):
 
 
 # ---- small calls --------------------------------------------------------------------------------
+
 
 def _small_calls():
     from scipy.sparse import _base, _compressed, _sputils
@@ -63,7 +65,12 @@ def _small_calls():
 
     def prune(self):
         ip, ind, dat = self.indptr, self.indices, self.data
-        if _patch.enabled and ip.__class__ is np.ndarray and ind.__class__ is np.ndarray and dat.__class__ is np.ndarray:
+        if (
+            _patch.enabled
+            and ip.__class__ is np.ndarray
+            and ind.__class__ is np.ndarray
+            and dat.__class__ is np.ndarray
+        ):
             nnz = int(ip[-1])
             if len(ip) == self._swap(self._shape_as_2d)[0] + 1 and len(ind) >= nnz and len(dat) >= nnz:
                 ind, dat = ind[:nnz], dat[:nnz]
@@ -75,10 +82,18 @@ def _small_calls():
     def check_format(self, full_check=True):
         if not full_check:
             ip, ind, dat = self.indptr, self.indices, self.data
-            if (ip.__class__ is np.ndarray and ind.__class__ is np.ndarray and dat.__class__ is np.ndarray
-                    and ip.dtype.kind == "i" and ind.dtype.kind == "i" and ip.ndim == 1 == ind.ndim == dat.ndim
-                    and len(ip) == self._swap(self._shape_as_2d)[0] + 1 and ip[0] == 0
-                    and len(ind) == len(dat) and ip[-1] <= len(ind)):
+            if (
+                ip.__class__ is np.ndarray
+                and ind.__class__ is np.ndarray
+                and dat.__class__ is np.ndarray
+                and ip.dtype.kind == "i"
+                and ind.dtype.kind == "i"
+                and ip.ndim == 1 == ind.ndim == dat.ndim
+                and len(ip) == self._swap(self._shape_as_2d)[0] + 1
+                and ip[0] == 0
+                and len(ind) == len(dat)
+                and ip[-1] <= len(ind)
+            ):
                 self.prune()
                 return
         return NotImplemented
@@ -92,9 +107,15 @@ def _small_calls():
 
 # ---- argmax / argmin ----------------------------------------------------------------------------
 
+
 def _argminmax_axis(self, axis, argminmax, compare, explicit):
-    if (self.ndim != 2 or self.dtype.char not in _VALS or axis not in (0, 1) or explicit.__class__ is not bool
-            or (argminmax, compare) not in ((np.argmax, np.greater), (np.argmin, np.less))):
+    if (
+        self.ndim != 2
+        or self.dtype.char not in _VALS
+        or axis not in (0, 1)
+        or explicit.__class__ is not bool
+        or (argminmax, compare) not in ((np.argmax, np.greater), (np.argmin, np.less))
+    ):
         return NotImplemented
     mat = self.tocsc() if axis == 0 else self.tocsr()
     mat.sum_duplicates()
@@ -102,11 +123,13 @@ def _argminmax_axis(self, axis, argminmax, compare, explicit):
     ip, ij, data = mat.indptr, mat.indices, mat.data
     if ip.dtype != ij.dtype or ip.dtype.char not in _IDX or not _contig(ip, ij, data):
         return NotImplemented
-    ret = _native.sparse.argminmax(ip, ij, data, line_size, argminmax is np.argmax, explicit,
-                                   _threads(len(data), "argminmax"))
+    ret = _native.sparse.argminmax(
+        ip, ij, data, line_size, argminmax is np.argmax, explicit, _threads(len(data), "argminmax")
+    )
     if ret is None:
         return NotImplemented
     from scipy.sparse._base import sparray
+
     if isinstance(self, sparray):
         return ret
     return self._ascontainer(ret.reshape(-1, 1) if axis == 1 else ret)
@@ -114,13 +137,20 @@ def _argminmax_axis(self, axis, argminmax, compare, explicit):
 
 # ---- COO sum_duplicates -------------------------------------------------------------------------
 
+
 def _sum_duplicates(self, coords, data):
     if len(coords) != 2 or not _contig(data, *coords) or data.dtype.char not in _VALS or data.dtype != self.dtype:
         return NotImplemented
     row, col = coords
     n, m = len(data), self.shape[0]
-    if n == 0 or row.dtype.char not in _IDX or row.dtype != col.dtype or len(row) != n or len(col) != n \
-            or m > 8 * n + 1_000_000:
+    if (
+        n == 0
+        or row.dtype.char not in _IDX
+        or row.dtype != col.dtype
+        or len(row) != n
+        or len(col) != n
+        or m > 8 * n + 1_000_000
+    ):
         return NotImplemented
     r = _native.sparse.sum_duplicates(row, col, data, m, _threads(n, "sumdup"))
     return NotImplemented if r is None else ((r[0], r[1]), r[2])
@@ -128,10 +158,18 @@ def _sum_duplicates(self, coords, data):
 
 # ---- dense -> sparse ----------------------------------------------------------------------------
 
+
 def _dense(arg1, shape, dtype, csc):
     """(indptr, indices, data) of a dense 2-D array when it is a plain case, else None."""
-    if (arg1.__class__ is not np.ndarray or arg1.ndim != 2 or shape is not None or dtype is not None
-            or arg1.size < _DENSE_MIN or arg1.dtype.char not in _VALS or max(arg1.shape) > _I32MAX):
+    if (
+        arg1.__class__ is not np.ndarray
+        or arg1.ndim != 2
+        or shape is not None
+        or dtype is not None
+        or arg1.size < _DENSE_MIN
+        or arg1.dtype.char not in _VALS
+        or max(arg1.shape) > _I32MAX
+    ):
         return None
     return _native.sparse.dense_to_compressed(arg1, csc, _threads(arg1.size, "dense"))
 
@@ -140,7 +178,11 @@ def _dense_inits(cs_cls, coo_cls):
     orig_cs, orig_coo = cs_cls.__init__, coo_cls.__init__
 
     def cs_init(self, arg1, shape=None, dtype=None, copy=False, *extra, maxprint=None):
-        if extra or self.format not in ("csr", "csc") or (r := _dense(arg1, shape, dtype, self.format == "csc")) is None:
+        if (
+            extra
+            or self.format not in ("csr", "csc")
+            or (r := _dense(arg1, shape, dtype, self.format == "csc")) is None
+        ):
             return NotImplemented
         indptr, indices, data = r
         orig_cs(self, (data, indices, indptr), shape=arg1.shape, copy=False, maxprint=maxprint)
@@ -154,17 +196,21 @@ def _dense_inits(cs_cls, coo_cls):
         self.has_canonical_format = True
 
     for cls, fast, name in ((cs_cls, cs_init, "cs.__init__"), (coo_cls, coo_init, "coo.__init__")):
-        _patch.replace(cls, "__init__", _patch.wrap(cls.__init__, fast, name))   # fast returns None when it built the object
+        _patch.replace(
+            cls, "__init__", _patch.wrap(cls.__init__, fast, name)
+        )  # fast returns None when it built the object
 
 
 # ---- find ---------------------------------------------------------------------------------------
 
+
 def _find(A):
     from scipy.sparse import csr_array
     from scipy.sparse._base import sparray
+
     if not (isinstance(A, sparray) and A.ndim == 2 and A.format in ("csr", "csc", "coo")):
         return NotImplemented
-    if A.format == "coo" and A.has_canonical_format:   # SciPy's own path has nothing to sort
+    if A.format == "coo" and A.has_canonical_format:  # SciPy's own path has nothing to sort
         return NotImplemented
     dtypes = (A.row.dtype, A.col.dtype) if A.format == "coo" else (A.indices.dtype,) * 2
     A = csr_array(A, copy=True)
@@ -176,12 +222,15 @@ def _find(A):
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     from scipy.sparse import _coo, _compressed, _data, _extract
+
     _native.sparse  # noqa: B018  (fail early if the extension lacks the module)
     _small_calls()
-    for owner, name, fast in ((_data._minmax_mixin, "_argminmax_axis", _argminmax_axis),
-                              (_coo._coo_base, "_sum_duplicates", _sum_duplicates)):
+    for owner, name, fast in (
+        (_data._minmax_mixin, "_argminmax_axis", _argminmax_axis),
+        (_coo._coo_base, "_sum_duplicates", _sum_duplicates),
+    ):
         _patch.replace(owner, name, _patch.wrap(getattr(owner, name), fast, name))
     _dense_inits(_compressed._cs_matrix, _coo._coo_base)
     old = _extract.find
@@ -190,6 +239,7 @@ def patch():
 
 def smoke():
     import scipy.sparse as sp
+
     rng = np.random.default_rng(0)
     d = rng.random((80, 70)) * (rng.random((80, 70)) < 0.2)
     for f in (sp.csr_array, sp.csc_array, sp.coo_array, sp.csr_matrix):

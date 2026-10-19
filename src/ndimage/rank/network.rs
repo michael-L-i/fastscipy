@@ -117,7 +117,10 @@ pub fn build(rows: &[Vec<isize>], shift: Option<isize>, r: usize) -> Net {
     use std::collections::{BTreeSet, HashMap};
     let set_a: BTreeSet<isize> = rows.iter().flatten().copied().collect();
     let k = set_a.len();
-    let mut b = Builder { ops: Vec::new(), nslots: 0 };
+    let mut b = Builder {
+        ops: Vec::new(),
+        nslots: 0,
+    };
     let mut slot_of: HashMap<isize, usize> = HashMap::new();
     let mut inputs = Vec::new();
     let mut slot = |b: &mut Builder, off: isize| -> usize {
@@ -236,7 +239,11 @@ fn prune_and_compact(b: Builder, inputs: Vec<(usize, isize)>, outputs: Vec<usize
                 next += 1;
             }
         }
-        ops.push(Op { kind, a: map[x] as u16, b: map[y] as u16 });
+        ops.push(Op {
+            kind,
+            a: map[x] as u16,
+            b: map[y] as u16,
+        });
     }
     let outputs = outputs
         .iter()
@@ -249,5 +256,10 @@ fn prune_and_compact(b: Builder, inputs: Vec<(usize, isize)>, outputs: Vec<usize
         })
         .collect();
     assert!(next < u16::MAX as usize);
-    Net { ops, nslots: next, inputs: new_inputs, outputs }
+    Net {
+        ops,
+        nslots: next,
+        inputs: new_inputs,
+        outputs,
+    }
 }

@@ -122,12 +122,19 @@ pub fn map_reduce<T: Sync, R: Send>(
 }
 
 /// `f(dst_chunk, src_chunk)` over matching chunks of two slices.
-pub fn zip_chunks<A: Send, B: Sync>(dst: &mut [A], src: &[B], chunk: usize, f: impl Fn(&mut [A], &[B]) + Sync + Send) {
+pub fn zip_chunks<A: Send, B: Sync>(
+    dst: &mut [A],
+    src: &[B],
+    chunk: usize,
+    f: impl Fn(&mut [A], &[B]) + Sync + Send,
+) {
     if serial() {
         for (d, s) in dst.chunks_mut(chunk).zip(src.chunks(chunk)) {
             f(d, s);
         }
     } else {
-        dst.par_chunks_mut(chunk).zip(src.par_chunks(chunk)).for_each(|(d, s)| f(d, s));
+        dst.par_chunks_mut(chunk)
+            .zip(src.par_chunks(chunk))
+            .for_each(|(d, s)| f(d, s));
     }
 }

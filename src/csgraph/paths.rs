@@ -21,7 +21,10 @@ impl PartialOrd for Key {
 }
 impl Ord for Key {
     fn cmp(&self, o: &Self) -> Ordering {
-        self.0.partial_cmp(&o.0).unwrap_or(Ordering::Equal).then(self.1.cmp(&o.1))
+        self.0
+            .partial_cmp(&o.0)
+            .unwrap_or(Ordering::Equal)
+            .then(self.1.cmp(&o.1))
     }
 }
 
@@ -115,9 +118,20 @@ fn level_search(srcs: &[i32], gs: &[&Csr], out: &mut Out, limit: f64) {
 #[pyo3(signature = (srcs, indptr, indices, data, tindptr, tindices, tdata, dist, pred, src, limit, min_only, unit))]
 #[allow(clippy::too_many_arguments)]
 pub fn dijkstra(
-    py: Python<'_>, srcs: Ro<i32>, indptr: Ro<i32>, indices: Ro<i32>, data: Ro<f64>, tindptr: Ro<i32>,
-    tindices: Ro<i32>, tdata: Ro<f64>, mut dist: Rw<f64>, mut pred: Rw<i32>, mut src: Rw<i32>, limit: f64,
-    min_only: bool, unit: bool,
+    py: Python<'_>,
+    srcs: Ro<i32>,
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    data: Ro<f64>,
+    tindptr: Ro<i32>,
+    tindices: Ro<i32>,
+    tdata: Ro<f64>,
+    mut dist: Rw<f64>,
+    mut pred: Rw<i32>,
+    mut src: Rw<i32>,
+    limit: f64,
+    min_only: bool,
+    unit: bool,
 ) -> PyResult<()> {
     let (srcs, n) = (srcs.as_slice()?, indptr.len()?.saturating_sub(1));
     fn w<'a>(a: &'a Ro<f64>, unit: bool) -> PyResult<Option<&'a [f64]>> {
@@ -127,22 +141,52 @@ pub fn dijkstra(
     let gt = if tindptr.len()? == 0 {
         None
     } else {
-        Some(Csr::new(tindptr.as_slice()?, tindices.as_slice()?, w(&tdata, unit)?, n)?)
+        Some(Csr::new(
+            tindptr.as_slice()?,
+            tindices.as_slice()?,
+            w(&tdata, unit)?,
+            n,
+        )?)
     };
-    let (dist, pred, src) = (dist.as_slice_mut()?, pred.as_slice_mut()?, src.as_slice_mut()?);
+    let (dist, pred, src) = (
+        dist.as_slice_mut()?,
+        pred.as_slice_mut()?,
+        src.as_slice_mut()?,
+    );
     let rows = if min_only { 1 } else { srcs.len() };
-    let (pw, sw) = (if pred.is_empty() { 0 } else { n }, if src.is_empty() { 0 } else { n });
-    if srcs.iter().any(|&s| s < 0 || s as usize >= n) || dist.len() != rows * n || pred.len() != rows * pw
-        || src.len() != rows * sw || limit.is_nan() {
+    let (pw, sw) = (
+        if pred.is_empty() { 0 } else { n },
+        if src.is_empty() { 0 } else { n },
+    );
+    if srcs.iter().any(|&s| s < 0 || s as usize >= n)
+        || dist.len() != rows * n
+        || pred.len() != rows * pw
+        || src.len() != rows * sw
+        || limit.is_nan()
+    {
         return Err(PyValueError::new_err("bad dijkstra arguments"));
     }
     let gs: Vec<&Csr> = std::iter::once(&g).chain(gt.as_ref()).collect();
-    let (pd, pp, ps) = (Ptr(dist.as_mut_ptr()), Ptr(pred.as_mut_ptr()), Ptr(src.as_mut_ptr()));
+    let (pd, pp, ps) = (
+        Ptr(dist.as_mut_ptr()),
+        Ptr(pred.as_mut_ptr()),
+        Ptr(src.as_mut_ptr()),
+    );
     let work = (g.indices.len() + n) * if min_only { 1 } else { srcs.len() };
     for_rows(py, rows, work >= PARALLEL_WORK, |i| {
-        let mut out = unsafe { Out { dist: pd.row(i, n), pred: pp.row(i, pw), src: ps.row(i, sw) } };
+        let mut out = unsafe {
+            Out {
+                dist: pd.row(i, n),
+                pred: pp.row(i, pw),
+                src: ps.row(i, sw),
+            }
+        };
         let s = if min_only { srcs } else { &srcs[i..i + 1] };
-        if unit { level_search(s, &gs, &mut out, limit) } else { heap_search(s, &gs, &mut out, limit) }
+        if unit {
+            level_search(s, &gs, &mut out, limit)
+        } else {
+            heap_search(s, &gs, &mut out, limit)
+        }
     });
     Ok(())
 }
@@ -185,7 +229,11 @@ fn bellman_ford_row(g: &Csr, undirected: bool, out: &mut Out) -> bool {
         let d1 = out.dist[j];
         g.row(j).any(|k| {
             let (w, d2) = (g.weight(k), out.dist[g.indices[k] as usize]);
-            if undirected { (d2 - d1).abs() > w + EPS } else { d1 + w + EPS < d2 }
+            if undirected {
+                (d2 - d1).abs() > w + EPS
+            } else {
+                d1 + w + EPS < d2
+            }
         })
     })
 }
@@ -195,11 +243,22 @@ fn bellman_ford_row(g: &Csr, undirected: bool, out: &mut Out) -> bool {
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
 pub fn bellman_ford(
-    py: Python<'_>, srcs: Ro<i32>, indptr: Ro<i32>, indices: Ro<i32>, data: Ro<f64>, undirected: bool,
-    mut dist: Rw<f64>, mut pred: Rw<i32>,
+    py: Python<'_>,
+    srcs: Ro<i32>,
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    data: Ro<f64>,
+    undirected: bool,
+    mut dist: Rw<f64>,
+    mut pred: Rw<i32>,
 ) -> PyResult<i64> {
     let (srcs, n) = (srcs.as_slice()?, indptr.len()?.saturating_sub(1));
-    let g = Csr::new(indptr.as_slice()?, indices.as_slice()?, Some(data.as_slice()?), n)?;
+    let g = Csr::new(
+        indptr.as_slice()?,
+        indices.as_slice()?,
+        Some(data.as_slice()?),
+        n,
+    )?;
     let (dist, pred) = (dist.as_slice_mut()?, pred.as_slice_mut()?);
     let pw = if pred.is_empty() { 0 } else { n };
     if dist.len() != srcs.len() * n || pred.len() != srcs.len() * pw {
@@ -210,14 +269,24 @@ pub fn bellman_ford(
     let work = (g.indices.len() + n) * n.min(64) * srcs.len();
     for_rows(py, srcs.len(), work >= PARALLEL_WORK, |i| {
         if (i as i64) < first_bad.load(Relaxed) {
-            let mut out = unsafe { Out { dist: pd.row(i, n), pred: pp.row(i, pw), src: &mut [] } };
+            let mut out = unsafe {
+                Out {
+                    dist: pd.row(i, n),
+                    pred: pp.row(i, pw),
+                    src: &mut [],
+                }
+            };
             if bellman_ford_row(&g, undirected, &mut out) {
                 first_bad.fetch_min(i as i64, Relaxed);
             }
         }
     });
     let bad = first_bad.load(Relaxed);
-    Ok(if bad == i64::MAX { -1 } else { srcs[bad as usize] as i64 })
+    Ok(if bad == i64::MAX {
+        -1
+    } else {
+        srcs[bad as usize] as i64
+    })
 }
 
 /// Johnson's first stage: Bellman-Ford from a virtual source joined to every node by
@@ -225,10 +294,20 @@ pub fn bellman_ford(
 /// that reveals a negative cycle, or -1.
 #[pyfunction]
 pub fn johnson_potentials(
-    py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, data: Ro<f64>, undirected: bool, mut h: Rw<f64>,
+    py: Python<'_>,
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    data: Ro<f64>,
+    undirected: bool,
+    mut h: Rw<f64>,
 ) -> PyResult<i64> {
     let h = h.as_slice_mut()?;
-    let g = Csr::new(indptr.as_slice()?, indices.as_slice()?, Some(data.as_slice()?), h.len())?;
+    let g = Csr::new(
+        indptr.as_slice()?,
+        indices.as_slice()?,
+        Some(data.as_slice()?),
+        h.len(),
+    )?;
     Ok(py.detach(|| {
         let n = h.len();
         for _ in 0..n {
@@ -257,7 +336,11 @@ pub fn johnson_potentials(
             .find(|&j| {
                 g.row(j).any(|k| {
                     let (w, d2) = (g.weight(k), h[g.indices[k] as usize]);
-                    if undirected { (d2 - h[j]).abs() > w + EPS } else { h[j] + w + EPS < d2 }
+                    if undirected {
+                        (d2 - h[j]).abs() > w + EPS
+                    } else {
+                        h[j] + w + EPS < d2
+                    }
                 })
             })
             .map_or(-1, |j| j as i64)
@@ -266,7 +349,12 @@ pub fn johnson_potentials(
 
 /// `w(u, v) += h(u); w(u, v) -= h(v)` over a CSR matrix, as `_johnson_add_weights`.
 #[pyfunction]
-pub fn add_weights(indptr: Ro<i32>, indices: Ro<i32>, mut data: Rw<f64>, h: Ro<f64>) -> PyResult<()> {
+pub fn add_weights(
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    mut data: Rw<f64>,
+    h: Ro<f64>,
+) -> PyResult<()> {
     let (ip, ix, h) = (indptr.as_slice()?, indices.as_slice()?, h.as_slice()?);
     let w = data.as_slice_mut()?;
     Csr::new(ip, ix, Some(w), h.len())?;

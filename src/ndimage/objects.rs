@@ -5,7 +5,7 @@ use pyo3::prelude::*;
 use pyo3::types::{PyList, PySlice, PyTuple};
 use rayon::prelude::*;
 
-use crate::ndimage::common::{pool, slice, typed, Elem};
+use crate::ndimage::common::{Elem, pool, slice, typed};
 
 trait Lab: Copy + Send + Sync {
     /// label index (value - 1) as i64, or -1 when out of the representable range
@@ -59,36 +59,53 @@ fn scan<T: Lab>(shape: &[usize], data: &[T], max_label: usize, nthreads: usize) 
                         r[2 * nd - 1] = e as i64;
                     } else {
                         for d in 0..nd - 1 {
-                            if coord[d] < r[d] { r[d] = coord[d]; }
-                            if coord[d] + 1 > r[d + nd] { r[d + nd] = coord[d] + 1; }
+                            if coord[d] < r[d] {
+                                r[d] = coord[d];
+                            }
+                            if coord[d] + 1 > r[d + nd] {
+                                r[d + nd] = coord[d] + 1;
+                            }
                         }
-                        if (x as i64) < r[nd - 1] { r[nd - 1] = x as i64; }
-                        if e as i64 > r[2 * nd - 1] { r[2 * nd - 1] = e as i64; }
+                        if (x as i64) < r[nd - 1] {
+                            r[nd - 1] = x as i64;
+                        }
+                        if e as i64 > r[2 * nd - 1] {
+                            r[2 * nd - 1] = e as i64;
+                        }
                     }
                 }
                 x = e;
             }
             for d in (0..nd - 1).rev() {
                 coord[d] += 1;
-                if coord[d] < shape[d] as i64 { break; }
+                if coord[d] < shape[d] as i64 {
+                    break;
+                }
                 coord[d] = 0;
             }
         }
         reg
     };
-    let parts: Vec<Vec<i64>> = pool().install(|| (0..nchunks).into_par_iter().map(scan_chunk).collect());
+    let parts: Vec<Vec<i64>> =
+        pool().install(|| (0..nchunks).into_par_iter().map(scan_chunk).collect());
     let mut it = parts.into_iter();
     let mut out = it.next().unwrap();
     for p in it {
         for k in 0..max_label {
             let b = k * per;
-            if p[b] < 0 { continue; }
+            if p[b] < 0 {
+                continue;
+            }
             if out[b] < 0 {
                 out[b..b + per].copy_from_slice(&p[b..b + per]);
             } else {
                 for d in 0..nd {
-                    if p[b + d] < out[b + d] { out[b + d] = p[b + d]; }
-                    if p[b + d + nd] > out[b + d + nd] { out[b + d + nd] = p[b + d + nd]; }
+                    if p[b + d] < out[b + d] {
+                        out[b + d] = p[b + d];
+                    }
+                    if p[b + d + nd] > out[b + d + nd] {
+                        out[b + d + nd] = p[b + d + nd];
+                    }
                 }
             }
         }
@@ -98,7 +115,11 @@ fn scan<T: Lab>(shape: &[usize], data: &[T], max_label: usize, nthreads: usize) 
 
 /// find_objects_core(input, max_label) -> list | None
 #[pyfunction]
-fn find_objects_core<'py>(py: Python<'py>, input: &Bound<'py, PyUntypedArray>, max_label: usize) -> PyResult<Option<Bound<'py, PyList>>> {
+fn find_objects_core<'py>(
+    py: Python<'py>,
+    input: &Bound<'py, PyUntypedArray>,
+    max_label: usize,
+) -> PyResult<Option<Bound<'py, PyList>>> {
     use numpy::PyArrayDescrMethods;
     if !input.is_c_contiguous() || input.ndim() == 0 || input.len() == 0 {
         return Ok(None);
@@ -107,20 +128,32 @@ fn find_objects_core<'py>(py: Python<'py>, input: &Bound<'py, PyUntypedArray>, m
     let nd = shape.len();
     let nthreads = crate::ndimage::common::num_threads();
     let d = input.dtype();
-    macro_rules! go { ($T:ty) => {{
-        let a = typed::<$T>(input)?;
-        let s = unsafe { slice(&a) };
-        py.detach(|| scan::<$T>(&shape, s, max_label, nthreads))
-    }}; }
-    let reg = if d.is_equiv_to(&numpy::dtype::<u8>(py)) { go!(u8) }
-    else if d.is_equiv_to(&numpy::dtype::<i8>(py)) { go!(i8) }
-    else if d.is_equiv_to(&numpy::dtype::<u16>(py)) { go!(u16) }
-    else if d.is_equiv_to(&numpy::dtype::<i16>(py)) { go!(i16) }
-    else if d.is_equiv_to(&numpy::dtype::<u32>(py)) { go!(u32) }
-    else if d.is_equiv_to(&numpy::dtype::<i32>(py)) { go!(i32) }
-    else if d.is_equiv_to(&numpy::dtype::<u64>(py)) { go!(u64) }
-    else if d.is_equiv_to(&numpy::dtype::<i64>(py)) { go!(i64) }
-    else { return Ok(None); };
+    macro_rules! go {
+        ($T:ty) => {{
+            let a = typed::<$T>(input)?;
+            let s = unsafe { slice(&a) };
+            py.detach(|| scan::<$T>(&shape, s, max_label, nthreads))
+        }};
+    }
+    let reg = if d.is_equiv_to(&numpy::dtype::<u8>(py)) {
+        go!(u8)
+    } else if d.is_equiv_to(&numpy::dtype::<i8>(py)) {
+        go!(i8)
+    } else if d.is_equiv_to(&numpy::dtype::<u16>(py)) {
+        go!(u16)
+    } else if d.is_equiv_to(&numpy::dtype::<i16>(py)) {
+        go!(i16)
+    } else if d.is_equiv_to(&numpy::dtype::<u32>(py)) {
+        go!(u32)
+    } else if d.is_equiv_to(&numpy::dtype::<i32>(py)) {
+        go!(i32)
+    } else if d.is_equiv_to(&numpy::dtype::<u64>(py)) {
+        go!(u64)
+    } else if d.is_equiv_to(&numpy::dtype::<i64>(py)) {
+        go!(i64)
+    } else {
+        return Ok(None);
+    };
     let list = PyList::empty(py);
     let slice_t = py.get_type::<PySlice>();
     for k in 0..max_label {

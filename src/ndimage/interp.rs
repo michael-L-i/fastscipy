@@ -14,8 +14,8 @@ mod spline;
 mod support;
 mod zoom;
 
-use crate::ndimage::common::{self, Elem, Mode, typed};
 use crate::dispatch_elem;
+use crate::ndimage::common::{self, Elem, Mode, typed};
 use support::{OutElem, int_output_risky, worth_parallel};
 
 /// Address range of an array's data, in bytes.
@@ -46,8 +46,13 @@ fn interp_spline_filter1d<'py>(
     output: &Bound<'py, PyUntypedArray>,
     mode: i64,
 ) -> PyResult<bool> {
-    let Some(mode) = mode_of(mode) else { return Ok(false) };
-    let Some(poles) = (0..=5).contains(&order).then(|| support::filter_poles(order as usize)).flatten()
+    let Some(mode) = mode_of(mode) else {
+        return Ok(false);
+    };
+    let Some(poles) = (0..=5)
+        .contains(&order)
+        .then(|| support::filter_poles(order as usize))
+        .flatten()
     else {
         return Ok(false);
     };
@@ -129,7 +134,9 @@ fn interp_zoom_shift<'py>(
     npad: i64,
     grid_mode: bool,
 ) -> PyResult<bool> {
-    let Some(mode) = mode_of(mode) else { return Ok(false) };
+    let Some(mode) = mode_of(mode) else {
+        return Ok(false);
+    };
     let rank = input.ndim();
     if !(0..=5).contains(&order)
         || !(0..=1 << 20).contains(&npad)
@@ -156,8 +163,18 @@ fn interp_zoom_shift<'py>(
         None => None,
     };
     let params_finite = cval.is_finite()
-        && zooms.iter().chain(shifts.iter()).flatten().all(|v| v.is_finite());
-    let p = zoom::Params { order: order as usize, mode, cval, npad, grid_mode };
+        && zooms
+            .iter()
+            .chain(shifts.iter())
+            .flatten()
+            .all(|v| v.is_finite());
+    let p = zoom::Params {
+        order: order as usize,
+        mode,
+        cval,
+        npad,
+        grid_mode,
+    };
     let in_shape = input.shape().to_vec();
     let out_shape = output.shape().to_vec();
     dispatch_elem!(py, input.dtype(), I => {
@@ -199,7 +216,9 @@ fn interp_affine<'py>(
     cval: f64,
     npad: i64,
 ) -> PyResult<bool> {
-    let Some(mode) = mode_of(mode) else { return Ok(false) };
+    let Some(mode) = mode_of(mode) else {
+        return Ok(false);
+    };
     let (irank, orank) = (input.ndim(), output.ndim());
     if !(0..=5).contains(&order)
         || !(0..=1 << 20).contains(&npad)
@@ -212,15 +231,23 @@ fn interp_affine<'py>(
     {
         return Ok(false);
     }
-    let Ok(m) = matrix.cast::<numpy::PyArray2<f64>>() else { return Ok(false) };
+    let Ok(m) = matrix.cast::<numpy::PyArray2<f64>>() else {
+        return Ok(false);
+    };
     let m = m.readonly().as_slice()?.to_vec();
-    let Some(off) = read_f64(offset)? else { return Ok(false) };
+    let Some(off) = read_f64(offset)? else {
+        return Ok(false);
+    };
     if off.len() != irank {
         return Ok(false);
     }
-    let params_finite =
-        cval.is_finite() && m.iter().chain(off.iter()).all(|v| v.is_finite());
-    let p = geom::Params { order: order as usize, mode, cval, npad };
+    let params_finite = cval.is_finite() && m.iter().chain(off.iter()).all(|v| v.is_finite());
+    let p = geom::Params {
+        order: order as usize,
+        mode,
+        cval,
+        npad,
+    };
     let in_shape = input.shape().to_vec();
     let out_shape = output.shape().to_vec();
     dispatch_elem!(py, input.dtype(), I => {
@@ -258,7 +285,9 @@ fn interp_map_coordinates<'py>(
     cval: f64,
     npad: i64,
 ) -> PyResult<bool> {
-    let Some(mode) = mode_of(mode) else { return Ok(false) };
+    let Some(mode) = mode_of(mode) else {
+        return Ok(false);
+    };
     let rank = input.ndim();
     let cshape = coordinates.shape();
     if !(0..=5).contains(&order)
@@ -274,10 +303,17 @@ fn interp_map_coordinates<'py>(
     {
         return Ok(false);
     }
-    let Ok(coords) = coordinates.cast::<numpy::PyArrayDyn<f64>>() else { return Ok(false) };
+    let Ok(coords) = coordinates.cast::<numpy::PyArrayDyn<f64>>() else {
+        return Ok(false);
+    };
     let coords = coords.readonly();
     let coords = coords.as_slice()?;
-    let p = geom::Params { order: order as usize, mode, cval, npad };
+    let p = geom::Params {
+        order: order as usize,
+        mode,
+        cval,
+        npad,
+    };
     let in_shape = input.shape().to_vec();
     dispatch_elem!(py, input.dtype(), I => {
         dispatch_elem!(py, output.dtype(), O => {

@@ -11,8 +11,8 @@
 use super::boundary::axis_table;
 use super::elem::RElem;
 use super::nets::GenNet;
+use super::network::{CE, MAX, MIN, Net};
 use super::par::{self, Arena, Arenas};
-use super::network::{Net, CE, MAX, MIN};
 use super::simd::Vx;
 use crate::ndimage::common::Mode;
 
@@ -48,10 +48,18 @@ pub struct Plan {
 }
 
 impl Plan {
-    pub fn new(shape: &[usize], before: &[usize], after: &[usize], mode: Mode, elem_size: usize) -> Plan {
+    pub fn new(
+        shape: &[usize],
+        before: &[usize],
+        after: &[usize],
+        mode: Mode,
+        elem_size: usize,
+    ) -> Plan {
         let nd = shape.len();
         let span: Vec<usize> = (0..nd).map(|i| before[i] + after[i] + 1).collect();
-        let tables: Vec<Vec<i64>> = (0..nd).map(|i| axis_table(mode, shape[i], before[i], after[i])).collect();
+        let tables: Vec<Vec<i64>> = (0..nd)
+            .map(|i| axis_table(mode, shape[i], before[i], after[i]))
+            .collect();
         let uses_cval = tables.iter().any(|t| t.iter().any(|&v| v < 0));
         let nx = shape[nd - 1];
         let tile = (TILE_BYTES / elem_size).max(64).min(nx);
@@ -79,7 +87,16 @@ impl Plan {
         for i in (0..nd - 1).rev() {
             sstrides[i] = sstrides[i + 1] * sdims[i + 1];
         }
-        Plan { shape: shape.to_vec(), span, tables, band, tile, sdims, sstrides, uses_cval }
+        Plan {
+            shape: shape.to_vec(),
+            span,
+            tables,
+            band,
+            tile,
+            sdims,
+            sstrides,
+            uses_cval,
+        }
     }
 
     pub fn ndim(&self) -> usize {
@@ -88,7 +105,10 @@ impl Plan {
 
     /// Slab offset of a window element with per-axis coordinates `c` (0..span).
     pub fn offset(&self, c: &[usize]) -> isize {
-        c.iter().zip(&self.sstrides).map(|(&a, &s)| (a * s) as isize).sum()
+        c.iter()
+            .zip(&self.sstrides)
+            .map(|(&a, &s)| (a * s) as isize)
+            .sum()
     }
 
     /// Slab offset between the windows of two outputs one row apart along
@@ -132,7 +152,10 @@ where
     let (nouter, ny) = if nd == 1 {
         (1, 1)
     } else {
-        (plan.shape[..nd - 2].iter().product::<usize>(), plan.shape[nd - 2])
+        (
+            plan.shape[..nd - 2].iter().product::<usize>(),
+            plan.shape[nd - 2],
+        )
     };
     let nbands = ny.div_ceil(plan.band);
     let ntasks = nouter * nbands * ntiles;
@@ -399,7 +422,14 @@ pub unsafe fn net_task<T: RElem, V: Vx<T>, const U: usize>(
 ///
 /// # Safety
 /// `out` must be valid for the task's output pixels.
-pub unsafe fn gen_task<T: RElem, V: Vx<T>, N: GenNet>(slab: &[T], t: &Task, soff: &[isize], poff: &[isize], r: usize, out: SendPtr<T>) {
+pub unsafe fn gen_task<T: RElem, V: Vx<T>, N: GenNet>(
+    slab: &[T],
+    t: &Task,
+    soff: &[isize],
+    poff: &[isize],
+    r: usize,
+    out: SendPtr<T>,
+) {
     let lanes = V::LANES;
     let mut tail = [T::default(); 512];
     let ostride = t.out_row_stride as isize;
@@ -446,17 +476,37 @@ impl Reduce {
     pub fn new(offsets: &[isize], shift: Option<isize>) -> Reduce {
         let pair = shift.map(|s| {
             let a: std::collections::HashSet<isize> = offsets.iter().copied().collect();
-            let core: Vec<isize> = offsets.iter().copied().filter(|o| a.contains(&(o - s))).collect();
-            let ea: Vec<isize> = offsets.iter().copied().filter(|o| !a.contains(&(o - s))).collect();
-            let eb: Vec<isize> = offsets.iter().map(|o| o + s).filter(|o| !a.contains(o)).collect();
+            let core: Vec<isize> = offsets
+                .iter()
+                .copied()
+                .filter(|o| a.contains(&(o - s)))
+                .collect();
+            let ea: Vec<isize> = offsets
+                .iter()
+                .copied()
+                .filter(|o| !a.contains(&(o - s)))
+                .collect();
+            let eb: Vec<isize> = offsets
+                .iter()
+                .map(|o| o + s)
+                .filter(|o| !a.contains(o))
+                .collect();
             (core, ea, eb)
         });
-        Reduce { single: offsets.to_vec(), pair }
+        Reduce {
+            single: offsets.to_vec(),
+            pair,
+        }
     }
 }
 
 #[inline(always)]
-unsafe fn reduce_into<T, V: Vx<T>>(minimum: bool, acc: Option<V>, p: *const T, offs: &[isize]) -> Option<V> {
+unsafe fn reduce_into<T, V: Vx<T>>(
+    minimum: bool,
+    acc: Option<V>,
+    p: *const T,
+    offs: &[isize],
+) -> Option<V> {
     let mut it = offs.iter();
     let mut acc = match acc {
         Some(a) => a,
@@ -480,7 +530,13 @@ unsafe fn reduce_into<T, V: Vx<T>>(minimum: bool, acc: Option<V>, p: *const T, o
 ///
 /// # Safety
 /// `out` must be valid for the task's output pixels.
-pub unsafe fn reduce_task<T: RElem, V: Vx<T>>(slab: &[T], t: &Task, r: &Reduce, minimum: bool, out: SendPtr<T>) {
+pub unsafe fn reduce_task<T: RElem, V: Vx<T>>(
+    slab: &[T],
+    t: &Task,
+    r: &Reduce,
+    minimum: bool,
+    out: SendPtr<T>,
+) {
     let lanes = V::LANES;
     let mut tail = [T::default(); 1024];
     let mut y = 0;
@@ -529,9 +585,21 @@ pub struct Slide {
 impl Slide {
     pub fn new(offsets: &[isize]) -> Slide {
         let set: std::collections::HashSet<isize> = offsets.iter().copied().collect();
-        let leave = offsets.iter().copied().filter(|o| !set.contains(&(o - 1))).collect();
-        let enter = offsets.iter().map(|o| o + 1).filter(|o| !set.contains(o)).collect();
-        Slide { all: offsets.to_vec(), leave, enter }
+        let leave = offsets
+            .iter()
+            .copied()
+            .filter(|o| !set.contains(&(o - 1)))
+            .collect();
+        let enter = offsets
+            .iter()
+            .map(|o| o + 1)
+            .filter(|o| !set.contains(o))
+            .collect();
+        Slide {
+            all: offsets.to_vec(),
+            leave,
+            enter,
+        }
     }
     /// Histogram updates per output pixel.
     pub fn edge(&self) -> usize {
@@ -600,8 +668,14 @@ pub unsafe fn huang_task<T: RElem>(slab: &[T], t: &Task, s: &Slide, r: usize, ou
 ///
 /// # Safety
 /// `out` must be valid for the task's output pixels.
-pub unsafe fn pixel_task<T: RElem, F>(ar: &mut Arena, slab: &[T], t: &Task, offsets: &[isize], out: SendPtr<T>, f: &F)
-where
+pub unsafe fn pixel_task<T: RElem, F>(
+    ar: &mut Arena,
+    slab: &[T],
+    t: &Task,
+    offsets: &[isize],
+    out: SendPtr<T>,
+    f: &F,
+) where
     F: Fn(&mut [T]) -> T,
 {
     let buf = ar.take::<T>(offsets.len());

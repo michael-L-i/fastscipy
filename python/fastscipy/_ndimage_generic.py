@@ -1,4 +1,5 @@
 """generic_filter with a numpy reducer (np.mean, np.sum, np.max, np.min, np.median, np.std, np.var, np.ptp)."""
+
 import numpy as np
 
 from ._ndimage_seam import accelerated, core
@@ -31,8 +32,11 @@ def generic_filter(input, function, footprint, output, mode, cval, origins, extr
         src = input
     else:
         return NotImplemented
-    fp = np.ascontiguousarray(footprint).view(np.uint8) if footprint.dtype == np.bool_ else \
-        np.ascontiguousarray(footprint != 0).view(np.uint8)
+    fp = (
+        np.ascontiguousarray(footprint).view(np.uint8)
+        if footprint.dtype == np.bool_
+        else np.ascontiguousarray(footprint != 0).view(np.uint8)
+    )
     if fp.ndim != input.ndim or fp.sum() == 0:
         return NotImplemented
     cval = float(cval)

@@ -132,13 +132,27 @@ impl ExtMap {
         let m = before + after + 1;
         let (head, tail) = if len > 2 * m {
             let b = extend_map(2 * m, before, after, mode);
-            let fix = |v: isize| if v == CONST || v < m as isize { v } else { v + (len - 2 * m) as isize };
-            (b[..before].iter().map(|&v| fix(v)).collect(), b[before + 2 * m..].iter().map(|&v| fix(v)).collect())
+            let fix = |v: isize| {
+                if v == CONST || v < m as isize {
+                    v
+                } else {
+                    v + (len - 2 * m) as isize
+                }
+            };
+            (
+                b[..before].iter().map(|&v| fix(v)).collect(),
+                b[before + 2 * m..].iter().map(|&v| fix(v)).collect(),
+            )
         } else {
             let b = extend_map(len, before, after, mode);
             (b[..before].to_vec(), b[before + len..].to_vec())
         };
-        ExtMap { before, len, head, tail }
+        ExtMap {
+            before,
+            len,
+            head,
+            tail,
+        }
     }
 
     /// Total extended length.
@@ -209,7 +223,11 @@ pub fn nd_map(cc: isize, len: isize, mode: Mode) -> Option<isize> {
             }
         }
         Mode::Nearest => {
-            if cc < 0 { 0 } else { len - 1 }
+            if cc < 0 {
+                0
+            } else {
+                len - 1
+            }
         }
         Mode::Constant | Mode::GridConstant => return None,
     })

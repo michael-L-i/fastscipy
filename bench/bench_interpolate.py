@@ -1,4 +1,5 @@
 """scipy.interpolate lookups on random queries (and sorted ones, where we expect ~1x)."""
+
 import numpy as np
 import scipy.interpolate as si
 import scipy.spatial as sp
@@ -23,7 +24,7 @@ def cases():
     tri = sp.Delaunay(pts)
     xq = r.random((100_000, 2))
     row = np.floor(xq[:, 1] * 300)
-    xs = xq[np.lexsort((np.where(row % 2 == 0, xq[:, 0], -xq[:, 0]), row))]       # snake raster order
+    xs = xq[np.lexsort((np.where(row % 2 == 0, xq[:, 0], -xq[:, 0]), row))]  # snake raster order
     yield "Delaunay.find_simplex 1e5 points, 1e5 random queries", lambda: tri.find_simplex(xq)
     yield "Delaunay.find_simplex 1e5 points, 1e5 raster-ordered queries", lambda: tri.find_simplex(xs), False
     lin = si.LinearNDInterpolator(tri, np.sin(5 * pts[:, 0]) + pts[:, 1])

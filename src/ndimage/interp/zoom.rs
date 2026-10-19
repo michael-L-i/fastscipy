@@ -1,8 +1,9 @@
 //! `NI_ZoomShift`: zoom and/or shift, where every output axis maps to one
 //! input axis, so tap indices and weights are tabulated per axis.
 //!
-//! SciPy computes every output point as `t = 0; t += ((v * w_0) * w_1) ...
-//! * w_last` over the taps in C order. Here, for each output row, the leading
+//! SciPy computes every output point as
+//! `t = 0; t += ((v * w_0) * w_1) ... * w_last` over the taps in C order.
+//! Here, for each output row, the leading
 //! products `(v[c] * w_0) * ... * w_{r-2}` are tabulated per input column `c`
 //! of the last axis; every output point then adds `table[c] * w_last` over
 //! its taps in SciPy's order. That is the same sequence of roundings, so the
@@ -213,8 +214,13 @@ pub fn zoom_shift<I: Elem, O: OutElem>(
     }
     let mut axes = Vec::with_capacity(rank);
     for d in 0..rank {
-        match build_axis(out_shape[d], in_shape[d], zooms.map(|z| z[d]), shifts.map(|s| s[d]), p)
-        {
+        match build_axis(
+            out_shape[d],
+            in_shape[d],
+            zooms.map(|z| z[d]),
+            shifts.map(|s| s[d]),
+            p,
+        ) {
             Some(a) => axes.push(a),
             None => return false,
         }
@@ -236,7 +242,9 @@ pub fn zoom_shift<I: Elem, O: OutElem>(
     // Split the last axis so that a work item's table stays cache-resident.
     let cols = (TABLE_TARGET / (combos * lanes)).max(16);
     let per_col = out_last as f64 / in_last as f64;
-    let block = ((cols as f64 * per_col) as usize).clamp(32, 4096).min(out_last);
+    let block = ((cols as f64 * per_col) as usize)
+        .clamp(32, 4096)
+        .min(out_last);
     let blocks: Vec<LastBlock> = (0..out_last.div_ceil(block))
         .map(|b| {
             let x0 = b * block;
@@ -244,7 +252,15 @@ pub fn zoom_shift<I: Elem, O: OutElem>(
         })
         .collect();
 
-    let ctx = Ctx { src, out_shape, strides: &strides, axes: &axes, p, combos, nrows };
+    let ctx = Ctx {
+        src,
+        out_shape,
+        strides: &strides,
+        axes: &axes,
+        p,
+        combos,
+        nrows,
+    };
     let groups = nrows.div_ceil(lanes);
     let nb = blocks.len();
     let out = SendPtr(dst.as_mut_ptr());
@@ -452,7 +468,13 @@ fn sum_taps<const ORDER: usize, const L: usize>(
     assert!(rel.len() >= nx * taps && w.len() >= nx * taps && table.len() >= combos * s1 * L);
     for x in 0..nx {
         // Tap columns and weights stay in registers across combinations.
-        let r: [usize; 6] = std::array::from_fn(|j| if j < taps { rel[x * taps + j] as usize * L } else { 0 });
+        let r: [usize; 6] = std::array::from_fn(|j| {
+            if j < taps {
+                rel[x * taps + j] as usize * L
+            } else {
+                0
+            }
+        });
         let wx: [f64; 6] = std::array::from_fn(|j| if j < taps { w[x * taps + j] } else { 0.0 });
         let mut acc = [0.0f64; L];
         for o in 0..combos {

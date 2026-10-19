@@ -7,6 +7,7 @@ chunks run SciPy's own loops, so results are identical. A call that raises a
 floating-point event NumPy would report is rerun serially by SciPy, so warnings
 and errors are SciPy's own; so is any call while ``sc.errstate`` reports errors.
 """
+
 import time
 
 import numpy as np
@@ -16,12 +17,25 @@ import scipy.special._ufuncs as _ufuncs
 from . import _patch
 from ._threads import chunks, get_num_threads, parallel_map
 
-_OK = "?bBhHiIlLqQefdFD"          # no object, longdouble or datetime
-_PROBE = 512                      # numpy releases the GIL only for inner loops above ~500 elements
+_OK = "?bBhHiIlLqQefdFD"  # no object, longdouble or datetime
+_PROBE = 512  # numpy releases the GIL only for inner loops above ~500 elements
 _CHUNK_NS = 250_000
 _SCALARS = (float, int, complex, np.generic)
-_ATTRS = ("nin", "nout", "nargs", "ntypes", "types", "identity", "signature", "reduce",
-          "outer", "accumulate", "reduceat", "at", "resolve_dtypes")
+_ATTRS = (
+    "nin",
+    "nout",
+    "nargs",
+    "ntypes",
+    "types",
+    "identity",
+    "signature",
+    "reduce",
+    "outer",
+    "accumulate",
+    "reduceat",
+    "at",
+    "resolve_dtypes",
+)
 
 
 def _part(a, ax, nd, s):
@@ -71,8 +85,10 @@ def _threaded(uf, st, args):
     for o, f in zip(outs, first):
         o[sel(slice(0, probe))] = f
     size = max(probe, -(-_CHUNK_NS // max(1, int(ns * per))))
-    parallel_map(lambda s: run(s, tuple(o[sel(s)] for o in outs)),
-                 [slice(probe + c.start, probe + c.stop) for c in chunks(rows - probe, size)])
+    parallel_map(
+        lambda s: run(s, tuple(o[sel(s)] for o in outs)),
+        [slice(probe + c.start, probe + c.stop) for c in chunks(rows - probe, size)],
+    )
     if events:
         return NotImplemented
     return outs if len(outs) > 1 else outs[0]
@@ -106,10 +122,10 @@ def _make(uf, module):
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     wrappers = {}
     for mod in (_ufuncs, sc):
-        for name, uf in list(vars(mod).items()):
+        for uf in list(vars(mod).values()):
             if isinstance(uf, np.ufunc) and uf not in wrappers:
                 wrappers[uf] = _make(uf, mod.__name__)
     for uf, fast in wrappers.items():

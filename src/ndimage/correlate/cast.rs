@@ -103,7 +103,11 @@ pub fn raw(py: Python<'_>, a: &Bound<'_, PyUntypedArray>, write: bool) -> Option
         return None;
     }
     let n: usize = a.shape().iter().product();
-    Some(Raw { ptr: unsafe { (*p).fields.data as *mut u8 }, dt, nbytes: n * dt.size() })
+    Some(Raw {
+        ptr: unsafe { (*p).fields.data as *mut u8 },
+        dt,
+        nbytes: n * dt.size(),
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -135,11 +139,19 @@ mod conv {
     // cvttsd2si: truncate; NaN or out of range -> MIN ("integer indefinite").
     #[inline(always)]
     pub fn i32_(v: f64) -> i32 {
-        if v > -2147483649.0 && v < 2147483648.0 { v as i32 } else { i32::MIN }
+        if v > -2147483649.0 && v < 2147483648.0 {
+            v as i32
+        } else {
+            i32::MIN
+        }
     }
     #[inline(always)]
     pub fn i64_(v: f64) -> i64 {
-        if v >= -9223372036854775808.0 && v < 9223372036854775808.0 { v as i64 } else { i64::MIN }
+        if v >= -9223372036854775808.0 && v < 9223372036854775808.0 {
+            v as i64
+        } else {
+            i64::MIN
+        }
     }
     // double -> unsigned int goes through a 64-bit cvttsd2si.
     #[inline(always)]
@@ -169,23 +181,37 @@ macro_rules! num_narrow {
     ($t:ty, unsigned) => {
         impl Num for $t {
             #[inline(always)]
-            fn to_f64(self) -> f64 { self as f64 }
+            fn to_f64(self) -> f64 {
+                self as f64
+            }
             #[inline(always)]
-            fn line(v: f64) -> Self { conv::i32_(v) as $t }
+            fn line(v: f64) -> Self {
+                conv::i32_(v) as $t
+            }
             #[inline(always)]
             fn safe(v: f64) -> Self {
-                if v > -1.0 { conv::i32_(v) as $t } else { (conv::i32_(-v) as $t).wrapping_neg() }
+                if v > -1.0 {
+                    conv::i32_(v) as $t
+                } else {
+                    (conv::i32_(-v) as $t).wrapping_neg()
+                }
             }
         }
     };
     ($t:ty, signed) => {
         impl Num for $t {
             #[inline(always)]
-            fn to_f64(self) -> f64 { self as f64 }
+            fn to_f64(self) -> f64 {
+                self as f64
+            }
             #[inline(always)]
-            fn line(v: f64) -> Self { conv::i32_(v) as $t }
+            fn line(v: f64) -> Self {
+                conv::i32_(v) as $t
+            }
             #[inline(always)]
-            fn safe(v: f64) -> Self { conv::i32_(v) as $t }
+            fn safe(v: f64) -> Self {
+                conv::i32_(v) as $t
+            }
         }
     };
 }
@@ -196,55 +222,95 @@ num_narrow!(i16, signed);
 
 impl Num for i32 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self as f64 }
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { conv::i32_(v) }
+    fn line(v: f64) -> Self {
+        conv::i32_(v)
+    }
     #[inline(always)]
-    fn safe(v: f64) -> Self { conv::i32_(v) }
+    fn safe(v: f64) -> Self {
+        conv::i32_(v)
+    }
 }
 impl Num for i64 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self as f64 }
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { conv::i64_(v) }
+    fn line(v: f64) -> Self {
+        conv::i64_(v)
+    }
     #[inline(always)]
-    fn safe(v: f64) -> Self { conv::i64_(v) }
+    fn safe(v: f64) -> Self {
+        conv::i64_(v)
+    }
 }
 impl Num for u32 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self as f64 }
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { conv::u32_(v) }
+    fn line(v: f64) -> Self {
+        conv::u32_(v)
+    }
     #[inline(always)]
     fn safe(v: f64) -> Self {
-        if v > -1.0 { conv::u32_(v) } else { conv::u32_(-v).wrapping_neg() }
+        if v > -1.0 {
+            conv::u32_(v)
+        } else {
+            conv::u32_(-v).wrapping_neg()
+        }
     }
 }
 impl Num for u64 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self as f64 }
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { conv::u64_(v) }
+    fn line(v: f64) -> Self {
+        conv::u64_(v)
+    }
     #[inline(always)]
     fn safe(v: f64) -> Self {
-        if v > -1.0 { conv::u64_(v) } else { conv::u64_(-v).wrapping_neg() }
+        if v > -1.0 {
+            conv::u64_(v)
+        } else {
+            conv::u64_(-v).wrapping_neg()
+        }
     }
 }
 impl Num for f32 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self as f64 }
+    fn to_f64(self) -> f64 {
+        self as f64
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { v as f32 }
+    fn line(v: f64) -> Self {
+        v as f32
+    }
     #[inline(always)]
-    fn safe(v: f64) -> Self { v as f32 }
+    fn safe(v: f64) -> Self {
+        v as f32
+    }
 }
 impl Num for f64 {
     #[inline(always)]
-    fn to_f64(self) -> f64 { self }
+    fn to_f64(self) -> f64 {
+        self
+    }
     #[inline(always)]
-    fn line(v: f64) -> Self { v }
+    fn line(v: f64) -> Self {
+        v
+    }
     #[inline(always)]
-    fn safe(v: f64) -> Self { v }
+    fn safe(v: f64) -> Self {
+        v
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -259,21 +325,36 @@ pub type StoreFn = unsafe fn(src: *const f64, n: usize, dst: *mut u8);
 // alias, so these loops vectorize without runtime checks.
 
 unsafe fn load_t<T: Num>(src: *const u8, n: usize, dst: *mut f64) {
-    let (s, d) = unsafe { (std::slice::from_raw_parts(src as *const T, n), std::slice::from_raw_parts_mut(dst, n)) };
+    let (s, d) = unsafe {
+        (
+            std::slice::from_raw_parts(src as *const T, n),
+            std::slice::from_raw_parts_mut(dst, n),
+        )
+    };
     for (d, &s) in d.iter_mut().zip(s) {
         *d = s.to_f64();
     }
 }
 
 unsafe fn store_line_t<T: Num>(src: *const f64, n: usize, dst: *mut u8) {
-    let (s, d) = unsafe { (std::slice::from_raw_parts(src, n), std::slice::from_raw_parts_mut(dst as *mut T, n)) };
+    let (s, d) = unsafe {
+        (
+            std::slice::from_raw_parts(src, n),
+            std::slice::from_raw_parts_mut(dst as *mut T, n),
+        )
+    };
     for (d, &s) in d.iter_mut().zip(s) {
         *d = T::line(s);
     }
 }
 
 unsafe fn store_safe_t<T: Num>(src: *const f64, n: usize, dst: *mut u8) {
-    let (s, d) = unsafe { (std::slice::from_raw_parts(src, n), std::slice::from_raw_parts_mut(dst as *mut T, n)) };
+    let (s, d) = unsafe {
+        (
+            std::slice::from_raw_parts(src, n),
+            std::slice::from_raw_parts_mut(dst as *mut T, n),
+        )
+    };
     for (d, &s) in d.iter_mut().zip(s) {
         *d = T::safe(s);
     }
@@ -315,7 +396,11 @@ const PAR_GRAIN: usize = 1 << 20;
 /// Threads worth using for `work` element operations.
 pub fn threads_for(work: usize) -> usize {
     let t = crate::ndimage::common::num_threads();
-    if t == 1 { 1 } else { (work / PAR_GRAIN).clamp(1, t) }
+    if t == 1 {
+        1
+    } else {
+        (work / PAR_GRAIN).clamp(1, t)
+    }
 }
 
 /// Run `f(state, task)` for every task in `0..n` on up to `threads` threads

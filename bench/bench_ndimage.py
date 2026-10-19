@@ -1,4 +1,5 @@
 """scipy.ndimage at image sizes: 2048x2048 images and a 256^3 volume."""
+
 import numpy as np
 import scipy.ndimage as ndi
 
@@ -47,7 +48,7 @@ def cases():
     lab = lab.astype(np.int32)
     ids = np.arange(1, n + 1)
     holes = blob2 & ~ndi.binary_erosion(blob2, iterations=3)
-    small = (ndi.gaussian_filter(rng.random((512, 512)), 1.5) > 0.5)
+    small = ndi.gaussian_filter(rng.random((512, 512)), 1.5) > 0.5
 
     yield "binary_erosion 2048^2 cross", lambda: ndi.binary_erosion(blob2)
     yield "binary_dilation 2048^2 3x3", lambda: ndi.binary_dilation(blob2, np.ones((3, 3)))

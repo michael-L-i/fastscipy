@@ -155,7 +155,10 @@ mod imp {
                 _mm_storeu_pd(s.as_mut_ptr(), self.0);
                 _mm_storeu_pd(x.as_mut_ptr(), a.0);
                 _mm_storeu_pd(y.as_mut_ptr(), b.0);
-                V(_mm_set_pd(x[1].mul_add(y[1], s[1]), x[0].mul_add(y[0], s[0])))
+                V(_mm_set_pd(
+                    x[1].mul_add(y[1], s[1]),
+                    x[0].mul_add(y[0], s[0]),
+                ))
             }
         }
     }
@@ -208,7 +211,10 @@ mod imp {
         }
         #[inline(always)]
         fn fma(self, a: V, b: V) -> V {
-            V([a.0[0].mul_add(b.0[0], self.0[0]), a.0[1].mul_add(b.0[1], self.0[1])])
+            V([
+                a.0[0].mul_add(b.0[0], self.0[0]),
+                a.0[1].mul_add(b.0[1], self.0[1]),
+            ])
         }
     }
 }

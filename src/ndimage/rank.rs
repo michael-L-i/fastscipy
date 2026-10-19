@@ -27,11 +27,13 @@
 //!   Herk / Gil-Werman, doubling), in place when SciPy passes output = input.
 //! * `simd`: NEON vectors on aarch64, portable arrays elsewhere.
 
-use numpy::{PyArrayDescrMethods, PyArrayDyn, PyArrayMethods, PyUntypedArray, PyUntypedArrayMethods};
+use numpy::{
+    PyArrayDescrMethods, PyArrayDyn, PyArrayMethods, PyUntypedArray, PyUntypedArrayMethods,
+};
 use pyo3::prelude::*;
 
-use crate::ndimage::common::{slice, slice_mut, typed, usable, Mode};
 use crate::dispatch_elem;
+use crate::ndimage::common::{Mode, slice, slice_mut, typed, usable};
 
 mod boundary;
 mod elem;
@@ -43,8 +45,11 @@ mod par;
 mod simd;
 
 use boundary::reflect_quirk;
-use elem::{scan, OutElem, RElem};
-use engine::{gen_task, huang_task, net_task, ni_select, pixel_task, reduce_task, run_tasks, seq_minmax, Plan, Reduce, SendPtr, Slide, Task};
+use elem::{OutElem, RElem, scan};
+use engine::{
+    Plan, Reduce, SendPtr, Slide, Task, gen_task, huang_task, net_task, ni_select, pixel_task,
+    reduce_task, run_tasks, seq_minmax,
+};
 use nets::{GenNet, Visit};
 use network::Net;
 use simd::{HasVec, X2};
@@ -91,7 +96,15 @@ impl NdKernel {
         } else {
             None
         };
-        NdKernel { op, offsets, rows: spec.rows(plan), shift, reduce, slide, gen_key: spec.gen_key(op) }
+        NdKernel {
+            op,
+            offsets,
+            rows: spec.rows(plan),
+            shift,
+            reduce,
+            slide,
+            gen_key: spec.gen_key(op),
+        }
     }
 
     /// Interpreted networks (single row, row pair) for a rank filter, unless
@@ -128,7 +141,14 @@ struct GenRun<'a, T> {
 impl<T: HasVec> Visit for GenRun<'_, T> {
     type Out = ();
     fn visit<N: GenNet>(self) {
-        let GenRun { plan, src, cval, k, rank, out } = self;
+        let GenRun {
+            plan,
+            src,
+            cval,
+            k,
+            rank,
+            out,
+        } = self;
         let nd = plan.ndim();
         let map = |inp: &[[u8; 3]]| -> Vec<isize> {
             inp.iter()
@@ -144,23 +164,42 @@ impl<T: HasVec> Visit for GenRun<'_, T> {
         let soff = map(N::SINGLE_IN);
         let poff = map(N::PAIR_IN);
         let exact = exact_fn::<T>(k.op);
-        run_tasks(plan, src, cval, k.offsets.len(), |slab, t: &Task, ar| unsafe {
-            let out = out;
-            if t.special {
-                pixel_task(ar, slab, t, &k.offsets, out, &exact);
-            } else {
-                gen_task::<T, N::W<T, T::V>, N>(slab, t, &soff, &poff, rank, out);
-            }
-        });
+        run_tasks(
+            plan,
+            src,
+            cval,
+            k.offsets.len(),
+            |slab, t: &Task, ar| unsafe {
+                let out = out;
+                if t.special {
+                    pixel_task(ar, slab, t, &k.offsets, out, &exact);
+                } else {
+                    gen_task::<T, N::W<T, T::V>, N>(slab, t, &soff, &poff, rank, out);
+                }
+            },
+        );
     }
 }
 
-fn run_nd_impl<T: HasVec, const U: usize>(plan: &Plan, src: &[T], cval: T, k: &NdKernel, out: &mut [T]) {
+fn run_nd_impl<T: HasVec, const U: usize>(
+    plan: &Plan,
+    src: &[T],
+    cval: T,
+    k: &NdKernel,
+    out: &mut [T],
+) {
     let outp = SendPtr(out.as_mut_ptr());
     if T::GEN
         && let Some((win, r)) = &k.gen_key
     {
-        let g = GenRun { plan, src, cval, k, rank: *r, out: outp };
+        let g = GenRun {
+            plan,
+            src,
+            cval,
+            k,
+            rank: *r,
+            out: outp,
+        };
         if nets::dispatch(win, *r, g).is_some() {
             return;
         }
@@ -206,13 +245,21 @@ struct NdSpec {
     mode: Mode,
 }
 
-fn prepare_nd(shape: &[usize], fshape: &[usize], mask: &[bool], origins: &[i64], mode: i64) -> Option<NdSpec> {
+fn prepare_nd(
+    shape: &[usize],
+    fshape: &[usize],
+    mask: &[bool],
+    origins: &[i64],
+    mode: i64,
+) -> Option<NdSpec> {
     let nd = shape.len();
     let mode = Mode::from_code(mode)?;
     if nd == 0 || fshape.len() != nd || origins.len() != nd {
         return None;
     }
-    if shape.iter().any(|&n| n == 0 || n > (1 << 30)) || fshape.iter().any(|&f| f == 0 || f > (1 << 20)) {
+    if shape.iter().any(|&n| n == 0 || n > (1 << 30))
+        || fshape.iter().any(|&f| f == 0 || f > (1 << 20))
+    {
         return None;
     }
     if mask.len() != fshape.iter().product::<usize>() {
@@ -256,9 +303,19 @@ fn prepare_nd(shape: &[usize], fshape: &[usize], mask: &[bool], origins: &[i64],
     }
     let coords = raw
         .iter()
-        .map(|c| (0..nd).map(|i| (c[i] - orgn[i] + before[i] as i64) as usize).collect())
+        .map(|c| {
+            (0..nd)
+                .map(|i| (c[i] - orgn[i] + before[i] as i64) as usize)
+                .collect()
+        })
         .collect();
-    Some(NdSpec { shape: shape.to_vec(), coords, before, after, mode })
+    Some(NdSpec {
+        shape: shape.to_vec(),
+        coords,
+        before,
+        after,
+        mode,
+    })
 }
 
 impl NdSpec {
@@ -288,7 +345,9 @@ impl NdSpec {
         if nd < 2 {
             return None;
         }
-        let span: Vec<usize> = (0..nd).map(|i| self.before[i] + self.after[i] + 1).collect();
+        let span: Vec<usize> = (0..nd)
+            .map(|i| self.before[i] + self.after[i] + 1)
+            .collect();
         let lead = nd.saturating_sub(3);
         if span[..lead].iter().any(|&s| s > 1) || span.iter().any(|&s| s > 255) {
             return None;
@@ -317,7 +376,9 @@ impl NdSpec {
 
 /// Read a bool footprint array.
 fn read_footprint(fp: &Bound<'_, PyUntypedArray>) -> PyResult<Option<(Vec<usize>, Vec<bool>)>> {
-    let Ok(a) = fp.cast::<PyArrayDyn<bool>>() else { return Ok(None) };
+    let Ok(a) = fp.cast::<PyArrayDyn<bool>>() else {
+        return Ok(None);
+    };
     if !a.is_c_contiguous() {
         return Ok(None);
     }
@@ -336,7 +397,10 @@ fn convert<T: RElem, O: OutElem>(src: &[T], dst: &mut [O], line: bool) -> bool {
         return false;
     }
     let has_nan = |c: &[T]| c.iter().any(|v| v.partial_cmp(v).is_none());
-    if sc.special && conv(f64::NAN).is_none() && par::map_reduce(src, 1 << 15, has_nan, || false, |a, b| a || b) {
+    if sc.special
+        && conv(f64::NAN).is_none()
+        && par::map_reduce(src, 1 << 15, has_nan, || false, |a, b| a || b)
+    {
         return false;
     }
     par::zip_chunks(dst, src, 1 << 15, |d, s| {
@@ -424,7 +488,13 @@ fn nd_filter_typed<'py, T: HasVec>(
     }
     let compute = |out: &mut [T]| {
         par::run(parallel, || {
-            let plan = Plan::new(&spec.shape, &spec.before, &spec.after, spec.mode, std::mem::size_of::<T>());
+            let plan = Plan::new(
+                &spec.shape,
+                &spec.before,
+                &spec.after,
+                spec.mode,
+                std::mem::size_of::<T>(),
+            );
             let kernel = NdKernel::new(spec, &plan, op);
             run_nd_impl::<T, INTERP_VECTORS>(&plan, src, cval_t, &kernel, out);
         })
@@ -454,8 +524,12 @@ fn py_rank_filter<'py>(
     cval: f64,
     origins: Vec<i64>,
 ) -> PyResult<bool> {
-    let Some((fshape, mask)) = read_footprint(footprint)? else { return Ok(false) };
-    let Some(spec) = prepare_nd(input.shape(), &fshape, &mask, &origins, mode) else { return Ok(false) };
+    let Some((fshape, mask)) = read_footprint(footprint)? else {
+        return Ok(false);
+    };
+    let Some(spec) = prepare_nd(input.shape(), &fshape, &mask, &origins, mode) else {
+        return Ok(false);
+    };
     if rank < 0 || rank as usize >= spec.k() {
         return Ok(false);
     }
@@ -479,8 +553,12 @@ fn py_min_or_max_filter<'py>(
     if structure.is_some_and(|s| !s.is_none()) {
         return Ok(false);
     }
-    let Some((fshape, mask)) = read_footprint(footprint)? else { return Ok(false) };
-    let Some(spec) = prepare_nd(input.shape(), &fshape, &mask, &origins, mode) else { return Ok(false) };
+    let Some((fshape, mask)) = read_footprint(footprint)? else {
+        return Ok(false);
+    };
+    let Some(spec) = prepare_nd(input.shape(), &fshape, &mask, &origins, mode) else {
+        return Ok(false);
+    };
     let op = if minimum != 0 { NdOp::Min } else { NdOp::Max };
     nd_filter(py, input, output, &spec, op, cval)
 }
@@ -499,20 +577,31 @@ fn py_min_or_max_filter1d<'py>(
     origin: i64,
     minimum: i64,
 ) -> PyResult<bool> {
-    let Some(mode) = Mode::from_code(mode) else { return Ok(false) };
+    let Some(mode) = Mode::from_code(mode) else {
+        return Ok(false);
+    };
     let shape = input.shape().to_vec();
     let nd = shape.len();
     if nd == 0 || axis < 0 || axis as usize >= nd || size < 1 || input.shape() != output.shape() {
         return Ok(false);
     }
-    if !usable(input) || !usable(output) || shape.iter().any(|&n| n == 0 || n > (1 << 30)) || size > (1 << 30) {
+    if !usable(input)
+        || !usable(output)
+        || shape.iter().any(|&n| n == 0 || n > (1 << 30))
+        || size > (1 << 30)
+    {
         return Ok(false);
     }
     let before = size / 2 + origin;
     if before < 0 || before >= size {
         return Ok(false);
     }
-    let p = minmax1d::Params { size: size as usize, before: before as usize, mode, minimum: minimum != 0 };
+    let p = minmax1d::Params {
+        size: size as usize,
+        before: before as usize,
+        mode,
+        minimum: minimum != 0,
+    };
     let same = input.dtype().is_equiv_to(&output.dtype());
     dispatch_elem!(py, input.dtype(), T => {
         filter1d_typed::<T>(py, input, output, &shape, axis as usize, p, cval, same)
@@ -536,7 +625,11 @@ fn filter1d_typed<'py, T: HasVec>(
     let n: usize = shape.iter().product();
     // The constant value: SciPy compares it as a double. Find an element of T
     // giving the same output, or force the exact path, or decline.
-    let mut cv = minmax1d::Cval { t: T::default(), raw: cval, special: false };
+    let mut cv = minmax1d::Cval {
+        t: T::default(),
+        raw: cval,
+        special: false,
+    };
     if constant {
         if cval.is_nan() {
             if !T::is_float() {
@@ -572,16 +665,28 @@ fn filter1d_typed<'py, T: HasVec>(
         let dst = typed::<T>(output)?;
         let dstp = dst.data() as usize;
         let inplace = dstp == srcp;
-        py.detach(|| par::run(parallel, || unsafe {
-            minmax1d::filter::<T>(srcp as *const T, dstp as *mut T, shape, axis, p, cv, inplace)
-        }));
+        py.detach(|| {
+            par::run(parallel, || unsafe {
+                minmax1d::filter::<T>(
+                    srcp as *const T,
+                    dstp as *mut T,
+                    shape,
+                    axis,
+                    p,
+                    cv,
+                    inplace,
+                )
+            })
+        });
         Ok(true)
     } else {
         let mut tmp = vec![T::default(); n];
         let tp = tmp.as_mut_ptr() as usize;
-        py.detach(|| par::run(parallel, || unsafe {
-            minmax1d::filter::<T>(srcp as *const T, tp as *mut T, shape, axis, p, cv, false)
-        }));
+        py.detach(|| {
+            par::run(parallel, || unsafe {
+                minmax1d::filter::<T>(srcp as *const T, tp as *mut T, shape, axis, p, cv, false)
+            })
+        });
         convert_to_output(py, &tmp, output, true, parallel)
     }
 }

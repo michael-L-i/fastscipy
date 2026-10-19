@@ -17,9 +17,12 @@ def _on():
 
 
 def _scipy_bindings():
-    return {(m.__name__, k): id(v) for m in list(sys.modules.values())
-            if (getattr(m, "__name__", None) or "").startswith("scipy")
-            for k, v in list(vars(m).items())}
+    return {
+        (m.__name__, k): id(v)
+        for m in list(sys.modules.values())
+        if (getattr(m, "__name__", None) or "").startswith("scipy")
+        for k, v in list(vars(m).items())
+    }
 
 
 def test_unpatch_restores_every_binding():
@@ -86,3 +89,13 @@ def test_forked_child_does_not_hang():
         time.sleep(0.05)
     os.kill(pid, 9)
     pytest.fail("forked child hung")
+
+
+def test_unvalidated_platform_is_refused(monkeypatch):
+    fastscipy.unpatch(["integrate"])
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.delenv("FASTSCIPY_ANY_PLATFORM", raising=False)
+    assert fastscipy.patch(["integrate"])["integrate"].startswith("off: RuntimeError: validated on macOS arm64")
+    fastscipy.unpatch(["integrate"])
+    monkeypatch.undo()
+    assert fastscipy.patch(["integrate"])["integrate"] == "on"

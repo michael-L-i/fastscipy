@@ -15,7 +15,11 @@ struct State {
     pool: Option<Arc<rayon::ThreadPool>>,
 }
 
-static STATE: Mutex<State> = Mutex::new(State { pid: 0, threads: 0, pool: None });
+static STATE: Mutex<State> = Mutex::new(State {
+    pid: 0,
+    threads: 0,
+    pool: None,
+});
 
 fn default_threads() -> usize {
     std::env::var("FASTSCIPY_NUM_THREADS")

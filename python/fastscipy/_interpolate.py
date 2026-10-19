@@ -7,6 +7,7 @@ around SciPy's own call. Simplices can depend on the walk's start when a query
 lies on a shared face, so queries are visited in grid-cell order and the
 queries near a face are replayed in their original order (``_locate``).
 """
+
 import numpy as np
 
 from . import _native, _patch, _threads
@@ -16,16 +17,16 @@ _orig = {}
 
 # Break-evens measured on one thread against SciPy 1.18.1 (Apple M-series).
 SPLINE_MIN_QUERIES = 300
-SPLINE_MIN_JUMP = 100            # mean knot-index jump between consecutive queries (SciPy's walk length)
-KERNEL_PARALLEL_FROM = 1 << 16   # with threads the kernel also pays on sorted queries
+SPLINE_MIN_JUMP = 100  # mean knot-index jump between consecutive queries (SciPy's walk length)
+KERNEL_PARALLEL_FROM = 1 << 16  # with threads the kernel also pays on sorted queries
 SIMPLEX_MIN_QUERIES = 300
-SIMPLEX_MIN_WORK = 5e4           # queries * sqrt(simplices): the walk length
-SAMPLE = 1024                    # consecutive query pairs sampled to judge the query order
-LOCAL_JUMP = 4.0                 # mean jump between consecutive queries, in grid cells, below which SciPy wins
-TIE_BAND = 1e-9                  # barycentric distance to a face that triggers a replay
-MAX_REPLAY = 0.25                # replay more than this fraction of the queries: use SciPy
+SIMPLEX_MIN_WORK = 5e4  # queries * sqrt(simplices): the walk length
+SAMPLE = 1024  # consecutive query pairs sampled to judge the query order
+LOCAL_JUMP = 4.0  # mean jump between consecutive queries, in grid cells, below which SciPy wins
+TIE_BAND = 1e-9  # barycentric distance to a face that triggers a replay
+MAX_REPLAY = 0.25  # replay more than this fraction of the queries: use SciPy
 MAX_REPLAY_RANGES = 20000
-CHUNK = 4000                     # smallest per-thread find_simplex chunk
+CHUNK = 4000  # smallest per-thread find_simplex chunk
 
 
 def _is_array(a, kinds):
@@ -43,7 +44,7 @@ def _on_axis(out, nd, axis):
     if not axis:
         return out
     perm = list(range(out.ndim))
-    return out.transpose(perm[nd:nd + axis] + perm[:nd] + perm[nd + axis:])
+    return out.transpose(perm[nd : nd + axis] + perm[:nd] + perm[nd + axis :])
 
 
 def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
@@ -76,8 +77,14 @@ def _bspline_call(self, x, nu=0, extrapolate=None):
     t, c, k = d.t, d.c, d.k
     if not isinstance(ext, (bool, np.bool_)) or not _is_array(t, "f") or not _is_array(c, "fc"):
         return NotImplemented
-    kernel_ok = (nu == 0 and ext and c.dtype in (np.float64, np.complex128) and t.dtype == np.float64
-                 and t.flags.c_contiguous and c.flags.c_contiguous)
+    kernel_ok = (
+        nu == 0
+        and ext
+        and c.dtype in (np.float64, np.complex128)
+        and t.dtype == np.float64
+        and t.flags.c_contiguous
+        and c.flags.c_contiguous
+    )
     flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
     return _spline(flat, x.shape, t, c, k, kernel_ok, d.axis, lambda xs: _orig["bspline"](self, xs, nu, extrapolate))
 
@@ -86,10 +93,20 @@ def _splev(x, tck, der=0, ext=0):
     if not (isinstance(tck, (tuple, list)) and len(tck) == 3 and all(isinstance(a, np.ndarray) for a in tck[:2])):
         return NotImplemented
     (t, c, k), x = tck, np.asarray(x)
-    if (type(k) is not int or not 1 <= k <= 5 or t.ndim != 1 or c.ndim != 1 or len(t) <= k + 1
-            or x.dtype.kind not in "fiu" or t.dtype.kind != "f" or c.dtype.kind != "f"):
+    if (
+        type(k) is not int
+        or not 1 <= k <= 5
+        or t.ndim != 1
+        or c.ndim != 1
+        or len(t) <= k + 1
+        or x.dtype.kind not in "fiu"
+        or t.dtype.kind != "f"
+        or c.dtype.kind != "f"
+    ):
         return NotImplemented
-    kernel_ok = der == 0 and ext == 0 and c.dtype == t.dtype == np.float64 and t.flags.c_contiguous and c.flags.c_contiguous
+    kernel_ok = (
+        der == 0 and ext == 0 and c.dtype == t.dtype == np.float64 and t.flags.c_contiguous and c.flags.c_contiguous
+    )
     flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
     return _spline(flat, x.shape, t, c, k, kernel_ok, 0, lambda xs: _orig["splev"](xs, tck, der, ext))
 
@@ -103,14 +120,14 @@ def _grid(tri):
 
 
 def _eligible(tri, x):
-    return len(x) >= SIMPLEX_MIN_QUERIES and len(x) * tri.nsimplex ** 0.5 >= SIMPLEX_MIN_WORK
+    return len(x) >= SIMPLEX_MIN_QUERIES and len(x) * tri.nsimplex**0.5 >= SIMPLEX_MIN_WORK
 
 
 def _is_local(x, tri):
     """Consecutive queries already close (sorted or raster order): SciPy's walk is short."""
     g, lo, span = _grid(tri)
     i = np.linspace(0, len(x) - 2, SAMPLE).astype(np.intp)
-    return (np.abs(x[i + 1] - x[i]) / span * g).max(axis=1).mean() < LOCAL_JUMP     # NaN is not local
+    return (np.abs(x[i + 1] - x[i]) / span * g).max(axis=1).mean() < LOCAL_JUMP  # NaN is not local
 
 
 def _locate(tri, x):
@@ -124,14 +141,14 @@ def _locate(tri, x):
     g, lo, span = _grid(tri)
     order = _k.cell_order(x, lo, span, g)
     xs = x[order]
-    tri.transform                  # lazily built (scipy#23854): materialise before threads
+    _ = tri.transform  # lazily built (scipy#23854): materialise before threads
     res_s = np.empty(n, np.intc)
     flag_s = np.zeros(n, bool)
 
     def work(s):
         r = res_s[s] = find(tri, xs[s])
         out = np.flatnonzero((r < 0) & np.isfinite(xs[s]).all(axis=1))
-        if len(out):                # outside the hull but within tolerance of a simplex
+        if len(out):  # outside the hull but within tolerance of a simplex
             flag_s[s.start + out[find(tri, xs[s][out], tol=TIE_BAND) >= 0]] = True
 
     _threads.parallel_map(work, _threads.chunks(n, CHUNK))
@@ -158,7 +175,7 @@ def _find_simplex(self, xi, bruteforce=False, tol=None):
         return NotImplemented
     res, _, ranges = loc
     for a, b in ranges:
-        res[a:b + 1] = _orig["find_simplex"](self, x[a:b + 1])
+        res[a : b + 1] = _orig["find_simplex"](self, x[a : b + 1])
     return res.reshape(xi.shape[:-1])
 
 
@@ -180,14 +197,16 @@ def _make_evaluate(cls, name):
         v = self.values
         if linear and name == "_evaluate_double" and _is_array(v, "f") and v.dtype == np.float64:
             for a, b in ranges:
-                res[a:b + 1] = _orig["find_simplex"](tri, x[a:b + 1])
+                res[a : b + 1] = _orig["find_simplex"](tri, x[a : b + 1])
             return _k.linear_eval(res, tri.transform, tri.simplices, np.ascontiguousarray(v), x, float(self.fill_value))
         xs = x[order]
-        parts = _threads.parallel_map(lambda s: original(self, xs[s]), _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))])
+        parts = _threads.parallel_map(
+            lambda s: original(self, xs[s]), _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))]
+        )
         out = np.empty_like(parts[0] if len(parts) == 1 else np.concatenate(parts))
         out[order] = parts[0] if len(parts) == 1 else np.concatenate(parts)
         for a, b in ranges:
-            out[a:b + 1] = original(self, x[a:b + 1])
+            out[a : b + 1] = original(self, x[a : b + 1])
         return out
 
     return original, evaluate
@@ -195,24 +214,40 @@ def _make_evaluate(cls, name):
 
 def _evaluate_spline(self, xi, method):
     g, v = self._grid, self._values
-    if (method != "pchip" or not _is_array(xi, "f") or xi.ndim != 2 or xi.dtype != np.float64
-            or not len(xi) or not _is_array(v, "f") or v.dtype != np.float64 or v.ndim != len(g)
-            or not all(_is_array(a, "f") and a.dtype == np.float64 and a.ndim == 1 for a in g)):
+    if (
+        method != "pchip"
+        or not _is_array(xi, "f")
+        or xi.ndim != 2
+        or xi.dtype != np.float64
+        or not len(xi)
+        or not _is_array(v, "f")
+        or v.dtype != np.float64
+        or v.ndim != len(g)
+        or not all(_is_array(a, "f") and a.dtype == np.float64 and a.ndim == 1 for a in g)
+    ):
         return NotImplemented
     out = _k.pchip_eval(list(g), np.ascontiguousarray(v).reshape(-1), np.ascontiguousarray(xi))
     return NotImplemented if out is None else out
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     import scipy.interpolate as si
     from scipy.interpolate import _bsplines, _fitpack_py, _interpnd
     from scipy.spatial import Delaunay
-    _orig.update(numpy_bspline=_bsplines._BSpline, bspline=si.BSpline.__call__, splev=_fitpack_py.splev, find_simplex=Delaunay.find_simplex)
+
+    _orig.update(
+        numpy_bspline=_bsplines._BSpline,
+        bspline=si.BSpline.__call__,
+        splev=_fitpack_py.splev,
+        find_simplex=Delaunay.find_simplex,
+    )
     _patch.replace(si.BSpline, "__call__", _patch.wrap(_orig["bspline"], _bspline_call, "BSpline.__call__"))
     _patch.replace(Delaunay, "find_simplex", _patch.wrap(_orig["find_simplex"], _find_simplex, "Delaunay.find_simplex"))
     rgi = si.RegularGridInterpolator
-    _patch.replace(rgi, "_evaluate_spline", _patch.wrap(rgi._evaluate_spline, _evaluate_spline, "RegularGridInterpolator pchip"))
+    _patch.replace(
+        rgi, "_evaluate_spline", _patch.wrap(rgi._evaluate_spline, _evaluate_spline, "RegularGridInterpolator pchip")
+    )
     _patch.rebind(_orig["splev"], _patch.wrap(_orig["splev"], _splev, "splev"))
     for cls in (_interpnd.LinearNDInterpolator, _interpnd.CloughTocher2DInterpolator):
         for name in ("_evaluate_double", "_evaluate_complex"):
@@ -223,6 +258,7 @@ def patch():
 def smoke():
     import scipy.interpolate as si
     import scipy.spatial as sp
+
     rng = np.random.default_rng(0)
     x = np.sort(rng.random(400))
     spl = si.make_interp_spline(x, np.sin(x * 6), k=3)

@@ -13,7 +13,12 @@ fn find(parent: &mut [u32], mut v: u32) -> u32 {
 /// Weak components. SciPy numbers them in order of their smallest node, which
 /// union-find with "smaller root wins" reproduces exactly.
 #[pyfunction]
-pub fn weak(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<i32>) -> PyResult<i32> {
+pub fn weak(
+    py: Python<'_>,
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    mut labels: Rw<i32>,
+) -> PyResult<i32> {
     let (ip, ix) = (indptr.as_slice()?, indices.as_slice()?);
     let lab = labels.as_slice_mut()?;
     let g = Csr::new(ip, ix, None, lab.len())?;
@@ -22,7 +27,10 @@ pub fn weak(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<i3
         let mut parent: Vec<u32> = (0..n as u32).collect();
         for v in 0..n {
             for e in g.row(v) {
-                let (a, b) = (find(&mut parent, v as u32), find(&mut parent, g.indices[e] as u32));
+                let (a, b) = (
+                    find(&mut parent, v as u32),
+                    find(&mut parent, g.indices[e] as u32),
+                );
                 if a != b {
                     parent[a.max(b) as usize] = a.min(b);
                 }
@@ -31,7 +39,12 @@ pub fn weak(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<i3
         let mut count = 0;
         for v in 0..n {
             let r = find(&mut parent, v as u32) as usize;
-            lab[v] = if r == v { count += 1; count - 1 } else { lab[r] };
+            lab[v] = if r == v {
+                count += 1;
+                count - 1
+            } else {
+                lab[r]
+            };
         }
         count
     }))
@@ -39,7 +52,12 @@ pub fn weak(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<i3
 
 /// Strong components: the iterative Tarjan variant of `_connected_components_directed2`.
 #[pyfunction]
-pub fn strong(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<i32>) -> PyResult<i32> {
+pub fn strong(
+    py: Python<'_>,
+    indptr: Ro<i32>,
+    indices: Ro<i32>,
+    mut labels: Rw<i32>,
+) -> PyResult<i32> {
     const NONLEAD: i32 = i32::MIN;
     let (ip, ix) = (indptr.as_slice()?, indices.as_slice()?);
     let lab = labels.as_slice_mut()?;
@@ -49,7 +67,8 @@ pub fn strong(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<
         lab.fill(0);
         let node = |v: i32| (v & 0x7FFF_FFFF) as usize;
         let mut succ = vec![-1i32; n];
-        let (mut dfs, mut comp): (Vec<i32>, Vec<i32>) = (Vec::with_capacity(n), Vec::with_capacity(n));
+        let (mut dfs, mut comp): (Vec<i32>, Vec<i32>) =
+            (Vec::with_capacity(n), Vec::with_capacity(n));
         let (mut index, mut n_comp) = (n as i32, 0);
         for root in 0..n {
             if succ[root] != -1 {
@@ -76,7 +95,9 @@ pub fn strong(py: Python<'_>, indptr: Ro<i32>, indices: Ro<i32>, mut labels: Rw<
                         if lab[v] == root_hl && index == 0 {
                             lab[v] = n_comp;
                             comp.iter().for_each(|&c| lab[c as usize] = n_comp);
-                            dfs[..dfs.len() - 1].iter().for_each(|&d| lab[node(d)] = n_comp);
+                            dfs[..dfs.len() - 1]
+                                .iter()
+                                .for_each(|&d| lab[node(d)] = n_comp);
                             return n_comp + 1;
                         }
                     }

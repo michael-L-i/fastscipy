@@ -37,7 +37,10 @@ fn scan(x: &[f64], peak: usize, wlen: isize) -> (Prom, usize) {
         }
         i += 1;
     }
-    ((xp - if rmin > lmin { rmin } else { lmin }, lb, rb), steps + (i - p) as usize)
+    (
+        (xp - if rmin > lmin { rmin } else { lmin }, lb, rb),
+        steps + (i - p) as usize,
+    )
 }
 
 /// For each slot-marked index, the minimum of `x` over the maximal run around it
@@ -88,13 +91,22 @@ fn sweeps(x: &[f64], peaks: &[isize]) -> Vec<Prom> {
         .map(|&p| {
             let s = slot[p as usize] as usize;
             let (l, r) = (left.0[s], right.0[s]);
-            (x[p as usize] - if r > l { r } else { l }, left.1[s], right.1[s])
+            (
+                x[p as usize] - if r > l { r } else { l },
+                left.1[s],
+                right.1[s],
+            )
         })
         .collect()
 }
 
 /// Per-peak scans of at most `wlen` samples, on all threads when there is enough work.
-fn windowed(x: &[f64], peaks: &[isize], wlen: isize, out: (&mut [f64], &mut [isize], &mut [isize])) {
+fn windowed(
+    x: &[f64],
+    peaks: &[isize],
+    wlen: isize,
+    out: (&mut [f64], &mut [isize], &mut [isize]),
+) {
     const BLOCK: usize = 1024;
     let (prom, left, right) = out;
     let block = |(b, ((p, l), r)): (usize, ((&mut [f64], &mut [isize]), &mut [isize]))| {
@@ -104,27 +116,53 @@ fn windowed(x: &[f64], peaks: &[isize], wlen: isize, out: (&mut [f64], &mut [isi
     };
     if pool::num_threads() > 1 && peaks.len() as isize * wlen >= 1 << 20 {
         pool::pool().install(|| {
-            prom.par_chunks_mut(BLOCK).zip(left.par_chunks_mut(BLOCK)).zip(right.par_chunks_mut(BLOCK))
-                .enumerate().for_each(block)
+            prom.par_chunks_mut(BLOCK)
+                .zip(left.par_chunks_mut(BLOCK))
+                .zip(right.par_chunks_mut(BLOCK))
+                .enumerate()
+                .for_each(block)
         });
     } else {
-        prom.chunks_mut(BLOCK).zip(left.chunks_mut(BLOCK)).zip(right.chunks_mut(BLOCK)).enumerate().for_each(block);
+        prom.chunks_mut(BLOCK)
+            .zip(left.chunks_mut(BLOCK))
+            .zip(right.chunks_mut(BLOCK))
+            .enumerate()
+            .for_each(block);
     }
 }
 
 #[pyfunction]
 #[allow(clippy::type_complexity)]
 pub fn peak_prominences<'py>(
-    py: Python<'py>, x: PyReadonlyArray1<'py, f64>, peaks: PyReadonlyArray1<'py, isize>, wlen: isize,
-) -> PyResult<Option<(Bound<'py, PyArray1<f64>>, Bound<'py, PyArray1<isize>>, Bound<'py, PyArray1<isize>>)>> {
+    py: Python<'py>,
+    x: PyReadonlyArray1<'py, f64>,
+    peaks: PyReadonlyArray1<'py, isize>,
+    wlen: isize,
+) -> PyResult<
+    Option<(
+        Bound<'py, PyArray1<f64>>,
+        Bound<'py, PyArray1<isize>>,
+        Bound<'py, PyArray1<isize>>,
+    )>,
+> {
     let (x, peaks) = (x.as_slice()?, peaks.as_slice()?);
     if peaks.iter().any(|&p| p < 0 || p as usize >= x.len()) {
         return Ok(None);
     }
     let m = peaks.len();
-    let (prom, left, right) = (PyArray1::<f64>::zeros(py, m, false), PyArray1::<isize>::zeros(py, m, false), PyArray1::<isize>::zeros(py, m, false));
+    let (prom, left, right) = (
+        PyArray1::<f64>::zeros(py, m, false),
+        PyArray1::<isize>::zeros(py, m, false),
+        PyArray1::<isize>::zeros(py, m, false),
+    );
     // SAFETY: freshly created, contiguous, and only written inside this call.
-    let (p, l, r) = unsafe { (prom.as_slice_mut()?, left.as_slice_mut()?, right.as_slice_mut()?) };
+    let (p, l, r) = unsafe {
+        (
+            prom.as_slice_mut()?,
+            left.as_slice_mut()?,
+            right.as_slice_mut()?,
+        )
+    };
     py.detach(|| {
         if wlen >= 2 {
             return windowed(x, peaks, wlen, (p, l, r));
@@ -187,8 +225,13 @@ fn width(x: &[f64], peak: usize, rel: f64, prom: f64, lo: usize, hi: usize) -> [
 #[pyfunction]
 #[allow(clippy::type_complexity)]
 pub fn peak_widths<'py>(
-    py: Python<'py>, x: PyReadonlyArray1<'py, f64>, peaks: PyReadonlyArray1<'py, isize>, rel_height: f64,
-    prominences: PyReadonlyArray1<'py, f64>, left: PyReadonlyArray1<'py, isize>, right: PyReadonlyArray1<'py, isize>,
+    py: Python<'py>,
+    x: PyReadonlyArray1<'py, f64>,
+    peaks: PyReadonlyArray1<'py, isize>,
+    rel_height: f64,
+    prominences: PyReadonlyArray1<'py, f64>,
+    left: PyReadonlyArray1<'py, isize>,
+    right: PyReadonlyArray1<'py, isize>,
 ) -> PyResult<Option<[Bound<'py, PyArray1<f64>>; 4]>> {
     let (x, peaks, prom) = (x.as_slice()?, peaks.as_slice()?, prominences.as_slice()?);
     let (left, right) = (left.as_slice()?, right.as_slice()?);
@@ -196,16 +239,37 @@ pub fn peak_widths<'py>(
         let (l, pk, r) = (left[p], peaks[p], right[p]);
         0 <= l && l <= pk && pk <= r && (r as usize) < x.len()
     };
-    if [prom.len(), left.len(), right.len()].iter().any(|&n| n != peaks.len()) || !(0..peaks.len()).all(ok) {
+    if [prom.len(), left.len(), right.len()]
+        .iter()
+        .any(|&n| n != peaks.len())
+        || !(0..peaks.len()).all(ok)
+    {
         return Ok(None);
     }
-    let one = |p: usize| width(x, peaks[p] as usize, rel_height, prom[p], left[p] as usize, right[p] as usize);
+    let one = |p: usize| {
+        width(
+            x,
+            peaks[p] as usize,
+            rel_height,
+            prom[p],
+            left[p] as usize,
+            right[p] as usize,
+        )
+    };
     let rows: Vec<[f64; 4]> = py.detach(|| {
         if pool::num_threads() > 1 && peaks.len() >= 1 << 15 {
-            pool::pool().install(|| (0..peaks.len()).into_par_iter().with_min_len(4096).map(one).collect())
+            pool::pool().install(|| {
+                (0..peaks.len())
+                    .into_par_iter()
+                    .with_min_len(4096)
+                    .map(one)
+                    .collect()
+            })
         } else {
             (0..peaks.len()).map(one).collect()
         }
     });
-    Ok(Some([0, 1, 2, 3].map(|k| PyArray1::from_iter(py, rows.iter().map(|r| r[k])))))
+    Ok(Some([0, 1, 2, 3].map(|k| {
+        PyArray1::from_iter(py, rows.iter().map(|r| r[k]))
+    })))
 }

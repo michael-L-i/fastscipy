@@ -55,7 +55,11 @@ fn eval(t: &[f64], c: &[f64], m: usize, k: usize, n: usize, x: f64, out: &mut [f
 /// if the knots (not sorted, degenerate end intervals), `k`, `c` or `x` (not finite) are unusual.
 #[pyfunction]
 pub fn bspline_eval<'py>(
-    py: Python<'py>, t: PyReadonlyArray1<'py, f64>, c: PyReadonlyArray2<'py, f64>, k: usize, x: PyReadonlyArray1<'py, f64>,
+    py: Python<'py>,
+    t: PyReadonlyArray1<'py, f64>,
+    c: PyReadonlyArray2<'py, f64>,
+    k: usize,
+    x: PyReadonlyArray1<'py, f64>,
 ) -> PyResult<Option<Bound<'py, PyArray2<f64>>>> {
     let m = c.shape()[1];
     let (t, c, x) = (t.as_slice()?, c.as_slice()?, x.as_slice()?);
@@ -76,10 +80,12 @@ pub fn bspline_eval<'py>(
     let out = PyArray2::<f64>::zeros(py, (x.len(), m), false);
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
-    py.detach(|| super::fill(o, m, 1 << 15, |i, o| {
-        for (o, &x) in o.chunks_mut(m).zip(&x[i..]) {
-            eval(t, c, m, k, n, x, o);
-        }
-    }));
+    py.detach(|| {
+        super::fill(o, m, 1 << 15, |i, o| {
+            for (o, &x) in o.chunks_mut(m).zip(&x[i..]) {
+                eval(t, c, m, k, n, x, o);
+            }
+        })
+    });
     Ok(Some(out))
 }

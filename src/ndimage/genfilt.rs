@@ -9,7 +9,7 @@ use numpy::{PyArrayDyn, PyArrayMethods, PyUntypedArray, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
-use crate::ndimage::common::{pool, Elem};
+use crate::ndimage::common::{Elem, pool};
 
 /// numpy's DOUBLE_pairwise_sum (loops_utils.h.src)
 fn pairwise(a: &[f64]) -> f64 {
@@ -52,16 +52,24 @@ fn np_max(a: &[f64]) -> f64 {
     for &x in &a[1..] {
         // numpy maximum: (in1 >= in2 || isnan(in1)) ? in1 : in2
         // reduction semantics (SIMD fmax-like): NaN propagates, +0.0 beats -0.0
-        if acc.is_nan() { break; }
-        if x.is_nan() || x > acc || (x == acc && acc.is_sign_negative()) { acc = x; }
+        if acc.is_nan() {
+            break;
+        }
+        if x.is_nan() || x > acc || (x == acc && acc.is_sign_negative()) {
+            acc = x;
+        }
     }
     acc
 }
 fn np_min(a: &[f64]) -> f64 {
     let mut acc = a[0];
     for &x in &a[1..] {
-        if acc.is_nan() { break; }
-        if x.is_nan() || x < acc || (x == acc && x.is_sign_negative()) { acc = x; }
+        if acc.is_nan() {
+            break;
+        }
+        if x.is_nan() || x < acc || (x == acc && x.is_sign_negative()) {
+            acc = x;
+        }
     }
     acc
 }
@@ -89,7 +97,10 @@ fn np_median(a: &mut [f64]) -> f64 {
     } else {
         a.select_nth_unstable_by(h, |x, y| x.partial_cmp(y).unwrap());
         let hi = a[h];
-        let lo = a[..h].iter().copied().fold(f64::NEG_INFINITY, |m, x| if x > m { x } else { m });
+        let lo = a[..h]
+            .iter()
+            .copied()
+            .fold(f64::NEG_INFINITY, |m, x| if x > m { x } else { m });
         // mean of the two middle values: sum then divide by 2
         np_sum(&[lo, hi]) / 2.0
     }
@@ -129,35 +140,37 @@ fn run<T: Elem>(
     let lead = &oshape[..n - 1];
     let lines_per_chunk = (16384 / len.max(1)).max(1);
     pool().install(|| {
-        out.par_chunks_mut(lines_per_chunk * len).enumerate().for_each(|(ci, chunk)| {
-            let mut buf = vec![0f64; offs.len()];
-            let mut tmp = Vec::with_capacity(offs.len());
-            let mut coord = vec![0usize; n - 1];
-            for li in 0..chunk.len() / len {
-                let mut r = ci * lines_per_chunk + li;
-                for k in (0..n - 1).rev() {
-                    coord[k] = r % lead[k];
-                    r /= lead[k];
-                }
-                let base: usize = (0..n - 1).map(|k| coord[k] * pstride[k]).sum();
-                for x in 0..len {
-                    let p = base + x;
-                    for (b, &o) in buf.iter_mut().zip(&offs) {
-                        *b = padded[p + o].to_f64();
+        out.par_chunks_mut(lines_per_chunk * len)
+            .enumerate()
+            .for_each(|(ci, chunk)| {
+                let mut buf = vec![0f64; offs.len()];
+                let mut tmp = Vec::with_capacity(offs.len());
+                let mut coord = vec![0usize; n - 1];
+                for li in 0..chunk.len() / len {
+                    let mut r = ci * lines_per_chunk + li;
+                    for k in (0..n - 1).rev() {
+                        coord[k] = r % lead[k];
+                        r /= lead[k];
                     }
-                    chunk[li * len + x] = match which {
-                        0 => np_sum(&buf) / buf.len() as f64,
-                        1 => np_sum(&buf),
-                        2 => np_max(&buf),
-                        3 => np_min(&buf),
-                        4 => np_median(&mut buf),
-                        5 => np_var(&buf, &mut tmp).sqrt(),
-                        6 => np_var(&buf, &mut tmp),
-                        _ => np_max(&buf) - np_min(&buf),
-                    };
+                    let base: usize = (0..n - 1).map(|k| coord[k] * pstride[k]).sum();
+                    for x in 0..len {
+                        let p = base + x;
+                        for (b, &o) in buf.iter_mut().zip(&offs) {
+                            *b = padded[p + o].to_f64();
+                        }
+                        chunk[li * len + x] = match which {
+                            0 => np_sum(&buf) / buf.len() as f64,
+                            1 => np_sum(&buf),
+                            2 => np_max(&buf),
+                            3 => np_min(&buf),
+                            4 => np_median(&mut buf),
+                            5 => np_var(&buf, &mut tmp).sqrt(),
+                            6 => np_var(&buf, &mut tmp),
+                            _ => np_max(&buf) - np_min(&buf),
+                        };
+                    }
                 }
-            }
-        });
+            });
     });
 }
 

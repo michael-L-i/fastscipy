@@ -123,7 +123,15 @@ trait Kernel<I>: Sync {
 
     /// Points `x0..x0 + out.len()` of an affine row: coordinate `d` of point
     /// `x` is `madd(x, m[d], b[d])`, the last step of SciPy's accumulation.
-    fn affine_row(&self, inp: &Input<I>, p: &Params, b: &[f64], m: &[f64], x0: usize, out: &mut [f64]) {
+    fn affine_row(
+        &self,
+        inp: &Input<I>,
+        p: &Params,
+        b: &[f64],
+        m: &[f64],
+        x0: usize,
+        out: &mut [f64],
+    ) {
         affine_generic(self, inp, p, b, m, x0, out);
     }
 }
@@ -280,7 +288,11 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
         let mapped = p.mode != Mode::GridConstant && p.mode != Mode::Nearest;
         let constant = p.mode == Mode::Constant;
         let npad = p.npad as f64;
-        let (slow, outside, base) = (&mut sc.slow[..mm], &mut sc.outside[..mm], &mut sc.base[..mm]);
+        let (slow, outside, base) = (
+            &mut sc.slow[..mm],
+            &mut sc.outside[..mm],
+            &mut sc.base[..mm],
+        );
         slow.fill(0);
         outside.fill(0);
         base.fill(0);
@@ -315,7 +327,11 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
         for i in 0..mm {
             // Constant mode: a coordinate outside [0, len - 1] (or NaN) maps
             // to -1, which makes the whole point cval.
-            let c = if cmask & outside[i] != 0 { 1 } else { 2 * slow[i] };
+            let c = if cmask & outside[i] != 0 {
+                1
+            } else {
+                2 * slow[i]
+            };
             let c = if i < m { c } else { 2 };
             cls[i] = c;
             if c != 0 {
@@ -351,7 +367,7 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
                 let v = x + npad;
                 lo = lo.min(v);
                 hi = hi.max(v);
-                nan |= (v != v) as u64;
+                nan |= v.is_nan() as u64;
             }
             let len = inp.dims[d];
             let top = (len - 1) as f64;
@@ -366,7 +382,13 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
 
     /// Points `s0..` (all fast) of a coordinate list.
     #[inline(always)]
-    fn fast_block<I: Elem>(inp: &Input<I>, npad: f64, icoor: &[&[f64]], s0: usize, out: &mut [f64]) {
+    fn fast_block<I: Elem>(
+        inp: &Input<I>,
+        npad: f64,
+        icoor: &[&[f64]],
+        s0: usize,
+        out: &mut [f64],
+    ) {
         let st: [usize; R] = std::array::from_fn(|d| inp.strides[d]);
         let n = out.len();
         let chunk = |cc: &[[f64; LANES]; R]| -> [f64; LANES] {
@@ -400,8 +422,9 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
         }
         if full < n {
             let k = n - full;
-            let cc: [[f64; LANES]; R] =
-                std::array::from_fn(|d| std::array::from_fn(|l| icoor[d][s0 + full + l.min(k - 1)] + npad));
+            let cc: [[f64; LANES]; R] = std::array::from_fn(|d| {
+                std::array::from_fn(|l| icoor[d][s0 + full + l.min(k - 1)] + npad)
+            });
             let t = chunk(&cc);
             out[full..].copy_from_slice(&t[..k]);
         }
@@ -409,7 +432,14 @@ impl<const ORDER: usize, const R: usize> Fast<ORDER, R> {
 
     /// Fast points of an affine row (no classification needed).
     #[inline(always)]
-    fn interior<I: Elem>(inp: &Input<I>, npad: f64, b: &[f64], m: &[f64], x0: usize, out: &mut [f64]) {
+    fn interior<I: Elem>(
+        inp: &Input<I>,
+        npad: f64,
+        b: &[f64],
+        m: &[f64],
+        x0: usize,
+        out: &mut [f64],
+    ) {
         let st: [usize; R] = std::array::from_fn(|d| inp.strides[d]);
         let mb: [(f64, f64); R] = std::array::from_fn(|d| (m[d], b[d]));
         let n = out.len();
@@ -556,7 +586,15 @@ impl<I: Elem, const ORDER: usize, const R: usize> Kernel<I> for Fast<ORDER, R> {
         })
     }
 
-    fn affine_row(&self, inp: &Input<I>, p: &Params, b: &[f64], m: &[f64], x0: usize, out: &mut [f64]) {
+    fn affine_row(
+        &self,
+        inp: &Input<I>,
+        p: &Params,
+        b: &[f64],
+        m: &[f64],
+        x0: usize,
+        out: &mut [f64],
+    ) {
         let n = out.len();
         let end = x0 + n;
         let mapped = p.mode != Mode::GridConstant && p.mode != Mode::Nearest;
@@ -634,7 +672,12 @@ fn make_kernel<I: Elem>(order: usize, rank: usize) -> Box<dyn Kernel<I>> {
 
 fn make_input<'a, I>(data: &'a [I], shape: &[usize]) -> Input<'a, I> {
     let rank = shape.len();
-    let mut inp = Input { data, rank, dims: [0; MAX_RANK], strides: [0; MAX_RANK] };
+    let mut inp = Input {
+        data,
+        rank,
+        dims: [0; MAX_RANK],
+        strides: [0; MAX_RANK],
+    };
     let mut s = 1usize;
     for d in (0..rank).rev() {
         inp.dims[d] = shape[d] as i64;
@@ -762,7 +805,11 @@ pub fn map_coords<I: Elem, O: OutElem>(
         }
         bad != 0
     };
-    let too_big = if par { coords.par_chunks(1 << 16).any(scan) } else { scan(coords) };
+    let too_big = if par {
+        coords.par_chunks(1 << 16).any(scan)
+    } else {
+        scan(coords)
+    };
     if too_big {
         return false;
     }
@@ -771,7 +818,9 @@ pub fn map_coords<I: Elem, O: OutElem>(
     for_each_chunk(dst, BLOCK, par, |b, out_blk| {
         let p0 = b * BLOCK;
         let m = out_blk.len();
-        let icoor: Vec<&[f64]> = (0..rank).map(|d| &coords[d * n + p0..d * n + p0 + m]).collect();
+        let icoor: Vec<&[f64]> = (0..rank)
+            .map(|d| &coords[d * n + p0..d * n + p0 + m])
+            .collect();
         with_tbuf(m, |t| {
             kernel.run(&inp, p, &icoor, m, t);
             store_interp(out_blk, t);

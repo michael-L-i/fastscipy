@@ -119,14 +119,46 @@ mod native {
             }
         };
     }
-    neon!(U8x16, u8, uint8x16_t, 16, vld1q_u8, vst1q_u8, vminq_u8, vmaxq_u8, true);
-    neon!(I8x16, i8, int8x16_t, 16, vld1q_s8, vst1q_s8, vminq_s8, vmaxq_s8, false);
-    neon!(U16x8, u16, uint16x8_t, 8, vld1q_u16, vst1q_u16, vminq_u16, vmaxq_u16, true);
-    neon!(I16x8, i16, int16x8_t, 8, vld1q_s16, vst1q_s16, vminq_s16, vmaxq_s16, true);
-    neon!(U32x4, u32, uint32x4_t, 4, vld1q_u32, vst1q_u32, vminq_u32, vmaxq_u32, false);
-    neon!(I32x4, i32, int32x4_t, 4, vld1q_s32, vst1q_s32, vminq_s32, vmaxq_s32, false);
-    neon!(F32x4, f32, float32x4_t, 4, vld1q_f32, vst1q_f32, vminq_f32, vmaxq_f32, true);
-    neon!(F64x2, f64, float64x2_t, 2, vld1q_f64, vst1q_f64, vminq_f64, vmaxq_f64, true);
+    neon!(
+        U8x16, u8, uint8x16_t, 16, vld1q_u8, vst1q_u8, vminq_u8, vmaxq_u8, true
+    );
+    neon!(
+        I8x16, i8, int8x16_t, 16, vld1q_s8, vst1q_s8, vminq_s8, vmaxq_s8, false
+    );
+    neon!(
+        U16x8, u16, uint16x8_t, 8, vld1q_u16, vst1q_u16, vminq_u16, vmaxq_u16, true
+    );
+    neon!(
+        I16x8, i16, int16x8_t, 8, vld1q_s16, vst1q_s16, vminq_s16, vmaxq_s16, true
+    );
+    neon!(
+        U32x4, u32, uint32x4_t, 4, vld1q_u32, vst1q_u32, vminq_u32, vmaxq_u32, false
+    );
+    neon!(
+        I32x4, i32, int32x4_t, 4, vld1q_s32, vst1q_s32, vminq_s32, vmaxq_s32, false
+    );
+    neon!(
+        F32x4,
+        f32,
+        float32x4_t,
+        4,
+        vld1q_f32,
+        vst1q_f32,
+        vminq_f32,
+        vmaxq_f32,
+        true
+    );
+    neon!(
+        F64x2,
+        f64,
+        float64x2_t,
+        2,
+        vld1q_f64,
+        vst1q_f64,
+        vminq_f64,
+        vmaxq_f64,
+        true
+    );
 
     // 64-bit integers: compare and select
     #[inline(always)]
@@ -145,8 +177,12 @@ mod native {
     unsafe fn max_s64(a: int64x2_t, b: int64x2_t) -> int64x2_t {
         unsafe { vbslq_s64(vcgtq_s64(a, b), a, b) }
     }
-    neon!(U64x2, u64, uint64x2_t, 2, vld1q_u64, vst1q_u64, min_u64, max_u64, false);
-    neon!(I64x2, i64, int64x2_t, 2, vld1q_s64, vst1q_s64, min_s64, max_s64, false);
+    neon!(
+        U64x2, u64, uint64x2_t, 2, vld1q_u64, vst1q_u64, min_u64, max_u64, false
+    );
+    neon!(
+        I64x2, i64, int64x2_t, 2, vld1q_s64, vst1q_s64, min_s64, max_s64, false
+    );
 }
 
 #[cfg(not(target_arch = "aarch64"))]

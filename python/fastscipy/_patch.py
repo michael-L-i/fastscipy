@@ -4,16 +4,17 @@ Every replacement goes through ``replace`` so ``restore`` can undo it, and
 every fast path goes through ``wrap`` (or checks ``enabled``) so
 ``fastscipy.disabled()`` and the fallback counters work everywhere.
 """
+
 import collections
 import functools
 import os
 import sys
 
-enabled = True        # False inside fastscipy.disabled()
-current = None        # component being patched; set by fastscipy.patch()
-counts = collections.Counter()   # (function, "fast" | "scipy" | "error") -> calls
-STRICT = os.environ.get("FASTSCIPY_STRICT", "") not in ("", "0")   # re-raise fast-path errors
-_records = []         # (component, owner, attr, old value)
+enabled = True  # False inside fastscipy.disabled()
+current = None  # component being patched; set by fastscipy.patch()
+counts = collections.Counter()  # (function, "fast" | "scipy" | "error") -> calls
+STRICT = os.environ.get("FASTSCIPY_STRICT", "") not in ("", "0")  # re-raise fast-path errors
+_records = []  # (component, owner, attr, old value)
 
 
 def stats():
@@ -21,12 +22,20 @@ def stats():
     return dict(counts)
 
 
-def require_scipy(*prefixes):
-    """Refuse to patch unless SciPy's version starts with one of ``prefixes``
-    (the versions a component was validated on). ``FASTSCIPY_ANY_VERSION=1`` overrides."""
+def require_validated(*prefixes):
+    """Refuse to patch outside what a component was validated on: SciPy versions
+    starting with ``prefixes``, on macOS arm64. Byte-identical results depend on
+    how SciPy's wheels were compiled (FMA contraction, BLAS), which differs by
+    platform. ``FASTSCIPY_ANY_VERSION=1`` and ``FASTSCIPY_ANY_PLATFORM=1`` override."""
+    import platform
+
     import scipy
+
     if not scipy.__version__.startswith(prefixes) and not os.environ.get("FASTSCIPY_ANY_VERSION"):
         raise RuntimeError(f"validated on SciPy {', '.join(prefixes)}, found {scipy.__version__}")
+    here = f"{sys.platform}-{platform.machine()}"
+    if here != "darwin-arm64" and not os.environ.get("FASTSCIPY_ANY_PLATFORM"):
+        raise RuntimeError(f"validated on macOS arm64 only, found {here}")
 
 
 def replace(owner, attr, new):
@@ -96,6 +105,7 @@ def _copy_identity_entries(old, new):
     """SciPy keys some registries by function object; give the stand-in the same entry."""
     try:
         from scipy._lib._array_api import xp_capabilities_table as table
+
         if old in table:
             table[new] = table[old]
     except (ImportError, TypeError):

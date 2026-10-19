@@ -6,6 +6,7 @@ Rust kernels use the Rust pool in ``_native``; Python wrappers use
 runs at a time; a second caller (another user thread, or a nested call) runs
 serially instead of oversubscribing. Both pools are rebuilt after ``fork``.
 """
+
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor

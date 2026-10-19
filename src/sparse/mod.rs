@@ -115,7 +115,12 @@ impl<T> Out<T> {
 }
 
 /// Run `f` on each range, on the pool when `threads > 1`.
-fn for_ranges(py: Python<'_>, ranges: &[(usize, usize)], threads: usize, f: impl Fn(usize, usize) + Sync) {
+fn for_ranges(
+    py: Python<'_>,
+    ranges: &[(usize, usize)],
+    threads: usize,
+    f: impl Fn(usize, usize) + Sync,
+) {
     py.detach(|| {
         if threads <= 1 {
             ranges.iter().for_each(|&(lo, hi)| f(lo, hi));
@@ -136,7 +141,14 @@ fn split(n: usize, min: usize, threads: usize) -> Vec<(usize, usize)> {
 /// SciPy's `_argminmax_axis` per line, including its implicit-zero rules and the quirk
 /// `min(extreme_index, zero_index)` where `extreme_index` is a position within the line.
 fn argminmax_k<I: Idx, T: Val>(
-    py: Python<'_>, ip: Arr, ij: Arr, x: Arr, line: i64, is_max: bool, explicit: bool, threads: usize,
+    py: Python<'_>,
+    ip: Arr,
+    ij: Arr,
+    x: Arr,
+    line: i64,
+    is_max: bool,
+    explicit: bool,
+    threads: usize,
 ) -> Option<Vec<i64>> {
     let (ip, ij, x) = unsafe { (slice::<I>(ip), slice::<I>(ij), slice::<T>(x)) };
     let rows = ip.len() - 1;
@@ -163,8 +175,14 @@ fn argminmax_k<I: Idx, T: Val>(
         if explicit || (if is_max { ev > zero } else { ev < zero }) || len as i64 == line {
             return ij[p + ei].get();
         }
-        let k = (0..len).find(|&k| ij[p + k].get() != k as i64).unwrap_or(len);
-        let zi = if k < len || (k as i64) < line { k as i64 } else { -1 };
+        let k = (0..len)
+            .find(|&k| ij[p + k].get() != k as i64)
+            .unwrap_or(len);
+        let zi = if k < len || (k as i64) < line {
+            k as i64
+        } else {
+            -1
+        };
         if ev == zero { (ei as i64).min(zi) } else { zi }
     };
     let mut ret = vec![0i64; rows];
@@ -180,20 +198,40 @@ fn argminmax_k<I: Idx, T: Val>(
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
 fn argminmax<'py>(
-    py: Python<'py>, ip: Arr, ij: Arr, x: Arr, line: i64, is_max: bool, explicit: bool, threads: usize,
+    py: Python<'py>,
+    ip: Arr,
+    ij: Arr,
+    x: Arr,
+    line: i64,
+    is_max: bool,
+    explicit: bool,
+    threads: usize,
 ) -> Option<Bound<'py, PyArray1<i64>>> {
-    let r = by_types!(code(ip), code(x), argminmax_k(py, ip, ij, x, line, is_max, explicit, threads))?;
+    let r = by_types!(
+        code(ip),
+        code(x),
+        argminmax_k(py, ip, ij, x, line, is_max, explicit, threads)
+    )?;
     Some(PyArray1::from_vec(py, r))
 }
 
 // ---- COO sum_duplicates ------------------------------------------------------------------------
 
-type Triple<'py, I, T> = (Bound<'py, PyArray1<I>>, Bound<'py, PyArray1<I>>, Bound<'py, PyArray1<T>>);
+type Triple<'py, I, T> = (
+    Bound<'py, PyArray1<I>>,
+    Bound<'py, PyArray1<I>>,
+    Bound<'py, PyArray1<T>>,
+);
 
 /// Stable sort by (row, col), then add up equal coordinates in order, like
 /// `np.lexsort` + `np.add.reduceat`. `None` if a row index is outside `0..m`.
 fn sumdup_k<'py, I: Idx, T: Val>(
-    py: Python<'py>, r: Arr, c: Arr, x: Arr, m: usize, threads: usize,
+    py: Python<'py>,
+    r: Arr,
+    c: Arr,
+    x: Arr,
+    m: usize,
+    threads: usize,
 ) -> Option<Triple<'py, I, T>> {
     let (r, c, x) = unsafe { (slice::<I>(r), slice::<I>(c), slice::<T>(x)) };
     let n = x.len();
@@ -219,7 +257,11 @@ fn sumdup_k<'py, I: Idx, T: Val>(
     let mut ranges = Vec::new();
     let (mut lo, parts) = (0, if threads > 1 { 8 * threads } else { 1 });
     for i in 1..=parts {
-        let hi = if i == parts { m } else { start.partition_point(|&s| s < n * i / parts).min(m) };
+        let hi = if i == parts {
+            m
+        } else {
+            start.partition_point(|&s| s < n * i / parts).min(m)
+        };
         if hi > lo || i == parts && lo < m {
             ranges.push((lo, hi));
             lo = hi;
@@ -232,7 +274,11 @@ fn sumdup_k<'py, I: Idx, T: Val>(
         for i in lo..hi {
             let row = unsafe { bufp.slice(start[i], start[i + 1] - start[i]) };
             row.sort_by_key(|e| e.0);
-            let u = row.iter().enumerate().filter(|&(k, e)| k == 0 || e.0 != row[k - 1].0).count();
+            let u = row
+                .iter()
+                .enumerate()
+                .filter(|&(k, e)| k == 0 || e.0 != row[k - 1].0)
+                .count();
             unsafe { *up.slice(i + 1, 1).as_mut_ptr() = u };
         }
     });
@@ -240,14 +286,26 @@ fn sumdup_k<'py, I: Idx, T: Val>(
         uniq[i + 1] += uniq[i];
     }
     let total = uniq[m];
-    let (mut orow, mut ocol, mut oval) = (vec![I::default(); total], vec![I::default(); total], vec![T::default(); total]);
-    let (rp, cp, vp) = (Out(orow.as_mut_ptr()), Out(ocol.as_mut_ptr()), Out(oval.as_mut_ptr()));
+    let (mut orow, mut ocol, mut oval) = (
+        vec![I::default(); total],
+        vec![I::default(); total],
+        vec![T::default(); total],
+    );
+    let (rp, cp, vp) = (
+        Out(orow.as_mut_ptr()),
+        Out(ocol.as_mut_ptr()),
+        Out(oval.as_mut_ptr()),
+    );
     for_ranges(py, &ranges, threads, |lo, hi| {
         for i in lo..hi {
             let row = &buf[start[i]..start[i + 1]];
             let (u, mut k) = (uniq[i], 0);
             let (rr, cc, vv) = unsafe {
-                (rp.slice(u, uniq[i + 1] - u), cp.slice(u, uniq[i + 1] - u), vp.slice(u, uniq[i + 1] - u))
+                (
+                    rp.slice(u, uniq[i + 1] - u),
+                    cp.slice(u, uniq[i + 1] - u),
+                    vp.slice(u, uniq[i + 1] - u),
+                )
             };
             let vals: Vec<T> = row.iter().map(|e| e.1).collect();
             let mut s = 0;
@@ -258,16 +316,26 @@ fn sumdup_k<'py, I: Idx, T: Val>(
             }
         }
     });
-    Some((PyArray1::from_vec(py, orow), PyArray1::from_vec(py, ocol), PyArray1::from_vec(py, oval)))
+    Some((
+        PyArray1::from_vec(py, orow),
+        PyArray1::from_vec(py, ocol),
+        PyArray1::from_vec(py, oval),
+    ))
 }
 
 #[pyfunction]
 fn sum_duplicates<'py>(
-    py: Python<'py>, row: Arr, col: Arr, data: Arr, m: usize, threads: usize,
+    py: Python<'py>,
+    row: Arr,
+    col: Arr,
+    data: Arr,
+    m: usize,
+    threads: usize,
 ) -> Option<(Bound<'py, PyAny>, Bound<'py, PyAny>, Bound<'py, PyAny>)> {
     macro_rules! go {
         ($i:ty, $t:ty) => {
-            sumdup_k::<$i, $t>(py, row, col, data, m, threads).map(|(a, b, c)| (a.into_any(), b.into_any(), c.into_any()))
+            sumdup_k::<$i, $t>(py, row, col, data, m, threads)
+                .map(|(a, b, c)| (a.into_any(), b.into_any(), c.into_any()))
         };
     }
     match (code(row), code(data)) {
@@ -285,19 +353,29 @@ fn sum_duplicates<'py>(
 
 // ---- dense to CSR / CSC ------------------------------------------------------------------------
 
-type Csr<'py, T> = (Bound<'py, PyArray1<i32>>, Bound<'py, PyArray1<i32>>, Bound<'py, PyArray1<T>>);
+type Csr<'py, T> = (
+    Bound<'py, PyArray1<i32>>,
+    Bound<'py, PyArray1<i32>>,
+    Bound<'py, PyArray1<T>>,
+);
 
 /// Nonzeros of a 2-D array, row-major (CSR) or column-major (CSC), as 32-bit `(indptr, indices, data)`.
 /// `None` if the counts do not fit in 32 bits.
 fn dense_k<'py, T: Val>(py: Python<'py>, a: Arr, csc: bool, threads: usize) -> Option<Csr<'py, T>> {
     let (sh, st) = (a.shape(), a.strides());
     let item = std::mem::size_of::<T>() as isize;
-    let (major, minor, sa, sb) = if csc { (sh[1], sh[0], st[1] / item, st[0] / item) } else { (sh[0], sh[1], st[0] / item, st[1] / item) };
+    let (major, minor, sa, sb) = if csc {
+        (sh[1], sh[0], st[1] / item, st[0] / item)
+    } else {
+        (sh[0], sh[1], st[0] / item, st[1] / item)
+    };
     if a.len() > i32::MAX as usize {
         return None;
     }
     let base = ptr(a) as usize;
-    let at = move |i: usize, j: usize| unsafe { *(base as *const T).offset(i as isize * sa + j as isize * sb) };
+    let at = move |i: usize, j: usize| unsafe {
+        *(base as *const T).offset(i as isize * sa + j as isize * sb)
+    };
     let zero = T::default();
     if csc && threads <= 1 && sb.abs() >= sa.abs() {
         return Some(csc_row_major(py, minor, major, |i, j| at(j, i)));
@@ -337,12 +415,19 @@ fn dense_k<'py, T: Val>(py: Python<'py>, a: Arr, csc: bool, threads: usize) -> O
             }
         }
     });
-    Some((PyArray1::from_vec(py, indptr), PyArray1::from_vec(py, indices), PyArray1::from_vec(py, data)))
+    Some((
+        PyArray1::from_vec(py, indptr),
+        PyArray1::from_vec(py, indices),
+        PyArray1::from_vec(py, data),
+    ))
 }
 
 /// CSC of a row-major array on one thread: scan rows (cache friendly) and append to per-column buckets.
 fn csc_row_major<'py, T: Val>(
-    py: Python<'py>, rows: usize, cols: usize, at: impl Fn(usize, usize) -> T,
+    py: Python<'py>,
+    rows: usize,
+    cols: usize,
+    at: impl Fn(usize, usize) -> T,
 ) -> Csr<'py, T> {
     let zero = T::default();
     let mut indptr = vec![0i32; cols + 1];
@@ -366,16 +451,24 @@ fn csc_row_major<'py, T: Val>(
             }
         }
     }
-    (PyArray1::from_vec(py, indptr), PyArray1::from_vec(py, indices), PyArray1::from_vec(py, data))
+    (
+        PyArray1::from_vec(py, indptr),
+        PyArray1::from_vec(py, indices),
+        PyArray1::from_vec(py, data),
+    )
 }
 
 #[pyfunction]
 fn dense_to_compressed<'py>(
-    py: Python<'py>, a: Arr, csc: bool, threads: usize,
+    py: Python<'py>,
+    a: Arr,
+    csc: bool,
+    threads: usize,
 ) -> Option<(Bound<'py, PyAny>, Bound<'py, PyAny>, Bound<'py, PyAny>)> {
     macro_rules! go {
         ($t:ty) => {
-            dense_k::<$t>(py, a, csc, threads).map(|(p, i, d)| (p.into_any(), i.into_any(), d.into_any()))
+            dense_k::<$t>(py, a, csc, threads)
+                .map(|(p, i, d)| (p.into_any(), i.into_any(), d.into_any()))
         };
     }
     match code(a) {

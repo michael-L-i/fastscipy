@@ -9,9 +9,11 @@ run: ``True`` (default: on 1 and all threads), ``"threads"`` (only with
 threads; a module sets ``THREADED_ONLY = True`` to make that its default) or
 ``False`` (a control it should decline, which must just not be slower).
 Every case checks that the patched result is byte-identical to SciPy's.
-Writes ``bench/results/<area>.json`` and prints a markdown table; ``--check`` exits non-zero if a case differs, never took the
-fast path, or is slower than SciPy on one thread.
+Writes ``bench/results/<area>.json`` and prints a markdown table; ``--check``
+exits non-zero if a case differs, never took the fast path, or is slower than
+SciPy on one thread.
 """
+
 import argparse
 import importlib
 import json
@@ -86,14 +88,19 @@ def main():
             flag = "yes" if r["identical"] else "**NO**"
             if not r["fast_path"]:
                 flag += " (no fast path)"
-            print(f"| {area}: {name} | {r['scipy_ms']:.3f} | {r['1t_ms']:.3f} | {r['nt_ms']:.3f} "
-                  f"| {r['x1t']:.1f} | {r['xnt']:.1f} | {flag} |", flush=True)
+            print(
+                f"| {area}: {name} | {r['scipy_ms']:.3f} | {r['1t_ms']:.3f} | {r['nt_ms']:.3f} "
+                f"| {r['x1t']:.1f} | {r['xnt']:.1f} | {flag} |",
+                flush=True,
+            )
             if not (r["identical"] and r["fast_path"] and r["x1t"] >= 0.9):
                 bad.append(f"{area}: {name}")
         fastscipy.set_num_threads(threads)
         if rows:
-            print(f"| **{area} geomean** | | | | **{geomean([r['x1t'] for r in rows.values()]):.1f}** "
-                  f"| **{geomean([r['xnt'] for r in rows.values()]):.1f}** | |")
+            print(
+                f"| **{area} geomean** | | | | **{geomean([r['x1t'] for r in rows.values()]):.1f}** "
+                f"| **{geomean([r['xnt'] for r in rows.values()]):.1f}** | |"
+            )
             meta = {"threads": threads, "cpu": os.cpu_count(), "platform": sys.platform}
             (HERE / "results" / f"{area}.json").write_text(json.dumps({"meta": meta, "cases": rows}, indent=1))
     if bad:

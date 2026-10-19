@@ -22,14 +22,29 @@ pub struct Csr<'a> {
 }
 
 impl<'a> Csr<'a> {
-    fn new(indptr: &'a [i32], indices: &'a [i32], data: Option<&'a [f64]>, n: usize) -> PyResult<Self> {
+    fn new(
+        indptr: &'a [i32],
+        indices: &'a [i32],
+        data: Option<&'a [f64]>,
+        n: usize,
+    ) -> PyResult<Self> {
         let ok = indptr.len() == n + 1
             && indptr[0] >= 0
             && indptr.windows(2).all(|w| w[0] <= w[1])
             && indptr[n] as usize <= indices.len()
             && data.is_none_or(|d| d.len() >= indptr[n] as usize)
-            && indices[..indptr[n] as usize].iter().all(|&j| (j as u32 as usize) < n);
-        if ok { Ok(Csr { indptr, indices, data }) } else { Err(PyValueError::new_err("malformed csgraph")) }
+            && indices[..indptr[n] as usize]
+                .iter()
+                .all(|&j| (j as u32 as usize) < n);
+        if ok {
+            Ok(Csr {
+                indptr,
+                indices,
+                data,
+            })
+        } else {
+            Err(PyValueError::new_err("malformed csgraph"))
+        }
     }
 
     #[inline]

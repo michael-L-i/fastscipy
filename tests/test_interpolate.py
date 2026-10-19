@@ -22,7 +22,7 @@ def rng(seed=0):
 
 def knots(kind, n, k, r):
     t = np.sort(r.random(n))
-    if kind == "repeated":                       # interior knots of multiplicity 2
+    if kind == "repeated":  # interior knots of multiplicity 2
         i = np.arange(1, n - 2, 7)
         t[i + 1] = t[i]
     if kind == "clamped":
@@ -43,7 +43,7 @@ def test_bspline_kernel(k, kind):
     q = np.r_[r.uniform(lo - 0.2, hi + 0.2, 5000), t, np.nextafter(t, 0), np.nextafter(t, 2), lo, hi]
     r.shuffle(q)
     check(lambda: spl(q))
-    check(lambda: spl(q[:len(q) // 8 * 8].reshape(-1, 8)))
+    check(lambda: spl(q[: len(q) // 8 * 8].reshape(-1, 8)))
     check(lambda: spl(q.astype(np.float32)))
 
 
@@ -53,7 +53,7 @@ def test_bspline_sort_path():
     t = knots("clamped", 400, k, r)
     q = r.uniform(t[0], t[-1], 4000)
     spl = si.BSpline(t, r.standard_normal((len(t) - k - 1, 3)), k)
-    check(lambda: spl(q))                                   # 2-D coefficients
+    check(lambda: spl(q))  # 2-D coefficients
     check(lambda: spl(q.reshape(40, 100)))
     spl1 = si.BSpline(t, r.standard_normal(len(t) - k - 1), k)
     check(lambda: spl1(q, nu=1))
@@ -80,7 +80,7 @@ def test_bspline_declined():
     check(lambda: spl(q[:50]), fast=False)
     check(lambda: spl(np.sort(q)[:200]), fast=False)
     check(lambda: spl(list(q[:10])), fast=False)
-    degenerate = np.r_[[0.0] * 6, np.sort(r.random(300)), [1.0] * 6]       # end knots of multiplicity k + 3
+    degenerate = np.r_[[0.0] * 6, np.sort(r.random(300)), [1.0] * 6]  # end knots of multiplicity k + 3
     dq = r.uniform(-0.1, 1.1, 3000)
     dspl = si.BSpline(degenerate, r.standard_normal(len(degenerate) - 4), 3)
     check(lambda: dspl(dq), fast=False)
@@ -91,18 +91,26 @@ def test_bspline_sorted_queries():
     t = knots("clamped", 2000, 3, r)
     spl = si.BSpline(t, r.standard_normal(len(t) - 4), 3)
     q = np.sort(r.uniform(t[0], t[-1], 20000))
-    check(lambda: spl(q), fast=False)           # SciPy's walk wins on one thread; either way identical
+    check(lambda: spl(q), fast=False)  # SciPy's walk wins on one thread; either way identical
 
 
 @pytest.mark.parametrize("kind", ["cubic", "quadratic", "slinear", "zero", "linear", "nearest"])
 def test_interp1d(kind):
     r = rng(4)
     x = np.sort(r.random(2000))
-    f = si.interp1d(x, np.sin(9 * x), kind=kind, bounds_error=False, fill_value="extrapolate" if kind in ("cubic", "quadratic", "slinear", "linear") else np.nan)
+    f = si.interp1d(
+        x,
+        np.sin(9 * x),
+        kind=kind,
+        bounds_error=False,
+        fill_value="extrapolate" if kind in ("cubic", "quadratic", "slinear", "linear") else np.nan,
+    )
     q = r.uniform(x[0], x[-1], 30000)
     check(lambda: f(q), fast=kind in ("cubic", "quadratic", "slinear", "zero"))
-    check(lambda: si.interp1d(x, np.cos(x[:, None] * np.arange(1, 4)), kind=kind, axis=0)(q.clip(x[0], x[-1])),
-          fast=kind in ("cubic", "quadratic", "slinear", "zero"))
+    check(
+        lambda: si.interp1d(x, np.cos(x[:, None] * np.arange(1, 4)), kind=kind, axis=0)(q.clip(x[0], x[-1])),
+        fast=kind in ("cubic", "quadratic", "slinear", "zero"),
+    )
 
 
 @pytest.mark.parametrize("k", [1, 3, 5])
@@ -120,7 +128,7 @@ def test_splev(k):
     check(lambda: si.splev(q, (tck[0], tck[1], tck[2])), fast=True)
     check(lambda: si.splev(q.astype(np.float32), tck))
     check(lambda: si.splev(list(q[:20]), tck), fast=False)
-    check(lambda: si.splev(q, si.BSpline(*tck)), fast=True)      # through BSpline.__call__
+    check(lambda: si.splev(q, si.BSpline(*tck)), fast=True)  # through BSpline.__call__
     with pytest.raises(ValueError, match="domain"):
         si.splev(q, tck, ext=2)
 
@@ -130,7 +138,7 @@ def test_univariate_spline():
     x = np.sort(r.random(1000))
     s = si.UnivariateSpline(x, np.sin(8 * x) + 0.01 * r.standard_normal(1000), k=3, s=0.01)
     q = r.uniform(0, 1, 30000)
-    check(lambda: s(q), fast=False)             # evaluates through _fitpack, not hooked
+    check(lambda: s(q), fast=False)  # evaluates through _fitpack, not hooked
 
 
 # ---------------------------------------------------------------- Delaunay
@@ -139,7 +147,7 @@ def points(kind, n, ndim, r):
         return r.random((n, ndim))
     m = int(round(n ** (1 / ndim)))
     g = np.stack(np.meshgrid(*[np.arange(m)] * ndim, indexing="ij"), -1).reshape(-1, ndim) / (m - 1)
-    return g + (1e-9 * r.random(g.shape) if kind == "jittered" else 0)       # jittered: nearly degenerate
+    return g + (1e-9 * r.random(g.shape) if kind == "jittered" else 0)  # jittered: nearly degenerate
 
 
 @pytest.mark.parametrize("ndim", [2, 3])
@@ -149,14 +157,14 @@ def test_find_simplex(ndim, kind):
     pts = points(kind, 3000 if ndim == 2 else 2000, ndim, r)
     tri = sp.Delaunay(pts)
     n = 6000
-    q = r.random((n, ndim)) * 1.2 - 0.1                                       # 15% outside the hull
+    q = r.random((n, ndim)) * 1.2 - 0.1  # 15% outside the hull
     k = n // 10
-    q[:k] = pts[r.integers(0, len(pts), k)]                                   # vertices
-    q[k:2 * k] = pts[r.integers(0, len(pts), k)] / 2 + pts[r.integers(0, len(pts), k)] / 2    # edge-ish points
-    q[2 * k:2 * k + 5] = np.nan
-    q[2 * k + 5:2 * k + 8] = np.inf
+    q[:k] = pts[r.integers(0, len(pts), k)]  # vertices
+    q[k : 2 * k] = pts[r.integers(0, len(pts), k)] / 2 + pts[r.integers(0, len(pts), k)] / 2  # edge-ish points
+    q[2 * k : 2 * k + 5] = np.nan
+    q[2 * k + 5 : 2 * k + 8] = np.inf
     r.shuffle(q)
-    check(lambda: tri.find_simplex(q), fast=kind == "random")     # lattices: heavy ties, replayed or declined
+    check(lambda: tri.find_simplex(q), fast=kind == "random")  # lattices: heavy ties, replayed or declined
     check(lambda: tri.find_simplex(q[:5400].reshape(60, 90, ndim)), fast=False)
 
 
@@ -165,10 +173,10 @@ def test_find_simplex_ties_replayed():
     pts = r.random((4000, 2))
     tri = sp.Delaunay(pts)
     q = r.random((20000, 2))
-    q[::40] = pts[r.integers(0, len(pts), 500)]                               # 2.5% vertices: replayed, still fast
+    q[::40] = pts[r.integers(0, len(pts), 500)]  # 2.5% vertices: replayed, still fast
     check(lambda: tri.find_simplex(q))
     q[:] = pts[r.integers(0, len(pts), len(q))]
-    check(lambda: tri.find_simplex(q), fast=False)                            # all ties: declined
+    check(lambda: tri.find_simplex(q), fast=False)  # all ties: declined
 
 
 def test_find_simplex_shapes_and_declines():
@@ -180,12 +188,12 @@ def test_find_simplex_shapes_and_declines():
     check(lambda: tri.find_simplex(q.reshape(-1, 2)[:100]), fast=False)
     check(lambda: tri.find_simplex(q.reshape(-1, 2), bruteforce=False, tol=1e-6), fast=False)
     check(lambda: tri.find_simplex(q.reshape(-1, 2)[:300], bruteforce=True), fast=False)
-    check(lambda: tri.find_simplex(np.sort(q.reshape(-1, 2), axis=0)), fast=False)     # already local
+    check(lambda: tri.find_simplex(np.sort(q.reshape(-1, 2), axis=0)), fast=False)  # already local
     one = r.random(2)
     check(lambda: tri.find_simplex(one), fast=False)
     check(lambda: tri.find_simplex(np.empty((0, 2))), fast=False)
     small, sq = sp.Delaunay(r.random((200, 2))), r.random((5000, 2))
-    check(lambda: small.find_simplex(sq), fast=False)                                  # few simplices
+    check(lambda: small.find_simplex(sq), fast=False)  # few simplices
 
 
 # ---------------------------------------------------------------- LinearND / CloughTocher / griddata
@@ -205,7 +213,7 @@ def test_linear_nd(ndim):
     check(lambda: f(q))
     check(lambda: f(q[:, 0], q[:, 1]) if ndim == 2 else f(q))
     check(lambda: si.LinearNDInterpolator(pts, np.c_[v, 2 * v, v**2], fill_value=-1.5)(q))
-    check(lambda: si.LinearNDInterpolator(pts, v * (1 + 1j))(q))              # complex: reordered SciPy
+    check(lambda: si.LinearNDInterpolator(pts, v * (1 + 1j))(q))  # complex: reordered SciPy
     check(lambda: si.LinearNDInterpolator(pts, v.astype(np.float32))(q))
     check(lambda: si.LinearNDInterpolator(pts, v, rescale=True)(q))
     check(lambda: f(q, simplex_tolerance=2.0), fast=False)
@@ -251,7 +259,7 @@ def test_rgi_pchip(ndim, uniform):
     shape = (60, 25, 12)[:ndim] if ndim > 1 else (200,)
     grid = [np.linspace(0, 1, s) if uniform else np.sort(r.random(s)) for s in shape]
     v = r.standard_normal(shape)
-    v[..., 0] = 1.0                                                           # flat runs
+    v[..., 0] = 1.0  # flat runs
     if ndim > 1:
         v[:, 3] = v[:, 2]
     f = si.RegularGridInterpolator(grid, v, method="pchip", bounds_error=False, fill_value=None)
@@ -259,7 +267,7 @@ def test_rgi_pchip(ndim, uniform):
     lo = [g[0] for g in grid]
     hi = [g[-1] for g in grid]
     q = r.uniform(lo, hi, (500, ndim))
-    q[:50] = [[g[r.integers(len(g))] for g in grid] for _ in range(50)]       # on nodes
+    q[:50] = [[g[r.integers(len(g))] for g in grid] for _ in range(50)]  # on nodes
     q[50:60] = r.uniform(np.array(lo) - 0.1, np.array(hi) + 0.1, (10, ndim))  # outside, extrapolated
     check(lambda: f(q[:60]))
     qn = q.copy()
@@ -267,7 +275,7 @@ def test_rgi_pchip(ndim, uniform):
     if ndim == 1:
         check(lambda: f(qn), fast=False)
     else:
-        with pytest.raises(ValueError, match="finite"):                      # SciPy refits on the NaN it produced
+        with pytest.raises(ValueError, match="finite"):  # SciPy refits on the NaN it produced
             f(qn)
     check(lambda: si.interpn(grid, v, q, method="pchip", bounds_error=False, fill_value=-1.0))
     inside = q[63:].clip(lo, hi)

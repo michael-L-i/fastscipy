@@ -11,7 +11,10 @@ def cases():
     multi = rng.standard_normal((64, 250_000))
     sos8, (b8, a8) = sg.butter(8, 0.1, output="sos"), sg.butter(8, 0.1)
 
-    yield "butter + sosfiltfilt, 200 samples", lambda: sg.sosfiltfilt(sg.butter(4, [0.05, 0.3], "band", output="sos"), x200)
+    yield (
+        "butter + sosfiltfilt, 200 samples",
+        lambda: sg.sosfiltfilt(sg.butter(4, [0.05, 0.3], "band", output="sos"), x200),
+    )
     yield "filtfilt, 1000 samples", lambda: sg.filtfilt(b, a, x1000)
     yield "sosfiltfilt, 1000 samples", lambda: sg.sosfiltfilt(sos, x1000)
     yield "detrend, 1000 samples", lambda: sg.detrend(x1000)

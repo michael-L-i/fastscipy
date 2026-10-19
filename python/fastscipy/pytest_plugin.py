@@ -4,6 +4,7 @@
 
 ``FASTSCIPY_COMPONENTS=ndimage,special`` limits the components patched.
 """
+
 import os
 
 import pytest
@@ -18,7 +19,7 @@ def pytest_configure(config):
 
 
 def pytest_sessionfinish(session):
-    out = getattr(session.config, "workeroutput", None)   # set on pytest-xdist workers
+    out = getattr(session.config, "workeroutput", None)  # set on pytest-xdist workers
     if out is not None:
         out["fastscipy_counts"] = [[f, p, n] for (f, p), n in _patch.counts.items()]
 

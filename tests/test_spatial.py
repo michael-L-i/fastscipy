@@ -23,7 +23,7 @@ def threads(request):
 def data(m, d, round_some=True):
     a = RNG.random((m, d))
     if round_some:
-        a[::7] = np.round(a[::7])    # exact zeros and ones exercise the boolean metrics
+        a[::7] = np.round(a[::7])  # exact zeros and ones exercise the boolean metrics
     return a
 
 
@@ -48,7 +48,7 @@ def test_pdist_shapes_and_default_metric(threads):
         check(lambda: dist.pdist(X), fast=threads > 1)
     tall, few, wide = data(5000, 4), data(3, 4), data(3, 400)
     check(lambda: dist.cdist(tall, few), fast=False)
-    check(lambda: dist.cdist(wide, data_wide), fast=False)   # 3 rows: nothing to split
+    check(lambda: dist.cdist(wide, data_wide), fast=False)  # 3 rows: nothing to split
 
 
 def test_declined_still_correct():
@@ -56,19 +56,21 @@ def test_declined_still_correct():
     out = np.empty((900, 700))
     r = dist.cdist(A, B, out=out)
     assert r is out and np.array_equal(out, dist.cdist.__wrapped__(A, B))
-    for call in (lambda: dist.cdist(A, B, "mahalanobis"),
-                 lambda: dist.cdist(A, B, "seuclidean"),
-                 lambda: dist.cdist(A, B, "minkowski", p=3.0),
-                 lambda: dist.cdist(A, B, "euclidean", w=np.ones(16)),
-                 lambda: dist.cdist(A[:5], B[:5], lambda u, v: 1.0),
-                 lambda: dist.cdist(A.astype(np.float32), B),
-                 lambda: dist.cdist(A.T, A.T),
-                 lambda: dist.cdist(A[::2], B[::2]),
-                 lambda: dist.cdist(A[:10], B[:10]),
-                 lambda: dist.cdist(A.tolist(), B.tolist()),
-                 lambda: dist.pdist(A, "dice"),
-                 lambda: dist.pdist(np.asfortranarray(A)),
-                 lambda: dist.pdist(A[:20])):
+    for call in (
+        lambda: dist.cdist(A, B, "mahalanobis"),
+        lambda: dist.cdist(A, B, "seuclidean"),
+        lambda: dist.cdist(A, B, "minkowski", p=3.0),
+        lambda: dist.cdist(A, B, "euclidean", w=np.ones(16)),
+        lambda: dist.cdist(A[:5], B[:5], lambda u, v: 1.0),
+        lambda: dist.cdist(A.astype(np.float32), B),
+        lambda: dist.cdist(A.T, A.T),
+        lambda: dist.cdist(A[::2], B[::2]),
+        lambda: dist.cdist(A[:10], B[:10]),
+        lambda: dist.cdist(A.tolist(), B.tolist()),
+        lambda: dist.pdist(A, "dice"),
+        lambda: dist.pdist(np.asfortranarray(A)),
+        lambda: dist.pdist(A[:20]),
+    ):
         check(call, fast=False)
 
 
@@ -97,10 +99,14 @@ def test_query_ball_point(tree, threads):
 def test_tree_declined_still_correct(tree):
     q = RNG.random((20_000, 3))
     for t in tree:
-        for call in (lambda: t.query(q, 2, workers=2), lambda: t.query(q, 2, 0.0, 2.0, np.inf, 1),
-                     lambda: t.query(q[:100], 2), lambda: t.query(q[0], 2),
-                     lambda: t.query_ball_point(q, 0.02, workers=-1).tolist(),
-                     lambda: t.query_ball_point(q[0], 0.1)):
+        for call in (
+            lambda: t.query(q, 2, workers=2),
+            lambda: t.query(q, 2, 0.0, 2.0, np.inf, 1),
+            lambda: t.query(q[:100], 2),
+            lambda: t.query(q[0], 2),
+            lambda: t.query_ball_point(q, 0.02, workers=-1).tolist(),
+            lambda: t.query_ball_point(q[0], 0.1),
+        ):
             check(call, fast=False)
 
 

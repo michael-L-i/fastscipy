@@ -64,7 +64,11 @@ pub fn map_coordinate(mut x: f64, len: i64, mode: Mode) -> f64 {
                 } else {
                     let sz2 = 2 * len - 2;
                     x = sz2.wrapping_mul((-x / sz2 as f64) as i64) as f64 + x;
-                    x = if x <= (1 - len) as f64 { x + sz2 as f64 } else { -x };
+                    x = if x <= (1 - len) as f64 {
+                        x + sz2 as f64
+                    } else {
+                        -x
+                    };
                 }
             }
             Mode::Reflect => {
@@ -94,7 +98,8 @@ pub fn map_coordinate(mut x: f64, len: i64, mode: Mode) -> f64 {
                 if len <= 1 {
                     x = 0.0;
                 } else {
-                    x += len.wrapping_mul((((-1.0 - x) / len as f64) as i64).wrapping_add(1)) as f64;
+                    x +=
+                        len.wrapping_mul((((-1.0 - x) / len as f64) as i64).wrapping_add(1)) as f64;
                 }
             }
             Mode::Nearest => x = 0.0,
@@ -161,7 +166,11 @@ pub fn spline_mode(mode: Mode) -> Mode {
 /// First tap of the spline footprint around coordinate `cc`.
 #[inline(always)]
 pub fn spline_start(cc: f64, order: usize) -> i64 {
-    let f = if order & 1 == 1 { cc.floor() } else { (cc + 0.5).floor() };
+    let f = if order & 1 == 1 {
+        cc.floor()
+    } else {
+        (cc + 0.5).floor()
+    };
     (f as i64).wrapping_sub((order / 2) as i64)
 }
 
@@ -170,7 +179,12 @@ pub fn spline_start(cc: f64, order: usize) -> i64 {
 
 #[inline(always)]
 pub fn spline_weights(cc: f64, order: usize, w: &mut [f64; 6]) {
-    let x = cc - if order & 1 == 1 { cc.floor() } else { (cc + 0.5).floor() };
+    let x = cc
+        - if order & 1 == 1 {
+            cc.floor()
+        } else {
+            (cc + 0.5).floor()
+        };
     let z = 1.0 - x;
     match order {
         1 => {
@@ -191,8 +205,16 @@ pub fn spline_weights(cc: f64, order: usize, w: &mut [f64; 6]) {
             let t = x * x;
             w[2] = madd(t, madd(t, 0.25, -0.625), 115.0 / 192.0);
             let y = 1.0 + x;
-            w[1] = madd(y, madd(y, y * (5.0 - y) / 6.0 - 1.25, 5.0 / 24.0), 55.0 / 96.0);
-            w[3] = madd(z, madd(z, z * (5.0 - z) / 6.0 - 1.25, 5.0 / 24.0), 55.0 / 96.0);
+            w[1] = madd(
+                y,
+                madd(y, y * (5.0 - y) / 6.0 - 1.25, 5.0 / 24.0),
+                55.0 / 96.0,
+            );
+            w[3] = madd(
+                z,
+                madd(z, z * (5.0 - z) / 6.0 - 1.25, 5.0 / 24.0),
+                55.0 / 96.0,
+            );
             let y = 0.5 - x;
             let t = y * y;
             w[0] = t * t / 24.0;
@@ -206,13 +228,21 @@ pub fn spline_weights(cc: f64, order: usize, w: &mut [f64; 6]) {
             let y1 = y + 1.0;
             w[1] = madd(
                 y1,
-                madd(y1, madd(y1, madd(y1, y1 / 24.0 - 0.375, 1.25), -1.75), 0.625),
+                madd(
+                    y1,
+                    madd(y1, madd(y1, y1 / 24.0 - 0.375, 1.25), -1.75),
+                    0.625,
+                ),
                 0.425,
             );
             let z1 = z + 1.0;
             w[4] = madd(
                 z1,
-                madd(z1, madd(z1, madd(z1, z1 / 24.0 - 0.375, 1.25), -1.75), 0.625),
+                madd(
+                    z1,
+                    madd(z1, madd(z1, z1 / 24.0 - 0.375, 1.25), -1.75),
+                    0.625,
+                ),
                 0.425,
             );
             let y = 1.0 - x;
@@ -234,10 +264,14 @@ pub fn spline_weights(cc: f64, order: usize, w: &mut [f64; 6]) {
 pub fn filter_poles(order: usize) -> Option<&'static [f64]> {
     const P2: [f64; 1] = [-0.171572875253809902396622551580603843];
     const P3: [f64; 1] = [-0.267949192431122706472553658494127633];
-    const P4: [f64; 2] =
-        [-0.361341225900220177092212841325675255, -0.013725429297339121360331226939128204];
-    const P5: [f64; 2] =
-        [-0.430575347099973791851434783493520110, -0.043096288203264653822712376822550182];
+    const P4: [f64; 2] = [
+        -0.361341225900220177092212841325675255,
+        -0.013725429297339121360331226939128204,
+    ];
+    const P5: [f64; 2] = [
+        -0.430575347099973791851434783493520110,
+        -0.043096288203264653822712376822550182,
+    ];
     match order {
         2 => Some(&P2),
         3 => Some(&P3),
@@ -285,7 +319,11 @@ macro_rules! out_uint {
             #[inline(always)]
             fn from_interp(t: f64) -> Self {
                 let t = if t > 0.0 { t + 0.5 } else { 0.0 };
-                let t = if t > <$t>::MAX as f64 { <$t>::MAX as f64 } else { t };
+                let t = if t > <$t>::MAX as f64 {
+                    <$t>::MAX as f64
+                } else {
+                    t
+                };
                 let t = if t < 0.0 { 0.0 } else { t };
                 clamped_cast!($t, t)
             }
@@ -306,8 +344,16 @@ macro_rules! out_sint {
             #[inline(always)]
             fn from_interp(t: f64) -> Self {
                 let t = if t > 0.0 { t + 0.5 } else { t - 0.5 };
-                let t = if t > <$t>::MAX as f64 { <$t>::MAX as f64 } else { t };
-                let t = if t < <$t>::MIN as f64 { <$t>::MIN as f64 } else { t };
+                let t = if t > <$t>::MAX as f64 {
+                    <$t>::MAX as f64
+                } else {
+                    t
+                };
+                let t = if t < <$t>::MIN as f64 {
+                    <$t>::MIN as f64
+                } else {
+                    t
+                };
                 // NaN survives the clamps; aarch64 converts it to 0.
                 let t = if t != t { 0.0 } else { t };
                 clamped_cast!($t, t)
@@ -458,7 +504,9 @@ pub fn for_each_chunk<T: Send>(
 ) {
     use rayon::prelude::*;
     if par {
-        data.par_chunks_mut(size).enumerate().for_each(|(i, c)| f(i, c));
+        data.par_chunks_mut(size)
+            .enumerate()
+            .for_each(|(i, c)| f(i, c));
     } else {
         data.chunks_mut(size).enumerate().for_each(|(i, c)| f(i, c));
     }

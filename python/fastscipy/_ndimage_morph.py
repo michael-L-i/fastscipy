@@ -1,5 +1,6 @@
 """Binary morphology, binary dilation to a fixed point (binary_fill_holes, binary_propagation)
 and the Euclidean distance transform."""
+
 import functools
 import numbers
 import operator
@@ -89,27 +90,39 @@ def euclidean_feature_transform(input, sampling, ft):
         return False
     if input.dtype != np.int8 or not input.flags.c_contiguous or input.ndim == 0 or input.size == 0:
         return False
-    if ft.dtype != np.int32 or not ft.flags.c_contiguous or not ft.flags.writeable \
-            or ft.shape != (input.ndim,) + input.shape:
+    if (
+        ft.dtype != np.int32
+        or not ft.flags.c_contiguous
+        or not ft.flags.writeable
+        or ft.shape != (input.ndim,) + input.shape
+    ):
         return False
-    if sampling is not None and not (sampling.dtype == np.float64 and sampling.flags.c_contiguous
-                                     and sampling.size == input.ndim):
+    if sampling is not None and not (
+        sampling.dtype == np.float64 and sampling.flags.c_contiguous and sampling.size == input.ndim
+    ):
         return False
     core.euclidean_feature_transform(input, sampling, ft)
     return True
 
 
-def _distance_transform_edt(input, sampling=None, return_distances=True, return_indices=False,
-                            distances=None, indices=None):
+def _distance_transform_edt(
+    input, sampling=None, return_distances=True, return_indices=False, distances=None, indices=None
+):
     """distance_transform_edt with the numpy post-processing fused into one Rust pass."""
-    if not (isinstance(input, np.ndarray) and distances is None and indices is None
-            and input.dtype.kind in "biuf" and input.size > 0):
+    if not (
+        isinstance(input, np.ndarray)
+        and distances is None
+        and indices is None
+        and input.dtype.kind in "biuf"
+        and input.size > 0
+    ):
         return NotImplemented
     _morphology._distance_transform_arg_check(False, False, return_distances, return_indices)
     inp = np.atleast_1d(np.ascontiguousarray(input != 0).view(np.int8))
     if sampling is not None:
-        sampling = np.ascontiguousarray(np.asarray(_ni_support._normalize_sequence(sampling, inp.ndim),
-                                                   dtype=np.float64))
+        sampling = np.ascontiguousarray(
+            np.asarray(_ni_support._normalize_sequence(sampling, inp.ndim), dtype=np.float64)
+        )
     ft = np.zeros((inp.ndim,) + inp.shape, dtype=np.int32)
     core.euclidean_feature_transform(inp, sampling, ft)
     result = []
@@ -136,6 +149,7 @@ def _offsets(sbytes, sshape, origin, erode):
 
 def _fixed_point_dilation(erode):
     """Fast path for ``_binary_erosion(..., iterations < 1, invert=True)``: dilation until nothing changes."""
+
     def fast(input, structure, iterations, mask, output, border_value, origin, invert, brute_force, axes):
         if iterations > 0 or not invert:
             return NotImplemented
@@ -156,7 +170,7 @@ def _fixed_point_dilation(erode):
         except TypeError:
             return NotImplemented
         if any(o < -(s // 2) or o > (s - 1) // 2 for o, s in zip(org, structure.shape)):
-            return NotImplemented     # SciPy raises for these
+            return NotImplemented  # SciPy raises for these
         m = None
         if mask is not None:
             mask = np.asarray(mask)
@@ -164,7 +178,7 @@ def _fixed_point_dilation(erode):
                 return NotImplemented
             m = np.ascontiguousarray(mask).view(np.uint8)
         if not _morphology._center_is_true(structure, list(org)):
-            return NotImplemented     # SciPy may loop forever
+            return NotImplemented  # SciPy may loop forever
         offs = _offsets(np.ascontiguousarray(structure).tobytes(), structure.shape, org, erode)
         if (0,) * ndim not in offs:
             return NotImplemented
@@ -175,21 +189,27 @@ def _fixed_point_dilation(erode):
         else:
             out = np.zeros(input.shape, dtype=bool)
         inp = np.ascontiguousarray(input if input.dtype == np.bool_ else input != 0).view(np.uint8)
-        direct = (out.dtype in _BYTE and out.flags.c_contiguous and out.flags.writeable
-                  and not np.may_share_memory(out, input)
-                  and not (mask is not None and np.may_share_memory(out, mask)))
+        direct = (
+            out.dtype in _BYTE
+            and out.flags.c_contiguous
+            and out.flags.writeable
+            and not np.may_share_memory(out, input)
+            and not (mask is not None and np.may_share_memory(out, mask))
+        )
         res = out.view(np.uint8) if direct else np.empty(input.shape, np.uint8)
         core.fill_core(inp, m, [list(o) for o in offs], bool(border_value), res, True)
         if not direct:
             out[...] = res.view(np.bool_)
         return out
+
     return fast
 
 
 def patch():
     erode = _morphology._binary_erosion
-    _patch.replace(_morphology, "_binary_erosion",
-                   _patch.wrap(erode, _fixed_point_dilation(erode), "fixed_point_dilation"))
+    _patch.replace(
+        _morphology, "_binary_erosion", _patch.wrap(erode, _fixed_point_dilation(erode), "fixed_point_dilation")
+    )
     old = ndi.distance_transform_edt
     new = _patch.wrap(old, _distance_transform_edt, "distance_transform_edt")
     _patch.rebind(old, new)

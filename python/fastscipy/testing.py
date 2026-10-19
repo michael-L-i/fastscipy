@@ -1,4 +1,5 @@
 """Exact comparison of SciPy results, for the tests and benchmarks."""
+
 import numpy as np
 
 
@@ -11,8 +12,7 @@ def identical(a, b):
     if type(a) is not type(b):
         return False
     if isinstance(a, np.ndarray):
-        return (a.dtype == b.dtype and a.shape == b.shape and a.strides == b.strides
-                and a.tobytes() == b.tobytes())
+        return a.dtype == b.dtype and a.shape == b.shape and a.strides == b.strides and a.tobytes() == b.tobytes()
     if isinstance(a, (np.generic, float, complex)):
         return np.asarray(a).tobytes() == np.asarray(b).tobytes()
     if isinstance(a, (tuple, list)):
@@ -34,6 +34,7 @@ def assert_identical(a, b):
 def fast_calls():
     """Total fast-path calls so far."""
     import fastscipy
+
     return sum(v for (_, path), v in fastscipy.stats().items() if path == "fast")
 
 
@@ -43,6 +44,7 @@ def check(call, fast=True):
     up at call time (``scipy.special.erf(x)``, not a name bound before patching).
     """
     import fastscipy
+
     with fastscipy.disabled():
         expected = call()
     before = fast_calls()

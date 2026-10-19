@@ -38,7 +38,10 @@ fn geom(shape: &[usize], sshape: &[usize], sdata: &[u8], origin: &[isize]) -> Ge
             idx[k] = 0;
         }
     }
-    Geom { shape: shape.to_vec(), elems }
+    Geom {
+        shape: shape.to_vec(),
+        elems,
+    }
 }
 
 /// Single pass. Returns (changed, list of flat indices of changed pixels).
@@ -71,7 +74,11 @@ fn erode_pass(
     // line strides in lines
     let mut lstride = vec![1usize; n - 1];
     for k in (0..n - 1).rev() {
-        lstride[k] = if k + 1 < n - 1 { lstride[k + 1] * lead_shape[k + 1] } else { 1 };
+        lstride[k] = if k + 1 < n - 1 {
+            lstride[k + 1] * lead_shape[k + 1]
+        } else {
+            1
+        };
     }
     let lines_per_chunk = (65536 / len.max(1)).max(1);
     let chunk = lines_per_chunk * len;
@@ -164,7 +171,9 @@ fn erode_pass(
                             }
                         }
                         Some(ml) => {
-                            for (((o, &i), &a), &mm) in out_line.iter_mut().zip(in_line).zip(acc.iter()).zip(ml) {
+                            for (((o, &i), &a), &mm) in
+                                out_line.iter_mut().zip(in_line).zip(acc.iter()).zip(ml)
+                            {
                                 let in01 = (i != 0) as u8;
                                 let out = a ^ inv;
                                 let keep = (cit_b & ((in01 == inv) as u8)) | ((mm == 0) as u8);
@@ -290,13 +299,17 @@ fn erode2(
                     }
                     let q = (p as isize + fo) as usize;
                     // exactly one thread wins the swap, as in the serial C code
-                    if arr[q].load(Ordering::Relaxed) == t && arr[q].swap(f, Ordering::Relaxed) == t && mklist {
+                    if arr[q].load(Ordering::Relaxed) == t
+                        && arr[q].swap(f, Ordering::Relaxed) == t
+                        && mklist
+                    {
                         next.push(q as u64);
                     }
                 }
             }
         };
-        let arr_at: &[AtomicU8] = unsafe { std::slice::from_raw_parts(array.as_ptr() as *const AtomicU8, array.len()) };
+        let arr_at: &[AtomicU8] =
+            unsafe { std::slice::from_raw_parts(array.as_ptr() as *const AtomicU8, array.len()) };
         let next: Vec<u64> = if cur.len() < 20000 || nthreads == 1 {
             let mut next = Vec::new();
             process(&cur, arr_at, &mut next);
@@ -340,14 +353,28 @@ fn binary_erosion_pass<'py>(
 ) -> PyResult<(bool, Option<Bound<'py, PyArray1<u64>>>)> {
     let shape = input.shape().to_vec();
     let sshape = structure.shape().to_vec();
-    let (inp, st, out) = unsafe { (input.as_slice()?, structure.as_slice()?, output.as_slice_mut()?) };
+    let (inp, st, out) = unsafe {
+        (
+            input.as_slice()?,
+            structure.as_slice()?,
+            output.as_slice_mut()?,
+        )
+    };
     let msk = match mask {
         Some(m) => Some(unsafe { m.as_slice()? }),
         None => None,
     };
     let g = geom(&shape, &sshape, st, &origin);
-    let (changed, list) = py.detach(|| erode_pass(&g, inp, msk, out, border_value, invert, cit, want_list));
-    Ok((changed, if want_list { Some(PyArray1::from_vec(py, list)) } else { None }))
+    let (changed, list) =
+        py.detach(|| erode_pass(&g, inp, msk, out, border_value, invert, cit, want_list));
+    Ok((
+        changed,
+        if want_list {
+            Some(PyArray1::from_vec(py, list))
+        } else {
+            None
+        },
+    ))
 }
 
 #[pyfunction]

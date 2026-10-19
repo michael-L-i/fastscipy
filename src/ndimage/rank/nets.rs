@@ -31,10 +31,26 @@ pub trait Visit {
     fn visit<N: GenNet>(self) -> Self::Out;
 }
 
-const WIN_BOX3X3: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const WIN_BOX3X3: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r4_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r4_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -73,10 +89,26 @@ unsafe fn box3x3_r4_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s7.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R4_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R4_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r4_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r4_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -132,10 +164,24 @@ unsafe fn box3x3_r4_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s15 = s15.mn(s17);
         let s16 = s15.mx(s16);
         let _ = r;
-        s7.store(out.offset(0 * ostride)); s16.store(out.offset(1 * ostride));
+        s7.store(out.offset(0 * ostride));
+        s16.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R4_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R4_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R4;
 impl GenNet for Box3x3R4 {
@@ -153,7 +199,13 @@ impl GenNet for Box3x3R4 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r1_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r1_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -190,10 +242,26 @@ unsafe fn box3x3_r1_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s5.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R1_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R1_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r1_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r1_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -243,10 +311,24 @@ unsafe fn box3x3_r1_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s13 = s13.mn(s11);
         let s13 = s13.mn(s14);
         let _ = r;
-        s5.store(out.offset(0 * ostride)); s13.store(out.offset(1 * ostride));
+        s5.store(out.offset(0 * ostride));
+        s13.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R1_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R1_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R1;
 impl GenNet for Box3x3R1 {
@@ -264,7 +346,13 @@ impl GenNet for Box3x3R1 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r2_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r2_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -301,10 +389,26 @@ unsafe fn box3x3_r2_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s3.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R2_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R2_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r2_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r2_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -354,10 +458,24 @@ unsafe fn box3x3_r2_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s13 = s13.mn(s11);
         let s14 = s13.mx(s14);
         let _ = r;
-        s3.store(out.offset(0 * ostride)); s14.store(out.offset(1 * ostride));
+        s3.store(out.offset(0 * ostride));
+        s14.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R2_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R2_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R2;
 impl GenNet for Box3x3R2 {
@@ -375,7 +493,13 @@ impl GenNet for Box3x3R2 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r3_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r3_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -414,10 +538,26 @@ unsafe fn box3x3_r3_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s8.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R3_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R3_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r3_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r3_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -473,10 +613,24 @@ unsafe fn box3x3_r3_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s15 = s15.mn(s17);
         let s15 = s15.mn(s16);
         let _ = r;
-        s8.store(out.offset(0 * ostride)); s15.store(out.offset(1 * ostride));
+        s8.store(out.offset(0 * ostride));
+        s15.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R3_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R3_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R3;
 impl GenNet for Box3x3R3 {
@@ -494,7 +648,13 @@ impl GenNet for Box3x3R3 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r5_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r5_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -533,10 +693,26 @@ unsafe fn box3x3_r5_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s6.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R5_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R5_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r5_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r5_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -592,10 +768,24 @@ unsafe fn box3x3_r5_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s17 = s15.mx(s17);
         let s17 = s17.mn(s9);
         let _ = r;
-        s6.store(out.offset(0 * ostride)); s17.store(out.offset(1 * ostride));
+        s6.store(out.offset(0 * ostride));
+        s17.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R5_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R5_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R5;
 impl GenNet for Box3x3R5 {
@@ -613,7 +803,13 @@ impl GenNet for Box3x3R5 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r6_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -652,10 +848,26 @@ unsafe fn box3x3_r6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s0.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R6_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R6_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r6_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -711,10 +923,24 @@ unsafe fn box3x3_r6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s17 = s15.mx(s17);
         let s9 = s17.mx(s9);
         let _ = r;
-        s0.store(out.offset(0 * ostride)); s9.store(out.offset(1 * ostride));
+        s0.store(out.offset(0 * ostride));
+        s9.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R6_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R6_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R6;
 impl GenNet for Box3x3R6 {
@@ -732,7 +958,13 @@ impl GenNet for Box3x3R6 {
 }
 
 #[inline(always)]
-unsafe fn box3x3_r7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r7_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 9] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -770,10 +1002,26 @@ unsafe fn box3x3_r7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s2.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3_R7_S_IN: [[u8; 3]; 9] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2]];
+const BOX3X3_R7_S_IN: [[u8; 3]; 9] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3_r7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3_r7_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 12] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -826,10 +1074,24 @@ unsafe fn box3x3_r7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s11 = s16.mx(s11);
         let s11 = s11.mn(s10);
         let _ = r;
-        s2.store(out.offset(0 * ostride)); s11.store(out.offset(1 * ostride));
+        s2.store(out.offset(0 * ostride));
+        s11.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3_R7_P_IN: [[u8; 3]; 12] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2]];
+const BOX3X3_R7_P_IN: [[u8; 3]; 12] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+];
 
 pub struct Box3x3R7;
 impl GenNet for Box3x3R7 {
@@ -846,10 +1108,42 @@ impl GenNet for Box3x3R7 {
     }
 }
 
-const WIN_BOX5X5: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const WIN_BOX5X5: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r12_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 25] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -1000,10 +1294,42 @@ unsafe fn box5x5_r12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         s3.store(out.offset(0 * ostride));
     }
 }
-const BOX5X5_R12_S_IN: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const BOX5X5_R12_S_IN: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r12_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 30] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -1211,10 +1537,42 @@ unsafe fn box5x5_r12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let s40 = s40.mn(s42);
         let s41 = s40.mx(s41);
         let _ = r;
-        s8.store(out.offset(0 * ostride)); s41.store(out.offset(1 * ostride));
+        s8.store(out.offset(0 * ostride));
+        s41.store(out.offset(1 * ostride));
     }
 }
-const BOX5X5_R12_P_IN: [[u8; 3]; 30] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4]];
+const BOX5X5_R12_P_IN: [[u8; 3]; 30] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+];
 
 pub struct Box5x5R12;
 impl GenNet for Box5x5R12 {
@@ -1232,7 +1590,13 @@ impl GenNet for Box5x5R12 {
 }
 
 #[inline(always)]
-unsafe fn box5x5_r1_6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r1_6_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 25] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -1375,20 +1739,64 @@ unsafe fn box5x5_r1_6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s9, s8) = (s9.mn(s8), s9.mx(s8));
         let (s12, s10) = (s12.mn(s10), s12.mx(s10));
         match r {
-            1 => { s7.store(out.offset(0 * ostride)); }
-            2 => { s5.store(out.offset(0 * ostride)); }
-            3 => { s9.store(out.offset(0 * ostride)); }
-            4 => { s8.store(out.offset(0 * ostride)); }
-            5 => { s12.store(out.offset(0 * ostride)); }
-            6 => { s10.store(out.offset(0 * ostride)); }
+            1 => {
+                s7.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s8.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s10.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R1_6_S_IN: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const BOX5X5_R1_6_S_IN: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r1_6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r1_6_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 30] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -1587,17 +1995,66 @@ unsafe fn box5x5_r1_6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s33, s34) = (s33.mn(s34), s33.mx(s34));
         let (s35, s36) = (s35.mn(s36), s35.mx(s36));
         match r {
-            1 => { s17.store(out.offset(0 * ostride)); s31.store(out.offset(1 * ostride)); }
-            2 => { s15.store(out.offset(0 * ostride)); s32.store(out.offset(1 * ostride)); }
-            3 => { s19.store(out.offset(0 * ostride)); s33.store(out.offset(1 * ostride)); }
-            4 => { s18.store(out.offset(0 * ostride)); s34.store(out.offset(1 * ostride)); }
-            5 => { s22.store(out.offset(0 * ostride)); s35.store(out.offset(1 * ostride)); }
-            6 => { s20.store(out.offset(0 * ostride)); s36.store(out.offset(1 * ostride)); }
+            1 => {
+                s17.store(out.offset(0 * ostride));
+                s31.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s15.store(out.offset(0 * ostride));
+                s32.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s19.store(out.offset(0 * ostride));
+                s33.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s18.store(out.offset(0 * ostride));
+                s34.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s22.store(out.offset(0 * ostride));
+                s35.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s20.store(out.offset(0 * ostride));
+                s36.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R1_6_P_IN: [[u8; 3]; 30] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4]];
+const BOX5X5_R1_6_P_IN: [[u8; 3]; 30] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+];
 
 pub struct Box5x5R1_6;
 impl GenNet for Box5x5R1_6 {
@@ -1615,7 +2072,13 @@ impl GenNet for Box5x5R1_6 {
 }
 
 #[inline(always)]
-unsafe fn box5x5_r7_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r7_12_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 25] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -1769,20 +2232,64 @@ unsafe fn box5x5_r7_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s13, s0) = (s13.mn(s0), s13.mx(s0));
         let (s4, s3) = (s4.mn(s3), s4.mx(s3));
         match r {
-            7 => { s14.store(out.offset(0 * ostride)); }
-            8 => { s11.store(out.offset(0 * ostride)); }
-            9 => { s13.store(out.offset(0 * ostride)); }
-            10 => { s0.store(out.offset(0 * ostride)); }
-            11 => { s4.store(out.offset(0 * ostride)); }
-            12 => { s3.store(out.offset(0 * ostride)); }
+            7 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            8 => {
+                s11.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s13.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s4.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s3.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R7_12_S_IN: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const BOX5X5_R7_12_S_IN: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r7_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r7_12_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 30] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -2003,17 +2510,66 @@ unsafe fn box5x5_r7_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s39, s40) = (s39.mn(s40), s39.mx(s40));
         let (s41, s42) = (s41.mn(s42), s41.mx(s42));
         match r {
-            7 => { s24.store(out.offset(0 * ostride)); s37.store(out.offset(1 * ostride)); }
-            8 => { s21.store(out.offset(0 * ostride)); s38.store(out.offset(1 * ostride)); }
-            9 => { s23.store(out.offset(0 * ostride)); s39.store(out.offset(1 * ostride)); }
-            10 => { s5.store(out.offset(0 * ostride)); s40.store(out.offset(1 * ostride)); }
-            11 => { s9.store(out.offset(0 * ostride)); s41.store(out.offset(1 * ostride)); }
-            12 => { s8.store(out.offset(0 * ostride)); s42.store(out.offset(1 * ostride)); }
+            7 => {
+                s24.store(out.offset(0 * ostride));
+                s37.store(out.offset(1 * ostride));
+            }
+            8 => {
+                s21.store(out.offset(0 * ostride));
+                s38.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s23.store(out.offset(0 * ostride));
+                s39.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s5.store(out.offset(0 * ostride));
+                s40.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s9.store(out.offset(0 * ostride));
+                s41.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s8.store(out.offset(0 * ostride));
+                s42.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R7_12_P_IN: [[u8; 3]; 30] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4]];
+const BOX5X5_R7_12_P_IN: [[u8; 3]; 30] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+];
 
 pub struct Box5x5R7_12;
 impl GenNet for Box5x5R7_12 {
@@ -2031,7 +2587,13 @@ impl GenNet for Box5x5R7_12 {
 }
 
 #[inline(always)]
-unsafe fn box5x5_r13_18_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r13_18_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 25] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -2186,20 +2748,64 @@ unsafe fn box5x5_r13_18_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s24, s16) = (s24.mn(s16), s24.mx(s16));
         let (s17, s15) = (s17.mn(s15), s17.mx(s15));
         match r {
-            13 => { s2.store(out.offset(0 * ostride)); }
-            14 => { s1.store(out.offset(0 * ostride)); }
-            15 => { s24.store(out.offset(0 * ostride)); }
-            16 => { s16.store(out.offset(0 * ostride)); }
-            17 => { s17.store(out.offset(0 * ostride)); }
-            18 => { s15.store(out.offset(0 * ostride)); }
+            13 => {
+                s2.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            15 => {
+                s24.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s15.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R13_18_S_IN: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const BOX5X5_R13_18_S_IN: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r13_18_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r13_18_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 30] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -2419,17 +3025,66 @@ unsafe fn box5x5_r13_18_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s43, s44) = (s43.mn(s44), s43.mx(s44));
         let (s45, s46) = (s45.mn(s46), s45.mx(s46));
         match r {
-            13 => { s12.store(out.offset(0 * ostride)); s41.store(out.offset(1 * ostride)); }
-            14 => { s10.store(out.offset(0 * ostride)); s42.store(out.offset(1 * ostride)); }
-            15 => { s14.store(out.offset(0 * ostride)); s43.store(out.offset(1 * ostride)); }
-            16 => { s6.store(out.offset(0 * ostride)); s44.store(out.offset(1 * ostride)); }
-            17 => { s7.store(out.offset(0 * ostride)); s45.store(out.offset(1 * ostride)); }
-            18 => { s11.store(out.offset(0 * ostride)); s46.store(out.offset(1 * ostride)); }
+            13 => {
+                s12.store(out.offset(0 * ostride));
+                s41.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s10.store(out.offset(0 * ostride));
+                s42.store(out.offset(1 * ostride));
+            }
+            15 => {
+                s14.store(out.offset(0 * ostride));
+                s43.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s6.store(out.offset(0 * ostride));
+                s44.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s7.store(out.offset(0 * ostride));
+                s45.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s11.store(out.offset(0 * ostride));
+                s46.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R13_18_P_IN: [[u8; 3]; 30] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4]];
+const BOX5X5_R13_18_P_IN: [[u8; 3]; 30] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+];
 
 pub struct Box5x5R13_18;
 impl GenNet for Box5x5R13_18 {
@@ -2447,7 +3102,13 @@ impl GenNet for Box5x5R13_18 {
 }
 
 #[inline(always)]
-unsafe fn box5x5_r19_23_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r19_23_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 25] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -2595,19 +3256,61 @@ unsafe fn box5x5_r19_23_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s22, s20) = (s22.mn(s20), s22.mx(s20));
         let s23 = s23.mn(s21);
         match r {
-            19 => { s19.store(out.offset(0 * ostride)); }
-            20 => { s18.store(out.offset(0 * ostride)); }
-            21 => { s22.store(out.offset(0 * ostride)); }
-            22 => { s20.store(out.offset(0 * ostride)); }
-            23 => { s23.store(out.offset(0 * ostride)); }
+            19 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s18.store(out.offset(0 * ostride));
+            }
+            21 => {
+                s22.store(out.offset(0 * ostride));
+            }
+            22 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s23.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R19_23_S_IN: [[u8; 3]; 25] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4]];
+const BOX5X5_R19_23_S_IN: [[u8; 3]; 25] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+];
 
 #[inline(always)]
-unsafe fn box5x5_r19_23_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box5x5_r19_23_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 30] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -2809,16 +3512,62 @@ unsafe fn box5x5_r19_23_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s27, s25) = (s27.mn(s25), s27.mx(s25));
         let s29 = s29.mn(s26);
         match r {
-            19 => { s13.store(out.offset(0 * ostride)); s43.store(out.offset(1 * ostride)); }
-            20 => { s3.store(out.offset(0 * ostride)); s28.store(out.offset(1 * ostride)); }
-            21 => { s2.store(out.offset(0 * ostride)); s27.store(out.offset(1 * ostride)); }
-            22 => { s0.store(out.offset(0 * ostride)); s25.store(out.offset(1 * ostride)); }
-            23 => { s4.store(out.offset(0 * ostride)); s29.store(out.offset(1 * ostride)); }
+            19 => {
+                s13.store(out.offset(0 * ostride));
+                s43.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s3.store(out.offset(0 * ostride));
+                s28.store(out.offset(1 * ostride));
+            }
+            21 => {
+                s2.store(out.offset(0 * ostride));
+                s27.store(out.offset(1 * ostride));
+            }
+            22 => {
+                s0.store(out.offset(0 * ostride));
+                s25.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s4.store(out.offset(0 * ostride));
+                s29.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX5X5_R19_23_P_IN: [[u8; 3]; 30] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4]];
+const BOX5X5_R19_23_P_IN: [[u8; 3]; 30] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+];
 
 pub struct Box5x5R19_23;
 impl GenNet for Box5x5R19_23 {
@@ -2835,10 +3584,66 @@ impl GenNet for Box5x5R19_23 {
     }
 }
 
-const WIN_BOX7X7: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const WIN_BOX7X7: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r24_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -3211,10 +4016,66 @@ unsafe fn box7x7_r24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         s33.store(out.offset(0 * ostride));
     }
 }
-const BOX7X7_R24_S_IN: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const BOX7X7_R24_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r24_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 56] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -3711,10 +4572,68 @@ unsafe fn box7x7_r24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let s73 = s73.mn(s75);
         let s74 = s73.mx(s74);
         let _ = r;
-        s19.store(out.offset(0 * ostride)); s74.store(out.offset(1 * ostride));
+        s19.store(out.offset(0 * ostride));
+        s74.store(out.offset(1 * ostride));
     }
 }
-const BOX7X7_R24_P_IN: [[u8; 3]; 56] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 7, 0], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6]];
+const BOX7X7_R24_P_IN: [[u8; 3]; 56] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 7, 0],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+];
 
 pub struct Box7x7R24;
 impl GenNet for Box7x7R24 {
@@ -3732,7 +4651,13 @@ impl GenNet for Box7x7R24 {
 }
 
 #[inline(always)]
-unsafe fn box7x7_r1_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r1_12_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -4100,26 +5025,106 @@ unsafe fn box7x7_r1_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s48, s45) = (s48.mn(s45), s48.mx(s45));
         let (s44, s43) = (s44.mn(s43), s44.mx(s43));
         match r {
-            1 => { s41.store(out.offset(0 * ostride)); }
-            2 => { s38.store(out.offset(0 * ostride)); }
-            3 => { s39.store(out.offset(0 * ostride)); }
-            4 => { s36.store(out.offset(0 * ostride)); }
-            5 => { s37.store(out.offset(0 * ostride)); }
-            6 => { s35.store(out.offset(0 * ostride)); }
-            7 => { s46.store(out.offset(0 * ostride)); }
-            8 => { s47.store(out.offset(0 * ostride)); }
-            9 => { s48.store(out.offset(0 * ostride)); }
-            10 => { s45.store(out.offset(0 * ostride)); }
-            11 => { s44.store(out.offset(0 * ostride)); }
-            12 => { s43.store(out.offset(0 * ostride)); }
+            1 => {
+                s41.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s38.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s39.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s36.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s37.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s35.store(out.offset(0 * ostride));
+            }
+            7 => {
+                s46.store(out.offset(0 * ostride));
+            }
+            8 => {
+                s47.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s48.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s45.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s44.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s43.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R1_12_S_IN: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const BOX7X7_R1_12_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r1_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r1_12_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 56] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -4625,23 +5630,116 @@ unsafe fn box7x7_r1_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s65, s66) = (s65.mn(s66), s65.mx(s66));
         let (s67, s68) = (s67.mn(s68), s67.mx(s68));
         match r {
-            1 => { s27.store(out.offset(0 * ostride)); s57.store(out.offset(1 * ostride)); }
-            2 => { s24.store(out.offset(0 * ostride)); s58.store(out.offset(1 * ostride)); }
-            3 => { s25.store(out.offset(0 * ostride)); s59.store(out.offset(1 * ostride)); }
-            4 => { s22.store(out.offset(0 * ostride)); s60.store(out.offset(1 * ostride)); }
-            5 => { s23.store(out.offset(0 * ostride)); s61.store(out.offset(1 * ostride)); }
-            6 => { s21.store(out.offset(0 * ostride)); s62.store(out.offset(1 * ostride)); }
-            7 => { s32.store(out.offset(0 * ostride)); s63.store(out.offset(1 * ostride)); }
-            8 => { s33.store(out.offset(0 * ostride)); s64.store(out.offset(1 * ostride)); }
-            9 => { s34.store(out.offset(0 * ostride)); s65.store(out.offset(1 * ostride)); }
-            10 => { s31.store(out.offset(0 * ostride)); s66.store(out.offset(1 * ostride)); }
-            11 => { s30.store(out.offset(0 * ostride)); s67.store(out.offset(1 * ostride)); }
-            12 => { s29.store(out.offset(0 * ostride)); s68.store(out.offset(1 * ostride)); }
+            1 => {
+                s27.store(out.offset(0 * ostride));
+                s57.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s24.store(out.offset(0 * ostride));
+                s58.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s25.store(out.offset(0 * ostride));
+                s59.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s22.store(out.offset(0 * ostride));
+                s60.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s23.store(out.offset(0 * ostride));
+                s61.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s21.store(out.offset(0 * ostride));
+                s62.store(out.offset(1 * ostride));
+            }
+            7 => {
+                s32.store(out.offset(0 * ostride));
+                s63.store(out.offset(1 * ostride));
+            }
+            8 => {
+                s33.store(out.offset(0 * ostride));
+                s64.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s34.store(out.offset(0 * ostride));
+                s65.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s31.store(out.offset(0 * ostride));
+                s66.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s30.store(out.offset(0 * ostride));
+                s67.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s29.store(out.offset(0 * ostride));
+                s68.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R1_12_P_IN: [[u8; 3]; 56] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 7, 0], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6]];
+const BOX7X7_R1_12_P_IN: [[u8; 3]; 56] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 7, 0],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+];
 
 pub struct Box7x7R1_12;
 impl GenNet for Box7x7R1_12 {
@@ -4659,7 +5757,13 @@ impl GenNet for Box7x7R1_12 {
 }
 
 #[inline(always)]
-unsafe fn box7x7_r13_24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r13_24_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -5048,26 +6152,106 @@ unsafe fn box7x7_r13_24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s23, s31) = (s23.mn(s31), s23.mx(s31));
         let (s30, s33) = (s30.mn(s33), s30.mx(s33));
         match r {
-            13 => { s42.store(out.offset(0 * ostride)); }
-            14 => { s21.store(out.offset(0 * ostride)); }
-            15 => { s32.store(out.offset(0 * ostride)); }
-            16 => { s26.store(out.offset(0 * ostride)); }
-            17 => { s27.store(out.offset(0 * ostride)); }
-            18 => { s24.store(out.offset(0 * ostride)); }
-            19 => { s25.store(out.offset(0 * ostride)); }
-            20 => { s22.store(out.offset(0 * ostride)); }
-            21 => { s23.store(out.offset(0 * ostride)); }
-            22 => { s31.store(out.offset(0 * ostride)); }
-            23 => { s30.store(out.offset(0 * ostride)); }
-            24 => { s33.store(out.offset(0 * ostride)); }
+            13 => {
+                s42.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s21.store(out.offset(0 * ostride));
+            }
+            15 => {
+                s32.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s26.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s27.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s24.store(out.offset(0 * ostride));
+            }
+            19 => {
+                s25.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s22.store(out.offset(0 * ostride));
+            }
+            21 => {
+                s23.store(out.offset(0 * ostride));
+            }
+            22 => {
+                s31.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s30.store(out.offset(0 * ostride));
+            }
+            24 => {
+                s33.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R13_24_S_IN: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const BOX7X7_R13_24_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r13_24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r13_24_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 56] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -5611,23 +6795,116 @@ unsafe fn box7x7_r13_24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s77, s78) = (s77.mn(s78), s77.mx(s78));
         let (s79, s80) = (s79.mn(s80), s79.mx(s80));
         match r {
-            13 => { s28.store(out.offset(0 * ostride)); s69.store(out.offset(1 * ostride)); }
-            14 => { s7.store(out.offset(0 * ostride)); s70.store(out.offset(1 * ostride)); }
-            15 => { s18.store(out.offset(0 * ostride)); s71.store(out.offset(1 * ostride)); }
-            16 => { s12.store(out.offset(0 * ostride)); s72.store(out.offset(1 * ostride)); }
-            17 => { s13.store(out.offset(0 * ostride)); s73.store(out.offset(1 * ostride)); }
-            18 => { s10.store(out.offset(0 * ostride)); s74.store(out.offset(1 * ostride)); }
-            19 => { s11.store(out.offset(0 * ostride)); s75.store(out.offset(1 * ostride)); }
-            20 => { s8.store(out.offset(0 * ostride)); s76.store(out.offset(1 * ostride)); }
-            21 => { s9.store(out.offset(0 * ostride)); s77.store(out.offset(1 * ostride)); }
-            22 => { s17.store(out.offset(0 * ostride)); s78.store(out.offset(1 * ostride)); }
-            23 => { s16.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride)); }
-            24 => { s19.store(out.offset(0 * ostride)); s80.store(out.offset(1 * ostride)); }
+            13 => {
+                s28.store(out.offset(0 * ostride));
+                s69.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s7.store(out.offset(0 * ostride));
+                s70.store(out.offset(1 * ostride));
+            }
+            15 => {
+                s18.store(out.offset(0 * ostride));
+                s71.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s12.store(out.offset(0 * ostride));
+                s72.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s13.store(out.offset(0 * ostride));
+                s73.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s10.store(out.offset(0 * ostride));
+                s74.store(out.offset(1 * ostride));
+            }
+            19 => {
+                s11.store(out.offset(0 * ostride));
+                s75.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s8.store(out.offset(0 * ostride));
+                s76.store(out.offset(1 * ostride));
+            }
+            21 => {
+                s9.store(out.offset(0 * ostride));
+                s77.store(out.offset(1 * ostride));
+            }
+            22 => {
+                s17.store(out.offset(0 * ostride));
+                s78.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s16.store(out.offset(0 * ostride));
+                s79.store(out.offset(1 * ostride));
+            }
+            24 => {
+                s19.store(out.offset(0 * ostride));
+                s80.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R13_24_P_IN: [[u8; 3]; 56] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 7, 0], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6]];
+const BOX7X7_R13_24_P_IN: [[u8; 3]; 56] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 7, 0],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+];
 
 pub struct Box7x7R13_24;
 impl GenNet for Box7x7R13_24 {
@@ -5645,7 +6922,13 @@ impl GenNet for Box7x7R13_24 {
 }
 
 #[inline(always)]
-unsafe fn box7x7_r25_36_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r25_36_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -6035,26 +7318,106 @@ unsafe fn box7x7_r25_36_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s13, s10) = (s13.mn(s10), s13.mx(s10));
         let (s11, s8) = (s11.mn(s8), s11.mx(s8));
         match r {
-            25 => { s34.store(out.offset(0 * ostride)); }
-            26 => { s29.store(out.offset(0 * ostride)); }
-            27 => { s28.store(out.offset(0 * ostride)); }
-            28 => { s15.store(out.offset(0 * ostride)); }
-            29 => { s14.store(out.offset(0 * ostride)); }
-            30 => { s0.store(out.offset(0 * ostride)); }
-            31 => { s4.store(out.offset(0 * ostride)); }
-            32 => { s12.store(out.offset(0 * ostride)); }
-            33 => { s13.store(out.offset(0 * ostride)); }
-            34 => { s10.store(out.offset(0 * ostride)); }
-            35 => { s11.store(out.offset(0 * ostride)); }
-            36 => { s8.store(out.offset(0 * ostride)); }
+            25 => {
+                s34.store(out.offset(0 * ostride));
+            }
+            26 => {
+                s29.store(out.offset(0 * ostride));
+            }
+            27 => {
+                s28.store(out.offset(0 * ostride));
+            }
+            28 => {
+                s15.store(out.offset(0 * ostride));
+            }
+            29 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            30 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            31 => {
+                s4.store(out.offset(0 * ostride));
+            }
+            32 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            33 => {
+                s13.store(out.offset(0 * ostride));
+            }
+            34 => {
+                s10.store(out.offset(0 * ostride));
+            }
+            35 => {
+                s11.store(out.offset(0 * ostride));
+            }
+            36 => {
+                s8.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R25_36_S_IN: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const BOX7X7_R25_36_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r25_36_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r25_36_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 56] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -6595,23 +7958,116 @@ unsafe fn box7x7_r25_36_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s82, s83) = (s82.mn(s83), s82.mx(s83));
         let (s84, s85) = (s84.mn(s85), s84.mx(s85));
         match r {
-            25 => { s20.store(out.offset(0 * ostride)); s74.store(out.offset(1 * ostride)); }
-            26 => { s15.store(out.offset(0 * ostride)); s75.store(out.offset(1 * ostride)); }
-            27 => { s14.store(out.offset(0 * ostride)); s76.store(out.offset(1 * ostride)); }
-            28 => { s43.store(out.offset(0 * ostride)); s77.store(out.offset(1 * ostride)); }
-            29 => { s42.store(out.offset(0 * ostride)); s78.store(out.offset(1 * ostride)); }
-            30 => { s35.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride)); }
-            31 => { s46.store(out.offset(0 * ostride)); s80.store(out.offset(1 * ostride)); }
-            32 => { s40.store(out.offset(0 * ostride)); s81.store(out.offset(1 * ostride)); }
-            33 => { s41.store(out.offset(0 * ostride)); s82.store(out.offset(1 * ostride)); }
-            34 => { s38.store(out.offset(0 * ostride)); s83.store(out.offset(1 * ostride)); }
-            35 => { s39.store(out.offset(0 * ostride)); s84.store(out.offset(1 * ostride)); }
-            36 => { s36.store(out.offset(0 * ostride)); s85.store(out.offset(1 * ostride)); }
+            25 => {
+                s20.store(out.offset(0 * ostride));
+                s74.store(out.offset(1 * ostride));
+            }
+            26 => {
+                s15.store(out.offset(0 * ostride));
+                s75.store(out.offset(1 * ostride));
+            }
+            27 => {
+                s14.store(out.offset(0 * ostride));
+                s76.store(out.offset(1 * ostride));
+            }
+            28 => {
+                s43.store(out.offset(0 * ostride));
+                s77.store(out.offset(1 * ostride));
+            }
+            29 => {
+                s42.store(out.offset(0 * ostride));
+                s78.store(out.offset(1 * ostride));
+            }
+            30 => {
+                s35.store(out.offset(0 * ostride));
+                s79.store(out.offset(1 * ostride));
+            }
+            31 => {
+                s46.store(out.offset(0 * ostride));
+                s80.store(out.offset(1 * ostride));
+            }
+            32 => {
+                s40.store(out.offset(0 * ostride));
+                s81.store(out.offset(1 * ostride));
+            }
+            33 => {
+                s41.store(out.offset(0 * ostride));
+                s82.store(out.offset(1 * ostride));
+            }
+            34 => {
+                s38.store(out.offset(0 * ostride));
+                s83.store(out.offset(1 * ostride));
+            }
+            35 => {
+                s39.store(out.offset(0 * ostride));
+                s84.store(out.offset(1 * ostride));
+            }
+            36 => {
+                s36.store(out.offset(0 * ostride));
+                s85.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R25_36_P_IN: [[u8; 3]; 56] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 7, 0], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6]];
+const BOX7X7_R25_36_P_IN: [[u8; 3]; 56] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 7, 0],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+];
 
 pub struct Box7x7R25_36;
 impl GenNet for Box7x7R25_36 {
@@ -6629,7 +8085,13 @@ impl GenNet for Box7x7R25_36 {
 }
 
 #[inline(always)]
-unsafe fn box7x7_r37_47_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r37_47_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -7003,25 +8465,103 @@ unsafe fn box7x7_r37_47_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s6, s3) = (s6.mn(s3), s6.mx(s3));
         let s2 = s2.mn(s5);
         match r {
-            37 => { s9.store(out.offset(0 * ostride)); }
-            38 => { s7.store(out.offset(0 * ostride)); }
-            39 => { s18.store(out.offset(0 * ostride)); }
-            40 => { s19.store(out.offset(0 * ostride)); }
-            41 => { s20.store(out.offset(0 * ostride)); }
-            42 => { s17.store(out.offset(0 * ostride)); }
-            43 => { s16.store(out.offset(0 * ostride)); }
-            44 => { s1.store(out.offset(0 * ostride)); }
-            45 => { s6.store(out.offset(0 * ostride)); }
-            46 => { s3.store(out.offset(0 * ostride)); }
-            47 => { s2.store(out.offset(0 * ostride)); }
+            37 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            38 => {
+                s7.store(out.offset(0 * ostride));
+            }
+            39 => {
+                s18.store(out.offset(0 * ostride));
+            }
+            40 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            41 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            42 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            43 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            44 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            45 => {
+                s6.store(out.offset(0 * ostride));
+            }
+            46 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            47 => {
+                s2.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R37_47_S_IN: [[u8; 3]; 49] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6]];
+const BOX7X7_R37_47_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+];
 
 #[inline(always)]
-unsafe fn box7x7_r37_47_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box7x7_r37_47_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 56] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -7520,22 +9060,112 @@ unsafe fn box7x7_r37_47_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s51, s49) = (s51.mn(s49), s51.mx(s49));
         let s55 = s55.mn(s54);
         match r {
-            37 => { s37.store(out.offset(0 * ostride)); s77.store(out.offset(1 * ostride)); }
-            38 => { s45.store(out.offset(0 * ostride)); s78.store(out.offset(1 * ostride)); }
-            39 => { s44.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride)); }
-            40 => { s47.store(out.offset(0 * ostride)); s80.store(out.offset(1 * ostride)); }
-            41 => { s48.store(out.offset(0 * ostride)); s81.store(out.offset(1 * ostride)); }
-            42 => { s3.store(out.offset(0 * ostride)); s52.store(out.offset(1 * ostride)); }
-            43 => { s4.store(out.offset(0 * ostride)); s53.store(out.offset(1 * ostride)); }
-            44 => { s1.store(out.offset(0 * ostride)); s50.store(out.offset(1 * ostride)); }
-            45 => { s2.store(out.offset(0 * ostride)); s51.store(out.offset(1 * ostride)); }
-            46 => { s0.store(out.offset(0 * ostride)); s49.store(out.offset(1 * ostride)); }
-            47 => { s6.store(out.offset(0 * ostride)); s55.store(out.offset(1 * ostride)); }
+            37 => {
+                s37.store(out.offset(0 * ostride));
+                s77.store(out.offset(1 * ostride));
+            }
+            38 => {
+                s45.store(out.offset(0 * ostride));
+                s78.store(out.offset(1 * ostride));
+            }
+            39 => {
+                s44.store(out.offset(0 * ostride));
+                s79.store(out.offset(1 * ostride));
+            }
+            40 => {
+                s47.store(out.offset(0 * ostride));
+                s80.store(out.offset(1 * ostride));
+            }
+            41 => {
+                s48.store(out.offset(0 * ostride));
+                s81.store(out.offset(1 * ostride));
+            }
+            42 => {
+                s3.store(out.offset(0 * ostride));
+                s52.store(out.offset(1 * ostride));
+            }
+            43 => {
+                s4.store(out.offset(0 * ostride));
+                s53.store(out.offset(1 * ostride));
+            }
+            44 => {
+                s1.store(out.offset(0 * ostride));
+                s50.store(out.offset(1 * ostride));
+            }
+            45 => {
+                s2.store(out.offset(0 * ostride));
+                s51.store(out.offset(1 * ostride));
+            }
+            46 => {
+                s0.store(out.offset(0 * ostride));
+                s49.store(out.offset(1 * ostride));
+            }
+            47 => {
+                s6.store(out.offset(0 * ostride));
+                s55.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX7X7_R37_47_P_IN: [[u8; 3]; 56] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 6, 0], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 7, 0], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6]];
+const BOX7X7_R37_47_P_IN: [[u8; 3]; 56] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 0, 3],
+    [0, 0, 4],
+    [0, 0, 5],
+    [0, 0, 6],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 6, 0],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 7, 0],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+];
 
 pub struct Box7x7R37_47;
 impl GenNet for Box7x7R37_47 {
@@ -7552,10 +9182,44 @@ impl GenNet for Box7x7R37_47 {
     }
 }
 
-const WIN_BOX3X3X3: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const WIN_BOX3X3X3: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r13_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r13_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 27] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -7720,10 +9384,44 @@ unsafe fn box3x3x3_r13_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         s24.store(out.offset(0 * ostride));
     }
 }
-const BOX3X3X3_R13_S_IN: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const BOX3X3X3_R13_S_IN: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r13_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r13_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -7969,10 +9667,48 @@ unsafe fn box3x3x3_r13_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let s49 = s47.mx(s49);
         let s49 = s49.mn(s50);
         let _ = r;
-        s30.store(out.offset(0 * ostride)); s49.store(out.offset(1 * ostride));
+        s30.store(out.offset(0 * ostride));
+        s49.store(out.offset(1 * ostride));
     }
 }
-const BOX3X3X3_R13_P_IN: [[u8; 3]; 36] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [1, 3, 1], [1, 3, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2], [2, 3, 0], [2, 3, 1], [2, 3, 2]];
+const BOX3X3X3_R13_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [1, 3, 0],
+    [1, 3, 1],
+    [1, 3, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 3, 0],
+    [2, 3, 1],
+    [2, 3, 2],
+];
 
 pub struct Box3x3x3R13;
 impl GenNet for Box3x3x3R13 {
@@ -7990,7 +9726,13 @@ impl GenNet for Box3x3x3R13 {
 }
 
 #[inline(always)]
-unsafe fn box3x3x3_r1_7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r1_7_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 27] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -8153,21 +9895,69 @@ unsafe fn box3x3x3_r1_7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s6, s0) = (s6.mn(s0), s6.mx(s0));
         let s2 = s2.mn(s1);
         match r {
-            1 => { s5.store(out.offset(0 * ostride)); }
-            2 => { s3.store(out.offset(0 * ostride)); }
-            3 => { s8.store(out.offset(0 * ostride)); }
-            4 => { s7.store(out.offset(0 * ostride)); }
-            5 => { s6.store(out.offset(0 * ostride)); }
-            6 => { s0.store(out.offset(0 * ostride)); }
-            7 => { s2.store(out.offset(0 * ostride)); }
+            1 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s8.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s7.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s6.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            7 => {
+                s2.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R1_7_S_IN: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const BOX3X3X3_R1_7_S_IN: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r1_7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r1_7_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -8413,18 +10203,76 @@ unsafe fn box3x3x3_r1_7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, os
         let (s41, s42) = (s41.mn(s42), s41.mx(s42));
         let s43 = s43.mn(s44);
         match r {
-            1 => { s17.store(out.offset(0 * ostride)); s37.store(out.offset(1 * ostride)); }
-            2 => { s15.store(out.offset(0 * ostride)); s38.store(out.offset(1 * ostride)); }
-            3 => { s20.store(out.offset(0 * ostride)); s39.store(out.offset(1 * ostride)); }
-            4 => { s19.store(out.offset(0 * ostride)); s40.store(out.offset(1 * ostride)); }
-            5 => { s18.store(out.offset(0 * ostride)); s41.store(out.offset(1 * ostride)); }
-            6 => { s3.store(out.offset(0 * ostride)); s42.store(out.offset(1 * ostride)); }
-            7 => { s8.store(out.offset(0 * ostride)); s43.store(out.offset(1 * ostride)); }
+            1 => {
+                s17.store(out.offset(0 * ostride));
+                s37.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s15.store(out.offset(0 * ostride));
+                s38.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s20.store(out.offset(0 * ostride));
+                s39.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s19.store(out.offset(0 * ostride));
+                s40.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s18.store(out.offset(0 * ostride));
+                s41.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s3.store(out.offset(0 * ostride));
+                s42.store(out.offset(1 * ostride));
+            }
+            7 => {
+                s8.store(out.offset(0 * ostride));
+                s43.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R1_7_P_IN: [[u8; 3]; 36] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [1, 3, 1], [1, 3, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2], [2, 3, 0], [2, 3, 1], [2, 3, 2]];
+const BOX3X3X3_R1_7_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [1, 3, 0],
+    [1, 3, 1],
+    [1, 3, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 3, 0],
+    [2, 3, 1],
+    [2, 3, 2],
+];
 
 pub struct Box3x3x3R1_7;
 impl GenNet for Box3x3x3R1_7 {
@@ -8442,7 +10290,13 @@ impl GenNet for Box3x3x3R1_7 {
 }
 
 #[inline(always)]
-unsafe fn box3x3x3_r8_14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r8_14_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 27] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -8613,21 +10467,69 @@ unsafe fn box3x3x3_r8_14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, o
         let (s26, s25) = (s26.mn(s25), s26.mx(s25));
         let (s24, s22) = (s24.mn(s22), s24.mx(s22));
         match r {
-            8 => { s1.store(out.offset(0 * ostride)); }
-            9 => { s23.store(out.offset(0 * ostride)); }
-            10 => { s21.store(out.offset(0 * ostride)); }
-            11 => { s26.store(out.offset(0 * ostride)); }
-            12 => { s25.store(out.offset(0 * ostride)); }
-            13 => { s24.store(out.offset(0 * ostride)); }
-            14 => { s22.store(out.offset(0 * ostride)); }
+            8 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s23.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s21.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s26.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s25.store(out.offset(0 * ostride));
+            }
+            13 => {
+                s24.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s22.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R8_14_S_IN: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const BOX3X3X3_R8_14_S_IN: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r8_14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r8_14_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -8891,18 +10793,76 @@ unsafe fn box3x3x3_r8_14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, o
         let (s47, s48) = (s47.mn(s48), s47.mx(s48));
         let (s49, s50) = (s49.mn(s50), s49.mx(s50));
         match r {
-            8 => { s4.store(out.offset(0 * ostride)); s44.store(out.offset(1 * ostride)); }
-            9 => { s5.store(out.offset(0 * ostride)); s45.store(out.offset(1 * ostride)); }
-            10 => { s7.store(out.offset(0 * ostride)); s46.store(out.offset(1 * ostride)); }
-            11 => { s6.store(out.offset(0 * ostride)); s47.store(out.offset(1 * ostride)); }
-            12 => { s31.store(out.offset(0 * ostride)); s48.store(out.offset(1 * ostride)); }
-            13 => { s30.store(out.offset(0 * ostride)); s49.store(out.offset(1 * ostride)); }
-            14 => { s27.store(out.offset(0 * ostride)); s50.store(out.offset(1 * ostride)); }
+            8 => {
+                s4.store(out.offset(0 * ostride));
+                s44.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s5.store(out.offset(0 * ostride));
+                s45.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s7.store(out.offset(0 * ostride));
+                s46.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s6.store(out.offset(0 * ostride));
+                s47.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s31.store(out.offset(0 * ostride));
+                s48.store(out.offset(1 * ostride));
+            }
+            13 => {
+                s30.store(out.offset(0 * ostride));
+                s49.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s27.store(out.offset(0 * ostride));
+                s50.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R8_14_P_IN: [[u8; 3]; 36] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [1, 3, 1], [1, 3, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2], [2, 3, 0], [2, 3, 1], [2, 3, 2]];
+const BOX3X3X3_R8_14_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [1, 3, 0],
+    [1, 3, 1],
+    [1, 3, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 3, 0],
+    [2, 3, 1],
+    [2, 3, 2],
+];
 
 pub struct Box3x3x3R8_14;
 impl GenNet for Box3x3x3R8_14 {
@@ -8920,7 +10880,13 @@ impl GenNet for Box3x3x3R8_14 {
 }
 
 #[inline(always)]
-unsafe fn box3x3x3_r15_21_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r15_21_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 27] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -9091,21 +11057,69 @@ unsafe fn box3x3x3_r15_21_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, 
         let (s20, s19) = (s20.mn(s19), s20.mx(s19));
         let s18 = s18.mn(s9);
         match r {
-            15 => { s14.store(out.offset(0 * ostride)); }
-            16 => { s16.store(out.offset(0 * ostride)); }
-            17 => { s17.store(out.offset(0 * ostride)); }
-            18 => { s15.store(out.offset(0 * ostride)); }
-            19 => { s20.store(out.offset(0 * ostride)); }
-            20 => { s19.store(out.offset(0 * ostride)); }
-            21 => { s18.store(out.offset(0 * ostride)); }
+            15 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s15.store(out.offset(0 * ostride));
+            }
+            19 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            21 => {
+                s18.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R15_21_S_IN: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const BOX3X3X3_R15_21_S_IN: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r15_21_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r15_21_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -9372,18 +11386,76 @@ unsafe fn box3x3x3_r15_21_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, 
         let (s35, s34) = (s35.mn(s34), s35.mx(s34));
         let s33 = s33.mn(s9);
         match r {
-            15 => { s32.store(out.offset(0 * ostride)); s51.store(out.offset(1 * ostride)); }
-            16 => { s28.store(out.offset(0 * ostride)); s52.store(out.offset(1 * ostride)); }
-            17 => { s29.store(out.offset(0 * ostride)); s53.store(out.offset(1 * ostride)); }
-            18 => { s12.store(out.offset(0 * ostride)); s21.store(out.offset(1 * ostride)); }
-            19 => { s26.store(out.offset(0 * ostride)); s35.store(out.offset(1 * ostride)); }
-            20 => { s25.store(out.offset(0 * ostride)); s34.store(out.offset(1 * ostride)); }
-            21 => { s24.store(out.offset(0 * ostride)); s33.store(out.offset(1 * ostride)); }
+            15 => {
+                s32.store(out.offset(0 * ostride));
+                s51.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s28.store(out.offset(0 * ostride));
+                s52.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s29.store(out.offset(0 * ostride));
+                s53.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s12.store(out.offset(0 * ostride));
+                s21.store(out.offset(1 * ostride));
+            }
+            19 => {
+                s26.store(out.offset(0 * ostride));
+                s35.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s25.store(out.offset(0 * ostride));
+                s34.store(out.offset(1 * ostride));
+            }
+            21 => {
+                s24.store(out.offset(0 * ostride));
+                s33.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R15_21_P_IN: [[u8; 3]; 36] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [1, 3, 1], [1, 3, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2], [2, 3, 0], [2, 3, 1], [2, 3, 2]];
+const BOX3X3X3_R15_21_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [1, 3, 0],
+    [1, 3, 1],
+    [1, 3, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 3, 0],
+    [2, 3, 1],
+    [2, 3, 2],
+];
 
 pub struct Box3x3x3R15_21;
 impl GenNet for Box3x3x3R15_21 {
@@ -9401,7 +11473,13 @@ impl GenNet for Box3x3x3R15_21 {
 }
 
 #[inline(always)]
-unsafe fn box3x3x3_r22_25_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r22_25_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 27] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -9558,18 +11636,60 @@ unsafe fn box3x3x3_r22_25_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, 
         let (s12, s10) = (s12.mn(s10), s12.mx(s10));
         let s11 = s11.mn(s13);
         match r {
-            22 => { s9.store(out.offset(0 * ostride)); }
-            23 => { s12.store(out.offset(0 * ostride)); }
-            24 => { s10.store(out.offset(0 * ostride)); }
-            25 => { s11.store(out.offset(0 * ostride)); }
+            22 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            24 => {
+                s10.store(out.offset(0 * ostride));
+            }
+            25 => {
+                s11.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R22_25_S_IN: [[u8; 3]; 27] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2]];
+const BOX3X3X3_R22_25_S_IN: [[u8; 3]; 27] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+];
 
 #[inline(always)]
-unsafe fn box3x3x3_r22_25_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn box3x3x3_r22_25_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -9812,15 +11932,64 @@ unsafe fn box3x3x3_r22_25_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, 
         let (s11, s10) = (s11.mn(s10), s11.mx(s10));
         let s23 = s23.mn(s22);
         match r {
-            22 => { s0.store(out.offset(0 * ostride)); s9.store(out.offset(1 * ostride)); }
-            23 => { s2.store(out.offset(0 * ostride)); s11.store(out.offset(1 * ostride)); }
-            24 => { s1.store(out.offset(0 * ostride)); s10.store(out.offset(1 * ostride)); }
-            25 => { s14.store(out.offset(0 * ostride)); s23.store(out.offset(1 * ostride)); }
+            22 => {
+                s0.store(out.offset(0 * ostride));
+                s9.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s2.store(out.offset(0 * ostride));
+                s11.store(out.offset(1 * ostride));
+            }
+            24 => {
+                s1.store(out.offset(0 * ostride));
+                s10.store(out.offset(1 * ostride));
+            }
+            25 => {
+                s14.store(out.offset(0 * ostride));
+                s23.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const BOX3X3X3_R22_25_P_IN: [[u8; 3]; 36] = [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, 0], [0, 3, 1], [0, 3, 2], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [1, 3, 1], [1, 3, 2], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, 0], [2, 2, 1], [2, 2, 2], [2, 3, 0], [2, 3, 1], [2, 3, 2]];
+const BOX3X3X3_R22_25_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 0, 2],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 0, 2],
+    [1, 1, 0],
+    [1, 1, 1],
+    [1, 1, 2],
+    [1, 2, 0],
+    [1, 2, 1],
+    [1, 2, 2],
+    [1, 3, 0],
+    [1, 3, 1],
+    [1, 3, 2],
+    [2, 0, 0],
+    [2, 0, 1],
+    [2, 0, 2],
+    [2, 1, 0],
+    [2, 1, 1],
+    [2, 1, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 3, 0],
+    [2, 3, 1],
+    [2, 3, 2],
+];
 
 pub struct Box3x3x3R22_25;
 impl GenNet for Box3x3x3R22_25 {
@@ -9892,10 +12061,20 @@ unsafe fn disk1_r2_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride
         let s9 = s9.mn(s5);
         let s7 = s9.mx(s7);
         let _ = r;
-        s0.store(out.offset(0 * ostride)); s7.store(out.offset(1 * ostride));
+        s0.store(out.offset(0 * ostride));
+        s7.store(out.offset(1 * ostride));
     }
 }
-const DISK1_R2_P_IN: [[u8; 3]; 8] = [[0, 0, 1], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 2], [0, 2, 1], [0, 3, 1]];
+const DISK1_R2_P_IN: [[u8; 3]; 8] = [
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 2],
+    [0, 2, 1],
+    [0, 3, 1],
+];
 
 pub struct Disk1R2;
 impl GenNet for Disk1R2 {
@@ -9965,10 +12144,20 @@ unsafe fn disk1_r1_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride
         let s9 = s9.mn(s5);
         let s9 = s9.mn(s7);
         let _ = r;
-        s6.store(out.offset(0 * ostride)); s9.store(out.offset(1 * ostride));
+        s6.store(out.offset(0 * ostride));
+        s9.store(out.offset(1 * ostride));
     }
 }
-const DISK1_R1_P_IN: [[u8; 3]; 8] = [[0, 0, 1], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 2], [0, 2, 1], [0, 3, 1]];
+const DISK1_R1_P_IN: [[u8; 3]; 8] = [
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 2],
+    [0, 2, 1],
+    [0, 3, 1],
+];
 
 pub struct Disk1R1;
 impl GenNet for Disk1R1 {
@@ -10038,10 +12227,20 @@ unsafe fn disk1_r3_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride
         let s5 = s9.mx(s5);
         let s5 = s5.mn(s4);
         let _ = r;
-        s3.store(out.offset(0 * ostride)); s5.store(out.offset(1 * ostride));
+        s3.store(out.offset(0 * ostride));
+        s5.store(out.offset(1 * ostride));
     }
 }
-const DISK1_R3_P_IN: [[u8; 3]; 8] = [[0, 0, 1], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 2, 0], [0, 2, 2], [0, 2, 1], [0, 3, 1]];
+const DISK1_R3_P_IN: [[u8; 3]; 8] = [
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 2, 0],
+    [0, 2, 2],
+    [0, 2, 1],
+    [0, 3, 1],
+];
 
 pub struct Disk1R3;
 impl GenNet for Disk1R3 {
@@ -10058,7 +12257,21 @@ impl GenNet for Disk1R3 {
     }
 }
 
-const WIN_DISK2: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const WIN_DISK2: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
 unsafe fn disk2_r6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
@@ -10123,7 +12336,21 @@ unsafe fn disk2_r6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride
         s1.store(out.offset(0 * ostride));
     }
 }
-const DISK2_R6_S_IN: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const DISK2_R6_S_IN: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
 unsafe fn disk2_r6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
@@ -10217,10 +12444,30 @@ unsafe fn disk2_r6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride
         let s23 = s21.mx(s23);
         let s24 = s23.mx(s24);
         let _ = r;
-        s5.store(out.offset(0 * ostride)); s24.store(out.offset(1 * ostride));
+        s5.store(out.offset(0 * ostride));
+        s24.store(out.offset(1 * ostride));
     }
 }
-const DISK2_R6_P_IN: [[u8; 3]; 18] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 1], [0, 4, 3], [0, 4, 2], [0, 5, 2]];
+const DISK2_R6_P_IN: [[u8; 3]; 18] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 4, 2],
+    [0, 5, 2],
+];
 
 pub struct Disk2R6;
 impl GenNet for Disk2R6 {
@@ -10238,7 +12485,13 @@ impl GenNet for Disk2R6 {
 }
 
 #[inline(always)]
-unsafe fn disk2_r1_3_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r1_3_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 13] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10297,17 +12550,43 @@ unsafe fn disk2_r1_3_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s11, s9) = (s11.mn(s9), s11.mx(s9));
         let s12 = s12.mn(s0);
         match r {
-            1 => { s11.store(out.offset(0 * ostride)); }
-            2 => { s9.store(out.offset(0 * ostride)); }
-            3 => { s12.store(out.offset(0 * ostride)); }
+            1 => {
+                s11.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s12.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R1_3_S_IN: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const DISK2_R1_3_S_IN: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
-unsafe fn disk2_r1_3_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r1_3_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 18] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10397,14 +12676,42 @@ unsafe fn disk2_r1_3_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s19, s20) = (s19.mn(s20), s19.mx(s20));
         let s21 = s21.mn(s22);
         match r {
-            1 => { s13.store(out.offset(0 * ostride)); s19.store(out.offset(1 * ostride)); }
-            2 => { s11.store(out.offset(0 * ostride)); s20.store(out.offset(1 * ostride)); }
-            3 => { s16.store(out.offset(0 * ostride)); s21.store(out.offset(1 * ostride)); }
+            1 => {
+                s13.store(out.offset(0 * ostride));
+                s19.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s11.store(out.offset(0 * ostride));
+                s20.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s16.store(out.offset(0 * ostride));
+                s21.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R1_3_P_IN: [[u8; 3]; 18] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 1], [0, 4, 3], [0, 4, 2], [0, 5, 2]];
+const DISK2_R1_3_P_IN: [[u8; 3]; 18] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 4, 2],
+    [0, 5, 2],
+];
 
 pub struct Disk2R1_3;
 impl GenNet for Disk2R1_3 {
@@ -10422,7 +12729,13 @@ impl GenNet for Disk2R1_3 {
 }
 
 #[inline(always)]
-unsafe fn disk2_r4_6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r4_6_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 13] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10483,17 +12796,43 @@ unsafe fn disk2_r4_6_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let s0 = s12.mx(s0);
         let (s3, s1) = (s3.mn(s1), s3.mx(s1));
         match r {
-            4 => { s0.store(out.offset(0 * ostride)); }
-            5 => { s3.store(out.offset(0 * ostride)); }
-            6 => { s1.store(out.offset(0 * ostride)); }
+            4 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s1.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R4_6_S_IN: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const DISK2_R4_6_S_IN: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
-unsafe fn disk2_r4_6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r4_6_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 18] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10588,14 +12927,42 @@ unsafe fn disk2_r4_6_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let s22 = s21.mx(s22);
         let (s23, s24) = (s23.mn(s24), s23.mx(s24));
         match r {
-            4 => { s2.store(out.offset(0 * ostride)); s22.store(out.offset(1 * ostride)); }
-            5 => { s7.store(out.offset(0 * ostride)); s23.store(out.offset(1 * ostride)); }
-            6 => { s5.store(out.offset(0 * ostride)); s24.store(out.offset(1 * ostride)); }
+            4 => {
+                s2.store(out.offset(0 * ostride));
+                s22.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s7.store(out.offset(0 * ostride));
+                s23.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s5.store(out.offset(0 * ostride));
+                s24.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R4_6_P_IN: [[u8; 3]; 18] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 1], [0, 4, 3], [0, 4, 2], [0, 5, 2]];
+const DISK2_R4_6_P_IN: [[u8; 3]; 18] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 4, 2],
+    [0, 5, 2],
+];
 
 pub struct Disk2R4_6;
 impl GenNet for Disk2R4_6 {
@@ -10613,7 +12980,13 @@ impl GenNet for Disk2R4_6 {
 }
 
 #[inline(always)]
-unsafe fn disk2_r7_9_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r7_9_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 13] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10675,17 +13048,43 @@ unsafe fn disk2_r7_9_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s2, s5) = (s2.mn(s5), s2.mx(s5));
         let s6 = s6.mn(s4);
         match r {
-            7 => { s2.store(out.offset(0 * ostride)); }
-            8 => { s5.store(out.offset(0 * ostride)); }
-            9 => { s6.store(out.offset(0 * ostride)); }
+            7 => {
+                s2.store(out.offset(0 * ostride));
+            }
+            8 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s6.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R7_9_S_IN: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const DISK2_R7_9_S_IN: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
-unsafe fn disk2_r7_9_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r7_9_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 18] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10783,14 +13182,42 @@ unsafe fn disk2_r7_9_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s25, s14) = (s25.mn(s14), s25.mx(s14));
         let s15 = s15.mn(s17);
         match r {
-            7 => { s6.store(out.offset(0 * ostride)); s25.store(out.offset(1 * ostride)); }
-            8 => { s4.store(out.offset(0 * ostride)); s14.store(out.offset(1 * ostride)); }
-            9 => { s8.store(out.offset(0 * ostride)); s15.store(out.offset(1 * ostride)); }
+            7 => {
+                s6.store(out.offset(0 * ostride));
+                s25.store(out.offset(1 * ostride));
+            }
+            8 => {
+                s4.store(out.offset(0 * ostride));
+                s14.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s8.store(out.offset(0 * ostride));
+                s15.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R7_9_P_IN: [[u8; 3]; 18] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 1], [0, 4, 3], [0, 4, 2], [0, 5, 2]];
+const DISK2_R7_9_P_IN: [[u8; 3]; 18] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 4, 2],
+    [0, 5, 2],
+];
 
 pub struct Disk2R7_9;
 impl GenNet for Disk2R7_9 {
@@ -10808,7 +13235,13 @@ impl GenNet for Disk2R7_9 {
 }
 
 #[inline(always)]
-unsafe fn disk2_r10_11_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r10_11_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 13] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10867,16 +13300,40 @@ unsafe fn disk2_r10_11_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let s4 = s6.mx(s4);
         let s8 = s8.mn(s7);
         match r {
-            10 => { s4.store(out.offset(0 * ostride)); }
-            11 => { s8.store(out.offset(0 * ostride)); }
+            10 => {
+                s4.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s8.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R10_11_S_IN: [[u8; 3]; 13] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 2]];
+const DISK2_R10_11_S_IN: [[u8; 3]; 13] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 2],
+];
 
 #[inline(always)]
-unsafe fn disk2_r10_11_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk2_r10_11_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 18] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -10967,13 +13424,38 @@ unsafe fn disk2_r10_11_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let s17 = s15.mx(s17);
         let s10 = s10.mn(s9);
         match r {
-            10 => { s0.store(out.offset(0 * ostride)); s17.store(out.offset(1 * ostride)); }
-            11 => { s3.store(out.offset(0 * ostride)); s10.store(out.offset(1 * ostride)); }
+            10 => {
+                s0.store(out.offset(0 * ostride));
+                s17.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s3.store(out.offset(0 * ostride));
+                s10.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK2_R10_11_P_IN: [[u8; 3]; 18] = [[0, 0, 2], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 3, 0], [0, 3, 4], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 4, 1], [0, 4, 3], [0, 4, 2], [0, 5, 2]];
+const DISK2_R10_11_P_IN: [[u8; 3]; 18] = [
+    [0, 0, 2],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 2, 0],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 3, 0],
+    [0, 3, 4],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 4, 2],
+    [0, 5, 2],
+];
 
 pub struct Disk2R10_11;
 impl GenNet for Disk2R10_11 {
@@ -10990,10 +13472,46 @@ impl GenNet for Disk2R10_11 {
     }
 }
 
-const WIN_DISK3: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const WIN_DISK3: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r14_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 29] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -11178,10 +13696,46 @@ unsafe fn disk3_r14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s11.store(out.offset(0 * ostride));
     }
 }
-const DISK3_R14_S_IN: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const DISK3_R14_S_IN: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r14_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -11446,10 +14000,48 @@ unsafe fn disk3_r14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s49 = s47.mx(s49);
         let s50 = s49.mx(s50);
         let _ = r;
-        s20.store(out.offset(0 * ostride)); s50.store(out.offset(1 * ostride));
+        s20.store(out.offset(0 * ostride));
+        s50.store(out.offset(1 * ostride));
     }
 }
-const DISK3_R14_P_IN: [[u8; 3]; 36] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 1], [0, 6, 2], [0, 6, 4], [0, 6, 5], [0, 6, 3], [0, 7, 3]];
+const DISK3_R14_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 3],
+    [0, 7, 3],
+];
 
 pub struct Disk3R14;
 impl GenNet for Disk3R14 {
@@ -11467,7 +14059,13 @@ impl GenNet for Disk3R14 {
 }
 
 #[inline(always)]
-unsafe fn disk3_r1_7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r1_7_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 29] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -11650,21 +14248,71 @@ unsafe fn disk3_r1_7_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s20, s18) = (s20.mn(s18), s20.mx(s18));
         let s22 = s22.mn(s19);
         match r {
-            1 => { s8.store(out.offset(0 * ostride)); }
-            2 => { s6.store(out.offset(0 * ostride)); }
-            3 => { s10.store(out.offset(0 * ostride)); }
-            4 => { s9.store(out.offset(0 * ostride)); }
-            5 => { s20.store(out.offset(0 * ostride)); }
-            6 => { s18.store(out.offset(0 * ostride)); }
-            7 => { s22.store(out.offset(0 * ostride)); }
+            1 => {
+                s8.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s6.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s10.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s18.store(out.offset(0 * ostride));
+            }
+            7 => {
+                s22.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R1_7_S_IN: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const DISK3_R1_7_S_IN: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r1_7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r1_7_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -11923,18 +14571,76 @@ unsafe fn disk3_r1_7_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostri
         let (s41, s42) = (s41.mn(s42), s41.mx(s42));
         let s43 = s43.mn(s44);
         match r {
-            1 => { s27.store(out.offset(0 * ostride)); s37.store(out.offset(1 * ostride)); }
-            2 => { s25.store(out.offset(0 * ostride)); s38.store(out.offset(1 * ostride)); }
-            3 => { s29.store(out.offset(0 * ostride)); s39.store(out.offset(1 * ostride)); }
-            4 => { s28.store(out.offset(0 * ostride)); s40.store(out.offset(1 * ostride)); }
-            5 => { s34.store(out.offset(0 * ostride)); s41.store(out.offset(1 * ostride)); }
-            6 => { s3.store(out.offset(0 * ostride)); s42.store(out.offset(1 * ostride)); }
-            7 => { s10.store(out.offset(0 * ostride)); s43.store(out.offset(1 * ostride)); }
+            1 => {
+                s27.store(out.offset(0 * ostride));
+                s37.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s25.store(out.offset(0 * ostride));
+                s38.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s29.store(out.offset(0 * ostride));
+                s39.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s28.store(out.offset(0 * ostride));
+                s40.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s34.store(out.offset(0 * ostride));
+                s41.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s3.store(out.offset(0 * ostride));
+                s42.store(out.offset(1 * ostride));
+            }
+            7 => {
+                s10.store(out.offset(0 * ostride));
+                s43.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R1_7_P_IN: [[u8; 3]; 36] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 1], [0, 6, 2], [0, 6, 4], [0, 6, 5], [0, 6, 3], [0, 7, 3]];
+const DISK3_R1_7_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 3],
+    [0, 7, 3],
+];
 
 pub struct Disk3R1_7;
 impl GenNet for Disk3R1_7 {
@@ -11952,7 +14658,13 @@ impl GenNet for Disk3R1_7 {
 }
 
 #[inline(always)]
-unsafe fn disk3_r8_14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r8_14_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 29] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -12143,21 +14855,71 @@ unsafe fn disk3_r8_14_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s15, s12) = (s15.mn(s12), s15.mx(s12));
         let (s13, s11) = (s13.mn(s11), s13.mx(s11));
         match r {
-            8 => { s19.store(out.offset(0 * ostride)); }
-            9 => { s21.store(out.offset(0 * ostride)); }
-            10 => { s14.store(out.offset(0 * ostride)); }
-            11 => { s15.store(out.offset(0 * ostride)); }
-            12 => { s12.store(out.offset(0 * ostride)); }
-            13 => { s13.store(out.offset(0 * ostride)); }
-            14 => { s11.store(out.offset(0 * ostride)); }
+            8 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s21.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s15.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            13 => {
+                s13.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s11.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R8_14_S_IN: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const DISK3_R8_14_S_IN: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r8_14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r8_14_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -12440,18 +15202,76 @@ unsafe fn disk3_r8_14_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s47, s48) = (s47.mn(s48), s47.mx(s48));
         let (s49, s50) = (s49.mn(s50), s49.mx(s50));
         match r {
-            8 => { s7.store(out.offset(0 * ostride)); s44.store(out.offset(1 * ostride)); }
-            9 => { s8.store(out.offset(0 * ostride)); s45.store(out.offset(1 * ostride)); }
-            10 => { s6.store(out.offset(0 * ostride)); s46.store(out.offset(1 * ostride)); }
-            11 => { s9.store(out.offset(0 * ostride)); s47.store(out.offset(1 * ostride)); }
-            12 => { s15.store(out.offset(0 * ostride)); s48.store(out.offset(1 * ostride)); }
-            13 => { s22.store(out.offset(0 * ostride)); s49.store(out.offset(1 * ostride)); }
-            14 => { s20.store(out.offset(0 * ostride)); s50.store(out.offset(1 * ostride)); }
+            8 => {
+                s7.store(out.offset(0 * ostride));
+                s44.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s8.store(out.offset(0 * ostride));
+                s45.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s6.store(out.offset(0 * ostride));
+                s46.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s9.store(out.offset(0 * ostride));
+                s47.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s15.store(out.offset(0 * ostride));
+                s48.store(out.offset(1 * ostride));
+            }
+            13 => {
+                s22.store(out.offset(0 * ostride));
+                s49.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s20.store(out.offset(0 * ostride));
+                s50.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R8_14_P_IN: [[u8; 3]; 36] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 1], [0, 6, 2], [0, 6, 4], [0, 6, 5], [0, 6, 3], [0, 7, 3]];
+const DISK3_R8_14_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 3],
+    [0, 7, 3],
+];
 
 pub struct Disk3R8_14;
 impl GenNet for Disk3R8_14 {
@@ -12469,7 +15289,13 @@ impl GenNet for Disk3R8_14 {
 }
 
 #[inline(always)]
-unsafe fn disk3_r15_21_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r15_21_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 29] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -12662,21 +15488,71 @@ unsafe fn disk3_r15_21_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s27, s26) = (s27.mn(s26), s27.mx(s26));
         let s28 = s28.mn(s0);
         match r {
-            15 => { s17.store(out.offset(0 * ostride)); }
-            16 => { s16.store(out.offset(0 * ostride)); }
-            17 => { s25.store(out.offset(0 * ostride)); }
-            18 => { s23.store(out.offset(0 * ostride)); }
-            19 => { s27.store(out.offset(0 * ostride)); }
-            20 => { s26.store(out.offset(0 * ostride)); }
-            21 => { s28.store(out.offset(0 * ostride)); }
+            15 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s25.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s23.store(out.offset(0 * ostride));
+            }
+            19 => {
+                s27.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s26.store(out.offset(0 * ostride));
+            }
+            21 => {
+                s28.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R15_21_S_IN: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const DISK3_R15_21_S_IN: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r15_21_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r15_21_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -12959,18 +15835,76 @@ unsafe fn disk3_r15_21_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s54, s55) = (s54.mn(s55), s54.mx(s55));
         let s56 = s56.mn(s35);
         match r {
-            15 => { s24.store(out.offset(0 * ostride)); s50.store(out.offset(1 * ostride)); }
-            16 => { s13.store(out.offset(0 * ostride)); s51.store(out.offset(1 * ostride)); }
-            17 => { s14.store(out.offset(0 * ostride)); s52.store(out.offset(1 * ostride)); }
-            18 => { s12.store(out.offset(0 * ostride)); s53.store(out.offset(1 * ostride)); }
-            19 => { s16.store(out.offset(0 * ostride)); s54.store(out.offset(1 * ostride)); }
-            20 => { s21.store(out.offset(0 * ostride)); s55.store(out.offset(1 * ostride)); }
-            21 => { s23.store(out.offset(0 * ostride)); s56.store(out.offset(1 * ostride)); }
+            15 => {
+                s24.store(out.offset(0 * ostride));
+                s50.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s13.store(out.offset(0 * ostride));
+                s51.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s14.store(out.offset(0 * ostride));
+                s52.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s12.store(out.offset(0 * ostride));
+                s53.store(out.offset(1 * ostride));
+            }
+            19 => {
+                s16.store(out.offset(0 * ostride));
+                s54.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s21.store(out.offset(0 * ostride));
+                s55.store(out.offset(1 * ostride));
+            }
+            21 => {
+                s23.store(out.offset(0 * ostride));
+                s56.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R15_21_P_IN: [[u8; 3]; 36] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 1], [0, 6, 2], [0, 6, 4], [0, 6, 5], [0, 6, 3], [0, 7, 3]];
+const DISK3_R15_21_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 3],
+    [0, 7, 3],
+];
 
 pub struct Disk3R15_21;
 impl GenNet for Disk3R15_21 {
@@ -12988,7 +15922,13 @@ impl GenNet for Disk3R15_21 {
 }
 
 #[inline(always)]
-unsafe fn disk3_r22_27_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r22_27_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 29] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -13171,20 +16111,68 @@ unsafe fn disk3_r22_27_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s3, s1) = (s3.mn(s1), s3.mx(s1));
         let s4 = s4.mn(s24);
         match r {
-            22 => { s0.store(out.offset(0 * ostride)); }
-            23 => { s5.store(out.offset(0 * ostride)); }
-            24 => { s2.store(out.offset(0 * ostride)); }
-            25 => { s3.store(out.offset(0 * ostride)); }
-            26 => { s1.store(out.offset(0 * ostride)); }
-            27 => { s4.store(out.offset(0 * ostride)); }
+            22 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            24 => {
+                s2.store(out.offset(0 * ostride));
+            }
+            25 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            26 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            27 => {
+                s4.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R22_27_S_IN: [[u8; 3]; 29] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 3]];
+const DISK3_R22_27_S_IN: [[u8; 3]; 29] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 3],
+];
 
 #[inline(always)]
-unsafe fn disk3_r22_27_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk3_r22_27_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 36] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -13447,17 +16435,72 @@ unsafe fn disk3_r22_27_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s33, s30) = (s33.mn(s30), s33.mx(s30));
         let s19 = s19.mn(s18);
         match r {
-            22 => { s0.store(out.offset(0 * ostride)); s35.store(out.offset(1 * ostride)); }
-            23 => { s2.store(out.offset(0 * ostride)); s31.store(out.offset(1 * ostride)); }
-            24 => { s4.store(out.offset(0 * ostride)); s32.store(out.offset(1 * ostride)); }
-            25 => { s5.store(out.offset(0 * ostride)); s33.store(out.offset(1 * ostride)); }
-            26 => { s1.store(out.offset(0 * ostride)); s30.store(out.offset(1 * ostride)); }
-            27 => { s17.store(out.offset(0 * ostride)); s19.store(out.offset(1 * ostride)); }
+            22 => {
+                s0.store(out.offset(0 * ostride));
+                s35.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s2.store(out.offset(0 * ostride));
+                s31.store(out.offset(1 * ostride));
+            }
+            24 => {
+                s4.store(out.offset(0 * ostride));
+                s32.store(out.offset(1 * ostride));
+            }
+            25 => {
+                s5.store(out.offset(0 * ostride));
+                s33.store(out.offset(1 * ostride));
+            }
+            26 => {
+                s1.store(out.offset(0 * ostride));
+                s30.store(out.offset(1 * ostride));
+            }
+            27 => {
+                s17.store(out.offset(0 * ostride));
+                s19.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK3_R22_27_P_IN: [[u8; 3]; 36] = [[0, 0, 3], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 3, 0], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 4, 0], [0, 4, 6], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 6, 1], [0, 6, 2], [0, 6, 4], [0, 6, 5], [0, 6, 3], [0, 7, 3]];
+const DISK3_R22_27_P_IN: [[u8; 3]; 36] = [
+    [0, 0, 3],
+    [0, 1, 1],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 3, 0],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 4, 0],
+    [0, 4, 6],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 3],
+    [0, 7, 3],
+];
 
 pub struct Disk3R22_27;
 impl GenNet for Disk3R22_27 {
@@ -13474,10 +16517,66 @@ impl GenNet for Disk3R22_27 {
     }
 }
 
-const WIN_DISK4: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const WIN_DISK4: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r24_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -13853,10 +16952,66 @@ unsafe fn disk4_r24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s18.store(out.offset(0 * ostride));
     }
 }
-const DISK4_R24_S_IN: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const DISK4_R24_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r24_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 58] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -14379,10 +17534,70 @@ unsafe fn disk4_r24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s78 = s78.mn(s80);
         let s79 = s78.mx(s79);
         let _ = r;
-        s8.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride));
+        s8.store(out.offset(0 * ostride));
+        s79.store(out.offset(1 * ostride));
     }
 }
-const DISK4_R24_P_IN: [[u8; 3]; 58] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 0], [0, 5, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 1], [0, 7, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 2], [0, 8, 3], [0, 8, 5], [0, 8, 6], [0, 8, 4], [0, 9, 4]];
+const DISK4_R24_P_IN: [[u8; 3]; 58] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 0],
+    [0, 5, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 1],
+    [0, 7, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 4],
+    [0, 9, 4],
+];
 
 pub struct Disk4R24;
 impl GenNet for Disk4R24 {
@@ -14400,7 +17615,13 @@ impl GenNet for Disk4R24 {
 }
 
 #[inline(always)]
-unsafe fn disk4_r1_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r1_12_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -14771,26 +17992,106 @@ unsafe fn disk4_r1_12_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s42, s39) = (s42.mn(s39), s42.mx(s39));
         let (s38, s37) = (s38.mn(s37), s38.mx(s37));
         match r {
-            1 => { s35.store(out.offset(0 * ostride)); }
-            2 => { s32.store(out.offset(0 * ostride)); }
-            3 => { s33.store(out.offset(0 * ostride)); }
-            4 => { s30.store(out.offset(0 * ostride)); }
-            5 => { s31.store(out.offset(0 * ostride)); }
-            6 => { s29.store(out.offset(0 * ostride)); }
-            7 => { s40.store(out.offset(0 * ostride)); }
-            8 => { s41.store(out.offset(0 * ostride)); }
-            9 => { s42.store(out.offset(0 * ostride)); }
-            10 => { s39.store(out.offset(0 * ostride)); }
-            11 => { s38.store(out.offset(0 * ostride)); }
-            12 => { s37.store(out.offset(0 * ostride)); }
+            1 => {
+                s35.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s32.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s33.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s30.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s31.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s29.store(out.offset(0 * ostride));
+            }
+            7 => {
+                s40.store(out.offset(0 * ostride));
+            }
+            8 => {
+                s41.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s42.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s39.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s38.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s37.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R1_12_S_IN: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const DISK4_R1_12_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r1_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r1_12_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 58] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -15308,23 +18609,118 @@ unsafe fn disk4_r1_12_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s67, s68) = (s67.mn(s68), s67.mx(s68));
         let (s69, s70) = (s69.mn(s70), s69.mx(s70));
         match r {
-            1 => { s19.store(out.offset(0 * ostride)); s59.store(out.offset(1 * ostride)); }
-            2 => { s16.store(out.offset(0 * ostride)); s60.store(out.offset(1 * ostride)); }
-            3 => { s17.store(out.offset(0 * ostride)); s61.store(out.offset(1 * ostride)); }
-            4 => { s14.store(out.offset(0 * ostride)); s62.store(out.offset(1 * ostride)); }
-            5 => { s15.store(out.offset(0 * ostride)); s63.store(out.offset(1 * ostride)); }
-            6 => { s13.store(out.offset(0 * ostride)); s64.store(out.offset(1 * ostride)); }
-            7 => { s25.store(out.offset(0 * ostride)); s65.store(out.offset(1 * ostride)); }
-            8 => { s26.store(out.offset(0 * ostride)); s66.store(out.offset(1 * ostride)); }
-            9 => { s27.store(out.offset(0 * ostride)); s67.store(out.offset(1 * ostride)); }
-            10 => { s24.store(out.offset(0 * ostride)); s68.store(out.offset(1 * ostride)); }
-            11 => { s23.store(out.offset(0 * ostride)); s69.store(out.offset(1 * ostride)); }
-            12 => { s22.store(out.offset(0 * ostride)); s70.store(out.offset(1 * ostride)); }
+            1 => {
+                s19.store(out.offset(0 * ostride));
+                s59.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s16.store(out.offset(0 * ostride));
+                s60.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s17.store(out.offset(0 * ostride));
+                s61.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s14.store(out.offset(0 * ostride));
+                s62.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s15.store(out.offset(0 * ostride));
+                s63.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s13.store(out.offset(0 * ostride));
+                s64.store(out.offset(1 * ostride));
+            }
+            7 => {
+                s25.store(out.offset(0 * ostride));
+                s65.store(out.offset(1 * ostride));
+            }
+            8 => {
+                s26.store(out.offset(0 * ostride));
+                s66.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s27.store(out.offset(0 * ostride));
+                s67.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s24.store(out.offset(0 * ostride));
+                s68.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s23.store(out.offset(0 * ostride));
+                s69.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s22.store(out.offset(0 * ostride));
+                s70.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R1_12_P_IN: [[u8; 3]; 58] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 0], [0, 5, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 1], [0, 7, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 2], [0, 8, 3], [0, 8, 5], [0, 8, 6], [0, 8, 4], [0, 9, 4]];
+const DISK4_R1_12_P_IN: [[u8; 3]; 58] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 0],
+    [0, 5, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 1],
+    [0, 7, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 4],
+    [0, 9, 4],
+];
 
 pub struct Disk4R1_12;
 impl GenNet for Disk4R1_12 {
@@ -15342,7 +18738,13 @@ impl GenNet for Disk4R1_12 {
 }
 
 #[inline(always)]
-unsafe fn disk4_r13_24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r13_24_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -15734,26 +19136,106 @@ unsafe fn disk4_r13_24_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s8, s16) = (s8.mn(s16), s8.mx(s16));
         let (s15, s18) = (s15.mn(s18), s15.mx(s18));
         match r {
-            13 => { s36.store(out.offset(0 * ostride)); }
-            14 => { s6.store(out.offset(0 * ostride)); }
-            15 => { s17.store(out.offset(0 * ostride)); }
-            16 => { s11.store(out.offset(0 * ostride)); }
-            17 => { s12.store(out.offset(0 * ostride)); }
-            18 => { s9.store(out.offset(0 * ostride)); }
-            19 => { s10.store(out.offset(0 * ostride)); }
-            20 => { s7.store(out.offset(0 * ostride)); }
-            21 => { s8.store(out.offset(0 * ostride)); }
-            22 => { s16.store(out.offset(0 * ostride)); }
-            23 => { s15.store(out.offset(0 * ostride)); }
-            24 => { s18.store(out.offset(0 * ostride)); }
+            13 => {
+                s36.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s6.store(out.offset(0 * ostride));
+            }
+            15 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s11.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s9.store(out.offset(0 * ostride));
+            }
+            19 => {
+                s10.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s7.store(out.offset(0 * ostride));
+            }
+            21 => {
+                s8.store(out.offset(0 * ostride));
+            }
+            22 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s15.store(out.offset(0 * ostride));
+            }
+            24 => {
+                s18.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R13_24_S_IN: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const DISK4_R13_24_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r13_24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r13_24_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 58] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -16318,23 +19800,118 @@ unsafe fn disk4_r13_24_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s79, s80) = (s79.mn(s80), s79.mx(s80));
         let (s81, s82) = (s81.mn(s82), s81.mx(s82));
         match r {
-            13 => { s21.store(out.offset(0 * ostride)); s71.store(out.offset(1 * ostride)); }
-            14 => { s3.store(out.offset(0 * ostride)); s72.store(out.offset(1 * ostride)); }
-            15 => { s11.store(out.offset(0 * ostride)); s73.store(out.offset(1 * ostride)); }
-            16 => { s48.store(out.offset(0 * ostride)); s74.store(out.offset(1 * ostride)); }
-            17 => { s49.store(out.offset(0 * ostride)); s75.store(out.offset(1 * ostride)); }
-            18 => { s47.store(out.offset(0 * ostride)); s76.store(out.offset(1 * ostride)); }
-            19 => { s51.store(out.offset(0 * ostride)); s77.store(out.offset(1 * ostride)); }
-            20 => { s50.store(out.offset(0 * ostride)); s78.store(out.offset(1 * ostride)); }
-            21 => { s56.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride)); }
-            22 => { s7.store(out.offset(0 * ostride)); s80.store(out.offset(1 * ostride)); }
-            23 => { s10.store(out.offset(0 * ostride)); s81.store(out.offset(1 * ostride)); }
-            24 => { s8.store(out.offset(0 * ostride)); s82.store(out.offset(1 * ostride)); }
+            13 => {
+                s21.store(out.offset(0 * ostride));
+                s71.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s3.store(out.offset(0 * ostride));
+                s72.store(out.offset(1 * ostride));
+            }
+            15 => {
+                s11.store(out.offset(0 * ostride));
+                s73.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s48.store(out.offset(0 * ostride));
+                s74.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s49.store(out.offset(0 * ostride));
+                s75.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s47.store(out.offset(0 * ostride));
+                s76.store(out.offset(1 * ostride));
+            }
+            19 => {
+                s51.store(out.offset(0 * ostride));
+                s77.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s50.store(out.offset(0 * ostride));
+                s78.store(out.offset(1 * ostride));
+            }
+            21 => {
+                s56.store(out.offset(0 * ostride));
+                s79.store(out.offset(1 * ostride));
+            }
+            22 => {
+                s7.store(out.offset(0 * ostride));
+                s80.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s10.store(out.offset(0 * ostride));
+                s81.store(out.offset(1 * ostride));
+            }
+            24 => {
+                s8.store(out.offset(0 * ostride));
+                s82.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R13_24_P_IN: [[u8; 3]; 58] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 0], [0, 5, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 1], [0, 7, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 2], [0, 8, 3], [0, 8, 5], [0, 8, 6], [0, 8, 4], [0, 9, 4]];
+const DISK4_R13_24_P_IN: [[u8; 3]; 58] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 0],
+    [0, 5, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 1],
+    [0, 7, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 4],
+    [0, 9, 4],
+];
 
 pub struct Disk4R13_24;
 impl GenNet for Disk4R13_24 {
@@ -16352,7 +19929,13 @@ impl GenNet for Disk4R13_24 {
 }
 
 #[inline(always)]
-unsafe fn disk4_r25_36_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r25_36_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -16745,26 +20328,106 @@ unsafe fn disk4_r25_36_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s45, s43) = (s45.mn(s43), s45.mx(s43));
         let (s47, s46) = (s47.mn(s46), s47.mx(s46));
         match r {
-            25 => { s19.store(out.offset(0 * ostride)); }
-            26 => { s14.store(out.offset(0 * ostride)); }
-            27 => { s13.store(out.offset(0 * ostride)); }
-            28 => { s27.store(out.offset(0 * ostride)); }
-            29 => { s26.store(out.offset(0 * ostride)); }
-            30 => { s23.store(out.offset(0 * ostride)); }
-            31 => { s24.store(out.offset(0 * ostride)); }
-            32 => { s44.store(out.offset(0 * ostride)); }
-            33 => { s45.store(out.offset(0 * ostride)); }
-            34 => { s43.store(out.offset(0 * ostride)); }
-            35 => { s47.store(out.offset(0 * ostride)); }
-            36 => { s46.store(out.offset(0 * ostride)); }
+            25 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            26 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            27 => {
+                s13.store(out.offset(0 * ostride));
+            }
+            28 => {
+                s27.store(out.offset(0 * ostride));
+            }
+            29 => {
+                s26.store(out.offset(0 * ostride));
+            }
+            30 => {
+                s23.store(out.offset(0 * ostride));
+            }
+            31 => {
+                s24.store(out.offset(0 * ostride));
+            }
+            32 => {
+                s44.store(out.offset(0 * ostride));
+            }
+            33 => {
+                s45.store(out.offset(0 * ostride));
+            }
+            34 => {
+                s43.store(out.offset(0 * ostride));
+            }
+            35 => {
+                s47.store(out.offset(0 * ostride));
+            }
+            36 => {
+                s46.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R25_36_S_IN: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const DISK4_R25_36_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r25_36_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r25_36_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 58] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -17327,23 +20990,118 @@ unsafe fn disk4_r25_36_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s87, s88) = (s87.mn(s88), s87.mx(s88));
         let (s89, s90) = (s89.mn(s90), s89.mx(s90));
         match r {
-            25 => { s9.store(out.offset(0 * ostride)); s79.store(out.offset(1 * ostride)); }
-            26 => { s41.store(out.offset(0 * ostride)); s80.store(out.offset(1 * ostride)); }
-            27 => { s40.store(out.offset(0 * ostride)); s81.store(out.offset(1 * ostride)); }
-            28 => { s39.store(out.offset(0 * ostride)); s82.store(out.offset(1 * ostride)); }
-            29 => { s38.store(out.offset(0 * ostride)); s83.store(out.offset(1 * ostride)); }
-            30 => { s31.store(out.offset(0 * ostride)); s84.store(out.offset(1 * ostride)); }
-            31 => { s42.store(out.offset(0 * ostride)); s85.store(out.offset(1 * ostride)); }
-            32 => { s36.store(out.offset(0 * ostride)); s86.store(out.offset(1 * ostride)); }
-            33 => { s37.store(out.offset(0 * ostride)); s87.store(out.offset(1 * ostride)); }
-            34 => { s34.store(out.offset(0 * ostride)); s88.store(out.offset(1 * ostride)); }
-            35 => { s35.store(out.offset(0 * ostride)); s89.store(out.offset(1 * ostride)); }
-            36 => { s32.store(out.offset(0 * ostride)); s90.store(out.offset(1 * ostride)); }
+            25 => {
+                s9.store(out.offset(0 * ostride));
+                s79.store(out.offset(1 * ostride));
+            }
+            26 => {
+                s41.store(out.offset(0 * ostride));
+                s80.store(out.offset(1 * ostride));
+            }
+            27 => {
+                s40.store(out.offset(0 * ostride));
+                s81.store(out.offset(1 * ostride));
+            }
+            28 => {
+                s39.store(out.offset(0 * ostride));
+                s82.store(out.offset(1 * ostride));
+            }
+            29 => {
+                s38.store(out.offset(0 * ostride));
+                s83.store(out.offset(1 * ostride));
+            }
+            30 => {
+                s31.store(out.offset(0 * ostride));
+                s84.store(out.offset(1 * ostride));
+            }
+            31 => {
+                s42.store(out.offset(0 * ostride));
+                s85.store(out.offset(1 * ostride));
+            }
+            32 => {
+                s36.store(out.offset(0 * ostride));
+                s86.store(out.offset(1 * ostride));
+            }
+            33 => {
+                s37.store(out.offset(0 * ostride));
+                s87.store(out.offset(1 * ostride));
+            }
+            34 => {
+                s34.store(out.offset(0 * ostride));
+                s88.store(out.offset(1 * ostride));
+            }
+            35 => {
+                s35.store(out.offset(0 * ostride));
+                s89.store(out.offset(1 * ostride));
+            }
+            36 => {
+                s32.store(out.offset(0 * ostride));
+                s90.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R25_36_P_IN: [[u8; 3]; 58] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 0], [0, 5, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 1], [0, 7, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 2], [0, 8, 3], [0, 8, 5], [0, 8, 6], [0, 8, 4], [0, 9, 4]];
+const DISK4_R25_36_P_IN: [[u8; 3]; 58] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 0],
+    [0, 5, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 1],
+    [0, 7, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 4],
+    [0, 9, 4],
+];
 
 pub struct Disk4R25_36;
 impl GenNet for Disk4R25_36 {
@@ -17361,7 +21119,13 @@ impl GenNet for Disk4R25_36 {
 }
 
 #[inline(always)]
-unsafe fn disk4_r37_47_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r37_47_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 49] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -17738,25 +21502,103 @@ unsafe fn disk4_r37_47_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s22, s20) = (s22.mn(s20), s22.mx(s20));
         let s28 = s28.mn(s21);
         match r {
-            37 => { s48.store(out.offset(0 * ostride)); }
-            38 => { s0.store(out.offset(0 * ostride)); }
-            39 => { s5.store(out.offset(0 * ostride)); }
-            40 => { s2.store(out.offset(0 * ostride)); }
-            41 => { s3.store(out.offset(0 * ostride)); }
-            42 => { s1.store(out.offset(0 * ostride)); }
-            43 => { s4.store(out.offset(0 * ostride)); }
-            44 => { s25.store(out.offset(0 * ostride)); }
-            45 => { s22.store(out.offset(0 * ostride)); }
-            46 => { s20.store(out.offset(0 * ostride)); }
-            47 => { s28.store(out.offset(0 * ostride)); }
+            37 => {
+                s48.store(out.offset(0 * ostride));
+            }
+            38 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            39 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            40 => {
+                s2.store(out.offset(0 * ostride));
+            }
+            41 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            42 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            43 => {
+                s4.store(out.offset(0 * ostride));
+            }
+            44 => {
+                s25.store(out.offset(0 * ostride));
+            }
+            45 => {
+                s22.store(out.offset(0 * ostride));
+            }
+            46 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            47 => {
+                s28.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R37_47_S_IN: [[u8; 3]; 49] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 4]];
+const DISK4_R37_47_S_IN: [[u8; 3]; 49] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 4],
+];
 
 #[inline(always)]
-unsafe fn disk4_r37_47_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk4_r37_47_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 58] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -18276,22 +22118,114 @@ unsafe fn disk4_r37_47_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s55, s52) = (s55.mn(s52), s55.mx(s52));
         let s53 = s53.mn(s45);
         match r {
-            37 => { s33.store(out.offset(0 * ostride)); s83.store(out.offset(1 * ostride)); }
-            38 => { s43.store(out.offset(0 * ostride)); s84.store(out.offset(1 * ostride)); }
-            39 => { s44.store(out.offset(0 * ostride)); s85.store(out.offset(1 * ostride)); }
-            40 => { s4.store(out.offset(0 * ostride)); s54.store(out.offset(1 * ostride)); }
-            41 => { s28.store(out.offset(0 * ostride)); s46.store(out.offset(1 * ostride)); }
-            42 => { s0.store(out.offset(0 * ostride)); s57.store(out.offset(1 * ostride)); }
-            43 => { s12.store(out.offset(0 * ostride)); s30.store(out.offset(1 * ostride)); }
-            44 => { s6.store(out.offset(0 * ostride)); s29.store(out.offset(1 * ostride)); }
-            45 => { s5.store(out.offset(0 * ostride)); s55.store(out.offset(1 * ostride)); }
-            46 => { s1.store(out.offset(0 * ostride)); s52.store(out.offset(1 * ostride)); }
-            47 => { s2.store(out.offset(0 * ostride)); s53.store(out.offset(1 * ostride)); }
+            37 => {
+                s33.store(out.offset(0 * ostride));
+                s83.store(out.offset(1 * ostride));
+            }
+            38 => {
+                s43.store(out.offset(0 * ostride));
+                s84.store(out.offset(1 * ostride));
+            }
+            39 => {
+                s44.store(out.offset(0 * ostride));
+                s85.store(out.offset(1 * ostride));
+            }
+            40 => {
+                s4.store(out.offset(0 * ostride));
+                s54.store(out.offset(1 * ostride));
+            }
+            41 => {
+                s28.store(out.offset(0 * ostride));
+                s46.store(out.offset(1 * ostride));
+            }
+            42 => {
+                s0.store(out.offset(0 * ostride));
+                s57.store(out.offset(1 * ostride));
+            }
+            43 => {
+                s12.store(out.offset(0 * ostride));
+                s30.store(out.offset(1 * ostride));
+            }
+            44 => {
+                s6.store(out.offset(0 * ostride));
+                s29.store(out.offset(1 * ostride));
+            }
+            45 => {
+                s5.store(out.offset(0 * ostride));
+                s55.store(out.offset(1 * ostride));
+            }
+            46 => {
+                s1.store(out.offset(0 * ostride));
+                s52.store(out.offset(1 * ostride));
+            }
+            47 => {
+                s2.store(out.offset(0 * ostride));
+                s53.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK4_R37_47_P_IN: [[u8; 3]; 58] = [[0, 0, 4], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 4, 0], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 5, 0], [0, 5, 8], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 7, 1], [0, 7, 7], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 8, 2], [0, 8, 3], [0, 8, 5], [0, 8, 6], [0, 8, 4], [0, 9, 4]];
+const DISK4_R37_47_P_IN: [[u8; 3]; 58] = [
+    [0, 0, 4],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 4, 0],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 5, 0],
+    [0, 5, 8],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 7, 1],
+    [0, 7, 7],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 4],
+    [0, 9, 4],
+];
 
 pub struct Disk4R37_47;
 impl GenNet for Disk4R37_47 {
@@ -18308,10 +22242,98 @@ impl GenNet for Disk4R37_47 {
     }
 }
 
-const WIN_DISK5: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const WIN_DISK5: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r40_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r40_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 81] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -19074,10 +23096,98 @@ unsafe fn disk5_r40_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         s60.store(out.offset(0 * ostride));
     }
 }
-const DISK5_R40_S_IN: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const DISK5_R40_S_IN: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r40_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r40_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 92] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -20033,10 +24143,104 @@ unsafe fn disk5_r40_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostrid
         let s121 = s121.mn(s123);
         let s122 = s121.mx(s122);
         let _ = r;
-        s22.store(out.offset(0 * ostride)); s122.store(out.offset(1 * ostride));
+        s22.store(out.offset(0 * ostride));
+        s122.store(out.offset(1 * ostride));
     }
 }
-const DISK5_R40_P_IN: [[u8; 3]; 92] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 0], [0, 6, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 1], [0, 9, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 2], [0, 10, 3], [0, 10, 4], [0, 10, 6], [0, 10, 7], [0, 10, 8], [0, 10, 5], [0, 11, 5]];
+const DISK5_R40_P_IN: [[u8; 3]; 92] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 0],
+    [0, 6, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 1],
+    [0, 9, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 2],
+    [0, 10, 3],
+    [0, 10, 4],
+    [0, 10, 6],
+    [0, 10, 7],
+    [0, 10, 8],
+    [0, 10, 5],
+    [0, 11, 5],
+];
 
 pub struct Disk5R40;
 impl GenNet for Disk5R40 {
@@ -20054,7 +24258,13 @@ impl GenNet for Disk5R40 {
 }
 
 #[inline(always)]
-unsafe fn disk5_r1_20_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r1_20_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 81] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -20817,34 +25027,162 @@ unsafe fn disk5_r1_20_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s45, s42) = (s45.mn(s42), s45.mx(s42));
         let (s43, s36) = (s43.mn(s36), s43.mx(s36));
         match r {
-            1 => { s79.store(out.offset(0 * ostride)); }
-            2 => { s76.store(out.offset(0 * ostride)); }
-            3 => { s77.store(out.offset(0 * ostride)); }
-            4 => { s74.store(out.offset(0 * ostride)); }
-            5 => { s75.store(out.offset(0 * ostride)); }
-            6 => { s73.store(out.offset(0 * ostride)); }
-            7 => { s80.store(out.offset(0 * ostride)); }
-            8 => { s0.store(out.offset(0 * ostride)); }
-            9 => { s7.store(out.offset(0 * ostride)); }
-            10 => { s4.store(out.offset(0 * ostride)); }
-            11 => { s5.store(out.offset(0 * ostride)); }
-            12 => { s2.store(out.offset(0 * ostride)); }
-            13 => { s3.store(out.offset(0 * ostride)); }
-            14 => { s1.store(out.offset(0 * ostride)); }
-            15 => { s6.store(out.offset(0 * ostride)); }
-            16 => { s44.store(out.offset(0 * ostride)); }
-            17 => { s45.store(out.offset(0 * ostride)); }
-            18 => { s42.store(out.offset(0 * ostride)); }
-            19 => { s43.store(out.offset(0 * ostride)); }
-            20 => { s36.store(out.offset(0 * ostride)); }
+            1 => {
+                s79.store(out.offset(0 * ostride));
+            }
+            2 => {
+                s76.store(out.offset(0 * ostride));
+            }
+            3 => {
+                s77.store(out.offset(0 * ostride));
+            }
+            4 => {
+                s74.store(out.offset(0 * ostride));
+            }
+            5 => {
+                s75.store(out.offset(0 * ostride));
+            }
+            6 => {
+                s73.store(out.offset(0 * ostride));
+            }
+            7 => {
+                s80.store(out.offset(0 * ostride));
+            }
+            8 => {
+                s0.store(out.offset(0 * ostride));
+            }
+            9 => {
+                s7.store(out.offset(0 * ostride));
+            }
+            10 => {
+                s4.store(out.offset(0 * ostride));
+            }
+            11 => {
+                s5.store(out.offset(0 * ostride));
+            }
+            12 => {
+                s2.store(out.offset(0 * ostride));
+            }
+            13 => {
+                s3.store(out.offset(0 * ostride));
+            }
+            14 => {
+                s1.store(out.offset(0 * ostride));
+            }
+            15 => {
+                s6.store(out.offset(0 * ostride));
+            }
+            16 => {
+                s44.store(out.offset(0 * ostride));
+            }
+            17 => {
+                s45.store(out.offset(0 * ostride));
+            }
+            18 => {
+                s42.store(out.offset(0 * ostride));
+            }
+            19 => {
+                s43.store(out.offset(0 * ostride));
+            }
+            20 => {
+                s36.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R1_20_S_IN: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const DISK5_R1_20_S_IN: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r1_20_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r1_20_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 92] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -21832,31 +26170,184 @@ unsafe fn disk5_r1_20_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostr
         let (s109, s110) = (s109.mn(s110), s109.mx(s110));
         let (s111, s112) = (s111.mn(s112), s111.mx(s112));
         match r {
-            1 => { s59.store(out.offset(0 * ostride)); s93.store(out.offset(1 * ostride)); }
-            2 => { s57.store(out.offset(0 * ostride)); s94.store(out.offset(1 * ostride)); }
-            3 => { s65.store(out.offset(0 * ostride)); s95.store(out.offset(1 * ostride)); }
-            4 => { s64.store(out.offset(0 * ostride)); s96.store(out.offset(1 * ostride)); }
-            5 => { s63.store(out.offset(0 * ostride)); s97.store(out.offset(1 * ostride)); }
-            6 => { s60.store(out.offset(0 * ostride)); s98.store(out.offset(1 * ostride)); }
-            7 => { s61.store(out.offset(0 * ostride)); s99.store(out.offset(1 * ostride)); }
-            8 => { s62.store(out.offset(0 * ostride)); s100.store(out.offset(1 * ostride)); }
-            9 => { s68.store(out.offset(0 * ostride)); s101.store(out.offset(1 * ostride)); }
-            10 => { s66.store(out.offset(0 * ostride)); s102.store(out.offset(1 * ostride)); }
-            11 => { s74.store(out.offset(0 * ostride)); s103.store(out.offset(1 * ostride)); }
-            12 => { s73.store(out.offset(0 * ostride)); s104.store(out.offset(1 * ostride)); }
-            13 => { s72.store(out.offset(0 * ostride)); s105.store(out.offset(1 * ostride)); }
-            14 => { s69.store(out.offset(0 * ostride)); s106.store(out.offset(1 * ostride)); }
-            15 => { s70.store(out.offset(0 * ostride)); s107.store(out.offset(1 * ostride)); }
-            16 => { s67.store(out.offset(0 * ostride)); s108.store(out.offset(1 * ostride)); }
-            17 => { s71.store(out.offset(0 * ostride)); s109.store(out.offset(1 * ostride)); }
-            18 => { s36.store(out.offset(0 * ostride)); s110.store(out.offset(1 * ostride)); }
-            19 => { s44.store(out.offset(0 * ostride)); s111.store(out.offset(1 * ostride)); }
-            20 => { s43.store(out.offset(0 * ostride)); s112.store(out.offset(1 * ostride)); }
+            1 => {
+                s59.store(out.offset(0 * ostride));
+                s93.store(out.offset(1 * ostride));
+            }
+            2 => {
+                s57.store(out.offset(0 * ostride));
+                s94.store(out.offset(1 * ostride));
+            }
+            3 => {
+                s65.store(out.offset(0 * ostride));
+                s95.store(out.offset(1 * ostride));
+            }
+            4 => {
+                s64.store(out.offset(0 * ostride));
+                s96.store(out.offset(1 * ostride));
+            }
+            5 => {
+                s63.store(out.offset(0 * ostride));
+                s97.store(out.offset(1 * ostride));
+            }
+            6 => {
+                s60.store(out.offset(0 * ostride));
+                s98.store(out.offset(1 * ostride));
+            }
+            7 => {
+                s61.store(out.offset(0 * ostride));
+                s99.store(out.offset(1 * ostride));
+            }
+            8 => {
+                s62.store(out.offset(0 * ostride));
+                s100.store(out.offset(1 * ostride));
+            }
+            9 => {
+                s68.store(out.offset(0 * ostride));
+                s101.store(out.offset(1 * ostride));
+            }
+            10 => {
+                s66.store(out.offset(0 * ostride));
+                s102.store(out.offset(1 * ostride));
+            }
+            11 => {
+                s74.store(out.offset(0 * ostride));
+                s103.store(out.offset(1 * ostride));
+            }
+            12 => {
+                s73.store(out.offset(0 * ostride));
+                s104.store(out.offset(1 * ostride));
+            }
+            13 => {
+                s72.store(out.offset(0 * ostride));
+                s105.store(out.offset(1 * ostride));
+            }
+            14 => {
+                s69.store(out.offset(0 * ostride));
+                s106.store(out.offset(1 * ostride));
+            }
+            15 => {
+                s70.store(out.offset(0 * ostride));
+                s107.store(out.offset(1 * ostride));
+            }
+            16 => {
+                s67.store(out.offset(0 * ostride));
+                s108.store(out.offset(1 * ostride));
+            }
+            17 => {
+                s71.store(out.offset(0 * ostride));
+                s109.store(out.offset(1 * ostride));
+            }
+            18 => {
+                s36.store(out.offset(0 * ostride));
+                s110.store(out.offset(1 * ostride));
+            }
+            19 => {
+                s44.store(out.offset(0 * ostride));
+                s111.store(out.offset(1 * ostride));
+            }
+            20 => {
+                s43.store(out.offset(0 * ostride));
+                s112.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R1_20_P_IN: [[u8; 3]; 92] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 0], [0, 6, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 1], [0, 9, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 2], [0, 10, 3], [0, 10, 4], [0, 10, 6], [0, 10, 7], [0, 10, 8], [0, 10, 5], [0, 11, 5]];
+const DISK5_R1_20_P_IN: [[u8; 3]; 92] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 0],
+    [0, 6, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 1],
+    [0, 9, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 2],
+    [0, 10, 3],
+    [0, 10, 4],
+    [0, 10, 6],
+    [0, 10, 7],
+    [0, 10, 8],
+    [0, 10, 5],
+    [0, 11, 5],
+];
 
 pub struct Disk5R1_20;
 impl GenNet for Disk5R1_20 {
@@ -21874,7 +26365,13 @@ impl GenNet for Disk5R1_20 {
 }
 
 #[inline(always)]
-unsafe fn disk5_r21_40_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r21_40_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 81] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -22674,34 +27171,162 @@ unsafe fn disk5_r21_40_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s61, s58) = (s61.mn(s58), s61.mx(s58));
         let (s59, s60) = (s59.mn(s60), s59.mx(s60));
         match r {
-            21 => { s37.store(out.offset(0 * ostride)); }
-            22 => { s35.store(out.offset(0 * ostride)); }
-            23 => { s39.store(out.offset(0 * ostride)); }
-            24 => { s40.store(out.offset(0 * ostride)); }
-            25 => { s41.store(out.offset(0 * ostride)); }
-            26 => { s38.store(out.offset(0 * ostride)); }
-            27 => { s72.store(out.offset(0 * ostride)); }
-            28 => { s71.store(out.offset(0 * ostride)); }
-            29 => { s70.store(out.offset(0 * ostride)); }
-            30 => { s67.store(out.offset(0 * ostride)); }
-            31 => { s68.store(out.offset(0 * ostride)); }
-            32 => { s56.store(out.offset(0 * ostride)); }
-            33 => { s57.store(out.offset(0 * ostride)); }
-            34 => { s55.store(out.offset(0 * ostride)); }
-            35 => { s63.store(out.offset(0 * ostride)); }
-            36 => { s62.store(out.offset(0 * ostride)); }
-            37 => { s61.store(out.offset(0 * ostride)); }
-            38 => { s58.store(out.offset(0 * ostride)); }
-            39 => { s59.store(out.offset(0 * ostride)); }
-            40 => { s60.store(out.offset(0 * ostride)); }
+            21 => {
+                s37.store(out.offset(0 * ostride));
+            }
+            22 => {
+                s35.store(out.offset(0 * ostride));
+            }
+            23 => {
+                s39.store(out.offset(0 * ostride));
+            }
+            24 => {
+                s40.store(out.offset(0 * ostride));
+            }
+            25 => {
+                s41.store(out.offset(0 * ostride));
+            }
+            26 => {
+                s38.store(out.offset(0 * ostride));
+            }
+            27 => {
+                s72.store(out.offset(0 * ostride));
+            }
+            28 => {
+                s71.store(out.offset(0 * ostride));
+            }
+            29 => {
+                s70.store(out.offset(0 * ostride));
+            }
+            30 => {
+                s67.store(out.offset(0 * ostride));
+            }
+            31 => {
+                s68.store(out.offset(0 * ostride));
+            }
+            32 => {
+                s56.store(out.offset(0 * ostride));
+            }
+            33 => {
+                s57.store(out.offset(0 * ostride));
+            }
+            34 => {
+                s55.store(out.offset(0 * ostride));
+            }
+            35 => {
+                s63.store(out.offset(0 * ostride));
+            }
+            36 => {
+                s62.store(out.offset(0 * ostride));
+            }
+            37 => {
+                s61.store(out.offset(0 * ostride));
+            }
+            38 => {
+                s58.store(out.offset(0 * ostride));
+            }
+            39 => {
+                s59.store(out.offset(0 * ostride));
+            }
+            40 => {
+                s60.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R21_40_S_IN: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const DISK5_R21_40_S_IN: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r21_40_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r21_40_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 92] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -23755,31 +28380,184 @@ unsafe fn disk5_r21_40_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s129, s130) = (s129.mn(s130), s129.mx(s130));
         let (s131, s132) = (s131.mn(s132), s131.mx(s132));
         match r {
-            21 => { s42.store(out.offset(0 * ostride)); s113.store(out.offset(1 * ostride)); }
-            22 => { s39.store(out.offset(0 * ostride)); s114.store(out.offset(1 * ostride)); }
-            23 => { s40.store(out.offset(0 * ostride)); s115.store(out.offset(1 * ostride)); }
-            24 => { s41.store(out.offset(0 * ostride)); s116.store(out.offset(1 * ostride)); }
-            25 => { s50.store(out.offset(0 * ostride)); s117.store(out.offset(1 * ostride)); }
-            26 => { s48.store(out.offset(0 * ostride)); s118.store(out.offset(1 * ostride)); }
-            27 => { s56.store(out.offset(0 * ostride)); s119.store(out.offset(1 * ostride)); }
-            28 => { s55.store(out.offset(0 * ostride)); s120.store(out.offset(1 * ostride)); }
-            29 => { s54.store(out.offset(0 * ostride)); s121.store(out.offset(1 * ostride)); }
-            30 => { s51.store(out.offset(0 * ostride)); s122.store(out.offset(1 * ostride)); }
-            31 => { s52.store(out.offset(0 * ostride)); s123.store(out.offset(1 * ostride)); }
-            32 => { s37.store(out.offset(0 * ostride)); s124.store(out.offset(1 * ostride)); }
-            33 => { s38.store(out.offset(0 * ostride)); s125.store(out.offset(1 * ostride)); }
-            34 => { s49.store(out.offset(0 * ostride)); s126.store(out.offset(1 * ostride)); }
-            35 => { s53.store(out.offset(0 * ostride)); s127.store(out.offset(1 * ostride)); }
-            36 => { s24.store(out.offset(0 * ostride)); s128.store(out.offset(1 * ostride)); }
-            37 => { s23.store(out.offset(0 * ostride)); s129.store(out.offset(1 * ostride)); }
-            38 => { s20.store(out.offset(0 * ostride)); s130.store(out.offset(1 * ostride)); }
-            39 => { s21.store(out.offset(0 * ostride)); s131.store(out.offset(1 * ostride)); }
-            40 => { s22.store(out.offset(0 * ostride)); s132.store(out.offset(1 * ostride)); }
+            21 => {
+                s42.store(out.offset(0 * ostride));
+                s113.store(out.offset(1 * ostride));
+            }
+            22 => {
+                s39.store(out.offset(0 * ostride));
+                s114.store(out.offset(1 * ostride));
+            }
+            23 => {
+                s40.store(out.offset(0 * ostride));
+                s115.store(out.offset(1 * ostride));
+            }
+            24 => {
+                s41.store(out.offset(0 * ostride));
+                s116.store(out.offset(1 * ostride));
+            }
+            25 => {
+                s50.store(out.offset(0 * ostride));
+                s117.store(out.offset(1 * ostride));
+            }
+            26 => {
+                s48.store(out.offset(0 * ostride));
+                s118.store(out.offset(1 * ostride));
+            }
+            27 => {
+                s56.store(out.offset(0 * ostride));
+                s119.store(out.offset(1 * ostride));
+            }
+            28 => {
+                s55.store(out.offset(0 * ostride));
+                s120.store(out.offset(1 * ostride));
+            }
+            29 => {
+                s54.store(out.offset(0 * ostride));
+                s121.store(out.offset(1 * ostride));
+            }
+            30 => {
+                s51.store(out.offset(0 * ostride));
+                s122.store(out.offset(1 * ostride));
+            }
+            31 => {
+                s52.store(out.offset(0 * ostride));
+                s123.store(out.offset(1 * ostride));
+            }
+            32 => {
+                s37.store(out.offset(0 * ostride));
+                s124.store(out.offset(1 * ostride));
+            }
+            33 => {
+                s38.store(out.offset(0 * ostride));
+                s125.store(out.offset(1 * ostride));
+            }
+            34 => {
+                s49.store(out.offset(0 * ostride));
+                s126.store(out.offset(1 * ostride));
+            }
+            35 => {
+                s53.store(out.offset(0 * ostride));
+                s127.store(out.offset(1 * ostride));
+            }
+            36 => {
+                s24.store(out.offset(0 * ostride));
+                s128.store(out.offset(1 * ostride));
+            }
+            37 => {
+                s23.store(out.offset(0 * ostride));
+                s129.store(out.offset(1 * ostride));
+            }
+            38 => {
+                s20.store(out.offset(0 * ostride));
+                s130.store(out.offset(1 * ostride));
+            }
+            39 => {
+                s21.store(out.offset(0 * ostride));
+                s131.store(out.offset(1 * ostride));
+            }
+            40 => {
+                s22.store(out.offset(0 * ostride));
+                s132.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R21_40_P_IN: [[u8; 3]; 92] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 0], [0, 6, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 1], [0, 9, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 2], [0, 10, 3], [0, 10, 4], [0, 10, 6], [0, 10, 7], [0, 10, 8], [0, 10, 5], [0, 11, 5]];
+const DISK5_R21_40_P_IN: [[u8; 3]; 92] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 0],
+    [0, 6, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 1],
+    [0, 9, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 2],
+    [0, 10, 3],
+    [0, 10, 4],
+    [0, 10, 6],
+    [0, 10, 7],
+    [0, 10, 8],
+    [0, 10, 5],
+    [0, 11, 5],
+];
 
 pub struct Disk5R21_40;
 impl GenNet for Disk5R21_40 {
@@ -23797,7 +28575,13 @@ impl GenNet for Disk5R21_40 {
 }
 
 #[inline(always)]
-unsafe fn disk5_r41_60_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r41_60_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 81] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -24601,34 +29385,162 @@ unsafe fn disk5_r41_60_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s19, s17) = (s19.mn(s17), s19.mx(s17));
         let (s25, s24) = (s25.mn(s24), s25.mx(s24));
         match r {
-            41 => { s66.store(out.offset(0 * ostride)); }
-            42 => { s64.store(out.offset(0 * ostride)); }
-            43 => { s69.store(out.offset(0 * ostride)); }
-            44 => { s65.store(out.offset(0 * ostride)); }
-            45 => { s52.store(out.offset(0 * ostride)); }
-            46 => { s49.store(out.offset(0 * ostride)); }
-            47 => { s50.store(out.offset(0 * ostride)); }
-            48 => { s47.store(out.offset(0 * ostride)); }
-            49 => { s51.store(out.offset(0 * ostride)); }
-            50 => { s8.store(out.offset(0 * ostride)); }
-            51 => { s16.store(out.offset(0 * ostride)); }
-            52 => { s15.store(out.offset(0 * ostride)); }
-            53 => { s14.store(out.offset(0 * ostride)); }
-            54 => { s11.store(out.offset(0 * ostride)); }
-            55 => { s12.store(out.offset(0 * ostride)); }
-            56 => { s13.store(out.offset(0 * ostride)); }
-            57 => { s19.store(out.offset(0 * ostride)); }
-            58 => { s17.store(out.offset(0 * ostride)); }
-            59 => { s25.store(out.offset(0 * ostride)); }
-            60 => { s24.store(out.offset(0 * ostride)); }
+            41 => {
+                s66.store(out.offset(0 * ostride));
+            }
+            42 => {
+                s64.store(out.offset(0 * ostride));
+            }
+            43 => {
+                s69.store(out.offset(0 * ostride));
+            }
+            44 => {
+                s65.store(out.offset(0 * ostride));
+            }
+            45 => {
+                s52.store(out.offset(0 * ostride));
+            }
+            46 => {
+                s49.store(out.offset(0 * ostride));
+            }
+            47 => {
+                s50.store(out.offset(0 * ostride));
+            }
+            48 => {
+                s47.store(out.offset(0 * ostride));
+            }
+            49 => {
+                s51.store(out.offset(0 * ostride));
+            }
+            50 => {
+                s8.store(out.offset(0 * ostride));
+            }
+            51 => {
+                s16.store(out.offset(0 * ostride));
+            }
+            52 => {
+                s15.store(out.offset(0 * ostride));
+            }
+            53 => {
+                s14.store(out.offset(0 * ostride));
+            }
+            54 => {
+                s11.store(out.offset(0 * ostride));
+            }
+            55 => {
+                s12.store(out.offset(0 * ostride));
+            }
+            56 => {
+                s13.store(out.offset(0 * ostride));
+            }
+            57 => {
+                s19.store(out.offset(0 * ostride));
+            }
+            58 => {
+                s17.store(out.offset(0 * ostride));
+            }
+            59 => {
+                s25.store(out.offset(0 * ostride));
+            }
+            60 => {
+                s24.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R41_60_S_IN: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const DISK5_R41_60_S_IN: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r41_60_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r41_60_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 92] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -25688,31 +30600,184 @@ unsafe fn disk5_r41_60_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s137, s138) = (s137.mn(s138), s137.mx(s138));
         let (s139, s140) = (s139.mn(s140), s139.mx(s140));
         match r {
-            41 => { s28.store(out.offset(0 * ostride)); s121.store(out.offset(1 * ostride)); }
-            42 => { s26.store(out.offset(0 * ostride)); s122.store(out.offset(1 * ostride)); }
-            43 => { s34.store(out.offset(0 * ostride)); s123.store(out.offset(1 * ostride)); }
-            44 => { s33.store(out.offset(0 * ostride)); s124.store(out.offset(1 * ostride)); }
-            45 => { s32.store(out.offset(0 * ostride)); s125.store(out.offset(1 * ostride)); }
-            46 => { s29.store(out.offset(0 * ostride)); s126.store(out.offset(1 * ostride)); }
-            47 => { s30.store(out.offset(0 * ostride)); s127.store(out.offset(1 * ostride)); }
-            48 => { s27.store(out.offset(0 * ostride)); s128.store(out.offset(1 * ostride)); }
-            49 => { s31.store(out.offset(0 * ostride)); s129.store(out.offset(1 * ostride)); }
-            50 => { s80.store(out.offset(0 * ostride)); s130.store(out.offset(1 * ostride)); }
-            51 => { s81.store(out.offset(0 * ostride)); s131.store(out.offset(1 * ostride)); }
-            52 => { s78.store(out.offset(0 * ostride)); s132.store(out.offset(1 * ostride)); }
-            53 => { s79.store(out.offset(0 * ostride)); s133.store(out.offset(1 * ostride)); }
-            54 => { s77.store(out.offset(0 * ostride)); s134.store(out.offset(1 * ostride)); }
-            55 => { s90.store(out.offset(0 * ostride)); s135.store(out.offset(1 * ostride)); }
-            56 => { s4.store(out.offset(0 * ostride)); s136.store(out.offset(1 * ostride)); }
-            57 => { s15.store(out.offset(0 * ostride)); s137.store(out.offset(1 * ostride)); }
-            58 => { s12.store(out.offset(0 * ostride)); s138.store(out.offset(1 * ostride)); }
-            59 => { s13.store(out.offset(0 * ostride)); s139.store(out.offset(1 * ostride)); }
-            60 => { s10.store(out.offset(0 * ostride)); s140.store(out.offset(1 * ostride)); }
+            41 => {
+                s28.store(out.offset(0 * ostride));
+                s121.store(out.offset(1 * ostride));
+            }
+            42 => {
+                s26.store(out.offset(0 * ostride));
+                s122.store(out.offset(1 * ostride));
+            }
+            43 => {
+                s34.store(out.offset(0 * ostride));
+                s123.store(out.offset(1 * ostride));
+            }
+            44 => {
+                s33.store(out.offset(0 * ostride));
+                s124.store(out.offset(1 * ostride));
+            }
+            45 => {
+                s32.store(out.offset(0 * ostride));
+                s125.store(out.offset(1 * ostride));
+            }
+            46 => {
+                s29.store(out.offset(0 * ostride));
+                s126.store(out.offset(1 * ostride));
+            }
+            47 => {
+                s30.store(out.offset(0 * ostride));
+                s127.store(out.offset(1 * ostride));
+            }
+            48 => {
+                s27.store(out.offset(0 * ostride));
+                s128.store(out.offset(1 * ostride));
+            }
+            49 => {
+                s31.store(out.offset(0 * ostride));
+                s129.store(out.offset(1 * ostride));
+            }
+            50 => {
+                s80.store(out.offset(0 * ostride));
+                s130.store(out.offset(1 * ostride));
+            }
+            51 => {
+                s81.store(out.offset(0 * ostride));
+                s131.store(out.offset(1 * ostride));
+            }
+            52 => {
+                s78.store(out.offset(0 * ostride));
+                s132.store(out.offset(1 * ostride));
+            }
+            53 => {
+                s79.store(out.offset(0 * ostride));
+                s133.store(out.offset(1 * ostride));
+            }
+            54 => {
+                s77.store(out.offset(0 * ostride));
+                s134.store(out.offset(1 * ostride));
+            }
+            55 => {
+                s90.store(out.offset(0 * ostride));
+                s135.store(out.offset(1 * ostride));
+            }
+            56 => {
+                s4.store(out.offset(0 * ostride));
+                s136.store(out.offset(1 * ostride));
+            }
+            57 => {
+                s15.store(out.offset(0 * ostride));
+                s137.store(out.offset(1 * ostride));
+            }
+            58 => {
+                s12.store(out.offset(0 * ostride));
+                s138.store(out.offset(1 * ostride));
+            }
+            59 => {
+                s13.store(out.offset(0 * ostride));
+                s139.store(out.offset(1 * ostride));
+            }
+            60 => {
+                s10.store(out.offset(0 * ostride));
+                s140.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R41_60_P_IN: [[u8; 3]; 92] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 0], [0, 6, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 1], [0, 9, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 2], [0, 10, 3], [0, 10, 4], [0, 10, 6], [0, 10, 7], [0, 10, 8], [0, 10, 5], [0, 11, 5]];
+const DISK5_R41_60_P_IN: [[u8; 3]; 92] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 0],
+    [0, 6, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 1],
+    [0, 9, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 2],
+    [0, 10, 3],
+    [0, 10, 4],
+    [0, 10, 6],
+    [0, 10, 7],
+    [0, 10, 8],
+    [0, 10, 5],
+    [0, 11, 5],
+];
 
 pub struct Disk5R41_60;
 impl GenNet for Disk5R41_60 {
@@ -25730,7 +30795,13 @@ impl GenNet for Disk5R41_60 {
 }
 
 #[inline(always)]
-unsafe fn disk5_r61_79_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r61_79_s<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 81] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -26512,33 +31583,159 @@ unsafe fn disk5_r61_79_s<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s10, s18) = (s10.mn(s18), s10.mx(s18));
         let s22 = s22.mn(s9);
         match r {
-            61 => { s23.store(out.offset(0 * ostride)); }
-            62 => { s20.store(out.offset(0 * ostride)); }
-            63 => { s21.store(out.offset(0 * ostride)); }
-            64 => { s27.store(out.offset(0 * ostride)); }
-            65 => { s28.store(out.offset(0 * ostride)); }
-            66 => { s26.store(out.offset(0 * ostride)); }
-            67 => { s34.store(out.offset(0 * ostride)); }
-            68 => { s33.store(out.offset(0 * ostride)); }
-            69 => { s32.store(out.offset(0 * ostride)); }
-            70 => { s29.store(out.offset(0 * ostride)); }
-            71 => { s30.store(out.offset(0 * ostride)); }
-            72 => { s31.store(out.offset(0 * ostride)); }
-            73 => { s48.store(out.offset(0 * ostride)); }
-            74 => { s46.store(out.offset(0 * ostride)); }
-            75 => { s54.store(out.offset(0 * ostride)); }
-            76 => { s53.store(out.offset(0 * ostride)); }
-            77 => { s10.store(out.offset(0 * ostride)); }
-            78 => { s18.store(out.offset(0 * ostride)); }
-            79 => { s22.store(out.offset(0 * ostride)); }
+            61 => {
+                s23.store(out.offset(0 * ostride));
+            }
+            62 => {
+                s20.store(out.offset(0 * ostride));
+            }
+            63 => {
+                s21.store(out.offset(0 * ostride));
+            }
+            64 => {
+                s27.store(out.offset(0 * ostride));
+            }
+            65 => {
+                s28.store(out.offset(0 * ostride));
+            }
+            66 => {
+                s26.store(out.offset(0 * ostride));
+            }
+            67 => {
+                s34.store(out.offset(0 * ostride));
+            }
+            68 => {
+                s33.store(out.offset(0 * ostride));
+            }
+            69 => {
+                s32.store(out.offset(0 * ostride));
+            }
+            70 => {
+                s29.store(out.offset(0 * ostride));
+            }
+            71 => {
+                s30.store(out.offset(0 * ostride));
+            }
+            72 => {
+                s31.store(out.offset(0 * ostride));
+            }
+            73 => {
+                s48.store(out.offset(0 * ostride));
+            }
+            74 => {
+                s46.store(out.offset(0 * ostride));
+            }
+            75 => {
+                s54.store(out.offset(0 * ostride));
+            }
+            76 => {
+                s53.store(out.offset(0 * ostride));
+            }
+            77 => {
+                s10.store(out.offset(0 * ostride));
+            }
+            78 => {
+                s18.store(out.offset(0 * ostride));
+            }
+            79 => {
+                s22.store(out.offset(0 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R61_79_S_IN: [[u8; 3]; 81] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 5]];
+const DISK5_R61_79_S_IN: [[u8; 3]; 81] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 5],
+];
 
 #[inline(always)]
-unsafe fn disk5_r61_79_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ostride: isize, r: usize) {
+unsafe fn disk5_r61_79_p<T, V: Vx<T>>(
+    p: *const T,
+    o: &[isize],
+    out: *mut T,
+    ostride: isize,
+    r: usize,
+) {
     let o: &[isize; 92] = o.try_into().unwrap();
     unsafe {
         let s0 = V::load(p.offset(o[0]));
@@ -27539,30 +32736,180 @@ unsafe fn disk5_r61_79_p<T, V: Vx<T>>(p: *const T, o: &[isize], out: *mut T, ost
         let (s89, s84) = (s89.mn(s84), s89.mx(s84));
         let s87 = s87.mn(s86);
         match r {
-            61 => { s11.store(out.offset(0 * ostride)); s128.store(out.offset(1 * ostride)); }
-            62 => { s9.store(out.offset(0 * ostride)); s129.store(out.offset(1 * ostride)); }
-            63 => { s14.store(out.offset(0 * ostride)); s130.store(out.offset(1 * ostride)); }
-            64 => { s18.store(out.offset(0 * ostride)); s131.store(out.offset(1 * ostride)); }
-            65 => { s19.store(out.offset(0 * ostride)); s132.store(out.offset(1 * ostride)); }
-            66 => { s17.store(out.offset(0 * ostride)); s133.store(out.offset(1 * ostride)); }
-            67 => { s25.store(out.offset(0 * ostride)); s134.store(out.offset(1 * ostride)); }
-            68 => { s82.store(out.offset(0 * ostride)); s135.store(out.offset(1 * ostride)); }
-            69 => { s83.store(out.offset(0 * ostride)); s136.store(out.offset(1 * ostride)); }
-            70 => { s0.store(out.offset(0 * ostride)); s91.store(out.offset(1 * ostride)); }
-            71 => { s16.store(out.offset(0 * ostride)); s47.store(out.offset(1 * ostride)); }
-            72 => { s35.store(out.offset(0 * ostride)); s75.store(out.offset(1 * ostride)); }
-            73 => { s45.store(out.offset(0 * ostride)); s76.store(out.offset(1 * ostride)); }
-            74 => { s8.store(out.offset(0 * ostride)); s46.store(out.offset(1 * ostride)); }
-            75 => { s2.store(out.offset(0 * ostride)); s85.store(out.offset(1 * ostride)); }
-            76 => { s6.store(out.offset(0 * ostride)); s88.store(out.offset(1 * ostride)); }
-            77 => { s7.store(out.offset(0 * ostride)); s89.store(out.offset(1 * ostride)); }
-            78 => { s1.store(out.offset(0 * ostride)); s84.store(out.offset(1 * ostride)); }
-            79 => { s5.store(out.offset(0 * ostride)); s87.store(out.offset(1 * ostride)); }
+            61 => {
+                s11.store(out.offset(0 * ostride));
+                s128.store(out.offset(1 * ostride));
+            }
+            62 => {
+                s9.store(out.offset(0 * ostride));
+                s129.store(out.offset(1 * ostride));
+            }
+            63 => {
+                s14.store(out.offset(0 * ostride));
+                s130.store(out.offset(1 * ostride));
+            }
+            64 => {
+                s18.store(out.offset(0 * ostride));
+                s131.store(out.offset(1 * ostride));
+            }
+            65 => {
+                s19.store(out.offset(0 * ostride));
+                s132.store(out.offset(1 * ostride));
+            }
+            66 => {
+                s17.store(out.offset(0 * ostride));
+                s133.store(out.offset(1 * ostride));
+            }
+            67 => {
+                s25.store(out.offset(0 * ostride));
+                s134.store(out.offset(1 * ostride));
+            }
+            68 => {
+                s82.store(out.offset(0 * ostride));
+                s135.store(out.offset(1 * ostride));
+            }
+            69 => {
+                s83.store(out.offset(0 * ostride));
+                s136.store(out.offset(1 * ostride));
+            }
+            70 => {
+                s0.store(out.offset(0 * ostride));
+                s91.store(out.offset(1 * ostride));
+            }
+            71 => {
+                s16.store(out.offset(0 * ostride));
+                s47.store(out.offset(1 * ostride));
+            }
+            72 => {
+                s35.store(out.offset(0 * ostride));
+                s75.store(out.offset(1 * ostride));
+            }
+            73 => {
+                s45.store(out.offset(0 * ostride));
+                s76.store(out.offset(1 * ostride));
+            }
+            74 => {
+                s8.store(out.offset(0 * ostride));
+                s46.store(out.offset(1 * ostride));
+            }
+            75 => {
+                s2.store(out.offset(0 * ostride));
+                s85.store(out.offset(1 * ostride));
+            }
+            76 => {
+                s6.store(out.offset(0 * ostride));
+                s88.store(out.offset(1 * ostride));
+            }
+            77 => {
+                s7.store(out.offset(0 * ostride));
+                s89.store(out.offset(1 * ostride));
+            }
+            78 => {
+                s1.store(out.offset(0 * ostride));
+                s84.store(out.offset(1 * ostride));
+            }
+            79 => {
+                s5.store(out.offset(0 * ostride));
+                s87.store(out.offset(1 * ostride));
+            }
             _ => {}
         }
     }
 }
-const DISK5_R61_79_P_IN: [[u8; 3]; 92] = [[0, 0, 5], [0, 1, 2], [0, 1, 3], [0, 1, 4], [0, 1, 5], [0, 1, 6], [0, 1, 7], [0, 1, 8], [0, 2, 1], [0, 2, 2], [0, 2, 3], [0, 2, 4], [0, 2, 5], [0, 2, 6], [0, 2, 7], [0, 2, 8], [0, 2, 9], [0, 3, 1], [0, 3, 2], [0, 3, 3], [0, 3, 4], [0, 3, 5], [0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 3, 9], [0, 4, 1], [0, 4, 2], [0, 4, 3], [0, 4, 4], [0, 4, 5], [0, 4, 6], [0, 4, 7], [0, 4, 8], [0, 4, 9], [0, 5, 0], [0, 5, 1], [0, 5, 2], [0, 5, 3], [0, 5, 4], [0, 5, 5], [0, 5, 6], [0, 5, 7], [0, 5, 8], [0, 5, 9], [0, 5, 10], [0, 6, 0], [0, 6, 10], [0, 6, 1], [0, 6, 2], [0, 6, 3], [0, 6, 4], [0, 6, 5], [0, 6, 6], [0, 6, 7], [0, 6, 8], [0, 6, 9], [0, 7, 1], [0, 7, 2], [0, 7, 3], [0, 7, 4], [0, 7, 5], [0, 7, 6], [0, 7, 7], [0, 7, 8], [0, 7, 9], [0, 8, 1], [0, 8, 2], [0, 8, 3], [0, 8, 4], [0, 8, 5], [0, 8, 6], [0, 8, 7], [0, 8, 8], [0, 8, 9], [0, 9, 1], [0, 9, 9], [0, 9, 2], [0, 9, 3], [0, 9, 4], [0, 9, 5], [0, 9, 6], [0, 9, 7], [0, 9, 8], [0, 10, 2], [0, 10, 3], [0, 10, 4], [0, 10, 6], [0, 10, 7], [0, 10, 8], [0, 10, 5], [0, 11, 5]];
+const DISK5_R61_79_P_IN: [[u8; 3]; 92] = [
+    [0, 0, 5],
+    [0, 1, 2],
+    [0, 1, 3],
+    [0, 1, 4],
+    [0, 1, 5],
+    [0, 1, 6],
+    [0, 1, 7],
+    [0, 1, 8],
+    [0, 2, 1],
+    [0, 2, 2],
+    [0, 2, 3],
+    [0, 2, 4],
+    [0, 2, 5],
+    [0, 2, 6],
+    [0, 2, 7],
+    [0, 2, 8],
+    [0, 2, 9],
+    [0, 3, 1],
+    [0, 3, 2],
+    [0, 3, 3],
+    [0, 3, 4],
+    [0, 3, 5],
+    [0, 3, 6],
+    [0, 3, 7],
+    [0, 3, 8],
+    [0, 3, 9],
+    [0, 4, 1],
+    [0, 4, 2],
+    [0, 4, 3],
+    [0, 4, 4],
+    [0, 4, 5],
+    [0, 4, 6],
+    [0, 4, 7],
+    [0, 4, 8],
+    [0, 4, 9],
+    [0, 5, 0],
+    [0, 5, 1],
+    [0, 5, 2],
+    [0, 5, 3],
+    [0, 5, 4],
+    [0, 5, 5],
+    [0, 5, 6],
+    [0, 5, 7],
+    [0, 5, 8],
+    [0, 5, 9],
+    [0, 5, 10],
+    [0, 6, 0],
+    [0, 6, 10],
+    [0, 6, 1],
+    [0, 6, 2],
+    [0, 6, 3],
+    [0, 6, 4],
+    [0, 6, 5],
+    [0, 6, 6],
+    [0, 6, 7],
+    [0, 6, 8],
+    [0, 6, 9],
+    [0, 7, 1],
+    [0, 7, 2],
+    [0, 7, 3],
+    [0, 7, 4],
+    [0, 7, 5],
+    [0, 7, 6],
+    [0, 7, 7],
+    [0, 7, 8],
+    [0, 7, 9],
+    [0, 8, 1],
+    [0, 8, 2],
+    [0, 8, 3],
+    [0, 8, 4],
+    [0, 8, 5],
+    [0, 8, 6],
+    [0, 8, 7],
+    [0, 8, 8],
+    [0, 8, 9],
+    [0, 9, 1],
+    [0, 9, 9],
+    [0, 9, 2],
+    [0, 9, 3],
+    [0, 9, 4],
+    [0, 9, 5],
+    [0, 9, 6],
+    [0, 9, 7],
+    [0, 9, 8],
+    [0, 10, 2],
+    [0, 10, 3],
+    [0, 10, 4],
+    [0, 10, 6],
+    [0, 10, 7],
+    [0, 10, 8],
+    [0, 10, 5],
+    [0, 11, 5],
+];
 
 pub struct Disk5R61_79;
 impl GenNet for Disk5R61_79 {

@@ -4,6 +4,7 @@ distributions, Rust ranking, and a few algorithmic shortcuts.
 Order matters: distribution methods first (the discrete shortcuts wrap them), ranking and
 shortcuts next, per-function fast paths last (``mannwhitneyu`` ranks through the Rust ``_rankdata``).
 """
+
 import os
 
 import numpy as np
@@ -13,7 +14,7 @@ from . import _patch, _stats_algos, _stats_dist, _stats_loop, _stats_rank
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     if os.environ.get("SCIPY_ARRAY_API", "0") not in ("", "0"):
         raise RuntimeError("SCIPY_ARRAY_API is set")
     _stats_dist.patch()

@@ -6,17 +6,31 @@
 * ``_signal_algo``: Rust kernels for peak finding, ``dlsim`` and direct 2-D correlation
   (faithful ports, checked bit for bit).
 """
+
 import importlib
 
 import numpy as np
 
 from . import _patch
 
-_FUNCS = {"_signaltools": ("sosfilt", "sosfiltfilt", "lfilter", "filtfilt", "lfilter_zi", "sosfilt_zi",
-                           "detrend", "hilbert", "decimate", "resample_poly", "medfilt2d"),
-          "_filter_design": ("iirfilter",),
-          "_spectral_py": ("welch", "csd"),
-          "_upfirdn": ("upfirdn",)}
+_FUNCS = {
+    "_signaltools": (
+        "sosfilt",
+        "sosfiltfilt",
+        "lfilter",
+        "filtfilt",
+        "lfilter_zi",
+        "sosfilt_zi",
+        "detrend",
+        "hilbert",
+        "decimate",
+        "resample_poly",
+        "medfilt2d",
+    ),
+    "_filter_design": ("iirfilter",),
+    "_spectral_py": ("welch", "csd"),
+    "_upfirdn": ("upfirdn",),
+}
 
 
 def _first(*paths):
@@ -29,13 +43,15 @@ def _first(*paths):
             if result is not NotImplemented:
                 return result
         return NotImplemented
+
     return fast
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     from . import _signal_small as small
     from . import _signal_threads as threads
+
     small.orig.clear()
     for mod, names in _FUNCS.items():
         owner = importlib.import_module(f"scipy.signal.{mod}")
@@ -50,8 +66,12 @@ def _patch_algo():
     from scipy.signal import _ltisys, _peak_finding_utils, _sigtools
 
     from . import _signal_algo as algo
-    for owner, name in ((_peak_finding_utils, "_peak_prominences"), (_peak_finding_utils, "_peak_widths"),
-                        (_ltisys, "dlsim")):
+
+    for owner, name in (
+        (_peak_finding_utils, "_peak_prominences"),
+        (_peak_finding_utils, "_peak_widths"),
+        (_ltisys, "dlsim"),
+    ):
         old = getattr(owner, name)
         _patch.rebind(old, _patch.wrap(old, getattr(algo, name.lstrip("_"))))
     # `_signaltools` calls these through the extension module, so its attributes are the seam
@@ -61,6 +81,7 @@ def _patch_algo():
 
 def smoke():
     import scipy.signal as sg
+
     rng = np.random.default_rng(0)
     x = rng.standard_normal((4, 300))
     big = rng.standard_normal((8, 1 << 14))

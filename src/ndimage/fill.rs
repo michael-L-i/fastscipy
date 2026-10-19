@@ -14,12 +14,18 @@ use pyo3::prelude::*;
 use rayon::prelude::*;
 
 use crate::ndimage::common::pool;
-use crate::ndimage::label::{connect, coords, extract_bytes, find_root, Block, Geo, Run, PAR_MIN};
+use crate::ndimage::label::{Block, Geo, PAR_MIN, Run, connect, coords, extract_bytes, find_root};
 
 /// Runs of V = in | mask on one line, plus the S runs of `in` for seeding.
 fn extract_block_fill(
-    g: &Geo, inp: &[u8], mask: Option<&[u8]>, start: usize, end: usize,
-    seed_ends: bool, border_offs: &[Vec<i64>], border_value: bool,
+    g: &Geo,
+    inp: &[u8],
+    mask: Option<&[u8]>,
+    start: usize,
+    end: usize,
+    seed_ends: bool,
+    border_offs: &[Vec<i64>],
+    border_value: bool,
 ) -> (Block, Vec<u8>) {
     let w = g.w;
     let mut runs: Vec<Run> = Vec::new();
@@ -88,20 +94,38 @@ fn extract_block_fill(
         }
     }
     line_start.push(runs.len() as u32);
-    (Block { start, runs, line_start }, seeds)
+    (
+        Block {
+            start,
+            runs,
+            line_start,
+        },
+        seeds,
+    )
 }
 
 fn fill_symmetric(
-    shape: &[usize], st3: &[u8], inp: &[u8], mask: Option<&[u8]>, out: &mut [u8],
-    border_value: bool, nthreads: usize,
+    shape: &[usize],
+    st3: &[u8],
+    inp: &[u8],
+    mask: Option<&[u8]>,
+    out: &mut [u8],
+    border_value: bool,
+    nthreads: usize,
 ) {
     let g = Geo::new(shape, st3);
     // fully connected in-line: required (checked by the caller)
     let n = inp.len();
-    let nblocks = if nthreads <= 1 || n < PAR_MIN.load(std::sync::atomic::Ordering::Relaxed) { 1 } else { (nthreads * 4).min(g.nlines) };
+    let nblocks = if nthreads <= 1 || n < PAR_MIN.load(std::sync::atomic::Ordering::Relaxed) {
+        1
+    } else {
+        (nthreads * 4).min(g.nlines)
+    };
     let bl = g.nlines.div_ceil(nblocks);
     let nblocks = g.nlines.div_ceil(bl);
-    let bounds: Vec<(usize, usize)> = (0..nblocks).map(|b| (b * bl, ((b + 1) * bl).min(g.nlines))).collect();
+    let bounds: Vec<(usize, usize)> = (0..nblocks)
+        .map(|b| (b * bl, ((b + 1) * bl).min(g.nlines)))
+        .collect();
     // lines that see the border: any non-zero other-dim offset present in the structure
     let nd = shape.len();
     let od = nd - 1;
@@ -118,16 +142,22 @@ fn fill_symmetric(
         let base = code * 3;
         let (p, a, nx) = (st3[base] != 0, st3[base + 1] != 0, st3[base + 2] != 0);
         if o.iter().all(|&x| x == 0) {
-            if p || nx { seed_ends = true; }
+            if p || nx {
+                seed_ends = true;
+            }
         } else if p || a || nx {
             border_offs.push(o);
-            if p || nx { seed_ends = true; }
+            if p || nx {
+                seed_ends = true;
+            }
         }
     }
     pool().install(|| {
         let parts: Vec<(Block, Vec<u8>)> = bounds
             .par_iter()
-            .map(|&(s, e)| extract_block_fill(&g, inp, mask, s, e, seed_ends, &border_offs, border_value))
+            .map(|&(s, e)| {
+                extract_block_fill(&g, inp, mask, s, e, seed_ends, &border_offs, border_value)
+            })
             .collect();
         let mut blocks = Vec::with_capacity(nblocks);
         let mut seeds = Vec::with_capacity(nblocks);
@@ -165,26 +195,35 @@ fn fill_symmetric(
         }
         let parent = &parent;
         let seeded = &seeded;
-        chunks.par_iter_mut().zip(blocks.par_iter()).zip(bases.par_iter()).for_each(|((o, blk), &base)| {
-            let nl = blk.line_start.len() - 1;
-            for li in 0..nl {
-                let ol = &mut o[li * g.w..(li + 1) * g.w];
-                ol.fill(0);
-                for r in blk.line_start[li] as usize..blk.line_start[li + 1] as usize {
-                    let root = parent[base as usize + r] as usize;
-                    if seeded[root] != 0 {
-                        let [s, e] = blk.runs[r];
-                        ol[s as usize..e as usize].fill(1);
+        chunks
+            .par_iter_mut()
+            .zip(blocks.par_iter())
+            .zip(bases.par_iter())
+            .for_each(|((o, blk), &base)| {
+                let nl = blk.line_start.len() - 1;
+                for li in 0..nl {
+                    let ol = &mut o[li * g.w..(li + 1) * g.w];
+                    ol.fill(0);
+                    for r in blk.line_start[li] as usize..blk.line_start[li + 1] as usize {
+                        let root = parent[base as usize + r] as usize;
+                        if seeded[root] != 0 {
+                            let [s, e] = blk.runs[r];
+                            ol[s as usize..e as usize].fill(1);
+                        }
                     }
                 }
-            }
-        });
+            });
     });
 }
 
 /// Breadth-first closure for arbitrary offset sets D (0 in D).
 fn fill_bfs(
-    shape: &[usize], offs: &[Vec<i64>], inp: &[u8], mask: Option<&[u8]>, out: &mut [u8], border_value: bool,
+    shape: &[usize],
+    offs: &[Vec<i64>],
+    inp: &[u8],
+    mask: Option<&[u8]>,
+    out: &mut [u8],
+    border_value: bool,
 ) {
     let nd = shape.len();
     let n = inp.len();
@@ -192,7 +231,10 @@ fn fill_bfs(
     for d in (0..nd.saturating_sub(1)).rev() {
         stride[d] = stride[d + 1] * shape[d + 1] as i64;
     }
-    let lin: Vec<i64> = offs.iter().map(|o| o.iter().zip(&stride).map(|(a, b)| a * b).sum()).collect();
+    let lin: Vec<i64> = offs
+        .iter()
+        .map(|o| o.iter().zip(&stride).map(|(a, b)| a * b).sum())
+        .collect();
     let mut queue: Vec<u64> = Vec::new();
     let mut c = vec![0i64; nd];
     for i in 0..n {
@@ -287,7 +329,10 @@ fn fill_core<'py>(
     // symmetric and within one pixel?
     let set: std::collections::HashSet<Vec<i64>> = offsets.iter().cloned().collect();
     let sym = allow_symmetric
-        && offsets.iter().all(|d| d.iter().all(|&x| x.abs() <= 1) && set.contains(&d.iter().map(|x| -x).collect::<Vec<_>>()))
+        && offsets.iter().all(|d| {
+            d.iter().all(|&x| x.abs() <= 1)
+                && set.contains(&d.iter().map(|x| -x).collect::<Vec<_>>())
+        })
         && shape[nd - 1] < (1 << 30);
     let nthreads = crate::ndimage::common::num_threads();
     if sym {
@@ -306,7 +351,9 @@ fn fill_core<'py>(
             set.contains(&z)
         };
         if cl && inp_s.len() < (u32::MAX as usize) - 2 {
-            py.detach(|| fill_symmetric(&shape, &st3, inp_s, mask_s, out_s, border_value, nthreads));
+            py.detach(|| {
+                fill_symmetric(&shape, &st3, inp_s, mask_s, out_s, border_value, nthreads)
+            });
             return Ok(true);
         }
     }

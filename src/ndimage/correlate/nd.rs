@@ -11,7 +11,7 @@
 use numpy::{PyUntypedArray, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 
-use super::cast::{self, for_each_task, LoadFn, Raw, StoreFn};
+use super::cast::{self, LoadFn, Raw, StoreFn, for_each_task};
 use super::ext::nd_map;
 use super::kern::{self, Tap};
 use crate::ndimage::common::Mode;
@@ -65,7 +65,10 @@ impl Job {
         let base = row * self.n;
         let end = j0 + cnt;
         // Positions orgn..orgn+n map to columns 0..n; the rest go through the map.
-        let (lo, hi) = (self.orgn.max(j0).min(end), (self.orgn + self.n).max(j0).min(end));
+        let (lo, hi) = (
+            self.orgn.max(j0).min(end),
+            (self.orgn + self.n).max(j0).min(end),
+        );
         let one = |q: usize, ext: &mut [f64]| {
             // Source column (or None for cval) of extended position q.
             let c = nd_map(q as isize - self.orgn as isize, self.n as isize, self.mode);
@@ -82,7 +85,13 @@ impl Job {
             one(q, ext);
         }
         if hi > lo {
-            unsafe { (self.load)(self.src.at(base + lo - self.orgn), hi - lo, ext.as_mut_ptr().add(lo - j0)) };
+            unsafe {
+                (self.load)(
+                    self.src.at(base + lo - self.orgn),
+                    hi - lo,
+                    ext.as_mut_ptr().add(lo - j0),
+                )
+            };
         }
         for q in hi.max(lo)..end {
             one(q, ext);
@@ -113,9 +122,11 @@ pub fn corr_correlate(
     origins: Vec<i64>,
     fused: bool,
 ) -> PyResult<bool> {
-    let (Some(src), Some(dst), Some(wr)) =
-        (cast::raw(py, input, false), cast::raw(py, output, true), cast::raw(py, weights, false))
-    else {
+    let (Some(src), Some(dst), Some(wr)) = (
+        cast::raw(py, input, false),
+        cast::raw(py, output, true),
+        cast::raw(py, weights, false),
+    ) else {
         return Ok(false);
     };
     let shape = input.shape().to_vec();
@@ -126,13 +137,15 @@ pub fn corr_correlate(
         || wr.dt != cast::DType::F64
         || fshape.len() != nd
         || origins.len() != nd
-        || fshape.iter().any(|&f| f == 0)
-        || shape.iter().any(|&s| s == 0)
+        || fshape.contains(&0)
+        || shape.contains(&0)
         || src.overlaps(&dst)
     {
         return Ok(false);
     }
-    let Some(mode) = Mode::from_code(mode) else { return Ok(false) };
+    let Some(mode) = Mode::from_code(mode) else {
+        return Ok(false);
+    };
     let mut orgn = vec![0isize; nd];
     for d in 0..nd {
         let f = fshape[d] as i64;
@@ -149,7 +162,10 @@ pub fn corr_correlate(
         let lo = -orgn[d];
         let hi = len + fshape[d] as isize - 2 - orgn[d];
         let outside = (lo..0).chain(len..=hi);
-        if outside.into_iter().any(|cc| nd_map(cc, len, mode).is_some_and(|m| m < 0 || m >= len)) {
+        if outside
+            .into_iter()
+            .any(|cc| nd_map(cc, len, mode).is_some_and(|m| m < 0 || m >= len))
+        {
             return Ok(false);
         }
     }
@@ -177,10 +193,15 @@ pub fn corr_correlate(
                 groups.push(off);
                 groups.len() - 1
             });
-            taps.push(Tap { row: g, off: b, w: wv });
+            taps.push(Tap {
+                row: g,
+                off: b,
+                w: wv,
+            });
         }
     }
-    let dense = (nd == 2 && k <= kern::ND_PAIR_MAX_M && taps.len() == w.len() && fshape[0] <= 64).then(|| w.to_vec());
+    let dense = (nd == 2 && k <= kern::ND_PAIR_MAX_M && taps.len() == w.len() && fshape[0] <= 64)
+        .then(|| w.to_vec());
     let job = Job {
         src,
         dst,
@@ -223,7 +244,12 @@ fn run(job: &Job) {
                 stamps: vec![0; cap],
                 bufs: (0..cap).map(|_| vec![0.0f64; chunk + job.k - 1]).collect(),
             };
-            (cache, vec![std::ptr::null::<f64>(); ng + 1], vec![0.0f64; 2 * chunk], vec![0usize; job.lead.len()])
+            (
+                cache,
+                vec![std::ptr::null::<f64>(); ng + 1],
+                vec![0.0f64; 2 * chunk],
+                vec![0usize; job.lead.len()],
+            )
         },
         |(cache, ptrs, out, idx), task| {
             let blk = task / nchunks;
@@ -241,7 +267,13 @@ fn run(job: &Job) {
                         // Evict the least recently used entry not used by this step.
                         let s = (0..cap)
                             .filter(|&s| cache.stamps[s] != stamp || cache.keys[s] == EMPTY)
-                            .min_by_key(|&s| if cache.keys[s] == EMPTY { 0 } else { cache.stamps[s] })
+                            .min_by_key(|&s| {
+                                if cache.keys[s] == EMPTY {
+                                    0
+                                } else {
+                                    cache.stamps[s]
+                                }
+                            })
                             .unwrap();
                         let r = if key < 0 { None } else { Some(key as usize) };
                         unsafe { job.fill(r, j0, ecnt, &mut cache.bufs[s]) };
@@ -268,9 +300,21 @@ fn run(job: &Job) {
                         ptrs[g] = get(job.source_row(idx, g).map_or(-1, |r| r as isize), stamp);
                     }
                     idx[0] += 1;
-                    ptrs[ng] = get(job.source_row(idx, ng - 1).map_or(-1, |r| r as isize), stamp);
+                    ptrs[ng] = get(
+                        job.source_row(idx, ng - 1).map_or(-1, |r| r as isize),
+                        stamp,
+                    );
                     unsafe {
-                        kern::nd_pair(dense, job.k, &job.taps, &ptrs[..=ng], cnt, job.fused, out0.as_mut_ptr(), out1.as_mut_ptr());
+                        kern::nd_pair(
+                            dense,
+                            job.k,
+                            &job.taps,
+                            &ptrs[..=ng],
+                            cnt,
+                            job.fused,
+                            out0.as_mut_ptr(),
+                            out1.as_mut_ptr(),
+                        );
                         (job.store)(out0.as_ptr(), cnt, job.dst.at(row * n + j0));
                         (job.store)(out1.as_ptr(), cnt, job.dst.at((row + 1) * n + j0));
                     }

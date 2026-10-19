@@ -7,6 +7,7 @@ Each component replaces SciPy internals with faster code that returns the same
 bytes as SciPy, and hands any call it does not cover back to SciPy unchanged.
 Call ``patch()`` before importing libraries that do ``from scipy.x import f``.
 """
+
 import contextlib
 import importlib
 import logging
@@ -18,8 +19,19 @@ from ._threads import get_num_threads, set_num_threads
 __version__ = "0.1.0"
 __all__ = ["patch", "unpatch", "status", "stats", "disabled", "set_num_threads", "get_num_threads"]
 
-COMPONENTS = ("ndimage", "special", "stats", "signal", "sparse", "linalg", "interpolate", "spatial",
-              "csgraph", "integrate", "optimize")
+COMPONENTS = (
+    "ndimage",
+    "special",
+    "stats",
+    "signal",
+    "sparse",
+    "linalg",
+    "interpolate",
+    "spatial",
+    "csgraph",
+    "integrate",
+    "optimize",
+)
 _status = {}
 log = logging.getLogger("fastscipy")
 

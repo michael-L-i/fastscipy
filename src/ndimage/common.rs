@@ -69,17 +69,39 @@ macro_rules! dispatch_elem {
         #[allow(unused_imports)]
         use numpy::PyArrayDescrMethods as _;
         let __d = $descr;
-        if __d.is_equiv_to(&numpy::dtype::<u8>($py)) { type $T = u8; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<i8>($py)) { type $T = i8; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<u16>($py)) { type $T = u16; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<i16>($py)) { type $T = i16; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<u32>($py)) { type $T = u32; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<i32>($py)) { type $T = i32; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<u64>($py)) { type $T = u64; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<i64>($py)) { type $T = i64; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<f32>($py)) { type $T = f32; $body }
-        else if __d.is_equiv_to(&numpy::dtype::<f64>($py)) { type $T = f64; $body }
-        else { $otherwise }
+        if __d.is_equiv_to(&numpy::dtype::<u8>($py)) {
+            type $T = u8;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<i8>($py)) {
+            type $T = i8;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<u16>($py)) {
+            type $T = u16;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<i16>($py)) {
+            type $T = i16;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<u32>($py)) {
+            type $T = u32;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<i32>($py)) {
+            type $T = i32;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<u64>($py)) {
+            type $T = u64;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<i64>($py)) {
+            type $T = i64;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<f32>($py)) {
+            type $T = f32;
+            $body
+        } else if __d.is_equiv_to(&numpy::dtype::<f64>($py)) {
+            type $T = f64;
+            $body
+        } else {
+            $otherwise
+        }
     }};
 }
 
@@ -106,6 +128,7 @@ pub unsafe fn slice<'a, T: Elem>(a: &'a Bound<'_, PyArrayDyn<T>>) -> &'a [T] {
 /// # Safety
 /// The caller must ensure no other view of the array is alive, and that the
 /// array does not overlap the input (the Python shim guarantees this).
+#[allow(clippy::mut_from_ref)] // exclusivity is the caller's obligation, as above
 pub unsafe fn slice_mut<'a, T: Elem>(a: &'a Bound<'_, PyArrayDyn<T>>) -> &'a mut [T] {
     unsafe { a.as_slice_mut().expect("array must be C-contiguous") }
 }

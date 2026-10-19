@@ -6,6 +6,7 @@ parameters, so that is all done here, with the parameter checks cached per (dist
 parameters). NaN, inf, out-of-support values, array parameters, odd dtypes and user
 subclasses decline to SciPy.
 """
+
 import math
 import types
 import warnings
@@ -16,7 +17,7 @@ from scipy.stats import _distn_infrastructure as di
 
 from . import _patch
 
-_LIM = 2.0 ** 53
+_LIM = 2.0**53
 _INF = math.inf
 _BIG = 1e100
 _f8 = np.dtype("float64")
@@ -49,17 +50,21 @@ def _cls_info(cls):
     info = _CLS.get(cls)
     if info is None:
         info = _Cls()
-        info.ok = (cls.__module__ in _OK_MODULES
-                   and issubclass(cls, (di.rv_continuous, di.rv_discrete))
-                   and not issubclass(cls, di.rv_sample))
+        info.ok = (
+            cls.__module__ in _OK_MODULES
+            and issubclass(cls, (di.rv_continuous, di.rv_discrete))
+            and not issubclass(cls, di.rv_sample)
+        )
         info.discrete = issubclass(cls, di.rv_discrete)
         info.get_support_default = cls._get_support in (
             di.rv_generic._get_support,
             getattr(di.rv_continuous, "_get_support", None),
-            getattr(di.rv_discrete, "_get_support", None))
-        info.support_mask_default = (cls._support_mask is di.rv_generic._support_mask
-                                     and cls._open_support_mask
-                                     is di.rv_generic._open_support_mask)
+            getattr(di.rv_discrete, "_get_support", None),
+        )
+        info.support_mask_default = (
+            cls._support_mask is di.rv_generic._support_mask
+            and cls._open_support_mask is di.rv_generic._open_support_mask
+        )
         # the discrete default _nonzero is floor(k) == k; if overridden, defer.
         if info.discrete and cls._nonzero is not di.rv_discrete._nonzero:
             info.ok = False
@@ -250,8 +255,7 @@ def _cont_q(self, q, args, kwds, priv):
         return NotImplemented
     loc = _loc_scale_ok(loc)
     scale = _loc_scale_ok(scale)
-    if loc is None or scale is None or not (-_BIG < loc < _BIG) \
-            or not (1.0 / _BIG < scale < _BIG):
+    if loc is None or scale is None or not (-_BIG < loc < _BIG) or not (1.0 / _BIG < scale < _BIG):
         return NotImplemented
     ent = _entry(self, info, pa)
     if ent is None:
@@ -275,10 +279,9 @@ def _cont_q(self, q, args, kwds, priv):
     pargs = [_full(n, p) for p in args0d]
     try:
         vals = getattr(self, priv)(qf, *pargs) * _full(n, scale) + _full(n, loc)
-    except OverflowError:       # raised by the kernel; SciPy's own call raises it with its context
+    except OverflowError:  # raised by the kernel; SciPy's own call raises it with its context
         return NotImplemented
-    if n == 1 and shape == () and type(vals) is _ndarray and vals.dtype is _f8 \
-            and vals.shape == (1,):
+    if n == 1 and shape == () and type(vals) is _ndarray and vals.dtype is _f8 and vals.shape == (1,):
         return vals[0]
     return _finish(vals, shape, n)
 
@@ -331,8 +334,7 @@ def _disc_k(self, k, args, kwds, priv, kind):
             if kind == "cdf" or kind == "sf":
                 if ks == -math.inf:
                     return NotImplemented
-        if type(ks) is float and -math.inf < ks < math.inf \
-                and ks != math.floor(ks):
+        if type(ks) is float and -math.inf < ks < math.inf and ks != math.floor(ks):
             return NotImplemented
         kf = np.array([ks])
         shape = ()
@@ -410,7 +412,6 @@ def _disc_q(self, q, args, kwds, priv):
     return _finish(vals, shape, n)
 
 
-
 # --------------------------------------------------------------------------
 # cheap frozen distributions
 # --------------------------------------------------------------------------
@@ -424,7 +425,7 @@ def _attach_argparser_methods(self):
     if code is None:
         code = _TEMPLATE_CODE[tpl] = compile(tpl, "<string>", "exec")
     ns = {}
-    exec(code, ns)
+    exec(code, ns)  # as SciPy's rv_generic._attach_argparser_methods does; the template is SciPy's
     for name in ("_parse_args", "_parse_args_stats", "_parse_args_rvs"):
         setattr(self, name, types.MethodType(ns[name], self))
 
@@ -440,7 +441,7 @@ def _clone(dist):
         # (module code may attach extras, such as ``_support``, to the shared instance later).
         fresh = cls(**dist._updated_ctor_param())
         odd = any(isinstance(v, types.MethodType) and v.__self__ is not fresh for v in fresh.__dict__.values())
-        _KEYS[cls] = False if odd else frozenset(fresh.__dict__)   # poisson_binom binds another instance
+        _KEYS[cls] = False if odd else frozenset(fresh.__dict__)  # poisson_binom binds another instance
         return fresh
     if keys is False:
         return NotImplemented
@@ -464,8 +465,12 @@ def _frozen_init(self, dist, *args, **kwds):
 # installation
 # --------------------------------------------------------------------------
 _CONT_X = {  # method: (private method, closed support?, post)
-    "pdf": ("_pdf", True, 1), "logpdf": ("_logpdf", True, 2), "cdf": ("_cdf", False, 0),
-    "logcdf": ("_logcdf", False, 0), "sf": ("_sf", False, 0), "logsf": ("_logsf", False, 0),
+    "pdf": ("_pdf", True, 1),
+    "logpdf": ("_logpdf", True, 2),
+    "cdf": ("_cdf", False, 0),
+    "logcdf": ("_logcdf", False, 0),
+    "sf": ("_sf", False, 0),
+    "logsf": ("_logsf", False, 0),
 }
 _DISC_K = ("pmf", "logpmf", "cdf", "logcdf", "sf", "logsf")
 

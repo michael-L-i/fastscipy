@@ -14,8 +14,18 @@ const NONE: u32 = u32::MAX;
 trait Val: Copy + Send + Sync {
     fn v(self) -> i32;
 }
-impl Val for u8 { #[inline(always)] fn v(self) -> i32 { self as i32 } }
-impl Val for u16 { #[inline(always)] fn v(self) -> i32 { self as i32 } }
+impl Val for u8 {
+    #[inline(always)]
+    fn v(self) -> i32 {
+        self as i32
+    }
+}
+impl Val for u16 {
+    #[inline(always)]
+    fn v(self) -> i32 {
+        self as i32
+    }
+}
 
 #[inline(always)]
 fn wrap(label: i32, bits: u32) -> i32 {
@@ -38,7 +48,15 @@ struct El {
 fn watershed<I: Val>(input: &[I], markers: &[i32], nstrides: &[i64], lab: &mut [i32], bits: u32) {
     let size = input.len();
     let maxval = input.iter().map(|x| x.v()).max().unwrap_or(0) as usize;
-    let mut e = vec![El { next: NONE, prev: NONE, cost: maxval as u32 + 1, done: 0 }; size];
+    let mut e = vec![
+        El {
+            next: NONE,
+            prev: NONE,
+            cost: maxval as u32 + 1,
+            done: 0
+        };
+        size
+    ];
     let mut first = vec![NONE; maxval + 2];
     let mut last = vec![NONE; maxval + 2];
     for j in 0..size {

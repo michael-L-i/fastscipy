@@ -1,6 +1,16 @@
 //! Rust kernels behind `fastscipy`, one submodule per SciPy area
 //! (`fastscipy._native.<area>`). All parallel work runs in `pool::pool()`.
 
+// Kernels mirror SciPy's C loops and arithmetic, so some lints don't fit:
+#![allow(
+    clippy::needless_range_loop,       // index loops follow SciPy's loop structure
+    clippy::neg_cmp_op_on_partial_ord, // `!(a < b)` keeps SciPy's NaN behaviour
+    clippy::excessive_precision,       // constants are copied verbatim from SciPy
+    clippy::redundant_locals,          // `let p = p;` makes closures capture Send wrappers whole
+    clippy::too_many_arguments,
+    clippy::type_complexity
+)]
+
 use pyo3::prelude::*;
 
 pub mod pool;

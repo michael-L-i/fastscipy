@@ -4,20 +4,21 @@ The wrappers keep their identity, argument checking and output types; only the
 calls into the private C module `_nd_image` are routed through one composed
 stand-in (see `_ndimage_seam`).
 """
+
 import numpy as np
 import scipy.ndimage as ndi
 from scipy.ndimage import _filters, _interpolation, _measurements, _morphology
 
 from . import _patch
-from . import _ndimage_generic, _ndimage_label, _ndimage_morph
-from . import _ndimage_correlate, _ndimage_interp, _ndimage_rank  # noqa: F401  (register overrides)
+from . import _ndimage_label, _ndimage_morph
+from . import _ndimage_correlate, _ndimage_generic, _ndimage_interp, _ndimage_rank  # noqa: F401  (register overrides)
 from ._ndimage_seam import standin
 
 _WRAPPERS = (_filters, _interpolation, _measurements, _morphology)
 
 
 def patch():
-    _patch.require_scipy("1.18.")
+    _patch.require_validated("1.18.")
     mod = standin()
     for wrapper in _WRAPPERS:
         _patch.replace(wrapper, "_nd_image", mod)

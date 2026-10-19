@@ -1,4 +1,5 @@
 """Byte-identity of fastscipy's scipy.ndimage fast paths against plain SciPy."""
+
 import os
 
 import numpy as np
@@ -10,16 +11,15 @@ from fastscipy import _native
 from fastscipy.testing import check
 
 MODES = ["reflect", "constant", "nearest", "mirror", "wrap", "grid-wrap", "grid-constant", "grid-mirror"]
-DTYPES = [np.uint8, np.int8, np.uint16, np.int16, np.uint32, np.int32, np.uint64, np.int64,
-          np.float32, np.float64]
-SEEDS = range(int(os.environ.get("FASTSCIPY_TEST_SEEDS", 16)))   # raise for a soak run
+DTYPES = [np.uint8, np.int8, np.uint16, np.int16, np.uint32, np.int32, np.uint64, np.int64, np.float32, np.float64]
+SEEDS = range(int(os.environ.get("FASTSCIPY_TEST_SEEDS", 16)))  # raise for a soak run
 
 
 @pytest.fixture(params=[1, 4], ids=["1t", "4t"], autouse=True)
 def threads(request):
     old = fastscipy.get_num_threads()
     fastscipy.set_num_threads(request.param)
-    _native.ndimage.set_par_min(1 if request.param > 1 else 1 << 18)   # split even tiny label/fill inputs
+    _native.ndimage.set_par_min(1 if request.param > 1 else 1 << 18)  # split even tiny label/fill inputs
     yield request.param
     _native.ndimage.set_par_min(1 << 18)
     fastscipy.set_num_threads(old)
@@ -37,7 +37,7 @@ def array(rng, shape, dtype, special=False):
         with np.errstate(over="ignore"):
             return a.astype(dtype)
     info = np.iinfo(dtype)
-    return rng.integers(max(info.min, -2**40), min(info.max, 2**40), size=shape, endpoint=True).astype(dtype)
+    return rng.integers(max(info.min, -(2**40)), min(info.max, 2**40), size=shape, endpoint=True).astype(dtype)
 
 
 def shape_of(rng, ndim=None, maxlen=40, minlen=1):
@@ -61,8 +61,9 @@ def view_of(rng, a):
 def weights(rng, size, kind):
     half = rng.standard_normal(size // 2)
     mid = rng.standard_normal(1)
-    w = {"sym": np.concatenate([half, mid, half[::-1]]),
-         "anti": np.concatenate([half, mid, -half[::-1]])}.get(kind, rng.standard_normal(size))
+    w = {"sym": np.concatenate([half, mid, half[::-1]]), "anti": np.concatenate([half, mid, -half[::-1]])}.get(
+        kind, rng.standard_normal(size)
+    )
     return w[:size]
 
 
@@ -71,6 +72,7 @@ def pick(rng, seq):
 
 
 # --- correlate family -------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize("seed", SEEDS)
 def test_correlate1d(seed):
@@ -83,9 +85,13 @@ def test_correlate1d(seed):
         fn = pick(rng, [ndi.correlate1d, ndi.convolve1d])
         if fn is ndi.convolve1d and size % 2 == 0 and origin == (size - 1) // 2:
             origin = 0
-        kw = dict(axis=int(rng.integers(-x.ndim, x.ndim)), mode=pick(rng, MODES),
-                  cval=float(pick(rng, [0.0, 1.5, -7.25, 1e5])), origin=origin,
-                  output=None if rng.random() < 0.6 else pick(rng, DTYPES))
+        kw = dict(
+            axis=int(rng.integers(-x.ndim, x.ndim)),
+            mode=pick(rng, MODES),
+            cval=float(pick(rng, [0.0, 1.5, -7.25, 1e5])),
+            origin=origin,
+            output=None if rng.random() < 0.6 else pick(rng, DTYPES),
+        )
         check(lambda: getattr(ndi, fn.__name__)(x, w, **kw))
 
 
@@ -124,9 +130,11 @@ def test_nd_correlate_derivatives(seed):
 def test_correlate_inplace_and_out():
     rng = np.random.default_rng(1)
     x = rng.standard_normal((50, 40))
-    for fn in (lambda a: ndi.correlate1d(a, [1.0, 2.0, 3.0], output=a),
-               lambda a: ndi.uniform_filter1d(a, 5, output=a),
-               lambda a: ndi.gaussian_filter(a, 2, output=a)):
+    for fn in (
+        lambda a: ndi.correlate1d(a, [1.0, 2.0, 3.0], output=a),
+        lambda a: ndi.uniform_filter1d(a, 5, output=a),
+        lambda a: ndi.gaussian_filter(a, 2, output=a),
+    ):
         a, b = x.copy(), x.copy()
         with fastscipy.disabled():
             fn(a)
@@ -137,6 +145,7 @@ def test_correlate_inplace_and_out():
 
 
 # --- interpolation ----------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize("seed", SEEDS)
 def test_spline_zoom_shift(seed):
@@ -171,18 +180,21 @@ def test_affine_rotate_map_coordinates(seed):
 
 # --- rank, min/max ----------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize("seed", SEEDS)
 def test_rank_filters(seed):
     rng = np.random.default_rng(500 + seed)
     for _ in range(14):
         x = view_of(rng, array(rng, shape_of(rng, rng.integers(1, 4), 24, 2), pick(rng, DTYPES), rng.random() < 0.2))
         mode = pick(rng, MODES[:7])
-        size = tuple(min(int(rng.integers(2, 6)), n) for n in x.shape)   # SciPy corrupts memory when a footprint exceeds the array
+        size = tuple(
+            min(int(rng.integers(2, 6)), n) for n in x.shape
+        )  # SciPy corrupts memory when a footprint exceeds the array
         fp = rng.random(size) < 0.7
         fp.flat[rng.integers(fp.size)] = True
-        out = None if rng.random() < 0.7 or x.ndim == 1 else pick(rng, DTYPES)   # 1-D + output dtype: SciPy bug
+        out = None if rng.random() < 0.7 or x.ndim == 1 else pick(rng, DTYPES)  # 1-D + output dtype: SciPy bug
         kw = dict(mode=mode, cval=1.0, output=out)
-        f1d = x.ndim > 1 and out is None    # 1-D rank filters go to SciPy's own _rank_filter_1d
+        f1d = x.ndim > 1 and out is None  # 1-D rank filters go to SciPy's own _rank_filter_1d
         check(lambda: ndi.median_filter(x, size=size, **kw), fast=f1d)
         check(lambda: ndi.minimum_filter(x, footprint=fp, **kw), fast=out is None)
         check(lambda: ndi.maximum_filter(x, size=size, **kw), fast=out is None)
@@ -207,6 +219,7 @@ def test_rank_filter_bool_and_inplace():
 
 
 # --- binary morphology ------------------------------------------------------------------------
+
 
 def structure_of(rng, ndim, center=True):
     st = rng.random(tuple(int(rng.integers(1, 5)) for _ in range(ndim))) < 0.6
@@ -248,10 +261,14 @@ def test_binary_fixed_point(seed):
     for _ in range(10):
         ndim = int(rng.integers(1, 4))
         x = blobs(rng, tuple(int(rng.integers(8, 40)) for _ in range(ndim)), 0.45)
-        st = structure_of(rng, ndim) if rng.random() < 0.5 else ndi.generate_binary_structure(ndim, int(rng.integers(1, ndim + 1)))
+        st = (
+            structure_of(rng, ndim)
+            if rng.random() < 0.5
+            else ndi.generate_binary_structure(ndim, int(rng.integers(1, ndim + 1)))
+        )
         origin = tuple(int(rng.integers(-(f // 2), (f - 1) // 2 + 1)) for f in st.shape)
         if not ndi._morphology._center_is_true(st, list(origin)):
-            continue    # SciPy's own fixed-point loop may hang or crash on these
+            continue  # SciPy's own fixed-point loop may hang or crash on these
         mask = ndi.binary_dilation(x, iterations=2) if rng.random() < 0.7 else None
         check(lambda: ndi.binary_fill_holes(x, structure=st if st.shape == (3,) * ndim else None))
         seeds = x & (rng.random(x.shape) < 0.1)
@@ -269,6 +286,7 @@ def test_binary_declines():
 
 
 # --- distance transform, generic_filter -------------------------------------------------------
+
 
 @pytest.mark.parametrize("seed", SEEDS)
 def test_distance_transform_edt(seed):
@@ -298,19 +316,25 @@ def test_edt_declined_and_errors():
 def test_generic_filter_reducers(seed):
     rng = np.random.default_rng(900 + seed)
     for _ in range(6):
-        x = view_of(rng, array(rng, shape_of(rng, rng.integers(1, 4), 14, 2), pick(rng, DTYPES + [np.bool_]), rng.random() < 0.2))
+        x = view_of(
+            rng,
+            array(rng, shape_of(rng, rng.integers(1, 4), 14, 2), pick(rng, DTYPES + [np.bool_]), rng.random() < 0.2),
+        )
         fp = rng.random(tuple(int(rng.integers(1, 5)) for _ in x.shape)) < 0.7
         fp.flat[rng.integers(fp.size)] = True
         origin = tuple(int(rng.integers(-(f // 2), (f - 1) // 2 + 1)) for f in fp.shape)
         mode = pick(rng, MODES)
         for fn in (np.mean, np.sum, np.max, np.min, np.median, np.std, np.var, np.ptp):
             # integer outputs of out-of-range doubles are undefined in C; SciPy's float output is always safe
-            check(lambda: ndi.generic_filter(x, fn, footprint=fp, mode=mode, cval=1.5, origin=origin,
-                                             output=np.float64), fast=True)
+            check(
+                lambda: ndi.generic_filter(x, fn, footprint=fp, mode=mode, cval=1.5, origin=origin, output=np.float64),
+                fast=True,
+            )
         check(lambda: ndi.generic_filter(x, np.mean, footprint=fp, mode=mode, cval=0.0, origin=origin), fast=False)
 
 
 # --- labelling and measurements ---------------------------------------------------------------
+
 
 @pytest.mark.parametrize("seed", SEEDS)
 def test_label(seed):
@@ -327,7 +351,7 @@ def test_label(seed):
             with fastscipy.disabled():
                 ndi.label(x, st, out)
         except Exception:
-            continue    # e.g. too many labels for the output dtype: SciPy decides
+            continue  # e.g. too many labels for the output dtype: SciPy decides
         check(lambda: ndi.label(x, st, out))
         if rng.random() < 0.3:
             check(lambda: ndi.label(x, st, np.zeros(x.shape, np.int32)))
@@ -371,11 +395,11 @@ def test_labelled_measurements(seed):
         lab = lab.astype(pick(rng, [np.int32, np.int64, np.uint8, np.int16]))
         x = array(rng, shape, pick(rng, DTYPES + [np.bool_]), rng.random() < 0.3)
         if x.dtype.kind == "f":
-            x = x + rng.random(shape).astype(x.dtype) * 1e-3     # mostly tie-free
+            x = x + rng.random(shape).astype(x.dtype) * 1e-3  # mostly tie-free
         index = np.arange(0, lab.max() + 3) if rng.random() < 0.5 else np.arange(1, lab.max() + 1)
         index = index.astype(pick(rng, [np.int64, np.int32]))
         for fn in (ndi.minimum, ndi.maximum, ndi.extrema, ndi.minimum_position, ndi.maximum_position):
-            check(lambda: fn(x, lab, index), fast=False)     # ties and absent labels: SciPy answers
+            check(lambda: fn(x, lab, index), fast=False)  # ties and absent labels: SciPy answers
         check(lambda: ndi.center_of_mass(x.astype(np.float64), lab, index[index > 0]), fast=False)
     big = rng.random((300, 300))
     blob = ndi.label(ndi.gaussian_filter(big, 3) > 0.5)[0]
@@ -387,6 +411,7 @@ def test_labelled_measurements(seed):
 
 
 # --- large inputs (parallel paths) ------------------------------------------------------------
+
 
 def test_large_inputs():
     x = np.random.default_rng(3).random((600, 500)).astype(np.float32)
@@ -402,20 +427,29 @@ def test_large_inputs():
 
 # --- declined cases still match SciPy ---------------------------------------------------------
 
-@pytest.mark.parametrize("make", [
-    lambda r: r.standard_normal((20, 20)).astype(np.float16),
-    lambda r: r.standard_normal((20, 20)).astype(">f8"),
-    lambda r: (r.standard_normal((20, 20)) + 1j * r.standard_normal((20, 20))),
-    lambda r: r.standard_normal((0, 5)),
-    lambda r: r.standard_normal(()),
-], ids=["f16", "bigendian", "complex", "empty", "0d"])
+
+@pytest.mark.parametrize(
+    "make",
+    [
+        lambda r: r.standard_normal((20, 20)).astype(np.float16),
+        lambda r: r.standard_normal((20, 20)).astype(">f8"),
+        lambda r: r.standard_normal((20, 20)) + 1j * r.standard_normal((20, 20)),
+        lambda r: r.standard_normal((0, 5)),
+        lambda r: r.standard_normal(()),
+    ],
+    ids=["f16", "bigendian", "complex", "empty", "0d"],
+)
 def test_declined_inputs(make):
     x = make(np.random.default_rng(5))
-    for call in (lambda: ndi.gaussian_filter(x, 1.0), lambda: ndi.uniform_filter(x, 3),
-                 lambda: ndi.median_filter(x, 3), lambda: ndi.zoom(x, 1.5)):
+    for call in (
+        lambda: ndi.gaussian_filter(x, 1.0),
+        lambda: ndi.uniform_filter(x, 3),
+        lambda: ndi.median_filter(x, 3),
+        lambda: ndi.zoom(x, 1.5),
+    ):
         try:
             with fastscipy.disabled():
-                expected = call()
+                call()
         except Exception as e:
             with pytest.raises(type(e)):
                 call()
@@ -426,8 +460,12 @@ def test_declined_inputs(make):
 def test_generic_callbacks_and_errors():
     x = np.random.default_rng(6).random((20, 20))
     check(lambda: ndi.generic_filter(x, np.ptp, size=3), fast=False)
-    for call in (lambda: ndi.gaussian_filter(x, 1, mode="bogus"), lambda: ndi.uniform_filter(x, 3, origin=5),
-                 lambda: ndi.median_filter(x, 3, origin=5), lambda: ndi.zoom(x, 2, order=7)):
+    for call in (
+        lambda: ndi.gaussian_filter(x, 1, mode="bogus"),
+        lambda: ndi.uniform_filter(x, 3, origin=5),
+        lambda: ndi.median_filter(x, 3, origin=5),
+        lambda: ndi.zoom(x, 2, order=7),
+    ):
         errors = []
         for off in (True, False):
             with pytest.raises(Exception) as e:

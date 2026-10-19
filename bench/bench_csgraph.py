@@ -20,10 +20,16 @@ def random_graph(n, m, seed=0, weights=True):
 def cases():
     g = grid(600)
     yield "shortest_path unweighted BFS, grid 600^2, 1 source", lambda: cg.shortest_path(g, unweighted=True, indices=0)
-    yield "dijkstra unweighted + predecessors, grid 600^2", lambda: cg.dijkstra(g, unweighted=True, indices=0, return_predecessors=True)
+    yield (
+        "dijkstra unweighted + predecessors, grid 600^2",
+        lambda: cg.dijkstra(g, unweighted=True, indices=0, return_predecessors=True),
+    )
     g2 = grid(300)
     yield "dijkstra weighted, 18 sources, grid 300^2", lambda: cg.dijkstra(g2, indices=np.arange(18) * 1000)
-    yield "dijkstra weighted + predecessors, 12 sources, undirected", lambda: cg.dijkstra(g2, False, np.arange(12) * 500, True)
+    yield (
+        "dijkstra weighted + predecessors, 12 sources, undirected",
+        lambda: cg.dijkstra(g2, False, np.arange(12) * 500, True),
+    )
     r = random_graph(2000, 40000)
     yield "bellman_ford 2000 nodes, 40k edges, 20 sources", lambda: cg.bellman_ford(r, indices=np.arange(20))
     yield "johnson 2000 nodes, 40k edges, 100 sources", lambda: cg.johnson(r, indices=np.arange(100))
@@ -31,4 +37,7 @@ def cases():
     yield "connected_components weak, 1M nodes", lambda: cg.connected_components(big)
     yield "connected_components strong, 1M nodes", lambda: cg.connected_components(big, connection="strong")
     small = random_graph(200, 400, 1)
-    yield "connected_components, 200 nodes x100 calls", lambda: [cg.connected_components(small, directed=False) for _ in range(100)]
+    yield (
+        "connected_components, 200 nodes x100 calls",
+        lambda: [cg.connected_components(small, directed=False) for _ in range(100)],
+    )

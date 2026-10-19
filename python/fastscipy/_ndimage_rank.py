@@ -7,6 +7,7 @@ overlaps the input) and calls the Rust kernel, which returns False without
 writing anything when the call is outside what it reproduces exactly; SciPy's
 C code then runs.
 """
+
 import numpy as np
 
 from ._ndimage_seam import accelerated, core
@@ -67,8 +68,7 @@ def _prepare(input, output, inplace_ok=False):
         return inp, np.empty(target.shape, target.dtype.newbyteorder("=")), target
     if np.may_share_memory(inp, target):
         same_buffer = (
-            inp.dtype == target.dtype
-            and inp.__array_interface__["data"][0] == target.__array_interface__["data"][0]
+            inp.dtype == target.dtype and inp.__array_interface__["data"][0] == target.__array_interface__["data"][0]
         )
         if not (inplace_ok and same_buffer):
             inp = inp.copy()

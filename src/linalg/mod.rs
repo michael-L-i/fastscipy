@@ -21,12 +21,61 @@ use crate::pool::pool;
 
 type I = c_int;
 type Getrf = unsafe extern "C" fn(*const I, *const I, *mut f64, *const I, *mut I, *mut I);
-type Getrs = unsafe extern "C" fn(*const c_char, *const I, *const I, *const f64, *const I, *const I, *mut f64, *const I, *mut I);
-type Potrs = unsafe extern "C" fn(*const c_char, *const I, *const I, *const f64, *const I, *mut f64, *const I, *mut I);
-type Trtrs = unsafe extern "C" fn(*const c_char, *const c_char, *const c_char, *const I, *const I, *const f64, *const I, *mut f64, *const I, *mut I);
+type Getrs = unsafe extern "C" fn(
+    *const c_char,
+    *const I,
+    *const I,
+    *const f64,
+    *const I,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
+type Potrs = unsafe extern "C" fn(
+    *const c_char,
+    *const I,
+    *const I,
+    *const f64,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
+type Trtrs = unsafe extern "C" fn(
+    *const c_char,
+    *const c_char,
+    *const c_char,
+    *const I,
+    *const I,
+    *const f64,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
 type Syevr = unsafe extern "C" fn(
-    *const c_char, *const c_char, *const c_char, *const I, *mut f64, *const I, *const f64, *const f64, *const I,
-    *const I, *const f64, *mut I, *mut f64, *mut f64, *const I, *mut I, *mut f64, *const I, *mut I, *const I, *mut I,
+    *const c_char,
+    *const c_char,
+    *const c_char,
+    *const I,
+    *mut f64,
+    *const I,
+    *const f64,
+    *const f64,
+    *const I,
+    *const I,
+    *const f64,
+    *mut I,
+    *mut f64,
+    *mut f64,
+    *const I,
+    *mut I,
+    *mut f64,
+    *const I,
+    *mut I,
+    *const I,
+    *mut I,
 );
 
 struct Lapack {
@@ -49,13 +98,24 @@ fn init(py: Python<'_>) -> PyResult<()> {
     if LAPACK.get().is_some() {
         return Ok(());
     }
-    let capi = py.import("scipy.linalg.cython_lapack")?.getattr("__pyx_capi__")?;
+    let capi = py
+        .import("scipy.linalg.cython_lapack")?
+        .getattr("__pyx_capi__")?;
     let capi = capi.cast::<PyDict>()?;
     let get = |name: &str| -> PyResult<*mut c_void> {
-        let cap = capi.get_item(name)?.ok_or_else(|| PyRuntimeError::new_err(format!("no {name}")))?;
+        let cap = capi
+            .get_item(name)?
+            .ok_or_else(|| PyRuntimeError::new_err(format!("no {name}")))?;
         unsafe {
-            let p = pyo3::ffi::PyCapsule_GetPointer(cap.as_ptr(), pyo3::ffi::PyCapsule_GetName(cap.as_ptr()));
-            if p.is_null() { Err(PyErr::fetch(py)) } else { Ok(p) }
+            let p = pyo3::ffi::PyCapsule_GetPointer(
+                cap.as_ptr(),
+                pyo3::ffi::PyCapsule_GetName(cap.as_ptr()),
+            );
+            if p.is_null() {
+                Err(PyErr::fetch(py))
+            } else {
+                Ok(p)
+            }
         }
     };
     unsafe {
@@ -84,12 +144,27 @@ impl View<f64> {
     fn new(a: &PyReadonlyArray3<f64>) -> Self {
         let v = a.as_array();
         let s = v.strides();
-        View { p: v.as_ptr(), s: [s[0], s[1], s[2]] }
+        View {
+            p: v.as_ptr(),
+            s: [s[0], s[1], s[2]],
+        }
     }
 
     /// Copy matrix `i` (or its transpose) into column-major `dst`; false if it holds a non-finite value.
-    unsafe fn load(&self, i: usize, rows: usize, cols: usize, dst: &mut [f64], tr: bool, chk: bool) -> bool {
-        let (sr, sc) = if tr { (self.s[2], self.s[1]) } else { (self.s[1], self.s[2]) };
+    unsafe fn load(
+        &self,
+        i: usize,
+        rows: usize,
+        cols: usize,
+        dst: &mut [f64],
+        tr: bool,
+        chk: bool,
+    ) -> bool {
+        let (sr, sc) = if tr {
+            (self.s[2], self.s[1])
+        } else {
+            (self.s[1], self.s[2])
+        };
         let base = unsafe { self.p.offset(i as isize * self.s[0]) };
         let mut ok = true;
         for c in 0..cols {
@@ -134,7 +209,10 @@ where
             work(0, b, &mut vec![0.0; nf], &mut vec![0; ni]);
         } else {
             let chunk = (b / (threads * 16)).clamp(1, 1024);
-            let ranges: Vec<_> = (0..b).step_by(chunk).map(|lo| (lo, (lo + chunk).min(b))).collect();
+            let ranges: Vec<_> = (0..b)
+                .step_by(chunk)
+                .map(|lo| (lo, (lo + chunk).min(b)))
+                .collect();
             pool().install(|| {
                 ranges.into_par_iter().for_each_init(
                     || (vec![0.0; nf], vec![0; ni]),
@@ -152,7 +230,10 @@ fn ch(c: char) -> c_char {
 
 #[pyfunction]
 fn getrf<'py>(
-    py: Python<'py>, a: PyReadonlyArray3<'py, f64>, chk: bool, threads: usize,
+    py: Python<'py>,
+    a: PyReadonlyArray3<'py, f64>,
+    chk: bool,
+    threads: usize,
 ) -> Option<(Bound<'py, PyArray1<f64>>, Bound<'py, PyArray1<I>>)> {
     let (b, n) = (a.shape()[0], a.shape()[1]);
     let (av, mut out, mut piv) = (View::new(&a), vec![0.0; b * n * n], vec![0 as I; b * n]);
@@ -174,8 +255,13 @@ fn getrf<'py>(
 
 #[pyfunction]
 fn getrs<'py>(
-    py: Python<'py>, lu: PyReadonlyArray3<'py, f64>, piv: PyReadonlyArray2<'py, I>, rhs: PyReadonlyArray3<'py, f64>,
-    trans: char, chk: bool, threads: usize,
+    py: Python<'py>,
+    lu: PyReadonlyArray3<'py, f64>,
+    piv: PyReadonlyArray2<'py, I>,
+    rhs: PyReadonlyArray3<'py, f64>,
+    trans: char,
+    chk: bool,
+    threads: usize,
 ) -> Option<Bound<'py, PyArray1<f64>>> {
     let (b, n, k) = (lu.shape()[0], lu.shape()[1], rhs.shape()[2]);
     let (lv, bv, mut out) = (View::new(&lu), View::new(&rhs), vec![0.0; b * n * k]);
@@ -197,7 +283,17 @@ fn getrs<'py>(
             }
             si[q] = v + 1;
         }
-        (lapack().getrs)(&tr, &ni, &ki, sf.as_ptr(), &ni, si.as_ptr(), x.as_mut_ptr(), &ni, &mut info);
+        (lapack().getrs)(
+            &tr,
+            &ni,
+            &ki,
+            sf.as_ptr(),
+            &ni,
+            si.as_ptr(),
+            x.as_mut_ptr(),
+            &ni,
+            &mut info,
+        );
         info == 0
     });
     ok.then(|| PyArray1::from_vec(py, out))
@@ -205,7 +301,12 @@ fn getrs<'py>(
 
 #[pyfunction]
 fn potrs<'py>(
-    py: Python<'py>, c: PyReadonlyArray3<'py, f64>, rhs: PyReadonlyArray3<'py, f64>, uplo: char, chk: bool, threads: usize,
+    py: Python<'py>,
+    c: PyReadonlyArray3<'py, f64>,
+    rhs: PyReadonlyArray3<'py, f64>,
+    uplo: char,
+    chk: bool,
+    threads: usize,
 ) -> Option<Bound<'py, PyArray1<f64>>> {
     let (b, n, k) = (c.shape()[0], c.shape()[1], rhs.shape()[2]);
     let (cv, bv, mut out) = (View::new(&c), View::new(&rhs), vec![0.0; b * n * k]);
@@ -217,7 +318,16 @@ fn potrs<'py>(
         if !(cv.load(i, n, n, sf, false, chk) & bv.load(i, n, k, x, false, chk)) {
             return false;
         }
-        (lapack().potrs)(&up, &ni, &ki, sf.as_ptr(), &ni, x.as_mut_ptr(), &ni, &mut info);
+        (lapack().potrs)(
+            &up,
+            &ni,
+            &ki,
+            sf.as_ptr(),
+            &ni,
+            x.as_mut_ptr(),
+            &ni,
+            &mut info,
+        );
         info == 0
     });
     ok.then(|| PyArray1::from_vec(py, out))
@@ -227,8 +337,15 @@ fn potrs<'py>(
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
 fn trtrs<'py>(
-    py: Python<'py>, a: PyReadonlyArray3<'py, f64>, rhs: PyReadonlyArray3<'py, f64>, uplo: char, trans: char, diag: char,
-    tin: bool, chk: bool, threads: usize,
+    py: Python<'py>,
+    a: PyReadonlyArray3<'py, f64>,
+    rhs: PyReadonlyArray3<'py, f64>,
+    uplo: char,
+    trans: char,
+    diag: char,
+    tin: bool,
+    chk: bool,
+    threads: usize,
 ) -> Option<Bound<'py, PyArray1<f64>>> {
     let (b, n, k) = (a.shape()[0], a.shape()[1], rhs.shape()[2]);
     let (av, bv, mut out) = (View::new(&a), View::new(&rhs), vec![0.0; b * n * k]);
@@ -240,7 +357,18 @@ fn trtrs<'py>(
         if !(av.load(i, n, n, sf, tin, chk) & bv.load(i, n, k, x, false, chk)) {
             return false;
         }
-        (lapack().trtrs)(&up, &tr, &dg, &ni, &ki, sf.as_ptr(), &ni, x.as_mut_ptr(), &ni, &mut info);
+        (lapack().trtrs)(
+            &up,
+            &tr,
+            &dg,
+            &ni,
+            &ki,
+            sf.as_ptr(),
+            &ni,
+            x.as_mut_ptr(),
+            &ni,
+            &mut info,
+        );
         info == 0
     });
     ok.then(|| PyArray1::from_vec(py, out))
@@ -251,7 +379,13 @@ type Eig<'py> = (Bound<'py, PyArray1<f64>>, Option<Bound<'py, PyArray1<f64>>>);
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
 fn syevr<'py>(
-    py: Python<'py>, a: PyReadonlyArray3<'py, f64>, uplo: char, wantv: bool, lwork: usize, liwork: usize, chk: bool,
+    py: Python<'py>,
+    a: PyReadonlyArray3<'py, f64>,
+    uplo: char,
+    wantv: bool,
+    lwork: usize,
+    liwork: usize,
+    chk: bool,
     threads: usize,
 ) -> Option<Eig<'py>> {
     let (b, n) = (a.shape()[0], a.shape()[1]);
@@ -261,21 +395,52 @@ fn syevr<'py>(
     let (ni, lw, liw, up) = (n as I, lwork as I, liwork as I, ch(uplo));
     let (jobz, range) = (ch(if wantv { 'V' } else { 'N' }), ch('A'));
     let ldz = if wantv { ni.max(1) } else { 1 };
-    let ok = run(py, b, threads, n * n + lwork, 2 * n + liwork, |i, sf, si| unsafe {
-        let (a2, work) = sf.split_at_mut(n * n);
-        let (isuppz, iwork) = si.split_at_mut(2 * n);
-        let (wi, zi) = (wo.slice(i * n, n), zo.slice(i * zn, zn));
-        let (mut info, mut m) = (0, 0);
-        if !av.load(i, n, n, a2, false, chk) {
-            return false;
-        }
-        (lapack().syevr)(
-            &jobz, &range, &up, &ni, a2.as_mut_ptr(), &ni, &0.0, &1.0, &1, &ni, &0.0, &mut m, wi.as_mut_ptr(),
-            zi.as_mut_ptr(), &ldz, isuppz.as_mut_ptr(), work.as_mut_ptr(), &lw, iwork.as_mut_ptr(), &liw, &mut info,
-        );
-        info == 0
-    });
-    ok.then(|| (PyArray1::from_vec(py, w), wantv.then(|| PyArray1::from_vec(py, z))))
+    let ok = run(
+        py,
+        b,
+        threads,
+        n * n + lwork,
+        2 * n + liwork,
+        |i, sf, si| unsafe {
+            let (a2, work) = sf.split_at_mut(n * n);
+            let (isuppz, iwork) = si.split_at_mut(2 * n);
+            let (wi, zi) = (wo.slice(i * n, n), zo.slice(i * zn, zn));
+            let (mut info, mut m) = (0, 0);
+            if !av.load(i, n, n, a2, false, chk) {
+                return false;
+            }
+            (lapack().syevr)(
+                &jobz,
+                &range,
+                &up,
+                &ni,
+                a2.as_mut_ptr(),
+                &ni,
+                &0.0,
+                &1.0,
+                &1,
+                &ni,
+                &0.0,
+                &mut m,
+                wi.as_mut_ptr(),
+                zi.as_mut_ptr(),
+                &ldz,
+                isuppz.as_mut_ptr(),
+                work.as_mut_ptr(),
+                &lw,
+                iwork.as_mut_ptr(),
+                &liw,
+                &mut info,
+            );
+            info == 0
+        },
+    );
+    ok.then(|| {
+        (
+            PyArray1::from_vec(py, w),
+            wantv.then(|| PyArray1::from_vec(py, z)),
+        )
+    })
 }
 
 pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {

@@ -3,6 +3,7 @@ parallel, Bellman-Ford and Johnson stop once a pass changes nothing) and of
 ``connected_components``. The wrappers repeat SciPy's argument handling, then
 call the kernels instead of Cython; anything unusual (non-CSR input that fails
 validation, negative weights in Dijkstra, int64 indices, a negative cycle) goes to SciPy."""
+
 import numpy as np
 import scipy.sparse as sp
 from scipy.sparse._sputils import safely_cast_index_arrays
@@ -49,8 +50,9 @@ def _transposed(g, unweighted):
     return (ip, ix, np.ones(t.data.shape) if unweighted else t.data) if ix is not None else None
 
 
-def _dijkstra(csgraph, directed=True, indices=None, return_predecessors=False, unweighted=False,
-              limit=np.inf, min_only=False):
+def _dijkstra(
+    csgraph, directed=True, indices=None, return_predecessors=False, unweighted=False, limit=np.inf, min_only=False
+):
     g = _csr(csgraph, directed)
     min_only, limit = bool(min_only), float(limit)
     if g is None or (g.data < 0).any() or not limit >= 0:
@@ -89,7 +91,7 @@ def _bellman_ford(csgraph, directed=True, indices=None, return_predecessors=Fals
     pred = np.full((len(srcs), n), NULL_IDX, I32) if return_predecessors else np.empty(0, I32)
     data = np.ones(g.data.shape) if unweighted else g.data
     if _k.bellman_ford(srcs, ip, ix, data, not directed, dist.reshape(-1), pred.reshape(-1)) >= 0:
-        return NotImplemented   # SciPy raises NegativeCycleError
+        return NotImplemented  # SciPy raises NegativeCycleError
     out = dist.reshape(shape + (n,))
     return (out, pred.reshape(shape + (n,))) if return_predecessors else out
 
@@ -108,7 +110,7 @@ def _johnson(csgraph, directed=True, indices=None, return_predecessors=False, un
     srcs, shape = src
     data, h = g.data.copy(), np.zeros(n)
     if _k.johnson_potentials(ip, ix, data, not directed, h) >= 0:
-        return NotImplemented   # SciPy raises NegativeCycleError
+        return NotImplemented  # SciPy raises NegativeCycleError
     _k.add_weights(ip, ix, data, h)
     t = (_EMPTY_I, _EMPTY_I, _EMPTY_F)
     if not directed:
@@ -127,14 +129,19 @@ def _johnson(csgraph, directed=True, indices=None, return_predecessors=False, un
     return (out, pred.reshape(shape + (n,))) if return_predecessors else out
 
 
-def _shortest_path(csgraph, method="auto", directed=True, return_predecessors=False, unweighted=False,
-                   overwrite=False, indices=None):
-    if not (sp.issparse(csgraph) and csgraph.format == "csr" and csgraph.shape[0] == csgraph.shape[1]
-            and csgraph.dtype.kind in "biuf"):
+def _shortest_path(
+    csgraph, method="auto", directed=True, return_predecessors=False, unweighted=False, overwrite=False, indices=None
+):
+    if not (
+        sp.issparse(csgraph)
+        and csgraph.format == "csr"
+        and csgraph.shape[0] == csgraph.shape[1]
+        and csgraph.dtype.kind in "biuf"
+    ):
         return NotImplemented
     if method == "auto":
         if indices is None and csgraph.nnz >= csgraph.shape[0] ** 2 / 4:
-            return NotImplemented   # Floyd-Warshall
+            return NotImplemented  # Floyd-Warshall
         method = "J" if (csgraph.data < 0).any() else "D"
     fast = {"D": _dijkstra, "BF": _bellman_ford, "J": _johnson}.get(method)
     if fast is None:
@@ -156,16 +163,21 @@ def _connected_components(csgraph, directed=True, connection="weak", return_labe
 
 
 def patch():
-    _patch.require_scipy("1.18.")
-    for mod, name, fast in ((_paths, "dijkstra", _dijkstra), (_paths, "bellman_ford", _bellman_ford),
-                            (_paths, "johnson", _johnson), (_paths, "shortest_path", _shortest_path),
-                            (_traversal, "connected_components", _connected_components)):
+    _patch.require_validated("1.18.")
+    for mod, name, fast in (
+        (_paths, "dijkstra", _dijkstra),
+        (_paths, "bellman_ford", _bellman_ford),
+        (_paths, "johnson", _johnson),
+        (_paths, "shortest_path", _shortest_path),
+        (_traversal, "connected_components", _connected_components),
+    ):
         old = getattr(mod, name)
         _patch.rebind(old, _patch.wrap(old, fast))
 
 
 def smoke():
     import scipy.sparse.csgraph as cg
+
     g = sp.random_array((30, 30), density=0.2, format="csr", rng=0)
     for directed in (True, False):
         cg.dijkstra(g, directed, [0, 1], return_predecessors=True)

@@ -7,6 +7,7 @@ On first use, the kernels are checked against SciPy's own C functions on
 small probes; the matching variant is used, and anything that cannot be
 matched (an FMA scheme or an integer output type) is left to SciPy.
 """
+
 import platform
 import sys
 import threading
@@ -39,12 +40,56 @@ def _same(a, b):
 
 
 def _probe_values():
-    v = [0.0, -0.0, 0.4, -0.4, 0.9999, -0.9999, 1.0, -1.0, -1.5, 2.5, 127.5, 128.0,
-         -128.5, -129.0, 255.0, 255.9, 256.0, -255.9, 300.7, -300.7, 32767.9, 32768.0,
-         -32769.0, 65535.5, 65536.0, -65536.5, 2.0**31 - 0.5, 2.0**31, -2.0**31 - 1.0,
-         -2.0**31, 2.0**32 - 1.0, 2.0**32, -2.0**32, 3e9, -3e9, 1e10, -1e10, 2.0**53,
-         2.0**63, -2.0**63, 2.0**63 * 1.5, 2.0**64, -2.0**64, 1e30, -1e30,
-         np.inf, -np.inf, np.nan]
+    v = [
+        0.0,
+        -0.0,
+        0.4,
+        -0.4,
+        0.9999,
+        -0.9999,
+        1.0,
+        -1.0,
+        -1.5,
+        2.5,
+        127.5,
+        128.0,
+        -128.5,
+        -129.0,
+        255.0,
+        255.9,
+        256.0,
+        -255.9,
+        300.7,
+        -300.7,
+        32767.9,
+        32768.0,
+        -32769.0,
+        65535.5,
+        65536.0,
+        -65536.5,
+        2.0**31 - 0.5,
+        2.0**31,
+        -(2.0**31) - 1.0,
+        -(2.0**31),
+        2.0**32 - 1.0,
+        2.0**32,
+        -(2.0**32),
+        3e9,
+        -3e9,
+        1e10,
+        -1e10,
+        2.0**53,
+        2.0**63,
+        -(2.0**63),
+        2.0**63 * 1.5,
+        2.0**64,
+        -(2.0**64),
+        1e30,
+        -1e30,
+        np.inf,
+        -np.inf,
+        np.nan,
+    ]
     return np.array(v, dtype=np.float64)
 
 
@@ -110,7 +155,7 @@ def _calibrate():
     line_types, safe_types = set(), set()
     for ch in _CHARS:
         dt = np.dtype(ch)
-        if (uniform_ok(1, v, dt) if uniform else scheme is not None and c1d_ok(scheme, one, v, dt)):
+        if uniform_ok(1, v, dt) if uniform else scheme is not None and c1d_ok(scheme, one, v, dt):
             line_types.add(ch)
         if nd_fused is not None and nd_ok(nd_fused, one, v, dt):
             safe_types.add(ch)
@@ -123,8 +168,7 @@ def _calibrate():
     }
 
 
-_DISABLED = {"scheme": None, "uniform": False, "nd_fused": None,
-             "line_types": frozenset(), "safe_types": frozenset()}
+_DISABLED = {"scheme": None, "uniform": False, "nd_fused": None, "line_types": frozenset(), "safe_types": frozenset()}
 
 
 def calibration():
@@ -164,9 +208,12 @@ def _prepare(input, output, allow_inplace):
         # output that is exactly the input (same buffer and layout) gives the
         # same result as a separate one. Other overlaps depend on SciPy's
         # buffering order.
-        identical = (allow_inplace
-                     and input.__array_interface__["data"][0] == output.__array_interface__["data"][0]
-                     and input.strides == output.strides and input.dtype == output.dtype)
+        identical = (
+            allow_inplace
+            and input.__array_interface__["data"][0] == output.__array_interface__["data"][0]
+            and input.strides == output.strides
+            and input.dtype == output.dtype
+        )
         if not identical:
             return None
     flags = input.flags
@@ -201,8 +248,7 @@ def correlate1d(input, weights, axis, output, mode, cval, origin):
         return False
     src, target = prep
     try:
-        ok = core.corr_correlate1d(src, weights, int(axis), target, int(mode), float(cval),
-                                   int(origin), cal["scheme"])
+        ok = core.corr_correlate1d(src, weights, int(axis), target, int(mode), float(cval), int(origin), cal["scheme"])
     except (TypeError, ValueError, OverflowError):
         return False
     return _finish(ok, output, target)
@@ -218,8 +264,7 @@ def uniform_filter1d(input, size, axis, output, mode, cval, origin):
         return False
     src, target = prep
     try:
-        ok = core.corr_uniform_filter1d(src, int(size), int(axis), target, int(mode), float(cval),
-                                        int(origin))
+        ok = core.corr_uniform_filter1d(src, int(size), int(axis), target, int(mode), float(cval), int(origin))
     except (TypeError, ValueError, OverflowError):
         return False
     return _finish(ok, output, target)
@@ -242,8 +287,7 @@ def correlate(input, weights, output, mode, cval, origins):
     src, target = prep
     try:
         origins = [int(o) for o in origins]
-        ok = core.corr_correlate(src, weights, target, int(mode), float(cval), origins,
-                                 cal["nd_fused"])
+        ok = core.corr_correlate(src, weights, target, int(mode), float(cval), origins, cal["nd_fused"])
     except (TypeError, ValueError, OverflowError):
         return False
     return _finish(ok, output, target)

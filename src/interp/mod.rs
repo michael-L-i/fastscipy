@@ -14,7 +14,12 @@ const ROWS_PER_TASK: usize = 4096;
 
 /// Fill `out` (rows of `width` values) with `f(first_row, rows)`, on the shared
 /// pool when the thread budget allows and there are at least `parallel_from` rows.
-fn fill<T: Send>(out: &mut [T], width: usize, parallel_from: usize, f: impl Fn(usize, &mut [T]) + Sync) {
+fn fill<T: Send>(
+    out: &mut [T],
+    width: usize,
+    parallel_from: usize,
+    f: impl Fn(usize, &mut [T]) + Sync,
+) {
     let rows = out.len() / width.max(1);
     if pool::num_threads() > 1 && rows >= parallel_from {
         pool::pool().install(|| {

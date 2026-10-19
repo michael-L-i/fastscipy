@@ -1,5 +1,6 @@
 """Labelling and labelled measurements: label, find_objects, watershed_ift, and the min/max/position
 and centre-of-mass reductions behind scipy.ndimage.measurements."""
+
 import numpy as np
 import scipy.ndimage as ndi
 from scipy.ndimage import _measurements, _ni_label
@@ -18,7 +19,7 @@ def _label(input, structure, output):
     if output.dtype.kind not in _INT or not output.dtype.isnative or not output.flags.writeable:
         return NotImplemented
     if not output.flags.c_contiguous:
-        return NotImplemented   # SciPy's scan axis (and so its numbering) depends on the memory layout
+        return NotImplemented  # SciPy's scan axis (and so its numbering) depends on the memory layout
     k, sz = input.dtype.kind, input.dtype.itemsize
     if not input.dtype.isnative or k not in "biuf" or (k == "f" and sz not in (4, 8)):
         return NotImplemented
@@ -41,8 +42,14 @@ def _label(input, structure, output):
 
 @accelerated("find_objects")
 def find_objects(input, max_label):
-    if not (type(input) is np.ndarray and input.dtype.kind in _INT and input.dtype.isnative
-            and input.ndim > 0 and input.size > 0 and 0 < max_label < 2**40):
+    if not (
+        type(input) is np.ndarray
+        and input.dtype.kind in _INT
+        and input.dtype.isnative
+        and input.ndim > 0
+        and input.size > 0
+        and 0 < max_label < 2**40
+    ):
         return False
     r = core.find_objects_core(np.ascontiguousarray(input), int(max_label))
     return False if r is None else r
@@ -55,7 +62,7 @@ def _nstrides(structure, shape):
         strides[i] = shape[i + 1] * strides[i + 1]
     coords = np.indices(structure.shape).reshape(nd, -1) - 1
     offs = (coords * np.array(strides)[:, None]).sum(axis=0)
-    return [int(v) for v in offs[structure.ravel() & (offs != 0)]]   # C order, like the C odometer
+    return [int(v) for v in offs[structure.ravel() & (offs != 0)]]  # C order, like the C odometer
 
 
 @accelerated("watershed_ift")
@@ -75,8 +82,9 @@ def watershed_ift(input, markers, structure, output):
     mk = np.ascontiguousarray(np.ascontiguousarray(markers).astype(np.int32, copy=False))
     direct = output.dtype == np.int32 and output.flags.c_contiguous
     lab = output if direct else np.empty(input.shape, np.int32)
-    if not core.watershed_core(np.ascontiguousarray(input), mk, _nstrides(structure, input.shape),
-                               8 * output.dtype.itemsize, lab):
+    if not core.watershed_core(
+        np.ascontiguousarray(input), mk, _nstrides(structure, input.shape), 8 * output.dtype.itemsize, lab
+    ):
         return False
     if not direct:
         output[...] = lab
@@ -84,6 +92,7 @@ def watershed_ift(input, markers, structure, output):
 
 
 # --- labelled reductions ----------------------------------------------------------------------
+
 
 def _prep(input, labels, index):
     """(values, labels64, index64, label min, label max, index shape, dtype), or None to decline."""
@@ -108,10 +117,23 @@ def _prep(input, labels, index):
     return values, lab, idx, int(lab.min()), int(lab.max()), index.shape, dt
 
 
-def _select(input, labels=None, index=None, find_min=False, find_max=False,
-            find_min_positions=False, find_max_positions=False, find_median=False):
-    if (find_median or labels is None or index is None or np.isscalar(index)
-            or not (find_min or find_max or find_min_positions or find_max_positions)):
+def _select(
+    input,
+    labels=None,
+    index=None,
+    find_min=False,
+    find_max=False,
+    find_min_positions=False,
+    find_max_positions=False,
+    find_median=False,
+):
+    if (
+        find_median
+        or labels is None
+        or index is None
+        or np.isscalar(index)
+        or not (find_min or find_max or find_min_positions or find_max_positions)
+    ):
         return NotImplemented
     p = _prep(input, labels, index)
     r = p and core.label_select(*p[:5])

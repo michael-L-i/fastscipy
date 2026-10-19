@@ -11,7 +11,7 @@ use numpy::{PyArray1, PyArrayDyn, PyArrayMethods, PyUntypedArray, PyUntypedArray
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
-use crate::ndimage::common::{pool, Elem};
+use crate::ndimage::common::{Elem, pool};
 
 trait Val: Elem {
     fn isnan(self) -> bool;
@@ -27,14 +27,30 @@ macro_rules! val_int { ($($t:ty),*) => {$(
 )*}; }
 val_int!(u8, i8, u16, i16, u32, i32, u64, i64);
 impl Val for f32 {
-    #[inline(always)] fn isnan(self) -> bool { self.is_nan() }
-    fn nanval() -> Self { f32::NAN }
-    #[inline(always)] fn bits(self) -> u64 { self.to_bits() as u64 }
+    #[inline(always)]
+    fn isnan(self) -> bool {
+        self.is_nan()
+    }
+    fn nanval() -> Self {
+        f32::NAN
+    }
+    #[inline(always)]
+    fn bits(self) -> u64 {
+        self.to_bits() as u64
+    }
 }
 impl Val for f64 {
-    #[inline(always)] fn isnan(self) -> bool { self.is_nan() }
-    fn nanval() -> Self { f64::NAN }
-    #[inline(always)] fn bits(self) -> u64 { self.to_bits() }
+    #[inline(always)]
+    fn isnan(self) -> bool {
+        self.is_nan()
+    }
+    fn nanval() -> Self {
+        f64::NAN
+    }
+    #[inline(always)]
+    fn bits(self) -> u64 {
+        self.to_bits()
+    }
 }
 
 enum Mapper {
@@ -59,7 +75,10 @@ impl Mapper {
             let mut h = HashMap::new();
             let mut n = 0u32;
             for &i in index {
-                h.entry(i).or_insert_with(|| { n += 1; n - 1 });
+                h.entry(i).or_insert_with(|| {
+                    n += 1;
+                    n - 1
+                });
             }
             (Mapper::Hash(h), n as usize)
         }
@@ -68,78 +87,151 @@ impl Mapper {
     fn slot(&self, l: i64) -> u32 {
         match self {
             Mapper::Table(t) => {
-                if (l as u64) < t.len() as u64 { t[l as usize] } else { NONE }
+                if (l as u64) < t.len() as u64 {
+                    t[l as usize]
+                } else {
+                    NONE
+                }
             }
             Mapper::Hash(h) => h.get(&l).copied().unwrap_or(NONE),
         }
     }
-    fn lookup(&self, l: i64) -> u32 { self.slot(l) }
+    fn lookup(&self, l: i64) -> u32 {
+        self.slot(l)
+    }
 }
 
 #[derive(Clone)]
 struct St<T> {
-    has_min: bool, minv: T, minpos: u64, mintie: bool,
-    has_max: bool, maxv: T, maxpos: u64, maxtie: bool,
-    nan_cnt: u64, nanpos: u64, zero_issue: bool,
+    has_min: bool,
+    minv: T,
+    minpos: u64,
+    mintie: bool,
+    has_max: bool,
+    maxv: T,
+    maxpos: u64,
+    maxtie: bool,
+    nan_cnt: u64,
+    nanpos: u64,
+    zero_issue: bool,
 }
 impl<T: Val> St<T> {
     fn new() -> Self {
-        St { has_min: false, minv: T::nanval(), minpos: 0, mintie: false,
-             has_max: false, maxv: T::nanval(), maxpos: 0, maxtie: false,
-             nan_cnt: 0, nanpos: 0, zero_issue: false }
+        St {
+            has_min: false,
+            minv: T::nanval(),
+            minpos: 0,
+            mintie: false,
+            has_max: false,
+            maxv: T::nanval(),
+            maxpos: 0,
+            maxtie: false,
+            nan_cnt: 0,
+            nanpos: 0,
+            zero_issue: false,
+        }
     }
     #[inline(always)]
     fn add(&mut self, v: T, pos: u64) {
         if v.isnan() {
-            if self.nan_cnt == 0 { self.nanpos = pos; }
+            if self.nan_cnt == 0 {
+                self.nanpos = pos;
+            }
             self.nan_cnt += 1;
             return;
         }
-        if !self.has_min || v < self.minv { self.has_min = true; self.minv = v; self.minpos = pos; self.mintie = false; }
-        else if v == self.minv { self.mintie = true; if v.bits() != self.minv.bits() { self.zero_issue = true; } }
-        if !self.has_max || v > self.maxv { self.has_max = true; self.maxv = v; self.maxpos = pos; self.maxtie = false; }
-        else if v == self.maxv { self.maxtie = true; if v.bits() != self.maxv.bits() { self.zero_issue = true; } }
+        if !self.has_min || v < self.minv {
+            self.has_min = true;
+            self.minv = v;
+            self.minpos = pos;
+            self.mintie = false;
+        } else if v == self.minv {
+            self.mintie = true;
+            if v.bits() != self.minv.bits() {
+                self.zero_issue = true;
+            }
+        }
+        if !self.has_max || v > self.maxv {
+            self.has_max = true;
+            self.maxv = v;
+            self.maxpos = pos;
+            self.maxtie = false;
+        } else if v == self.maxv {
+            self.maxtie = true;
+            if v.bits() != self.maxv.bits() {
+                self.zero_issue = true;
+            }
+        }
     }
     fn merge(&mut self, b: &St<T>) {
         self.zero_issue |= b.zero_issue;
         if b.has_min {
-            if !self.has_min || b.minv < self.minv { self.has_min = true; self.minv = b.minv; self.minpos = b.minpos; self.mintie = b.mintie; }
-            else if b.minv == self.minv { self.mintie = true; if b.minv.bits() != self.minv.bits() { self.zero_issue = true; } }
+            if !self.has_min || b.minv < self.minv {
+                self.has_min = true;
+                self.minv = b.minv;
+                self.minpos = b.minpos;
+                self.mintie = b.mintie;
+            } else if b.minv == self.minv {
+                self.mintie = true;
+                if b.minv.bits() != self.minv.bits() {
+                    self.zero_issue = true;
+                }
+            }
         }
         if b.has_max {
-            if !self.has_max || b.maxv > self.maxv { self.has_max = true; self.maxv = b.maxv; self.maxpos = b.maxpos; self.maxtie = b.maxtie; }
-            else if b.maxv == self.maxv { self.maxtie = true; if b.maxv.bits() != self.maxv.bits() { self.zero_issue = true; } }
+            if !self.has_max || b.maxv > self.maxv {
+                self.has_max = true;
+                self.maxv = b.maxv;
+                self.maxpos = b.maxpos;
+                self.maxtie = b.maxtie;
+            } else if b.maxv == self.maxv {
+                self.maxtie = true;
+                if b.maxv.bits() != self.maxv.bits() {
+                    self.zero_issue = true;
+                }
+            }
         }
-        if b.nan_cnt > 0 && self.nan_cnt == 0 { self.nanpos = b.nanpos; }
+        if b.nan_cnt > 0 && self.nan_cnt == 0 {
+            self.nanpos = b.nanpos;
+        }
         self.nan_cnt += b.nan_cnt;
     }
 }
 
 fn select_impl<T: Val>(
-    values: &[T], labels: &[i64], index: &[i64], lmin: i64, lmax: i64,
+    values: &[T],
+    labels: &[i64],
+    index: &[i64],
+    lmin: i64,
+    lmax: i64,
 ) -> (Vec<T>, Vec<i64>, Vec<T>, Vec<i64>, bool, bool, bool) {
     let (map, nslots) = Mapper::new(index, lmin, lmax);
     let n = values.len();
     let nthreads = pool().current_num_threads();
     let chunk = n.div_ceil(nthreads * 4).max(1 << 16);
     let parts: Vec<Vec<St<T>>> = pool().install(|| {
-        (0..n.div_ceil(chunk)).into_par_iter().map(|c| {
-            let lo = c * chunk;
-            let hi = (lo + chunk).min(n);
-            let mut st = vec![St::<T>::new(); nslots];
-            for i in lo..hi {
-                let s = map.slot(labels[i]);
-                if s != NONE {
-                    st[s as usize].add(values[i], i as u64);
+        (0..n.div_ceil(chunk))
+            .into_par_iter()
+            .map(|c| {
+                let lo = c * chunk;
+                let hi = (lo + chunk).min(n);
+                let mut st = vec![St::<T>::new(); nslots];
+                for i in lo..hi {
+                    let s = map.slot(labels[i]);
+                    if s != NONE {
+                        st[s as usize].add(values[i], i as u64);
+                    }
                 }
-            }
-            st
-        }).collect()
+                st
+            })
+            .collect()
     });
     let mut it = parts.into_iter();
     let mut tot = it.next().unwrap();
     for p in it {
-        for (a, b) in tot.iter_mut().zip(&p) { a.merge(b); }
+        for (a, b) in tot.iter_mut().zip(&p) {
+            a.merge(b);
+        }
     }
     let mut minv = Vec::with_capacity(index.len());
     let mut minp = Vec::with_capacity(index.len());
@@ -151,24 +243,51 @@ fn select_impl<T: Val>(
         let s = map.lookup(l);
         if s == NONE {
             // label absent from the image: SciPy returns zeros
-            minv.push(T::from_f64(0.0)); minp.push(0); maxv.push(T::from_f64(0.0)); maxp.push(0);
+            minv.push(T::from_f64(0.0));
+            minp.push(0);
+            maxv.push(T::from_f64(0.0));
+            maxp.push(0);
             continue;
         }
         let a = &tot[s as usize];
         if !seen[s as usize] {
             seen[s as usize] = true;
             zi |= a.zero_issue;
-            if a.has_min && a.mintie { mintie = true; }
-            if a.has_max && a.maxtie { maxtie = true; }
-            if a.nan_cnt >= 2 { if !a.has_min { mintie = true; } maxtie = true; }
+            if a.has_min && a.mintie {
+                mintie = true;
+            }
+            if a.has_max && a.maxtie {
+                maxtie = true;
+            }
+            if a.nan_cnt >= 2 {
+                if !a.has_min {
+                    mintie = true;
+                }
+                maxtie = true;
+            }
         }
         if a.nan_cnt == 0 && !a.has_min {
             // label present in index but with no pixels (cannot happen: slot only filled by pixels)
-            minv.push(T::from_f64(0.0)); minp.push(0); maxv.push(T::from_f64(0.0)); maxp.push(0);
+            minv.push(T::from_f64(0.0));
+            minp.push(0);
+            maxv.push(T::from_f64(0.0));
+            maxp.push(0);
             continue;
         }
-        if a.has_min { minv.push(a.minv); minp.push(a.minpos as i64); } else { minv.push(T::nanval()); minp.push(a.nanpos as i64); }
-        if a.nan_cnt > 0 { maxv.push(T::nanval()); maxp.push(a.nanpos as i64); } else { maxv.push(a.maxv); maxp.push(a.maxpos as i64); }
+        if a.has_min {
+            minv.push(a.minv);
+            minp.push(a.minpos as i64);
+        } else {
+            minv.push(T::nanval());
+            minp.push(a.nanpos as i64);
+        }
+        if a.nan_cnt > 0 {
+            maxv.push(T::nanval());
+            maxp.push(a.nanpos as i64);
+        } else {
+            maxv.push(a.maxv);
+            maxp.push(a.maxpos as i64);
+        }
     }
     (minv, minp, maxv, maxp, mintie, maxtie, zi)
 }
@@ -202,7 +321,14 @@ fn label_select<'py>(
     } else Ok(None))
 }
 
-fn com_impl<T: Elem>(values: &[T], labels: &[i64], index: &[i64], lmin: i64, lmax: i64, shape: &[usize]) -> Vec<Vec<f64>> {
+fn com_impl<T: Elem>(
+    values: &[T],
+    labels: &[i64],
+    index: &[i64],
+    lmin: i64,
+    lmax: i64,
+    shape: &[usize],
+) -> Vec<Vec<f64>> {
     let (map, nslots) = Mapper::new(index, lmin, lmax);
     let nd = shape.len();
     let mut sums = vec![vec![0.0f64; nslots]; nd + 1];
@@ -219,7 +345,9 @@ fn com_impl<T: Elem>(values: &[T], labels: &[i64], index: &[i64], lmin: i64, lma
         }
         for d in (0..nd).rev() {
             coord[d] += 1;
-            if coord[d] < shape[d] { break; }
+            if coord[d] < shape[d] {
+                break;
+            }
             coord[d] = 0;
         }
     }

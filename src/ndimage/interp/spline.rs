@@ -235,7 +235,6 @@ fn filter_lanes<const N: usize>(c: &mut [Lanes<N>], poles: &[f64], init: Init, f
             }
             next = *row;
         }
-
     }
 }
 
@@ -347,7 +346,7 @@ unsafe fn load_lines<I: Elem, const N: usize>(
     #[cfg_attr(not(target_arch = "aarch64"), allow(unused_mut))]
     let mut ok = true;
     #[cfg(target_arch = "aarch64")]
-    if N % 2 == 0 {
+    if N.is_multiple_of(2) {
         use std::arch::aarch64::*;
         // 2 x 2 transposes: lanes (l, l + 1) by columns (i, i + 1).
         let full = n / 2 * 2;
@@ -398,7 +397,7 @@ unsafe fn store_lines<O: OutElem, const N: usize>(
     #[cfg_attr(not(target_arch = "aarch64"), allow(unused_mut))]
     let mut start = 0;
     #[cfg(target_arch = "aarch64")]
-    if N % 2 == 0 {
+    if N.is_multiple_of(2) {
         use std::arch::aarch64::*;
         let full = n / 2 * 2;
         let pairs = count / 2 * 2;

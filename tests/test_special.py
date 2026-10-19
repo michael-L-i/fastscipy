@@ -7,7 +7,6 @@ import scipy.special as sc
 import scipy.special._ufuncs as _ufuncs
 
 import fastscipy
-from fastscipy import _patch
 from fastscipy.testing import check, fast_calls
 
 N = 300_000
@@ -75,7 +74,7 @@ def test_broadcast(threads):
     go(lambda: sc.betainc(a[:300] + 1, c, c / 6), threads)
     row = x64(1000)
     go(lambda: sc.jv(row, c), threads)
-    check(lambda: sc.jv(a, b), fast=False)   # large output from small inputs: declined
+    check(lambda: sc.jv(a, b), fast=False)  # large output from small inputs: declined
 
 
 def test_special_values(threads):
@@ -87,22 +86,24 @@ def test_special_values(threads):
 
 def test_declined_still_correct():
     x = x64()
-    for call in (lambda: sc.erf(x[::2]),                      # strided
-                 lambda: sc.erf(np.asfortranarray(x.reshape(500, 600))),
-                 lambda: sc.erf(list(x[:5000])),
-                 lambda: sc.erf(x.astype(np.longdouble)),
-                 lambda: sc.erf(x.astype(object)[:100]),
-                 lambda: sc.erf(x, out=np.empty_like(x)),
-                 lambda: sc.erf(x, where=x > 1),
-                 lambda: sc.erf(x, dtype=np.float32),
-                 lambda: sc.erf(x[:100]),
-                 lambda: sc.erf(np.float64(1.0)),
-                 lambda: sc.erf(2.0),
-                 lambda: sc.erf(np.empty(0))):
+    for call in (
+        lambda: sc.erf(x[::2]),  # strided
+        lambda: sc.erf(np.asfortranarray(x.reshape(500, 600))),
+        lambda: sc.erf(list(x[:5000])),
+        lambda: sc.erf(x.astype(np.longdouble)),
+        lambda: sc.erf(x.astype(object)[:100]),
+        lambda: sc.erf(x, out=np.empty_like(x)),
+        lambda: sc.erf(x, where=x > 1),
+        lambda: sc.erf(x, dtype=np.float32),
+        lambda: sc.erf(x[:100]),
+        lambda: sc.erf(np.float64(1.0)),
+        lambda: sc.erf(2.0),
+        lambda: sc.erf(np.empty(0)),
+    ):
         try:
             check(call, fast=False)
         except TypeError:
-            pass   # object arrays raise in SciPy too
+            pass  # object arrays raise in SciPy too
 
 
 def test_out_buffer_written():
@@ -163,6 +164,7 @@ def test_unpatch_restores():
 def test_rebound_inside_scipy():
     import scipy.stats._continuous_distns as cd
     import scipy.spatial.distance as sd
+
     assert sd.__dict__.get("xlogy", sc.xlogy) is sc.xlogy
     assert cd.sc.gammaln is sc.gammaln
 
@@ -206,9 +208,8 @@ def test_all_ufuncs_identical(threads):
     assert fast > (50 if threads > 1 else -1) and (threads > 1 or fast == 0)
 
 
-
 def test_error_warnings_match_scipy(threads):
-    x = np.full(N, -1.0)   # gamma is singular at every element
+    x = np.full(N, -1.0)  # gamma is singular at every element
 
     def warned():
         with sc.errstate(all="warn"), warnings.catch_warnings(record=True) as w:

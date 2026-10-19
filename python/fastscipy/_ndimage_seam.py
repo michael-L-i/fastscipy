@@ -3,6 +3,7 @@ of SciPy's private C module. They are composed into a single stand-in module
 (SciPy's functions plus the overrides; overlapping names are an error) that is
 installed in each SciPy wrapper module.
 """
+
 import functools
 import types
 
@@ -11,7 +12,7 @@ from scipy.ndimage import _nd_image as orig
 from . import _native, _patch
 
 core = _native.ndimage
-OVERRIDES = {}      # _nd_image function name -> wrapper that tries Rust first
+OVERRIDES = {}  # _nd_image function name -> wrapper that tries Rust first
 
 
 def accelerated(name):

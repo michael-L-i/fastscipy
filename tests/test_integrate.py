@@ -24,8 +24,13 @@ def test_trapezoid(n):
 
 def test_trapezoid_declined():
     y = rng.standard_normal(20)
-    for args, kw in (((y.astype(np.float32),), {}), ((list(y),), {}), ((y[:0],), {}), ((y,), {"x": y.astype(int)}),
-                     ((y,), {"dx": np.float64(0.5)})):
+    for args, kw in (
+        ((y.astype(np.float32),), {}),
+        ((list(y),), {}),
+        ((y[:0],), {}),
+        ((y,), {"x": y.astype(int)}),
+        ((y,), {"dx": np.float64(0.5)}),
+    ):
         check(lambda: integrate.trapezoid(*args, **kw), fast=False)
     check(lambda: integrate.trapezoid(y, axis=np.int64(0)), fast=False)
     check(lambda: integrate.trapezoid(np.ones(1)))

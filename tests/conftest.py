@@ -1,6 +1,6 @@
 import os
 
-os.environ.setdefault("FASTSCIPY_STRICT", "1")   # fast-path exceptions fail the test
+os.environ.setdefault("FASTSCIPY_STRICT", "1")  # fast-path exceptions fail the test
 
 import pytest  # noqa: E402
 

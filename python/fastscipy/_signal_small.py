@@ -8,6 +8,7 @@ for anything else, and SciPy then decides every warning and error.
 Caches are keyed on the exact bytes of their inputs and filled by SciPy's own
 code, only when it emitted no warning, so a hit returns SciPy's own value.
 """
+
 import warnings
 
 import numpy as np
@@ -20,8 +21,8 @@ NI = NotImplemented
 F8, F4 = np.dtype(np.float64), np.dtype(np.float32)
 ndarray = np.ndarray
 _linear_filter = _sigtools._linear_filter
-orig = {}   # name -> SciPy's function, set by _signal.patch()
-_RAISE = dict(divide="raise", over="raise", invalid="raise")   # overflow: let SciPy warn from its own frame
+orig = {}  # name -> SciPy's function, set by _signal.patch()
+_RAISE = dict(divide="raise", over="raise", invalid="raise")  # overflow: let SciPy warn from its own frame
 
 
 class _Uncacheable(Exception):
@@ -103,18 +104,27 @@ def _odd_ext(x, edge):
     n = x.shape[-1]
     ext = np.empty(x.shape[:-1] + (n + 2 * edge,), x.dtype)
     np.subtract(2 * x[..., :1], x[..., edge:0:-1], out=ext[..., :edge])
-    ext[..., edge:edge + n] = x
-    np.subtract(2 * x[..., -1:], x[..., -2:-(edge + 2):-1], out=ext[..., edge + n:])
+    ext[..., edge : edge + n] = x
+    np.subtract(2 * x[..., -1:], x[..., -2 : -(edge + 2) : -1], out=ext[..., edge + n :])
     return ext
 
 
 # --------------------------------------------------------------------- filters
 def sosfilt(sos, x, axis=-1, zi=None):
-    if not (type(x) is ndarray and x.dtype in (F8, F4) and _f8(sos) and x.size and _last_axis(x, axis)
-            and sos.ndim == 2 and sos.shape[1] == 6 and sos.flags.c_contiguous and _sos_info(sos)[0]):
+    if not (
+        type(x) is ndarray
+        and x.dtype in (F8, F4)
+        and _f8(sos)
+        and x.size
+        and _last_axis(x, axis)
+        and sos.ndim == 2
+        and sos.shape[1] == 6
+        and sos.flags.c_contiguous
+        and _sos_info(sos)[0]
+    ):
         return NI
     ns = sos.shape[0]
-    y = np.array(x, F8, order="C")      # the copy SciPy makes, filtered in place
+    y = np.array(x, F8, order="C")  # the copy SciPy makes, filtered in place
     if zi is None:
         _sosfilt(sos, y.reshape(-1, x.shape[-1]), np.zeros((y.size // x.shape[-1], ns, 2)))
         return y
@@ -130,9 +140,17 @@ def sosfilt(sos, x, axis=-1, zi=None):
 
 
 def sosfiltfilt(sos, x, axis=-1, padtype="odd", padlen=None):
-    if not (type(x) is ndarray and x.dtype in (F8, F4) and _f8(sos) and _last_axis(x, axis)
-            and padlen is None and _is(padtype, "odd")
-            and sos.ndim == 2 and sos.shape[1] == 6 and sos.flags.c_contiguous):
+    if not (
+        type(x) is ndarray
+        and x.dtype in (F8, F4)
+        and _f8(sos)
+        and _last_axis(x, axis)
+        and padlen is None
+        and _is(padtype, "odd")
+        and sos.ndim == 2
+        and sos.shape[1] == 6
+        and sos.flags.c_contiguous
+    ):
         return NI
     ok, ntaps, zi = _sos_info(sos)
     edge = 3 * ntaps
@@ -161,14 +179,25 @@ def lfilter(b, a, x, axis=-1, zi=None):
         return NI
     try:
         return _linear_filter(b, a, x, axis, *(() if zi is None else (zi,)))
-    except Exception:   # bad axis, shapes or coefficients: SciPy raises its own error
+    except Exception:  # bad axis, shapes or coefficients: SciPy raises its own error
         return NI
 
 
 def filtfilt(b, a, x, axis=-1, padtype="odd", padlen=None, method="pad", irlen=None):
-    if not (_f8(b) and _f8(a) and type(x) is ndarray and x.dtype in (F8, F4) and _last_axis(x, axis)
-            and padlen is None and _is(padtype, "odd") and _is(method, "pad")
-            and b.ndim == 1 and a.ndim == 1 and b.size and a.size > 1):
+    if not (
+        _f8(b)
+        and _f8(a)
+        and type(x) is ndarray
+        and x.dtype in (F8, F4)
+        and _last_axis(x, axis)
+        and padlen is None
+        and _is(padtype, "odd")
+        and _is(method, "pad")
+        and b.ndim == 1
+        and a.ndim == 1
+        and b.size
+        and a.size > 1
+    ):
         return NI
     edge = 3 * max(a.size, b.size)
     if x.shape[-1] <= edge or not x.size:
@@ -193,7 +222,7 @@ def lfilter_zi(b, a):
     z = _lf_zi(b, a)
     if z is None:
         return NI
-    return z[::-1].copy()[::-1] if z.strides[0] < 0 else z.copy()   # SciPy returns a reversed view
+    return z[::-1].copy()[::-1] if z.strides[0] < 0 else z.copy()  # SciPy returns a reversed view
 
 
 def sosfilt_zi(sos):
@@ -242,13 +271,21 @@ def iirfilter(N, Wn, rp=None, rs=None, btype="band", analog=False, ftype="butter
             return r
     except Exception:
         pass
-    return NI   # an error or a warning: SciPy re-runs it and raises or warns itself
+    return NI  # an error or a warning: SciPy re-runs it and raises or warns itself
 
 
 # ---------------------------------------------------------- detrend / hilbert
 def detrend(data, axis=-1, type="linear", bp=0, overwrite_data=False):
-    if not (_f8(data) and data.size and data.ndim and (_is(type, "linear") or _is(type, "l"))
-            and bp.__class__ is int and bp == 0 and axis.__class__ is int and -data.ndim <= axis < data.ndim):
+    if not (
+        _f8(data)
+        and data.size
+        and data.ndim
+        and (_is(type, "linear") or _is(type, "l"))
+        and bp.__class__ is int
+        and bp == 0
+        and axis.__class__ is int
+        and -data.ndim <= axis < data.ndim
+    ):
         return NI
     N = data.shape[axis]
     if N < 2:
@@ -264,7 +301,7 @@ def detrend(data, axis=-1, type="linear", bp=0, overwrite_data=False):
     b = moved.reshape(N, -1)
     if not overwrite_data:
         b = b.copy()
-    if not np.abs(b).max() < 1e100:   # NaN/inf: lstsq raises; huge: its residual check can warn
+    if not np.abs(b).max() < 1e100:  # NaN/inf: lstsq raises; huge: its residual check can warn
         return NI
     x, _, _, err = _batched_linalg._lstsq(A, b, 2.220446049250313e-16, "gelsd", False, False)
     if err:
@@ -282,7 +319,7 @@ def hilbert(x, N=None, axis=-1):
     try:
         with np.errstate(**_RAISE):
             Xf[..., 1:h] *= 2.0
-            Xf[..., h + (N % 2 == 0):] *= 0.0    # SciPy multiplies by h, so signed zeros and NaN match
+            Xf[..., h + (N % 2 == 0) :] *= 0.0  # SciPy multiplies by h, so signed zeros and NaN match
     except FloatingPointError:
         return NI
     return scipy.fft.ifft(np.moveaxis(Xf, -1, axis), axis=axis)
@@ -306,8 +343,9 @@ def _sft(window, nperseg, hop, fs, nfft, scaling):
     if e is None:
         win = get_window(window, nperseg) if isinstance(window, (str, tuple)) else np.asarray(window)
         scale = {"spectrum": "magnitude", "density": "psd"}[scaling]
-        ok, sft = _quiet(lambda: ShortTimeFFT(win, hop, fs, fft_mode="onesided", mfft=nfft,
-                                              scale_to=scale, phase_shift=None))
+        ok, sft = _quiet(
+            lambda: ShortTimeFFT(win, hop, fs, fft_mode="onesided", mfft=nfft, scale_to=scale, phase_shift=None)
+        )
         if not ok or sft.win.dtype != F8:
             return None
         e = _sft_cache.put(key, (sft, sft.win.conj(), _ro(sft.f.copy()), _Cache()))
@@ -329,45 +367,80 @@ def _frames(e, x, nperseg, p1, detr):
     lo, hi = -min(k0, 0), max(k1 - n, 0)
     if lo or hi:
         x1 = np.zeros(x.shape[:-1] + (lo + min(k1, n) - max(k0, 0) + hi,))
-        x1[..., lo:x1.shape[-1] - hi] = x[..., max(k0, 0):min(k1, n)]
+        x1[..., lo : x1.shape[-1] - hi] = x[..., max(k0, 0) : min(k1, n)]
     else:
         x1 = x[..., k0:k1]
     S = np.zeros(x.shape[:-1] + (len(f), p1 - p0), dtype=complex)
     for p, k in enumerate(range(0, n1, hop)):
-        xs = x1[..., k:k + m]
+        xs = x1[..., k : k + m]
         if detr:
             r = np.add.reduce(xs, axis=-1, keepdims=True)
-            xs = xs - np.true_divide(r, m, out=r)    # what np.mean(..., keepdims=True) does
+            xs = xs - np.true_divide(r, m, out=r)  # what np.mean(..., keepdims=True) does
         S[..., :, p] = scipy.fft.rfft(xs * wc, n=sft.mfft, axis=-1)
     return S
 
 
-def csd(x, y, fs=1.0, window="hann_periodic", nperseg=None, noverlap=None, nfft=None,
-        detrend="constant", return_onesided=True, scaling="density", axis=-1, average="mean"):
+def csd(
+    x,
+    y,
+    fs=1.0,
+    window="hann_periodic",
+    nperseg=None,
+    noverlap=None,
+    nfft=None,
+    detrend="constant",
+    return_onesided=True,
+    scaling="density",
+    axis=-1,
+    average="mean",
+):
     return _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, scaling, axis, average)
 
 
-def welch(x, fs=1.0, window="hann_periodic", nperseg=None, noverlap=None, nfft=None,
-          detrend="constant", return_onesided=True, scaling="density", axis=-1, average="mean"):
+def welch(
+    x,
+    fs=1.0,
+    window="hann_periodic",
+    nperseg=None,
+    noverlap=None,
+    nfft=None,
+    detrend="constant",
+    return_onesided=True,
+    scaling="density",
+    axis=-1,
+    average="mean",
+):
     return _csd(x, x, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, scaling, axis, average)
 
 
 def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, scaling, axis, average):
     same = y is x
-    if not (_f8(x) and (same or (_f8(y) and y.shape == x.shape)) and x.size and _last_axis(x, axis)
-            and return_onesided is True and _is(average, "mean")
-            and (_is(scaling, "density") or _is(scaling, "spectrum"))
-            and (detrend is False or _is(detrend, "constant"))
-            and type(window) in (str, tuple, ndarray)):
+    if not (
+        _f8(x)
+        and (same or (_f8(y) and y.shape == x.shape))
+        and x.size
+        and _last_axis(x, axis)
+        and return_onesided is True
+        and _is(average, "mean")
+        and (_is(scaling, "density") or _is(scaling, "spectrum"))
+        and (detrend is False or _is(detrend, "constant"))
+        and type(window) in (str, tuple, ndarray)
+    ):
         return NI
     n = x.shape[-1]
     if nperseg is None:
         nperseg = len(window) if type(window) is ndarray else 256
     nfft = nperseg if nfft is None else nfft
     noverlap = nperseg // 2 if noverlap is None else noverlap
-    if not (type(nperseg) is int and 1 <= nperseg <= n and type(nfft) is int and nfft >= nperseg
-            and type(noverlap) is int and 0 <= noverlap < nperseg
-            and (type(window) is not ndarray or len(window) == nperseg)):
+    if not (
+        type(nperseg) is int
+        and 1 <= nperseg <= n
+        and type(nfft) is int
+        and nfft >= nperseg
+        and type(noverlap) is int
+        and 0 <= noverlap < nperseg
+        and (type(window) is not ndarray or len(window) == nperseg)
+    ):
         return NI
     try:
         e = _sft(window, nperseg, nperseg - noverlap, fs, nfft, scaling)
@@ -384,11 +457,11 @@ def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, sc
         with np.errstate(**_RAISE):
             Sy = _frames(e, yc, nperseg, p1, detr)
             if same:
-                P = Sy.real ** 2 + Sy.imag ** 2
+                P = Sy.real**2 + Sy.imag**2
             else:
                 P = Sy * _frames(e, xc, nperseg, p1, detr).conj()
             P = np.moveaxis(P, P.ndim - 2, -1)
-            P[..., 1:-1 if sft.mfft % 2 == 0 else None] *= 2
+            P[..., 1 : -1 if sft.mfft % 2 == 0 else None] *= 2
             P = np.moveaxis(P, -1, P.ndim - 2)
             P = P.mean(axis=-1) if P.shape[-1] > 1 else P.reshape(P.shape[:-1])
     except FloatingPointError:

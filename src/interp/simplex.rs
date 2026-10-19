@@ -1,7 +1,10 @@
 //! Helpers for reordering `Delaunay.find_simplex` queries and for evaluating
 //! `LinearNDInterpolator` once the simplex of every query is known.
 
-use numpy::{PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3, PyReadwriteArray1, PyUntypedArrayMethods};
+use numpy::{
+    PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3,
+    PyReadwriteArray1, PyUntypedArrayMethods,
+};
 use pyo3::prelude::*;
 
 /// Stable counting sort of the rows of `x` (n, ndim) by grid cell, boustrophedon
@@ -9,7 +12,11 @@ use pyo3::prelude::*;
 /// each other. Non-finite coordinates go to the lower bound.
 #[pyfunction]
 pub fn cell_order<'py>(
-    py: Python<'py>, x: PyReadonlyArray2<'py, f64>, lo: PyReadonlyArray1<'py, f64>, span: PyReadonlyArray1<'py, f64>, g: usize,
+    py: Python<'py>,
+    x: PyReadonlyArray2<'py, f64>,
+    lo: PyReadonlyArray1<'py, f64>,
+    span: PyReadonlyArray1<'py, f64>,
+    g: usize,
 ) -> PyResult<Bound<'py, PyArray1<i64>>> {
     let nd = x.shape()[1];
     let (x, lo, span) = (x.as_slice()?, lo.as_slice()?, span.as_slice()?);
@@ -18,19 +25,23 @@ pub fn cell_order<'py>(
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let order = unsafe { out.as_slice_mut()? };
     py.detach(|| {
-        let key: Vec<usize> = x.chunks(nd).map(|p| {
-            let (mut k, mut flip) = (0, 0);
-            for d in 0..nd {
-                let v = if p[d].is_finite() { p[d] } else { lo[d] };
-                let mut c = (((v - lo[d]) / span[d] * g as f64) as i64).clamp(0, g as i64 - 1) as usize;
-                if d == nd - 1 && flip == 1 {
-                    c = g - 1 - c;
+        let key: Vec<usize> = x
+            .chunks(nd)
+            .map(|p| {
+                let (mut k, mut flip) = (0, 0);
+                for d in 0..nd {
+                    let v = if p[d].is_finite() { p[d] } else { lo[d] };
+                    let mut c =
+                        (((v - lo[d]) / span[d] * g as f64) as i64).clamp(0, g as i64 - 1) as usize;
+                    if d == nd - 1 && flip == 1 {
+                        c = g - 1 - c;
+                    }
+                    flip ^= c & 1;
+                    k = k * g + c;
                 }
-                flip ^= c & 1;
-                k = k * g + c;
-            }
-            k
-        }).collect();
+                k
+            })
+            .collect();
         let mut start = vec![0usize; g.pow(nd as u32) + 1];
         for &k in &key {
             start[k + 1] += 1;
@@ -52,35 +63,46 @@ pub fn cell_order<'py>(
 /// the band for ill-conditioned simplices. Queries outside the hull are not judged here.
 #[pyfunction]
 pub fn tie_flags<'py>(
-    py: Python<'py>, xs: PyReadonlyArray2<'py, f64>, res: PyReadonlyArray1<'py, i32>, transform: PyReadonlyArray3<'py, f64>,
-    band: f64, mut flag: PyReadwriteArray1<'py, bool>,
+    py: Python<'py>,
+    xs: PyReadonlyArray2<'py, f64>,
+    res: PyReadonlyArray1<'py, i32>,
+    transform: PyReadonlyArray3<'py, f64>,
+    band: f64,
+    mut flag: PyReadwriteArray1<'py, bool>,
 ) -> PyResult<()> {
     let nd = xs.shape()[1];
-    let (xs, res, tr, flag) = (xs.as_slice()?, res.as_slice()?, transform.as_slice()?, flag.as_slice_mut()?);
-    py.detach(|| super::fill(flag, 1, 1 << 15, |i0, flag| {
-        for (r, f) in flag.iter_mut().enumerate() {
-            let s = res[i0 + r];
-            if s < 0 {
-                continue;
-            }
-            let x = &xs[(i0 + r) * nd..][..nd];
-            let t = &tr[s as usize * (nd + 1) * nd..][..(nd + 1) * nd];
-            let (mut last, mut lerr, mut bad) = (1.0, 0.0, false);
-            for a in 0..nd {
-                let (mut acc, mut err) = (0.0, 0.0);
-                for b in 0..nd {
-                    let tt = t[a * nd + b];
-                    acc = tt.mul_add(x[b] - t[nd * nd + b], acc);
-                    err += tt.abs() * (x[b].abs() + t[nd * nd + b].abs());
+    let (xs, res, tr, flag) = (
+        xs.as_slice()?,
+        res.as_slice()?,
+        transform.as_slice()?,
+        flag.as_slice_mut()?,
+    );
+    py.detach(|| {
+        super::fill(flag, 1, 1 << 15, |i0, flag| {
+            for (r, f) in flag.iter_mut().enumerate() {
+                let s = res[i0 + r];
+                if s < 0 {
+                    continue;
                 }
-                err *= 1e-12;
-                last -= acc;
-                lerr += err;
-                bad |= !(acc - err >= band && acc + err <= 1.0 - band);
+                let x = &xs[(i0 + r) * nd..][..nd];
+                let t = &tr[s as usize * (nd + 1) * nd..][..(nd + 1) * nd];
+                let (mut last, mut lerr, mut bad) = (1.0, 0.0, false);
+                for a in 0..nd {
+                    let (mut acc, mut err) = (0.0, 0.0);
+                    for b in 0..nd {
+                        let tt = t[a * nd + b];
+                        acc = tt.mul_add(x[b] - t[nd * nd + b], acc);
+                        err += tt.abs() * (x[b].abs() + t[nd * nd + b].abs());
+                    }
+                    err *= 1e-12;
+                    last -= acc;
+                    lerr += err;
+                    bad |= !(acc - err >= band && acc + err <= 1.0 - band);
+                }
+                *f = bad || !(last - lerr >= band && last + lerr <= 1.0 - band);
             }
-            *f = bad || !(last - lerr >= band && last + lerr <= 1.0 - band);
-        }
-    }));
+        })
+    });
     Ok(())
 }
 
@@ -90,7 +112,12 @@ pub fn tie_flags<'py>(
 /// started), and overlapping ranges are merged. `None` if the ranges would
 /// cover more than `max_total` queries or number more than `max_ranges`.
 #[pyfunction]
-pub fn replay_intervals(res: PyReadonlyArray1<'_, i32>, flagged: PyReadonlyArray1<'_, bool>, max_total: usize, max_ranges: usize) -> PyResult<Option<Vec<(usize, usize)>>> {
+pub fn replay_intervals(
+    res: PyReadonlyArray1<'_, i32>,
+    flagged: PyReadonlyArray1<'_, bool>,
+    max_total: usize,
+    max_ranges: usize,
+) -> PyResult<Option<Vec<(usize, usize)>>> {
     let (res, flagged) = (res.as_slice()?, flagged.as_slice()?);
     let (mut out, mut anchor, mut total): (Vec<(usize, usize)>, usize, usize) = (vec![], 0, 0);
     for (f, &fl) in flagged.iter().enumerate() {
@@ -122,36 +149,54 @@ pub fn replay_intervals(res: PyReadonlyArray1<'_, i32>, flagged: PyReadonlyArray
 /// clang fuses the multiply-adds on arm64, hence `mul_add`.
 #[pyfunction]
 pub fn linear_eval<'py>(
-    py: Python<'py>, simplex: PyReadonlyArray1<'py, i32>, transform: PyReadonlyArray3<'py, f64>, simplices: PyReadonlyArray2<'py, i32>,
-    values: PyReadonlyArray2<'py, f64>, q: PyReadonlyArray2<'py, f64>, fill: f64,
+    py: Python<'py>,
+    simplex: PyReadonlyArray1<'py, i32>,
+    transform: PyReadonlyArray3<'py, f64>,
+    simplices: PyReadonlyArray2<'py, i32>,
+    values: PyReadonlyArray2<'py, f64>,
+    q: PyReadonlyArray2<'py, f64>,
+    fill: f64,
 ) -> PyResult<Bound<'py, PyArray2<f64>>> {
     let (nd, nv) = (q.shape()[1], values.shape()[1]);
-    let (sx, tr, sp, vals, q) = (simplex.as_slice()?, transform.as_slice()?, simplices.as_slice()?, values.as_slice()?, q.as_slice()?);
+    let (sx, tr, sp, vals, q) = (
+        simplex.as_slice()?,
+        transform.as_slice()?,
+        simplices.as_slice()?,
+        values.as_slice()?,
+        q.as_slice()?,
+    );
     let out = PyArray2::<f64>::zeros(py, (sx.len(), nv), false);
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
-    py.detach(|| super::fill(o, nv, 1 << 12, |i0, o| {
-        let mut c = [0.0f64; 8];
-        for (r, row) in o.chunks_mut(nv).enumerate() {
-            let s = sx[i0 + r];
-            if s < 0 {
-                row.fill(fill);
-                continue;
-            }
-            let (x, t) = (&q[(i0 + r) * nd..][..nd], &tr[s as usize * (nd + 1) * nd..][..(nd + 1) * nd]);
-            c[nd] = 1.0;
-            for a in 0..nd {
-                c[a] = (0..nd).fold(0.0, |acc, b| t[a * nd + b].mul_add(x[b] - t[nd * nd + b], acc));
-                c[nd] -= c[a];
-            }
-            row.fill(0.0);
-            for j in 0..=nd {
-                let m = sp[s as usize * (nd + 1) + j] as usize;
-                for (o, &v) in row.iter_mut().zip(&vals[m * nv..][..nv]) {
-                    *o = c[j].mul_add(v, *o);
+    py.detach(|| {
+        super::fill(o, nv, 1 << 12, |i0, o| {
+            let mut c = [0.0f64; 8];
+            for (r, row) in o.chunks_mut(nv).enumerate() {
+                let s = sx[i0 + r];
+                if s < 0 {
+                    row.fill(fill);
+                    continue;
+                }
+                let (x, t) = (
+                    &q[(i0 + r) * nd..][..nd],
+                    &tr[s as usize * (nd + 1) * nd..][..(nd + 1) * nd],
+                );
+                c[nd] = 1.0;
+                for a in 0..nd {
+                    c[a] = (0..nd).fold(0.0, |acc, b| {
+                        t[a * nd + b].mul_add(x[b] - t[nd * nd + b], acc)
+                    });
+                    c[nd] -= c[a];
+                }
+                row.fill(0.0);
+                for j in 0..=nd {
+                    let m = sp[s as usize * (nd + 1) + j] as usize;
+                    for (o, &v) in row.iter_mut().zip(&vals[m * nv..][..nv]) {
+                        *o = c[j].mul_add(v, *o);
+                    }
                 }
             }
-        }
-    }));
+        })
+    });
     Ok(out)
 }

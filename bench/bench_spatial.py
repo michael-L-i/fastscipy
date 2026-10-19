@@ -2,7 +2,7 @@ import numpy as np
 import scipy.spatial as sp
 import scipy.spatial.distance as dist
 
-THREADED_ONLY = True   # the fast paths only thread; they decline on 1 thread
+THREADED_ONLY = True  # the fast paths only thread; they decline on 1 thread
 rng = np.random.default_rng(0)
 
 
@@ -18,7 +18,7 @@ def cases():
     for k in (1, 8):
         yield f"cKDTree.query 1M pts, 200k queries, k={k}", lambda k=k: tree.query(q, k)
     yield "cKDTree.query_ball_point 200k, r=0.01", lambda: tree.query_ball_point(q, 0.01, return_length=True)
-    small, ssmall = rng.random((300, 16)), rng.random((100, 16))   # below the thresholds
+    small, ssmall = rng.random((300, 16)), rng.random((100, 16))  # below the thresholds
     yield "cdist 300x100x16 (control)", lambda: dist.cdist(small, ssmall), False
     yield "pdist 100x16 (control)", lambda: dist.pdist(ssmall), False
     yield "cKDTree.query 100 queries (control)", lambda: tree.query(q[:100], 4), False

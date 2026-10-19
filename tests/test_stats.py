@@ -46,20 +46,37 @@ rng = np.random.default_rng(12345)
 def sample():
     n = int(rng.choice([2, 3, 4, 5, 8, 10, 17, 30, 64, 100, 257, 1000, 4096]))
     k = rng.choice([0, 1, 2, 3, 9, 12, 13]) if rng.random() < 0.65 else rng.integers(0, 14)
-    if k == 0: x = rng.standard_normal(n)
-    elif k == 1: x = rng.gamma(2.0, 3.0, n)
-    elif k == 2: x = rng.standard_normal(n) * 10.0 ** rng.integers(-8, 8) + rng.standard_normal() * 10.0 ** rng.integers(-3, 8)
-    elif k == 3: x = rng.integers(0, 5, n).astype(float)             # ties
-    elif k == 4: x = np.full(n, rng.standard_normal())               # constant
-    elif k == 5: x = 1e8 + rng.standard_normal(n) * 1e-7             # near constant
-    elif k == 6: x = rng.standard_normal(n); x[rng.integers(0, n)] = np.nan
-    elif k == 7: x = rng.standard_normal(n); x[rng.integers(0, n)] = np.inf
-    elif k == 8: x = rng.standard_normal(n) * 1e200
-    elif k == 9: x = rng.standard_normal(n * 2)[::2]                 # strided
-    elif k == 10: x = rng.standard_normal(n).astype(np.float32)
-    elif k == 11: x = rng.integers(-5, 5, n)
-    elif k == 12: x = rng.standard_normal(n); x.flags.writeable = False
-    else: x = np.abs(rng.standard_normal(n)) + 1e-3
+    if k == 0:
+        x = rng.standard_normal(n)
+    elif k == 1:
+        x = rng.gamma(2.0, 3.0, n)
+    elif k == 2:
+        x = rng.standard_normal(n) * 10.0 ** rng.integers(-8, 8) + rng.standard_normal() * 10.0 ** rng.integers(-3, 8)
+    elif k == 3:
+        x = rng.integers(0, 5, n).astype(float)  # ties
+    elif k == 4:
+        x = np.full(n, rng.standard_normal())  # constant
+    elif k == 5:
+        x = 1e8 + rng.standard_normal(n) * 1e-7  # near constant
+    elif k == 6:
+        x = rng.standard_normal(n)
+        x[rng.integers(0, n)] = np.nan
+    elif k == 7:
+        x = rng.standard_normal(n)
+        x[rng.integers(0, n)] = np.inf
+    elif k == 8:
+        x = rng.standard_normal(n) * 1e200
+    elif k == 9:
+        x = rng.standard_normal(n * 2)[::2]  # strided
+    elif k == 10:
+        x = rng.standard_normal(n).astype(np.float32)
+    elif k == 11:
+        x = rng.integers(-5, 5, n)
+    elif k == 12:
+        x = rng.standard_normal(n)
+        x.flags.writeable = False
+    else:
+        x = np.abs(rng.standard_normal(n)) + 1e-3
     return x
 
 
@@ -82,15 +99,22 @@ CASES = {
     "sem": lambda: ((sample(),), opts(ddof=[0, 1, 2, 5], axis=[0, -1, None])),
     "zscore": lambda: ((sample(),), opts(ddof=[0, 1, 2], axis=[0, -1, None])),
     "describe": lambda: ((sample(),), opts(ddof=[0, 1, 2], bias=[True, False])),
-    "entropy": lambda: ((np.abs(sample()) + (rng.random() < 0.8) * 0.01,), opts(base=[2, 2.0, 10, 0.5, -1, 1], axis=[0, -1])),
-    "ttest_1samp": lambda: ((sample(), float(rng.choice([0.0, 0.1, -1.0, 3.0, 1e3]))),
-                            opts(alternative=ALTS, axis=[0, -1, None])),
+    "entropy": lambda: (
+        (np.abs(sample()) + (rng.random() < 0.8) * 0.01,),
+        opts(base=[2, 2.0, 10, 0.5, -1, 1], axis=[0, -1]),
+    ),
+    "ttest_1samp": lambda: (
+        (sample(), float(rng.choice([0.0, 0.1, -1.0, 3.0, 1e3]))),
+        opts(alternative=ALTS, axis=[0, -1, None]),
+    ),
     "ttest_ind": lambda: (pair(), opts(equal_var=[True, False], alternative=ALTS, axis=[0, -1, None], trim=[0, 0.1])),
     "ttest_rel": lambda: (pair(), opts(alternative=ALTS, axis=[0, -1])),
     "pearsonr": lambda: (pair(), opts(alternative=ALTS, axis=[0, -1, None])),
     "linregress": lambda: (pair(), opts(alternative=ALTS, axis=[0, -1])),
-    "mannwhitneyu": lambda: (pair(), opts(alternative=ALTS, use_continuity=[True, False],
-                                          method=["auto", "asymptotic"], axis=[0, -1])),
+    "mannwhitneyu": lambda: (
+        pair(),
+        opts(alternative=ALTS, use_continuity=[True, False], method=["auto", "asymptotic"], axis=[0, -1]),
+    ),
 }
 
 
@@ -111,9 +135,16 @@ def test_function_randomized(name, threads):
 
 def test_functions_decline_odd_input():
     a = rng.standard_normal(20)
-    for f, args in [(st.skew, ([1.0, 2.0, 4.0],)), (st.sem, (a.astype(np.float32),)), (st.zscore, (np.ones(5),)),
-                    (st.ttest_ind, (a, a[:1])), (st.pearsonr, (a, a[:2])), (st.entropy, (a, a)),
-                    (st.kurtosis, (np.ma.masked_array(a),)), (st.describe, (a.reshape(4, 5),))]:
+    for f, args in [
+        (st.skew, ([1.0, 2.0, 4.0],)),
+        (st.sem, (a.astype(np.float32),)),
+        (st.zscore, (np.ones(5),)),
+        (st.ttest_ind, (a, a[:1])),
+        (st.pearsonr, (a, a[:2])),
+        (st.entropy, (a, a)),
+        (st.kurtosis, (np.ma.masked_array(a),)),
+        (st.describe, (a.reshape(4, 5),)),
+    ]:
         assert same(lambda: f(*args)) is False
 
 
@@ -122,7 +153,7 @@ RANK_KINDS = {
     "float": lambda n: rng.standard_normal(n),
     "ties": lambda n: rng.integers(0, 6, n).astype(float),
     "special": lambda n: rng.choice([0.0, -0.0, np.inf, -np.inf, np.nan, 1.0, 5e-324], n),
-    "int64": lambda n: rng.integers(-2**62, 2**62, n),
+    "int64": lambda n: rng.integers(-(2**62), 2**62, n),
     "uint64": lambda n: rng.integers(0, 2**64 - 1, n, dtype=np.uint64),
     "int8": lambda n: rng.integers(-5, 5, n).astype(np.int8),
 }
@@ -162,15 +193,67 @@ def test_rank_based_tests(n, threads):
 
 
 # --------------------------------------------------------------------------------- distributions
-CONT = [(st.norm, ()), (st.t, (7,)), (st.chi2, (3,)), (st.beta, (2, 3)), (st.gamma, (2.5,)), (st.expon, ()),
-        (st.lognorm, (0.5,)), (st.uniform, ()), (st.f, (3, 5)), (st.weibull_min, (1.5,)), (st.erlang, (3,))]
-DISC = [(st.poisson, (3.5,)), (st.binom, (10, 0.3)), (st.nbinom, (5, 0.4)), (st.zipf, (2.5,)), (st.geom, (0.2,)),
-        (st.hypergeom, (50, 10, 20)), (st.randint, (2, 40))]
-XS = [0.5, 1, np.float64(2.5), 0.0, -1.0, 7.0, np.nan, np.inf, -np.inf, 1e300,
-      rng.uniform(0.01, 5, 30), rng.uniform(0.01, 5, (3, 4)), np.array([0.2, np.nan]), rng.uniform(0.01, 5, 30).astype(np.float32),
-      [0.5, 1.5], np.empty(0), np.array(1.5)]
-QS = [0.3, np.float64(0.9), 0.0, 1.0, 1.5, np.nan, rng.uniform(0.01, 0.99, 25), rng.uniform(0.01, 0.99, (2, 5)), np.array([0.5, 1.0])]
-LOCSCALE = [{}, {"loc": 1.5, "scale": 2.0}, {"loc": -3}, {"scale": 0.5}, {"loc": np.array([1.0, 2.0])}, {"scale": -1.0}, {"loc": np.nan}]
+CONT = [
+    (st.norm, ()),
+    (st.t, (7,)),
+    (st.chi2, (3,)),
+    (st.beta, (2, 3)),
+    (st.gamma, (2.5,)),
+    (st.expon, ()),
+    (st.lognorm, (0.5,)),
+    (st.uniform, ()),
+    (st.f, (3, 5)),
+    (st.weibull_min, (1.5,)),
+    (st.erlang, (3,)),
+]
+DISC = [
+    (st.poisson, (3.5,)),
+    (st.binom, (10, 0.3)),
+    (st.nbinom, (5, 0.4)),
+    (st.zipf, (2.5,)),
+    (st.geom, (0.2,)),
+    (st.hypergeom, (50, 10, 20)),
+    (st.randint, (2, 40)),
+]
+XS = [
+    0.5,
+    1,
+    np.float64(2.5),
+    0.0,
+    -1.0,
+    7.0,
+    np.nan,
+    np.inf,
+    -np.inf,
+    1e300,
+    rng.uniform(0.01, 5, 30),
+    rng.uniform(0.01, 5, (3, 4)),
+    np.array([0.2, np.nan]),
+    rng.uniform(0.01, 5, 30).astype(np.float32),
+    [0.5, 1.5],
+    np.empty(0),
+    np.array(1.5),
+]
+QS = [
+    0.3,
+    np.float64(0.9),
+    0.0,
+    1.0,
+    1.5,
+    np.nan,
+    rng.uniform(0.01, 0.99, 25),
+    rng.uniform(0.01, 0.99, (2, 5)),
+    np.array([0.5, 1.0]),
+]
+LOCSCALE = [
+    {},
+    {"loc": 1.5, "scale": 2.0},
+    {"loc": -3},
+    {"scale": 0.5},
+    {"loc": np.array([1.0, 2.0])},
+    {"scale": -1.0},
+    {"loc": np.nan},
+]
 
 
 @pytest.mark.parametrize("dist,args", CONT, ids=lambda v: getattr(v, "name", ""))
@@ -188,8 +271,22 @@ def test_continuous_methods(dist, args):
 
 @pytest.mark.parametrize("dist,args", DISC, ids=lambda v: getattr(v, "name", ""))
 def test_discrete_methods(dist, args):
-    ks = [0, 3, 5.0, np.float64(2.0), 2.5, -1, 1e4, np.nan, np.inf, np.arange(12), np.arange(12.0), np.arange(12) % 5,
-          rng.integers(0, 8, (3, 4)), [1, 2]]
+    ks = [
+        0,
+        3,
+        5.0,
+        np.float64(2.0),
+        2.5,
+        -1,
+        1e4,
+        np.nan,
+        np.inf,
+        np.arange(12),
+        np.arange(12.0),
+        np.arange(12) % 5,
+        rng.integers(0, 8, (3, 4)),
+        [1, 2],
+    ]
     fast = 0
     for kw in ({}, {"loc": 2}, {"loc": 0.5}):
         for m in ("pmf", "logpmf", "cdf", "logcdf", "sf", "logsf"):
@@ -201,8 +298,11 @@ def test_discrete_methods(dist, args):
     assert fast > 20
 
 
-@pytest.mark.parametrize("dist,args", [(st.poisson, (4.2,)), (st.binom, (30, 0.4)), (st.zipf, (2.0,)),
-                                       (st.nbinom, (5, 0.3)), (st.geom, (0.1,))], ids=lambda v: getattr(v, "name", ""))
+@pytest.mark.parametrize(
+    "dist,args",
+    [(st.poisson, (4.2,)), (st.binom, (30, 0.4)), (st.zipf, (2.0,)), (st.nbinom, (5, 0.3)), (st.geom, (0.1,))],
+    ids=lambda v: getattr(v, "name", ""),
+)
 def test_discrete_tables(dist, args):
     n = 20_000
     k = rng.integers(0, 60, n)
@@ -213,7 +313,7 @@ def test_discrete_tables(dist, args):
     q = rng.uniform(1e-3, 0.99, n)
     for m in ("ppf", "isf"):
         check(lambda: getattr(dist, m)(q, *args), fast=m == "ppf")
-    cdf = dist.cdf(np.arange(30), *args)                     # quantiles on exact cdf boundaries
+    cdf = dist.cdf(np.arange(30), *args)  # quantiles on exact cdf boundaries
     check(lambda: dist.ppf(np.repeat(cdf[(cdf > 0) & (cdf < 1)], 300), *args))
     check(lambda: dist.ppf(np.nextafter(np.repeat(cdf[(cdf > 0) & (cdf < 1)], 300), 1), *args))
     check(lambda: dist.cdf(k, *args, loc=3), fast=False)

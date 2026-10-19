@@ -43,13 +43,31 @@ fn gemv(m: &[f64], cols: usize, v: &[f64], out: &mut [f64]) {
 
 /// True if the emulation equals the reference products `refs[t] = np.dot(ms[t], vs[t])` in every trial.
 #[pyfunction]
-pub fn gemv_matches(ms: PyReadonlyArray3<f64>, vs: PyReadonlyArray2<f64>, refs: PyReadonlyArray2<f64>) -> PyResult<bool> {
-    let (shape, ms, vs, refs) = (ms.shape().to_vec(), ms.as_slice()?, vs.as_slice()?, refs.as_slice()?);
+pub fn gemv_matches(
+    ms: PyReadonlyArray3<f64>,
+    vs: PyReadonlyArray2<f64>,
+    refs: PyReadonlyArray2<f64>,
+) -> PyResult<bool> {
+    let (shape, ms, vs, refs) = (
+        ms.shape().to_vec(),
+        ms.as_slice()?,
+        vs.as_slice()?,
+        refs.as_slice()?,
+    );
     let (rows, cols) = (shape[1], shape[2]);
     let mut out = vec![0.0; rows];
     for t in 0..shape[0] {
-        gemv(&ms[t * rows * cols..][..rows * cols], cols, &vs[t * cols..][..cols], &mut out);
-        if out.iter().zip(&refs[t * rows..][..rows]).any(|(a, b)| a.to_bits() != b.to_bits()) {
+        gemv(
+            &ms[t * rows * cols..][..rows * cols],
+            cols,
+            &vs[t * cols..][..cols],
+            &mut out,
+        );
+        if out
+            .iter()
+            .zip(&refs[t * rows..][..rows])
+            .any(|(a, b)| a.to_bits() != b.to_bits())
+        {
             return Ok(false);
         }
     }
@@ -60,20 +78,38 @@ pub fn gemv_matches(ms: PyReadonlyArray3<f64>, vs: PyReadonlyArray2<f64>, refs: 
 #[pyfunction]
 #[allow(clippy::too_many_arguments)]
 pub fn dlsim_loop(
-    py: Python<'_>, a: PyReadonlyArray2<f64>, b: PyReadonlyArray2<f64>, c: PyReadonlyArray2<f64>,
-    d: PyReadonlyArray2<f64>, u: PyReadonlyArray2<f64>, mut xout: PyReadwriteArray2<f64>,
+    py: Python<'_>,
+    a: PyReadonlyArray2<f64>,
+    b: PyReadonlyArray2<f64>,
+    c: PyReadonlyArray2<f64>,
+    d: PyReadonlyArray2<f64>,
+    u: PyReadonlyArray2<f64>,
+    mut xout: PyReadwriteArray2<f64>,
     mut yout: PyReadwriteArray2<f64>,
 ) -> PyResult<()> {
     let (n, ns, ni, no) = (xout.shape()[0], a.shape()[0], b.shape()[1], c.shape()[0]);
-    let fits = a.shape() == [ns, ns] && b.shape() == [ns, ni] && c.shape() == [no, ns] && d.shape() == [no, ni]
-        && u.shape() == [n, ni] && xout.shape() == [n, ns] && yout.shape() == [n, no] && n > 0;
+    let fits = a.shape() == [ns, ns]
+        && b.shape() == [ns, ni]
+        && c.shape() == [no, ns]
+        && d.shape() == [no, ni]
+        && u.shape() == [n, ni]
+        && xout.shape() == [n, ns]
+        && yout.shape() == [n, no]
+        && n > 0;
     if !fits {
         return Err(PyValueError::new_err("inconsistent state-space shapes"));
     }
-    let (a, b, c, d, u) = (a.as_slice()?, b.as_slice()?, c.as_slice()?, d.as_slice()?, u.as_slice()?);
+    let (a, b, c, d, u) = (
+        a.as_slice()?,
+        b.as_slice()?,
+        c.as_slice()?,
+        d.as_slice()?,
+        u.as_slice()?,
+    );
     let (x, y) = (xout.as_slice_mut()?, yout.as_slice_mut()?);
     py.detach(|| {
-        let (mut ax, mut bu, mut cx, mut du) = (vec![0.0; ns], vec![0.0; ns], vec![0.0; no], vec![0.0; no]);
+        let (mut ax, mut bu, mut cx, mut du) =
+            (vec![0.0; ns], vec![0.0; ns], vec![0.0; no], vec![0.0; no]);
         for i in 0..n {
             let ui = &u[i * ni..][..ni];
             if i + 1 < n {

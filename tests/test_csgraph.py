@@ -21,8 +21,8 @@ def graph(seed, n=60, density=0.08, ints=True, negative=False, fmt="csr", sort=T
     rng = np.random.default_rng(seed)
     m = max(int(n * n * density), 1)
     r, c = rng.integers(0, n, m), rng.integers(0, n, m)
-    w = rng.integers(1, 6, m).astype(float) if ints else rng.random(m) * 10 + 0.1   # integers give many ties
-    if negative:   # a random potential keeps cycles non-negative
+    w = rng.integers(1, 6, m).astype(float) if ints else rng.random(m) * 10 + 0.1  # integers give many ties
+    if negative:  # a random potential keeps cycles non-negative
         h = rng.integers(0, 5, n)
         w = w + h[r] - h[c]
     g = sp.coo_array((w, (r, c)), (n, n)).tocsr()
@@ -40,12 +40,19 @@ def graph(seed, n=60, density=0.08, ints=True, negative=False, fmt="csr", sort=T
 @pytest.mark.parametrize("ints", [True, False])
 def test_dijkstra(seed, directed, ints):
     g = graph(seed, ints=ints, sort=seed % 2 == 0)
-    for kw in ({}, {"return_predecessors": True}, {"unweighted": True, "return_predecessors": True},
-               {"indices": [3, 7, 3], "return_predecessors": True}, {"indices": -1}, {"indices": [[1, 2], [3, 4]]},
-               {"limit": 4.0, "return_predecessors": True}, {"unweighted": True, "limit": 3, "indices": [0, 5]},
-               {"indices": [0, 9, 17], "min_only": True, "return_predecessors": True},
-               {"indices": [4, 2], "min_only": True, "unweighted": True, "return_predecessors": True},
-               {"indices": [], "return_predecessors": True}):
+    for kw in (
+        {},
+        {"return_predecessors": True},
+        {"unweighted": True, "return_predecessors": True},
+        {"indices": [3, 7, 3], "return_predecessors": True},
+        {"indices": -1},
+        {"indices": [[1, 2], [3, 4]]},
+        {"limit": 4.0, "return_predecessors": True},
+        {"unweighted": True, "limit": 3, "indices": [0, 5]},
+        {"indices": [0, 9, 17], "min_only": True, "return_predecessors": True},
+        {"indices": [4, 2], "min_only": True, "unweighted": True, "return_predecessors": True},
+        {"indices": [], "return_predecessors": True},
+    ):
         check(lambda: cg.dijkstra(g, directed, **kw))
 
 
@@ -66,11 +73,20 @@ def test_input_formats(fmt):
 @pytest.mark.parametrize("directed", [True, False])
 def test_bellman_ford_johnson(seed, directed):
     for neg in (False, True):
-        g = graph(seed, negative=neg, ints=seed % 2 == 0 or not directed, density=0.05)   # float undirected rounding trips SciPy's cycle check
+        g = graph(
+            seed, negative=neg, ints=seed % 2 == 0 or not directed, density=0.05
+        )  # float undirected rounding trips SciPy's cycle check
         for f in (cg.bellman_ford, cg.johnson):
-            for kw in ({}, {"return_predecessors": True}, {"unweighted": True, "return_predecessors": True},
-                       {"indices": [0, 11, -2], "return_predecessors": True}, {"indices": 5}):
-                if neg and (not directed or kw.get("unweighted")):   # a negative undirected edge is a cycle; unweighted Dijkstra declines
+            for kw in (
+                {},
+                {"return_predecessors": True},
+                {"unweighted": True, "return_predecessors": True},
+                {"indices": [0, 11, -2], "return_predecessors": True},
+                {"indices": 5},
+            ):
+                if neg and (
+                    not directed or kw.get("unweighted")
+                ):  # a negative undirected edge is a cycle; unweighted Dijkstra declines
                     continue
                 check(lambda: f(g, directed, **kw))
 
@@ -106,9 +122,14 @@ def test_nan_and_inf_weights():
 @pytest.mark.parametrize("seed", range(4))
 def test_shortest_path(seed):
     g = graph(seed, density=0.03)
-    for kw in ({}, {"unweighted": True, "indices": 0}, {"method": "D", "return_predecessors": True, "directed": False},
-               {"method": "BF", "indices": [0, 3]}, {"method": "J", "unweighted": True, "return_predecessors": True},
-               {"indices": [1, 2], "directed": False}):
+    for kw in (
+        {},
+        {"unweighted": True, "indices": 0},
+        {"method": "D", "return_predecessors": True, "directed": False},
+        {"method": "BF", "indices": [0, 3]},
+        {"method": "J", "unweighted": True, "return_predecessors": True},
+        {"indices": [1, 2], "directed": False},
+    ):
         check(lambda: cg.shortest_path(g, **kw))
     check(lambda: cg.shortest_path(graph(seed, negative=True, density=0.03), indices=[0, 4], return_predecessors=True))
     check(lambda: cg.shortest_path(graph(seed, density=0.5), method="FW"), fast=False)
@@ -128,8 +149,14 @@ def test_unweighted_grid():
 @pytest.mark.parametrize("seed", range(8))
 def test_connected_components(seed):
     g = graph(seed, n=200, density=0.004 + 0.002 * seed, sort=seed % 2 == 0)
-    for kw in ({}, {"directed": False}, {"connection": "strong"}, {"connection": "STRONG", "return_labels": False},
-               {"directed": False, "connection": "strong"}, {"return_labels": False}):
+    for kw in (
+        {},
+        {"directed": False},
+        {"connection": "strong"},
+        {"connection": "STRONG", "return_labels": False},
+        {"directed": False, "connection": "strong"},
+        {"return_labels": False},
+    ):
         check(lambda: cg.connected_components(g, **kw))
     check(lambda: cg.connected_components(sp.csr_array((0, 0))), fast=False)
     for gg in (sp.csr_array((5, 5)), sp.csr_array(np.ones((4, 4)))):

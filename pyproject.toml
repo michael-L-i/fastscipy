@@ -20,3 +20,13 @@ module-name = "fastscipy._native"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+# Tests call their lambdas immediately (B023); kernels mirror SciPy's terse style (E70x, E731).
+ignore = ["B023", "B905", "B008", "E701", "E702", "E731"]
+

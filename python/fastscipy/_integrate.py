@@ -14,6 +14,7 @@ from scipy.integrate import _quadrature
 from . import _patch
 
 _NP = array_namespace(np.empty(0))
+_SIMPSON_DTYPES = tuple(np.dtype(t) for t in ("float64", "float32", "complex128", "complex64"))
 
 
 def _trapezoid(y, x=None, dx=1.0, axis=-1):
@@ -91,11 +92,10 @@ def _cumulative_trapezoid(y, x=None, dx=1.0, axis=-1, initial=None):
 
 
 def _simpson(y, x=None, *, dx=1.0, axis=-1):
-    """Uniform spacing: SciPy's composite rule and even-length end correction."""
+    """SciPy's composite rule and end correction with concrete NumPy arithmetic."""
     if (
         type(y) is not np.ndarray
-        or y.dtype != np.float64
-        or x is not None
+        or y.dtype not in _SIMPSON_DTYPES
         or type(dx) not in (float, int)
         or (type(dx) is int and not -(2**63) <= dx < 2**64)
         or type(axis) is not int
@@ -110,20 +110,59 @@ def _simpson(y, x=None, *, dx=1.0, axis=-1):
     s0[axis], s1[axis], s2[axis] = slice(0, stop, 2), slice(1, stop + 1, 2), slice(2, stop + 2, 2)
     try:
         with np.errstate(all="raise"):
-            spacing = np.asarray(dx, dtype=np.float64)
+            if x is None:
+                spacing = np.asarray(dx, dtype=y.dtype)
+                differences = None
+            else:
+                if not (
+                    y.size and y.dtype.kind == "f" and type(x) is np.ndarray and x.dtype in (np.float64, np.float32)
+                ):
+                    return NotImplemented
+                dtype = np.result_type(y.dtype, x.dtype)
+                y, coords = y.astype(dtype, copy=False), x.astype(dtype, copy=False)
+                if coords.ndim == 1 and coords.size == n:
+                    shape = [1] * y.ndim
+                    shape[axis] = n
+                    coords = coords.reshape(shape)
+                elif coords.shape != y.shape:
+                    return NotImplemented
+                differences = np.diff(coords, axis=axis)
+                low, high = differences.min(initial=np.inf), differences.max(initial=-np.inf)
+                if not ((low >= 1e-20 and high <= 1e20) or (low >= -1e20 and high <= -1e-20)):
+                    return NotImplemented
+                spacing = None
             if n == 2:
                 s1[axis], s2[axis] = -1, -2
-                return 0.0 + 0.5 * spacing * (y[tuple(s1)] + y[tuple(s2)])
-            result = spacing / 3.0 * np.sum(y[tuple(s0)] + 4.0 * y[tuple(s1)] + y[tuple(s2)], axis=axis)
+                last_dx = spacing if x is None else np.squeeze(differences, axis=axis)
+                return 0.0 + 0.5 * last_dx * (y[tuple(s1)] + y[tuple(s2)])
+            if x is None:
+                result = spacing / 3.0 * np.sum(y[tuple(s0)] + 4.0 * y[tuple(s1)] + y[tuple(s2)], axis=axis)
+            else:
+                h0, h1 = differences[tuple(s0)], differences[tuple(s1)]
+                hsum, hprod, ratio = h0 + h1, h0 * h1, h0 / h1
+                tmp = (
+                    hsum
+                    / 6.0
+                    * (
+                        y[tuple(s0)] * (2.0 - 1.0 / ratio)
+                        + y[tuple(s1)] * (hsum * (hsum / hprod))
+                        + y[tuple(s2)] * (2.0 - ratio)
+                    )
+                )
+                result = np.sum(tmp, axis=axis)
             if n % 2:
                 return result
-            h0, h1 = np.stack((spacing, spacing))
+            if x is None:
+                h0, h1 = np.stack((spacing, spacing))
+            else:
+                s0[axis], s1[axis] = slice(-2, -1), slice(-1, None)
+                h0, h1 = np.squeeze(differences[tuple(s0)], axis=axis), np.squeeze(differences[tuple(s1)], axis=axis)
             num, den = 2 * h1**2 + 3 * h0 * h1, 6 * (h1 + h0)
-            alpha = np.asarray(num / den if den != 0 else 0.0)
+            alpha = np.asarray(num / den if x is not None or den != 0 else np.zeros((), dtype=y.dtype))
             num, den = h1**2 + 3.0 * h0 * h1, 6 * h0
-            beta = np.asarray(num / den if den != 0 else 0.0)
+            beta = np.asarray(num / den if x is not None or den != 0 else np.zeros((), dtype=y.dtype))
             num, den = 1 * h1**3, 6 * h0 * (h0 + h1)
-            eta = np.asarray(num / den if den != 0 else 0.0)
+            eta = np.asarray(num / den if x is not None or den != 0 else np.zeros((), dtype=y.dtype))
             s0[axis], s1[axis], s2[axis] = -1, -2, -3
             result += alpha * y[tuple(s0)] + beta * y[tuple(s1)] - eta * y[tuple(s2)]
             result += 0.0
@@ -315,6 +354,9 @@ def smoke():
     integrate.cumulative_trapezoid(y, initial=0)
     integrate.simpson(y[:19])
     integrate.simpson(y)
+    integrate.simpson(y, x=y * y)
+    integrate.simpson(y.astype(np.float32))
+    integrate.simpson(y.astype(np.complex64))
     integrate.cumulative_simpson(y)
     integrate.cumulative_simpson(y, x=y * y)
     integrate.romb(y[:17])

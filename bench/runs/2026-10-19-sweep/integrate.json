@@ -8,13 +8,42 @@
   "budget_s": 0.025,
   "rejected_candidates": [],
   "notes": [
-   "Small irregular 1-D cumulative Simpson has marginal improvement; retained as the same implementation gives larger gains for long arrays and multiple channels."
+   "Small irregular 1-D cumulative Simpson has marginal improvement; retained as the same implementation gives larger gains for long arrays and multiple channels.",
+   "Wave 3 adds explicit real-coordinate Simpson and float32/complex64/complex128 uniform Simpson; original eight wave-1 measurements and baseline are preserved."
   ],
   "remaining_opportunities": [
-   "Simpson with explicit irregular coordinates",
-   "float32/complex128 Simpson with exact dtype promotion",
+   "Complex Simpson with explicit coordinates and exact promoted complex arithmetic",
+   "NumPy scalar dx promotion for Simpson",
+   "Repeated/mixed-sign irregular grids currently delegated to SciPy",
    "float32 coordinates for cumulative Simpson"
-  ]
+  ],
+  "wave3_baseline": "3b74ed9",
+  "wave3_existing_float64_controls": {
+   "100": [
+    {
+     "before_us": 6.291025783866644,
+     "after_us": 6.290996680036187,
+     "x_before": 1.0000046262670188
+    },
+    {
+     "before_us": 6.332993507385254,
+     "after_us": 6.249989382922649,
+     "x_before": 1.013280682474342
+    }
+   ],
+   "101": [
+    {
+     "before_us": 3.207998815923929,
+     "after_us": 3.1660019885748625,
+     "x_before": 1.0132649402939797
+    },
+    {
+     "before_us": 3.1659728847444057,
+     "after_us": 3.1249946914613247,
+     "x_before": 1.0131130441261385
+    }
+   ]
+  }
  },
  "cases": {
   "cumulative_simpson 100 irregular points": {
@@ -264,6 +293,262 @@
    ],
    "before_ms": 0.01591601176187396,
    "x_before": 1.317225797749345
+  },
+  "simpson 100 irregular points": {
+   "scipy_ms": 0.053415977163240314,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.012791017070412636,
+   "x1t": 4.176053934506799,
+   "nt_ms": 0.012666016118600965,
+   "xnt": 4.21726742355831,
+   "rounds": [
+    {
+     "scipy_ms": 0.054459000239148736,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.013082986697554588,
+     "x1t": 4.1625816411880905,
+     "nt_ms": 0.012957985745742917,
+     "xnt": 4.2027365446855915
+    },
+    {
+     "scipy_ms": 0.053415977163240314,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.012791017070412636,
+     "x1t": 4.176053934506799,
+     "nt_ms": 0.012666016118600965,
+     "xnt": 4.21726742355831
+    }
+   ],
+   "before_ms": 0.05408399738371372,
+   "x_before": 4.228279665799006,
+   "baseline": "3b74ed9"
+  },
+  "simpson 101 irregular points": {
+   "scipy_ms": 0.02812498132698238,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.007875001756474376,
+   "x1t": 3.571425403665419,
+   "nt_ms": 0.007541995728388429,
+   "xnt": 3.7291165813205938,
+   "rounds": [
+    {
+     "scipy_ms": 0.027875008527189493,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.007624999852851033,
+     "x1t": 3.6557388937872384,
+     "nt_ms": 0.007666007149964571,
+     "xnt": 3.63618347620747
+    },
+    {
+     "scipy_ms": 0.02812498132698238,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.007875001756474376,
+     "x1t": 3.571425403665419,
+     "nt_ms": 0.007541995728388429,
+     "xnt": 3.7291165813205938
+    }
+   ],
+   "before_ms": 0.02791700535453856,
+   "x_before": 3.545015762261487,
+   "baseline": "3b74ed9"
+  },
+  "simpson 100 uniform float32 points": {
+   "scipy_ms": 0.025582994567230344,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006457994459196925,
+   "x1t": 3.9614457288357108,
+   "nt_ms": 0.006749993190169334,
+   "xnt": 3.7900770928908973,
+   "rounds": [
+    {
+     "scipy_ms": 0.025583984097465873,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006499991286545992,
+     "x1t": 3.936002829791616,
+     "nt_ms": 0.006708985893055797,
+     "xnt": 3.813390653265024
+    },
+    {
+     "scipy_ms": 0.025582994567230344,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006457994459196925,
+     "x1t": 3.9614457288357108,
+     "nt_ms": 0.006749993190169334,
+     "xnt": 3.7900770928908973
+    }
+   ],
+   "before_ms": 0.026374997105449438,
+   "x_before": 4.084084814889925,
+   "baseline": "3b74ed9"
+  },
+  "simpson 101 uniform float32 points": {
+   "scipy_ms": 0.004999979864805937,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0033329997677356005,
+   "x1t": 1.500144078378638,
+   "nt_ms": 0.0033329997677356005,
+   "xnt": 1.500144078378638,
+   "rounds": [
+    {
+     "scipy_ms": 0.0048330111894756556,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0032910029403865337,
+     "x1t": 1.4685526804506623,
+     "nt_ms": 0.0033329997677356005,
+     "xnt": 1.45004846272736
+    },
+    {
+     "scipy_ms": 0.004999979864805937,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0033329997677356005,
+     "x1t": 1.500144078378638,
+     "nt_ms": 0.0033329997677356005,
+     "xnt": 1.500144078378638
+    }
+   ],
+   "before_ms": 0.004915986210107803,
+   "x_before": 1.4749434601514133,
+   "baseline": "3b74ed9"
+  },
+  "simpson 100 uniform complex64 points": {
+   "scipy_ms": 0.02566599869169295,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006999995093792677,
+   "x1t": 3.666573811523462,
+   "nt_ms": 0.006749993190169334,
+   "xnt": 3.8023740126246075,
+   "rounds": [
+    {
+     "scipy_ms": 0.025958986952900887,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006665999535471201,
+     "x1t": 3.8942377380567756,
+     "nt_ms": 0.006999995093792677,
+     "xnt": 3.7084293067462726
+    },
+    {
+     "scipy_ms": 0.02566599869169295,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006999995093792677,
+     "x1t": 3.666573811523462,
+     "nt_ms": 0.006749993190169334,
+     "xnt": 3.8023740126246075
+    }
+   ],
+   "before_ms": 0.02587502240203321,
+   "x_before": 3.6964343625009355,
+   "baseline": "3b74ed9"
+  },
+  "simpson 101 uniform complex64 points": {
+   "scipy_ms": 0.004791014362126589,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003416003892198205,
+   "x1t": 1.4025201707377335,
+   "nt_ms": 0.0035409757401794195,
+   "xnt": 1.3530209506275326,
+   "rounds": [
+    {
+     "scipy_ms": 0.004999979864805937,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0035409757401794195,
+     "x1t": 1.4120344875767463,
+     "nt_ms": 0.0034580007195472717,
+     "xnt": 1.4459163748990036
+    },
+    {
+     "scipy_ms": 0.004791014362126589,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.003416003892198205,
+     "x1t": 1.4025201707377335,
+     "nt_ms": 0.0035409757401794195,
+     "xnt": 1.3530209506275326
+    }
+   ],
+   "before_ms": 0.004999979864805937,
+   "x_before": 1.4636926720796095,
+   "baseline": "3b74ed9"
+  },
+  "simpson 100 uniform complex128 points": {
+   "scipy_ms": 0.025833025574684143,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006707996362820268,
+   "x1t": 3.8510792459379135,
+   "nt_ms": 0.006541988113895059,
+   "xnt": 3.948803502075353,
+   "rounds": [
+    {
+     "scipy_ms": 0.026416004402562976,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006624992238357663,
+     "x1t": 3.9873260906810524,
+     "nt_ms": 0.006624992238357663,
+     "xnt": 3.9873260906810524
+    },
+    {
+     "scipy_ms": 0.025833025574684143,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.006707996362820268,
+     "x1t": 3.8510792459379135,
+     "nt_ms": 0.006541988113895059,
+     "xnt": 3.948803502075353
+    }
+   ],
+   "before_ms": 0.025874993298202753,
+   "x_before": 3.857335618369959,
+   "baseline": "3b74ed9"
+  },
+  "simpson 101 uniform complex128 points": {
+   "scipy_ms": 0.0048340007197111845,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0032919924706220627,
+   "x1t": 1.4684118395926162,
+   "nt_ms": 0.003374996595084667,
+   "xnt": 1.432297954537615,
+   "rounds": [
+    {
+     "scipy_ms": 0.004875008016824722,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0034159747883677483,
+     "x1t": 1.4271206079814607,
+     "nt_ms": 0.0033329997677356005,
+     "xnt": 1.4626487718409724
+    },
+    {
+     "scipy_ms": 0.0048340007197111845,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0032919924706220627,
+     "x1t": 1.4684118395926162,
+     "nt_ms": 0.003374996595084667,
+     "xnt": 1.432297954537615
+    }
+   ],
+   "before_ms": 0.004958012141287327,
+   "x_before": 1.506082466935427,
+   "baseline": "3b74ed9"
   }
  }
 }

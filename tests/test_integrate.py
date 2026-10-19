@@ -272,6 +272,96 @@ def test_expanded_sampled_numpy_callbacks_not_retried(name, kwargs, y, monkeypat
         assert caught.value is error and len(calls) == 1
 
 
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("n", [2, 3, 4, 17, 100, 101])
+def test_simpson_uniform_dtype_promotion(dtype, n, integration_threads):
+    local = np.random.default_rng(993 + n)
+    y = local.standard_normal((2, n, 3)).astype(dtype)
+    if y.dtype.kind == "c":
+        y += 1j * local.standard_normal(y.shape).astype(dtype)
+    for data, axis in (
+        (y, 1),
+        (y[:, ::-1], -2),
+        (np.asfortranarray(y), 1),
+        (y.swapaxes(0, 1), 0),
+        (y[0, :, 0], -1),
+        (np.zeros(n, dtype=dtype), 0),
+    ):
+        data.flags.writeable = False
+        before = data.tobytes()
+        for dx in (1.0, 0.1, -2, 0.0, -0.0):
+            out = check(lambda: integrate.simpson(data, dx=dx, axis=axis))
+            assert out.dtype == data.dtype
+        assert data.tobytes() == before
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("xdtype", [np.float32, np.float64])
+@pytest.mark.parametrize("n", [2, 3, 4, 17, 100])
+def test_simpson_irregular_dtype_layout(dtype, xdtype, n, integration_threads):
+    local = np.random.default_rng(994 + n)
+    y = local.standard_normal((2, n, 3)).astype(dtype)
+    full = np.cumsum(local.uniform(0.1, 1.0, y.shape), axis=1).astype(xdtype)
+    x = np.cumsum(local.uniform(0.1, 1.0, n)).astype(xdtype)
+    for data, coords, axis in (
+        (y, x, 1),
+        (y, full, 1),
+        (np.asfortranarray(y), np.asfortranarray(full), 1),
+        (y[:, ::-1], -x, -2),
+        (y.swapaxes(0, 1), full.swapaxes(0, 1), 0),
+        (y[0, :, 0], x, 0),
+    ):
+        data.flags.writeable = False
+        coords.flags.writeable = False
+        before = data.tobytes(), coords.tobytes()
+        check(lambda: integrate.simpson(data, x=coords, axis=axis))
+        assert (data.tobytes(), coords.tobytes()) == before
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.complex64, np.complex128])
+def test_simpson_expanded_dtype_warnings(dtype, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    large = np.finfo(np.float32 if np.dtype(dtype).itemsize <= 8 else np.float64).max
+    arrays = [
+        np.array([large, large, np.inf, -np.inf], dtype=dtype),
+        np.array([np.nan, -0.0, 0.0], dtype=dtype),
+        np.ones(5, dtype=dtype),
+    ]
+    for data in arrays:
+        for dx in (1.0, 1e200, 1e-200, 0.0):
+            for settings in ({"all": "warn"}, {"all": "raise"}, {"over": "warn", "invalid": "raise"}):
+                with np.errstate(**settings):
+                    with fastscipy.disabled():
+                        expected = _sampled_outcome("simpson", data, dx=dx)
+                    assert_identical(expected, _sampled_outcome("simpson", data, dx=dx))
+
+
+@pytest.mark.parametrize(
+    "coords",
+    [
+        np.array([0.0, 1.0, 1.0, 2.0, 3.0]),
+        np.array([0.0, 1e-300, 2e-300, 1.0, 2.0]),
+        np.array([0.0, 1.0, np.inf, np.inf, np.inf]),
+        np.array([0.0, 1.0, np.nan, 3.0, 4.0]),
+    ],
+)
+def test_simpson_irregular_degenerate_spacing(coords):
+    y = np.arange(5.0)
+    with fastscipy.disabled():
+        expected = _sampled_outcome("simpson", y, x=coords)
+    assert_identical(expected, _sampled_outcome("simpson", y, x=coords))
+
+
+def test_simpson_irregular_empty_outer_dimensions():
+    y = np.empty((0, 5))
+    for x in (np.arange(5.0), np.empty((0, 5))):
+        with fastscipy.disabled():
+            expected = _sampled_outcome("simpson", y, x=x)
+        assert_identical(expected, _sampled_outcome("simpson", y, x=x))
+
+
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128])
 def test_cumulative_trapezoid_nd_dtypes(dtype, integration_threads):
     local = np.random.default_rng(950)

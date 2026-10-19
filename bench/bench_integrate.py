@@ -7,6 +7,17 @@ _y2 = np.random.default_rng(2).standard_normal((1000, 30))
 
 
 def cases():
+    simpson_rng = np.random.default_rng(995)
+    for n in (100, 101):
+        irregular_y = simpson_rng.standard_normal(n)
+        irregular_x = np.cumsum(simpson_rng.uniform(0.1, 1.0, n))
+        yield f"simpson {n} irregular points", lambda y=irregular_y, x=irregular_x: integrate.simpson(y, x=x)
+    for dtype in (np.float32, np.complex64, np.complex128):
+        for n in (100, 101):
+            typed_y = simpson_rng.standard_normal(n).astype(dtype)
+            if typed_y.dtype.kind == "c":
+                typed_y += 1j * simpson_rng.standard_normal(n).astype(dtype)
+            yield f"simpson {n} uniform {np.dtype(dtype).name} points", lambda y=typed_y: integrate.simpson(y)
     wave_rng = np.random.default_rng(970)
     for n in (100, 100_001):
         irregular_y = wave_rng.standard_normal(n)

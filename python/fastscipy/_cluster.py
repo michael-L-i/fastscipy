@@ -33,10 +33,10 @@ def _vq(obs, code_book, check_finite=True):
 def _whiten(obs, check_finite=None):
     if (
         type(obs) is not np.ndarray
-        or obs.dtype not in (np.dtype(np.float32), np.dtype(np.float64))
-        or obs.ndim != 2
+        or obs.dtype not in (np.float64, np.float32, np.complex64, np.complex128)
+        or obs.ndim < 1
         or obs.shape[0] < 2
-        or obs.shape[1] == 0
+        or obs.size == 0
         or check_finite is not None
         and type(check_finite) is not bool
     ):
@@ -48,7 +48,7 @@ def _whiten(obs, check_finite=None):
     # exceptions to the original function, which runs exactly once afterward.
     try:
         with np.errstate(all="raise"):
-            std = np.std(obs, axis=0, ddof=0.0)
+            std = np.asarray(np.std(obs, axis=0, ddof=0.0))
             zero = std == 0
             if check_finite and zero.any():
                 return NotImplemented

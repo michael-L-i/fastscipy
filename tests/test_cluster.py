@@ -81,6 +81,36 @@ def test_whiten(dtype, layout):
     check(lambda: vq.whiten(zero_columns, check_finite=False))
 
 
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("shape", [(31,), (19, 3, 4)])
+@pytest.mark.parametrize("layout", ["C", "F", "reversed"])
+def test_whiten_nd_and_complex(dtype, shape, layout):
+    rng = np.random.default_rng(850)
+    x = rng.standard_normal(shape).astype(dtype)
+    if np.iscomplexobj(x):
+        x += 1j * rng.standard_normal(shape)
+    if layout == "F":
+        x = np.asfortranarray(x)
+    elif layout == "reversed":
+        x = x[::-1]
+    x.flags.writeable = False
+    before = x.tobytes()
+    for finite in (None, True, False):
+        check(lambda: vq.whiten(x, check_finite=finite))
+    assert x.tobytes() == before
+    zero = np.zeros(shape, dtype=dtype)
+    check(lambda: vq.whiten(zero, check_finite=False))
+    for value in (np.nan, np.inf, -np.inf, 1e30, 1e-30):
+        a = x.copy()
+        a.flat[0] = value
+        for finite in (None, False):
+            for err in ({}, {"all": "warn"}, {"all": "raise"}):
+                with np.errstate(**err):
+                    with fastscipy.disabled():
+                        expected = _outcome(lambda: vq.whiten(a, check_finite=finite))
+                    assert_identical(expected, _outcome(lambda: vq.whiten(a, check_finite=finite)))
+
+
 def _outcome(call):
     with warnings.catch_warnings(record=True) as seen:
         warnings.simplefilter("always")

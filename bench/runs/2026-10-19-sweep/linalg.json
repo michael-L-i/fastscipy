@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "single NumPy triangular solves"
+  },
+  "cases": {
+    "solve_triangular single 8x8 float32 C, check_finite=True": {
+      "scipy_ms": 0.0046670029405504465,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0022909953258931637,
+      "x1t": 2.0371071419497446,
+      "nt_ms": 0.0023329921532422304,
+      "xnt": 2.0004366212996345
+    },
+    "solve_triangular single 8x8 float32 C, check_finite=False": {
+      "scipy_ms": 0.0034999975468963385,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014580145943909883,
+      "x1t": 2.400522985408308,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 2.333359203709812
+    },
+    "solve_triangular single 8x8 float64 F, check_finite=True": {
+      "scipy_ms": 0.004542001988738775,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002249988028779626,
+      "x1t": 2.0186782910139827,
+      "nt_ms": 0.002249988028779626,
+      "xnt": 2.0186782910139827
+    },
+    "solve_triangular single 8x8 float64 F, check_finite=False": {
+      "scipy_ms": 0.0034580007195472717,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014579854905605316,
+      "x1t": 2.3717662088789524,
+      "nt_ms": 0.0014160177670419216,
+      "xnt": 2.4420602622600405
+    },
+    "solve_triangular single 8x8 complex64 strided, check_finite=True": {
+      "scipy_ms": 0.005374982720240951,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.00291600008495152,
+      "x1t": 1.843272484105676,
+      "nt_ms": 0.0029999937396496534,
+      "xnt": 1.7916646455631118
+    },
+    "solve_triangular single 8x8 complex64 strided, check_finite=False": {
+      "scipy_ms": 0.0036659766919910908,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0016250123735517263,
+      "x1t": 2.255968478552879,
+      "nt_ms": 0.0016250123735517263,
+      "xnt": 2.255968478552879
+    },
+    "solve_triangular single 8x8 complex128 C, check_finite=True": {
+      "scipy_ms": 0.004624977009370923,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024579931050539017,
+      "x1t": 1.8816069906223358,
+      "nt_ms": 0.002415996277704835,
+      "xnt": 1.9143146254201149
+    },
+    "solve_triangular single 8x8 complex128 C, check_finite=False": {
+      "scipy_ms": 0.0035409757401794195,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0015829864423722029,
+      "x1t": 2.236895809968561,
+      "nt_ms": 0.0015409896150231361,
+      "xnt": 2.297858276044421
+    }
+  },
+  "rejected": [
+    {
+      "candidate": "float16 single-matrix dispatch",
+      "reason": "SciPy batch decorator emits dtype deprecation warning; retain original warning behavior via fallback"
+    }
+  ],
+  "remaining": [
+    "float32 and complex native batch kernels require Rust LAPACK support/build",
+    "Other unbatched solvers not yet profiled"
+  ]
+}

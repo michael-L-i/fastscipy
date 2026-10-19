@@ -1,7 +1,8 @@
 """Batched stacks for the scipy.linalg functions that SciPy still loops over in
 Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
 ``solve_triangular``, ``eigh`` and ``eigvalsh``; plus ``null_space`` of tall matrices
-(skips the unused (M, M) ``u``).
+(skips the unused (M, M) ``u``). Single NumPy triangular solves skip generic
+array validation and use SciPy's own LAPACK dispatcher, including complex data.
 
 Tier 1 (faithful port). The Rust kernels call the same LAPACK routines as SciPy's
 f2py wrappers. They commit only if every matrix finishes with ``info == 0`` and
@@ -21,6 +22,7 @@ _I4 = np.dtype(np.int32)
 _MAX_BYTES = 1 << 29  # per array; SciPy handles anything bigger
 _MIN_WORK_US = 150.0  # no threads for less work than this
 _lwork_cache = {}
+_triangular_core = None
 
 
 def _ok(x, ndim, dtype=_F8):
@@ -164,11 +166,45 @@ def _cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True):
     return NotImplemented if x is None else _solution(x, batch, n, bc, k)
 
 
-def _solve_triangular(a, b, trans=0, lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True):
+def _single_triangular(a, b, trans, lower, unit_diagonal, overwrite_b, check_finite):
+    """Validated NumPy matrices can go straight to SciPy's LAPACK dispatcher."""
     if (
-        a.__class__ is not _ND
-        or b.__class__ is not _ND
-        or not (a.ndim > 2 or b.ndim > 2)
+        a.shape[0] != a.shape[1]
+        or a.shape[0] != b.shape[0]
+        or b.size == 0
+        or overwrite_b is not False
+        or type(lower) is not bool
+        or type(unit_diagonal) is not bool
+        or type(check_finite) is not bool
+        or not all(
+            (x.dtype.kind == "f" and x.dtype.itemsize in (4, 8))
+            or (x.dtype.kind == "c" and x.dtype.itemsize in (8, 16))
+            for x in (a, b)
+        )
+    ):
+        return NotImplemented
+    if type(trans) is str:
+        if trans not in ("N", "T", "C"):
+            return NotImplemented
+    elif type(trans) is not int or trans not in (0, 1, 2):
+        return NotImplemented
+    if check_finite and not (np.isfinite(a).all() and np.isfinite(b).all()):
+        return NotImplemented
+    try:
+        return _triangular_core(a, b, trans, lower, unit_diagonal, False)[0]
+    except np.linalg.LinAlgError:
+        # With overwrite disabled no inputs changed; let SciPy own singular
+        # system errors, just as the batched kernels decline nonzero info.
+        return NotImplemented
+
+
+def _solve_triangular(a, b, trans=0, lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True):
+    if a.__class__ is not _ND or b.__class__ is not _ND:
+        return NotImplemented
+    if a.ndim == 2 and b.ndim in (1, 2):
+        return _single_triangular(a, b, trans, lower, unit_diagonal, overwrite_b, check_finite)
+    if (
+        not (a.ndim > 2 or b.ndim > 2)
         or not (_ok(a, 2) and _ok(b, 1))
         or overwrite_b is not False
         or check_finite.__class__ is not bool
@@ -306,6 +342,7 @@ def _null_space(A, rcond=None, *, overwrite_a=False, check_finite=True, lapack_d
 
 
 def patch():
+    global _triangular_core
     _patch.require_validated("1.18.")
     import scipy.linalg._basic as basic
     import scipy.linalg._decomp as decomp
@@ -313,6 +350,7 @@ def patch():
     import scipy.linalg._decomp_lu as lu
     import scipy.linalg._decomp_svd as svdmod
 
+    _triangular_core = basic._solve_triangular
     _native.linalg.init()
     for mod, name, fast in (
         (lu, "lu_factor", _lu_factor),
@@ -337,6 +375,7 @@ def smoke():
     lu = sl.lu_factor(a)
     sl.lu_solve(lu, b)
     sl.solve_triangular(a, b)
+    sl.solve_triangular(a[0], b[0])
     sl.cho_solve(sl.cho_factor(s + 6 * np.eye(3)), b)
     sl.eigh(s)
     sl.eigvalsh(s)

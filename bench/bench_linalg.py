@@ -4,6 +4,26 @@ import scipy.linalg as sl
 
 def cases():
     rng = np.random.default_rng(0)
+    single_rng = np.random.default_rng(322)
+    for dtype, layout in ((np.float32, "C"), (np.float64, "F"), (np.complex64, "strided"), (np.complex128, "C")):
+        single_a = single_rng.standard_normal((8, 8)) + 5 * np.eye(8)
+        single_b = single_rng.standard_normal((8, 2))
+        if np.dtype(dtype).kind == "c":
+            single_a = single_a + 1j * single_rng.standard_normal(single_a.shape)
+            single_b = single_b + 1j * single_rng.standard_normal(single_b.shape)
+        single_a, single_b = single_a.astype(dtype), single_b.astype(dtype)
+        if layout == "F":
+            single_a, single_b = np.asfortranarray(single_a), np.asfortranarray(single_b)
+        elif layout == "strided":
+            single_big = np.zeros((16, 16), dtype=dtype)
+            single_big[::2, ::2] = single_a
+            single_a, single_b = single_big[::2, ::2], single_b[::-1]
+        for finite in (True, False):
+            tag = f"{np.dtype(dtype).name} {layout}, check_finite={finite}"
+            yield (
+                f"solve_triangular single 8x8 {tag}",
+                lambda a=single_a, b=single_b, f=finite: sl.solve_triangular(a, b, check_finite=f),
+            )
     small_rng = np.random.default_rng(45)
     for B in (4, 32):
         small_a = small_rng.standard_normal((B, 3, 3)) + 5 * np.eye(3)

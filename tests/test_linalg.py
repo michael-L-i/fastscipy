@@ -209,3 +209,73 @@ def test_null_space_declines():
         [[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]],
     ):
         declined(lambda: sl.null_space(A))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("layout", ["C", "F", "strided"])
+@pytest.mark.parametrize("nrhs", [None, 1, 3])
+def test_single_triangular_dtypes_and_layout(dtype, layout, nrhs):
+    rng = np.random.default_rng(320)
+    a = rng.standard_normal((5, 5)) + 5 * np.eye(5)
+    b = rng.standard_normal((5,) if nrhs is None else (5, nrhs))
+    if np.dtype(dtype).kind == "c":
+        a = a + 1j * rng.standard_normal(a.shape)
+        b = b + 1j * rng.standard_normal(b.shape)
+    a, b = a.astype(dtype), b.astype(dtype)
+    if layout == "F":
+        a, b = np.asfortranarray(a), np.asfortranarray(b)
+    elif layout == "strided":
+        aa = np.zeros((10, 10), dtype=dtype)
+        aa[::2, ::2] = a
+        a, b = aa[::2, ::2], b[::-1]
+    a.flags.writeable = b.flags.writeable = False
+    before = a.tobytes(), b.tobytes()
+    for lower in (False, True):
+        for trans in (0, 1, 2, "N", "T", "C"):
+            for unit in (False, True):
+                for finite in (False, True):
+                    check(
+                        lambda: sl.solve_triangular(
+                            a, b, trans=trans, lower=lower, unit_diagonal=unit, check_finite=finite
+                        )
+                    )
+    assert (a.tobytes(), b.tobytes()) == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtypes", [(np.float32, np.float64), (np.float64, np.complex64), (np.complex128, np.float32)])
+def test_single_triangular_mixed_dtypes(dtypes):
+    rng = np.random.default_rng(321)
+    a = (rng.standard_normal((5, 5)) + 5 * np.eye(5)).astype(dtypes[0])
+    b = rng.standard_normal((5, 3)).astype(dtypes[1])
+    check(lambda: sl.solve_triangular(a, b))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_single_triangular_declined_errors():
+    a, b = np.eye(3), np.ones(3)
+    for aa, bb, options in (
+        (a.astype(int), b, {}),
+        (a, b.astype(int), {}),
+        (a[:2], b, {}),
+        (a, b[:2], {}),
+        (a, b, {"trans": "invalid"}),
+        (a, b, {"overwrite_b": True}),
+        (a, b, {"lower": np.bool_(True)}),
+        (np.full((3, 3), np.nan), b, {}),
+        (a, np.full(3, np.inf), {}),
+    ):
+        declined(lambda: sl.solve_triangular(aa, bb, **options))
+    for aa, bb in ((np.eye(0), np.empty(0)), (a, np.empty((3, 0)))):
+        check(lambda: sl.solve_triangular(aa, bb), fast=False)
+    declined(lambda: sl.solve_triangular(a.astype(np.float16), b.astype(np.float16)))
+    # The same SciPy dispatcher owns singular-system errors.
+    check(lambda: sl.solve_triangular(np.zeros((3, 3)), b), fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_single_triangular_unchecked_nonfinite():
+    a, b = np.eye(3), np.ones(3)
+    a[0, 2] = np.nan
+    check(lambda: sl.solve_triangular(a, b, check_finite=False))

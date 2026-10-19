@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  SCIPY_VERSION: "1.18.1"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: pip install ruff
+      - run: ruff check python tests bench tools
+      - run: ruff format --check python tests bench tools
+      - run: cargo fmt --check
+      - run: cargo clippy --profile dev-release --all-targets -- -D warnings
+
+  test:
+    name: Tests (macOS arm64, Python ${{ matrix.python }})
+    runs-on: macos-15
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install maturin "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis
+          maturin develop --profile dev-release
+      - name: Identity tests
+        run: .venv/bin/python -m pytest tests -n auto -q
+
+  scipy-suite:
+    name: SciPy's test suite, with and without fastscipy
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install maturin "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis pooch
+          maturin develop --profile dev-release
+      - name: Compare every test's outcome
+        run: .venv/bin/python tools/scipy_suite.py --pyargs scipy -n auto

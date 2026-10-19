@@ -1,90 +1,169 @@
 # fastscipy
 
-Drop-in acceleration for SciPy. Same results, byte for byte. Faster on one core
-and on all of them.
+Drop-in acceleration for [SciPy](https://scipy.org). Call `fastscipy.patch()`
+and the SciPy functions you already use run faster, on one core and on many,
+and return **exactly the same results, byte for byte**.
 
 ```python
 import fastscipy
-fastscipy.patch()          # SciPy calls made after this are faster
+fastscipy.patch()
 
-import scipy.ndimage       # ...including calls made by scikit-image and others
+import scipy.ndimage                                  # your code is unchanged
+smooth = scipy.ndimage.median_filter(image, size=3)   # 260 ms -> 0.8 ms
 ```
 
-`patch()` swaps SciPy internals for Rust kernels and multithreaded wrappers.
-Every fast path returns exactly what SciPy returns. Any call outside what a
-fast path covers (an unusual dtype, option or layout) goes to SciPy's own code
-unchanged.
+fastscipy replaces the slow parts of SciPy with Rust kernels and
+multithreaded wrappers, and leaves everything else to SciPy:
 
-| | |
+- **Same results.** Each fast path reproduces SciPy's arithmetic, down to the
+  order of additions and which operations are fused multiply-adds. 219
+  benchmark cases and about 5,000 randomized tests compare the bytes against
+  SciPy, and every test in SciPy's own 88,000-test suite that runs both with
+  and without fastscipy has the same outcome.
+- **Faster.** 5.2× faster on one thread and 17.5× on 18 threads (geometric
+  mean over 211 benchmark cases), and hundreds of times faster for some
+  functions.
+- **Safe to switch on.** Any call a fast path does not cover (an unusual
+  dtype, option or layout) goes to SciPy unchanged, so SciPy still produces
+  every warning and error. `fastscipy.unpatch()` restores SciPy.
+- **Works for libraries too.** `patch()` changes SciPy itself in the running
+  process, so scikit-image, astropy and other libraries that call SciPy
+  speed up as well.
+
+**Status: experimental.** Validated on macOS arm64 (Apple Silicon) with
+SciPy 1.18 and Python 3.12-3.14. On any other platform or SciPy version,
+`patch()` leaves SciPy untouched (see [Platforms](#platforms)).
+
+This is an independent project, not affiliated with the SciPy project.
+
+[Quick start](#quick-start) · [Performance](#performance) ·
+[What is covered](docs/coverage.md) · [How it works](docs/design.md) ·
+[Benchmarks](bench/README.md) · [Contributing](CONTRIBUTING.md)
+
+## Quick start
+
+fastscipy is not on PyPI yet. Building it needs a Rust toolchain
+([rustup](https://rustup.rs)):
+
+```sh
+pip install git+https://github.com/michael-L-i/fastscipy
+```
+
+Then, at the top of your program, before importing other libraries that use
+SciPy:
+
+```python
+import fastscipy
+print(fastscipy.patch())    # {'ndimage': 'on', 'special': 'on', 'stats': 'on', ...}
+```
+
+| API | |
 |---|---|
-| `fastscipy.patch(components=None, threads=None)` | patch all components, or some; returns `status()` |
-| `fastscipy.unpatch()` | restore SciPy |
-| `fastscipy.set_num_threads(n)` | thread budget (default: all cores, or `FASTSCIPY_NUM_THREADS`) |
-| `fastscipy.disabled()` | context manager that runs SciPy's own code |
-| `fastscipy.stats()` | calls per function that took the fast path or fell back |
+| `fastscipy.patch(components=None, threads=None)` | patch all components, or the ones named; returns `status()` |
+| `fastscipy.unpatch(components=None)` | restore SciPy |
+| `fastscipy.status()` | `{component: "on" \| "off: <reason>"}` |
+| `fastscipy.set_num_threads(n)` / `get_num_threads()` | thread budget; default all cores, or `FASTSCIPY_NUM_THREADS` |
+| `with fastscipy.disabled():` | run SciPy's own code inside the block, for comparisons |
+| `fastscipy.stats()` | per-function counts of calls that took a fast path or went to SciPy |
 
-Call `patch()` before importing libraries that bind SciPy functions at import
-time (`from scipy.special import expit`), or they keep the original.
+A component that cannot be enabled (for example on an unsupported SciPy
+version) reports why in `status()`; `patch()` never raises for that.
 
-## Results
+## Performance
 
-219 benchmark cases, every one byte-identical to SciPy 1.18.1. Geometric-mean
-speedup per area on an 18-core Apple M5 Pro (full table: `bench/RESULTS.md`):
+![Geometric-mean speedup by SciPy area](docs/speedup-by-area.svg)
 
-| Area | 1 thread | 18 threads | How | Highlights (1T / 18T) |
-|---|---:|---:|---|---|
-| ndimage | 13.3× | 68× | Rust kernels (fastndimage), labelling, morphology, measurements | median 3×3 u8 496× / 1240×, `generic_filter(np.mean)` 244× / 677× |
-| linalg | 10.0× | 76× | batched small-matrix LAPACK calls without Python loops | `solve_triangular` 10k×3×3 147× / 586× |
-| interpolate | 9.1× | 23× | query reordering, Rust spline and pchip kernels | RGI pchip 659× / 732×, `find_simplex` 69× / 160× |
-| stats | 7.0× | 9.3× | lean small-call paths, Rust `rankdata`, discrete tables | `ttest_ind` n=10 9×, `zipf.cdf` 546× |
-| csgraph | 5.8× | 15.5× | Rust shortest paths and components | `bellman_ford` 311× / 2435× |
-| signal | 4.7× | 12.4× | small-call paths, channel threading, Rust kernels | direct 2-D convolve 49× / 260×, `dlsim` 105× |
-| sparse | 4.7× | 11.9× | Rust argmax, `sum_duplicates`, dense→sparse, `find` | `sum_duplicates` 2e6 25× / 73× |
-| special | 1.0× | 6.6× | threads over SciPy's own ufunc loops (large arrays) | `jv`, `betainc` 1e7 13–16× on 18 threads |
-| spatial | 1.0× | 4.0× | threaded `cdist`/`pdist`, KD-tree queries | |
-| integrate, optimize | 1.6×, 1.1× | same | less Python overhead (`trapezoid`, numerical gradients) | |
+| Area | Cases | 1 thread | 18 threads | How |
+|---|---:|---:|---:|---|
+| ndimage | 41 | 13.3× | 68× | Rust filters, interpolation, morphology, labelling, measurements |
+| linalg | 19 | 10.0× | 76× | stacks of small matrices without SciPy's per-matrix Python loop |
+| interpolate | 12 | 15.6× | 44× | Rust spline and pchip kernels, query reordering |
+| stats | 46 | 7.0× | 9.3× | lean small-call paths, Rust ranking, discrete tables |
+| csgraph | 9 | 5.8× | 15.5× | Rust shortest paths and connected components |
+| signal | 22 | 4.7× | 12.4× | small-call paths, per-channel threads, Rust kernels |
+| sparse | 16 | 4.7× | 11.9× | Rust argmax, duplicate summing, dense conversion |
+| special | 32 | 1.0× | 7.4× | SciPy's own ufunc loops on several threads |
+| spatial | 8 | 1.0× | 6.7× | `cdist`, `pdist` and KD-tree queries on several threads |
+| integrate, optimize | 6 | 1.1-1.6× | 1.1-1.6× | less Python overhead |
 
-Across all cases: 5.2× on one thread and 17.5× on 18 (geometric mean); 102
-cases are at least 5× faster on one thread and 126 at least 10× on 18. Small
-calls a fast path does not cover are not slower.
+![Largest speedups](docs/speedup-highlights.svg)
 
-SciPy's full test suite (about 88,000 tests) with every component patched in
-at once gives the same outcome, test by test, as plain SciPy: the same 3
-failures (Accelerate-related, also unpatched), no new ones, and 1.86 million
-fast-path calls with 0 fast-path errors. The only differences are the 684
-tests described under "Known differences" and SciPy's own flaky
-`test_sepfir2d_strided_3` (an out-of-bounds read in code we don't touch).
+Measured on an Apple M5 Pro (18 cores) with SciPy 1.18.1, one benchmark at a
+time; every case checks that the result is byte-identical to SciPy's. Small
+calls that a fast path hands back to SciPy are included as controls and are
+not slower. Full table: [bench/RESULTS.md](bench/RESULTS.md); method and how
+to reproduce: [bench/README.md](bench/README.md).
 
-**Not accelerated:** dense linear algebra, FFT, `linprog`, iterative sparse
-solvers, `cluster` and `io` (already near the hardware or
-I/O-bound), and solvers whose time is spent in a Python callback (`minimize`,
-`solve_ivp`, `quad`). Only macOS arm64 with SciPy 1.18 has been validated;
-every component refuses other SciPy versions.
+The speed comes from three sources. SciPy's own C kernels (ndimage, sparse,
+csgraph, signal) are mostly single-threaded and use little SIMD, so Rust
+rewrites gain on one core and scale across cores. Some functions spend most
+of their time in Python layers around a small computation (statistical
+tests, filter design, batches of small matrices), which a lean path removes.
+And some functions, such as the special functions and `cdist`, already run
+in fast compiled loops and only gain from threads.
+
+## What is covered
+
+About 130 functions have their own fast path, plus all 322 `scipy.special`
+ufuncs, which are threaded for large arrays. [docs/coverage.md](docs/coverage.md)
+lists them by area, with the cases each one hands back to SciPy.
+
+Not covered, by design:
+
+- **Already near the hardware limit:** large dense linear algebra and FFT
+  (they call tuned BLAS/LAPACK and FFT libraries), `linprog`, iterative
+  sparse solvers, `cluster`, `io`.
+- **Time spent in your code:** `minimize`, `solve_ivp`, `quad`, `root` and
+  similar solvers spend most of their time calling your Python function.
+
+## Platforms
+
+Byte-identical results depend on how SciPy's wheels were compiled: which
+multiply-adds the compiler fused, and in what order the BLAS sums. fastscipy
+reproduces the macOS arm64 wheels. On other platforms `patch()` turns
+nothing on; `FASTSCIPY_ANY_PLATFORM=1` overrides that, for testing ports. A
+[Linux workflow](.github/workflows/linux.yml) runs the identity tests there
+to track what still differs.
+
+Each component also refuses SciPy versions other than 1.18
+(`FASTSCIPY_ANY_VERSION=1` overrides).
 
 ## Known differences
 
-- `isinstance(scipy.special.erf, np.ufunc)` is False while patched (the
-  wrappers forward `nin`, `types`, `reduce`, ...). 684 SciPy tests that check
-  this are not collected under the patch.
-- `scipy.spatial.cKDTree` is a subclass while patched; `isinstance` and
-  pickling behave as before.
+- While patched, `isinstance(scipy.special.erf, np.ufunc)` is `False`: the
+  wrappers forward `nin`, `nout`, `types`, `reduce`, `outer` and the other
+  ufunc attributes, but cannot be ufuncs. SciPy has 684 tests that select
+  functions this way, and they are not collected under the patch.
+- `scipy.spatial.cKDTree` is replaced by a subclass; `isinstance`, `issubclass`
+  and pickling behave as before.
+- Modules that ran `from scipy.x import f` before `patch()` keep the original
+  `f`.
 
-## Development
+## Validation
 
-```sh
-uv venv -p 3.13 .venv && uv pip install --python .venv/bin/python numpy scipy maturin pytest pytest-xdist
-.venv/bin/maturin develop --profile dev-release      # fast rebuild; `--release` for real numbers
-.venv/bin/python -m pytest tests                     # identity tests
-.venv/bin/python bench/run.py                        # SciPy vs fastscipy, 1 thread and all threads
-.venv/bin/python -m pytest -p fastscipy.pytest_plugin --pyargs scipy.ndimage -n 2   # SciPy's own suite, patched
+- `tests/`: about 5,000 randomized tests compare each fast path with plain
+  SciPy on 1 and several threads, including declined cases, and check that
+  forked processes work after every thread pool has run.
+- SciPy's own test suite: with every component patched, each of its ~88,000
+  tests has the same outcome as without fastscipy, and 1.86 million calls
+  took a fast path with no fast-path errors
+  ([tools/scipy_suite.py](tools/scipy_suite.py)).
+- CI runs the tests on macOS arm64 with Python 3.12, 3.13 and 3.14, and the
+  SciPy-suite comparison with Python 3.13.
+
+## Project layout
+
+```text
+python/fastscipy/     patch(), the thread budget, and one module per SciPy area (_ndimage.py, _stats.py, ...)
+src/                  Rust kernels, one directory per area; src/pool.rs is the shared thread pool
+tests/                identity tests against SciPy
+bench/                benchmark cases, runner, results and charts
+tools/scipy_suite.py  SciPy's test suite with and without fastscipy
+docs/                 coverage list and design notes
 ```
 
-## Layout
+## Contributing and license
 
-- `python/fastscipy/_<area>.py`: one component per SciPy area. `patch()` installs it; `smoke()` exercises every fast path.
-- `src/<area>/`: its Rust kernels, exposed as `fastscipy._native.<area>`. `src/pool.rs` is the one thread pool.
-- `tests/test_<area>.py`: byte-identity tests against SciPy. `bench/bench_<area>.py`: benchmark cases.
-
-## License
-
-BSD-3-Clause. Parts are ports of SciPy code; see `LICENSES/scipy-LICENSE.txt`.
+See [CONTRIBUTING.md](CONTRIBUTING.md). fastscipy is BSD-3-Clause; parts are
+ports of SciPy code, whose license is in
+[LICENSES/scipy-LICENSE.txt](LICENSES/scipy-LICENSE.txt).

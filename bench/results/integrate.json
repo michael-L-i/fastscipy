@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "threads": 18,
+  "cpu": 18,
+  "platform": "darwin"
+ },
+ "cases": {
+  "trapezoid 100 points with x, x100 calls": {
+   "scipy_ms": 0.29512500623241067,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.15124998753890395,
+   "x1t": 1.9512398713851116,
+   "nt_ms": 0.15416699170600623,
+   "xnt": 1.9143203286680779
+  },
+  "trapezoid 100 points dx, x100 calls": {
+   "scipy_ms": 0.2582080051070079,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.13391599350143224,
+   "x1t": 1.9281341858860672,
+   "nt_ms": 0.13595800555776805,
+   "xnt": 1.8991747050694732
+  },
+  "trapezoid (1000, 30) axis=0 x100 calls": {
+   "scipy_ms": 2.00470800336916,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.9088749977527186,
+   "x1t": 1.0502039189204446,
+   "nt_ms": 1.9107090047327802,
+   "xnt": 1.0491958735754878
+  }
+ }
+}

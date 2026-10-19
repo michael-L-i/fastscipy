@@ -1,0 +1,42 @@
+# Linux is not supported yet: SciPy's Linux wheels are built with a different
+# compiler and BLAS, so some fast paths may not reproduce their last bit.
+# This workflow runs the identity tests there anyway to find out which.
+name: Linux (experimental)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  FASTSCIPY_ANY_PLATFORM: "1"
+
+jobs:
+  test:
+    name: Identity tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install maturin "scipy==1.18.1" pytest pytest-xdist hypothesis
+          maturin develop --profile dev-release
+      - name: Identity tests
+        run: .venv/bin/python -m pytest tests -n auto -q -rf --tb=no

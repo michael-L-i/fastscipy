@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "threads": 18,
+  "cpu": 18,
+  "platform": "darwin"
+ },
+ "cases": {
+  "approx_fprime rosen n=1000": {
+   "scipy_ms": 9.652458000346087,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 8.740958000998944,
+   "x1t": 1.1042791876179903,
+   "nt_ms": 8.876666994183324,
+   "xnt": 1.0873966553742662
+  },
+  "approx_fprime cheap sum-of-squares n=1000": {
+   "scipy_ms": 3.834791001281701,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.9713330004597083,
+   "x1t": 1.2905961737336082,
+   "nt_ms": 2.956083000754006,
+   "xnt": 1.297254170570841
+  },
+  "minimize BFGS rosen n=10 (numerical gradient)": {
+   "scipy_ms": 12.98554199456703,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 12.25574999989476,
+   "x1t": 1.059546906119865,
+   "nt_ms": 12.295291991904378,
+   "xnt": 1.0561393745766374
+  }
+ }
+}

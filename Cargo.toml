@@ -3,7 +3,9 @@ name = "fastscipy"
 version = "0.1.0"
 edition = "2024"
 license = "BSD-3-Clause"
-description = "Drop-in accelerators for SciPy"
+description = "Rust kernels for fastscipy, a drop-in accelerator for SciPy"
+repository = "https://github.com/michael-L-i/fastscipy"
+publish = false
 
 [lib]
 name = "_native"

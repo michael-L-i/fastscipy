@@ -17,6 +17,8 @@ clean = ndimage.median_filter(image, size=3)
 
 *Run on a MacBook Pro with M5 Pro.*
 
+[Explore eight more examples →](examples/README.md)
+
 ## Install
 
 Requires a [Rust toolchain](https://rustup.rs). Not on PyPI yet.

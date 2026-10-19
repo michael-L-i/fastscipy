@@ -34,6 +34,7 @@ Benchmarks = "https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.m
 [project.optional-dependencies]
 test = ["pytest", "pytest-xdist", "hypothesis"]
 bench = ["pillow>=10.1"]
+gallery = ["pillow>=10.1", "matplotlib>=3.8"]
 
 [tool.maturin]
 python-source = "python"

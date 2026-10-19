@@ -42,11 +42,19 @@ def check(call, fast=True):
     """Assert ``call()`` gives the same result patched as on plain SciPy, and
     (if ``fast``) that it took a fast path. ``call`` must look SciPy functions
     up at call time (``scipy.special.erf(x)``, not a name bound before patching).
+    If plain SciPy raises, the patched call must raise the same exception type.
     """
     import fastscipy
 
     with fastscipy.disabled():
-        expected = call()
+        try:
+            expected = call()
+        except Exception as error:
+            try:
+                call()
+            except type(error):
+                return None
+            raise AssertionError(f"SciPy raised {error!r}; the patched call did not") from None
     before = fast_calls()
     got = call()
     assert_identical(expected, got)

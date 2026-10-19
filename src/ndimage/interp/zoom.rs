@@ -394,27 +394,27 @@ impl<I: Elem> Ctx<'_, I> {
             let rows: [&[I]; L] = std::array::from_fn(|l| &self.src[off[l]..off[l] + span]);
             let (cells, last) = tab.split_at_mut(span * L);
             if !weighted || lead == 0 {
-                for (c, cell) in cells.chunks_exact_mut(L).enumerate() {
+                for (c, cell) in cells.as_chunks_mut::<L>().0.iter_mut().enumerate() {
                     for l in 0..L {
                         cell[l] = rows[l][c].to_f64();
                     }
                 }
             } else if lead == 1 {
                 let w0 = ws[0];
-                for (c, cell) in cells.chunks_exact_mut(L).enumerate() {
+                for (c, cell) in cells.as_chunks_mut::<L>().0.iter_mut().enumerate() {
                     for l in 0..L {
                         cell[l] = rows[l][c].to_f64() * w0[l];
                     }
                 }
             } else if lead == 2 {
                 let (w0, w1) = (ws[0], ws[1]);
-                for (c, cell) in cells.chunks_exact_mut(L).enumerate() {
+                for (c, cell) in cells.as_chunks_mut::<L>().0.iter_mut().enumerate() {
                     for l in 0..L {
                         cell[l] = rows[l][c].to_f64() * w0[l] * w1[l];
                     }
                 }
             } else {
-                for (c, cell) in cells.chunks_exact_mut(L).enumerate() {
+                for (c, cell) in cells.as_chunks_mut::<L>().0.iter_mut().enumerate() {
                     for l in 0..L {
                         let mut p = rows[l][c].to_f64();
                         for w in &ws[..lead] {
@@ -433,7 +433,7 @@ impl<I: Elem> Ctx<'_, I> {
                 }
                 last[l] = pc;
                 if is_cval[l] {
-                    for cell in cells.chunks_exact_mut(L) {
+                    for cell in cells.as_chunks_mut::<L>().0 {
                         cell[l] = pc;
                     }
                 }

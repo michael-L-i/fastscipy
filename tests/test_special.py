@@ -93,7 +93,7 @@ def test_declined_still_correct():
         lambda: sc.erf(x.astype(np.longdouble)),
         lambda: sc.erf(x.astype(object)[:100]),
         lambda: sc.erf(x, out=np.empty_like(x)),
-        lambda: sc.erf(x, where=x > 1),
+        lambda: sc.erf(x, out=np.zeros_like(x), where=x > 1),
         lambda: sc.erf(x, dtype=np.float32),
         lambda: sc.erf(x[:100]),
         lambda: sc.erf(np.float64(1.0)),

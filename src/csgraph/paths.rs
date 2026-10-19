@@ -2,8 +2,6 @@ use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::sync::atomic::{AtomicI64, Ordering::Relaxed};
 
-use pyo3::prelude::*;
-
 use super::*;
 
 const EPS: f64 = 1e-15;

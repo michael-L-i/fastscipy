@@ -3,12 +3,15 @@ Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
 ``solve_triangular``, ``eigh`` and ``eigvalsh``; plus ``null_space`` of tall matrices
 (skips the unused (M, M) ``u``). Single NumPy triangular solves skip generic
 array validation and use SciPy's own LAPACK dispatcher, including complex data.
+Single factor solves bypass the batch adapter while retaining SciPy's core
+validation and LAPACK calls.
 
 Tier 1 (faithful port). The Rust kernels call the same LAPACK routines as SciPy's
 f2py wrappers. They commit only if every matrix finishes with ``info == 0`` and
 finite input; otherwise SciPy reruns the whole call and warns or raises itself.
 """
 
+import functools
 import math
 
 import numpy as np
@@ -83,6 +86,94 @@ def _solve_shapes(a, b):
 
 def _solution(raw, batch, n, bc, k):
     return _fview(raw, batch, n, k) if bc == 2 else raw.reshape(batch + (n,))
+
+
+def _single_factor_inputs(factor, b):
+    if type(factor) not in (tuple, list) or len(factor) != 2:
+        return None
+    a, option = factor
+    if (
+        type(a) is not _ND
+        or a.ndim != 2
+        or a.shape[0] != a.shape[1]
+        or a.shape[0] != b.shape[0]
+        or not b.size
+        or a.dtype.char not in "fdFD"
+        or b.dtype.char not in "fdFD"
+    ):
+        return None
+    return a, option
+
+
+def _cho_solver(original, core):
+    @functools.wraps(original)
+    def solve(c_and_lower, b, overwrite_b=False, check_finite=True):
+        if _patch.enabled and type(b) is _ND and b.ndim in (1, 2):
+            inputs = _single_factor_inputs(c_and_lower, b)
+            if inputs is not None and overwrite_b is False and type(check_finite) is bool:
+                a, lower = inputs
+                if type(lower) in (bool, np.bool_) or (
+                    type(lower) is _ND and lower.ndim == 0 and lower.dtype == np.bool_
+                ):
+                    _patch.counts["cho_solve", "fast"] += 1
+                    return core(a, b, lower, False, check_finite)
+        if _patch.enabled:
+            try:
+                result = _cho_solve(c_and_lower, b, overwrite_b, check_finite)
+            except Exception:
+                if _patch.STRICT:
+                    raise
+                _patch.counts["cho_solve", "error"] += 1
+            else:
+                if result is not NotImplemented:
+                    _patch.counts["cho_solve", "fast"] += 1
+                    return result
+        _patch.counts["cho_solve", "scipy"] += 1
+        return original(c_and_lower, b, overwrite_b=overwrite_b, check_finite=check_finite)
+
+    return solve
+
+
+def _lu_solver(original, core):
+    @functools.wraps(original)
+    def solve(lu_and_piv, b, trans=0, overwrite_b=False, check_finite=True):
+        if _patch.enabled and type(b) is _ND and b.ndim in (1, 2):
+            inputs = _single_factor_inputs(lu_and_piv, b)
+            if (
+                inputs is not None
+                and overwrite_b is False
+                and type(check_finite) is bool
+                and type(trans) is int
+                and trans in (0, 1, 2)
+            ):
+                a, piv = inputs
+                if (
+                    type(piv) is _ND
+                    and piv.dtype == _I4
+                    and piv.ndim == 1
+                    and len(piv) == a.shape[0]
+                    and not ((piv < 0) | (piv >= a.shape[0])).any()
+                ):
+                    _patch.counts["lu_solve", "fast"] += 1
+                    # The original core checks only RHS finiteness. Run it
+                    # outside the generic fallback: cast error handlers and
+                    # exceptions must never cause the solve to run twice.
+                    return core(a, piv, b, trans, False, check_finite)
+        if _patch.enabled:
+            try:
+                result = _lu_solve(lu_and_piv, b, trans, overwrite_b, check_finite)
+            except Exception:
+                if _patch.STRICT:
+                    raise
+                _patch.counts["lu_solve", "error"] += 1
+            else:
+                if result is not NotImplemented:
+                    _patch.counts["lu_solve", "fast"] += 1
+                    return result
+        _patch.counts["lu_solve", "scipy"] += 1
+        return original(lu_and_piv, b, trans=trans, overwrite_b=overwrite_b, check_finite=check_finite)
+
+    return solve
 
 
 def _lu_factor(a, overwrite_a=False, check_finite=True):
@@ -362,7 +453,13 @@ def patch():
         (svdmod, "null_space", _null_space),
     ):
         old = getattr(mod, name)
-        _patch.rebind(old, _patch.wrap(old, fast, name))
+        if name == "cho_solve":
+            wrapper = _cho_solver(old, cholesky._cho_solve.__wrapped__)
+        elif name == "lu_solve":
+            wrapper = _lu_solver(old, lu._lu_solve.__wrapped__)
+        else:
+            wrapper = _patch.wrap(old, fast, name)
+        _patch.rebind(old, wrapper)
 
 
 def smoke():
@@ -374,9 +471,11 @@ def smoke():
     b = rng.random((4, 3, 2))
     lu = sl.lu_factor(a)
     sl.lu_solve(lu, b)
+    sl.lu_solve((lu[0][0], lu[1][0]), b[0])
     sl.solve_triangular(a, b)
     sl.solve_triangular(a[0], b[0])
     sl.cho_solve(sl.cho_factor(s + 6 * np.eye(3)), b)
+    sl.cho_solve(sl.cho_factor(s[0] + 6 * np.eye(3)), b[0])
     sl.eigh(s)
     sl.eigvalsh(s)
     sl.null_space(rng.random((6, 3)))

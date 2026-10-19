@@ -279,3 +279,136 @@ def test_single_triangular_unchecked_nonfinite():
     a, b = np.eye(3), np.ones(3)
     a[0, 2] = np.nan
     check(lambda: sl.solve_triangular(a, b, check_finite=False))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("layout", ["C", "F", "strided"])
+@pytest.mark.parametrize("nrhs", [None, 1, 3])
+def test_single_factor_solves(dtype, layout, nrhs):
+    rng = np.random.default_rng(352)
+    a = rng.standard_normal((5, 5)) + 5 * np.eye(5)
+    b = rng.standard_normal((5,) if nrhs is None else (5, nrhs))
+    if np.dtype(dtype).kind == "c":
+        a = a + 1j * rng.standard_normal(a.shape)
+        b = b + 1j * rng.standard_normal(b.shape)
+    a, b = a.astype(dtype), b.astype(dtype)
+    factors = ((sl.lu_solve, sl.lu_factor(a)), (sl.cho_solve, sl.cho_factor(a @ a.conj().T)))
+    for solver, (factor, option) in factors:
+        if layout == "C":
+            factor = factor.copy(order="C")
+        elif layout == "strided":
+            tmp = np.zeros((10, 10), dtype=dtype)
+            tmp[::2, ::2] = factor
+            factor = tmp[::2, ::2]
+            b = b[::-1]
+        factor.flags.writeable = b.flags.writeable = False
+        before = factor.tobytes(), b.tobytes()
+        for finite in (True, False):
+            for trans in (0, 1, 2) if solver is sl.lu_solve else (0,):
+                opts = {"trans": trans} if solver is sl.lu_solve else {}
+                check(lambda: solver((factor, option), b, check_finite=finite, **opts))
+        assert (factor.tobytes(), b.tobytes()) == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("lower", [False, True, np.bool_(False), np.array(True)])
+def test_single_cholesky_flag_types(lower):
+    a = np.array([[4.0, 1.0], [1.0, 3.0]])
+    factor = sl.cho_factor(a, lower=bool(lower))[0]
+    check(lambda: sl.cho_solve((factor, lower), np.ones(2)))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("solver", ["lu_solve", "cho_solve"])
+@pytest.mark.parametrize("dtypes", [(np.float32, np.float64), (np.float64, np.complex64), (np.complex128, np.float32)])
+def test_single_factor_solve_mixed_dtypes(solver, dtypes):
+    solver = getattr(sl, solver)
+    a = np.array([[4.0, 1.0], [1.0, 3.0]], dtype=dtypes[0])
+    factor = sl.lu_factor(a) if solver is sl.lu_solve else sl.cho_factor(a)
+    check(lambda: solver(factor, np.ones(2, dtype=dtypes[1])))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("solver", ["lu_solve", "cho_solve"])
+def test_single_factor_solve_declined_errors_and_warnings(solver):
+    solver = getattr(sl, solver)
+    a = np.array([[4.0, 1.0], [1.0, 3.0]])
+    factor = sl.lu_factor(a) if solver is sl.lu_solve else sl.cho_factor(a)
+    b = np.ones(2)
+    for bad in ((), (factor[0],), (*factor, 1)):
+        check(lambda: solver(bad, b), fast=False)
+    check(lambda: solver(factor, b, overwrite_b=True), fast=False)
+    check(lambda: solver(factor, np.ones(3)), fast=False)
+    check(lambda: solver(factor, np.full(2, np.nan)), fast=False)
+    check(lambda: solver(factor, np.empty((2, 0))), fast=False)
+    declined(lambda: solver((factor[0].astype(np.float16), factor[1]), b.astype(np.float16)))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_single_lu_checks_only_rhs_finiteness():
+    lu, piv = sl.lu_factor(np.array([[4.0, 1.0], [1.0, 3.0]]))
+    lu[0, 0] = np.nan
+    check(lambda: sl.lu_solve((lu, piv), np.ones(2), check_finite=True))
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("solver", ["lu_solve", "cho_solve"])
+@pytest.mark.parametrize("mode", ["call", "log"])
+def test_single_factor_cast_handler_is_not_retried(solver, mode, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    solver = getattr(sl, solver)
+    factor = np.eye(3, dtype=np.float32)
+    factor.view(np.uint32)[0, 0] = 0x7F800001  # Signaling NaN; promoted to float64 by LAPACK dispatch.
+    option = np.arange(3, dtype=np.int32) if solver is sl.lu_solve else False
+    calls = []
+
+    def handler(*args):
+        calls.append(args)
+        raise RuntimeError("factor cast handler")
+
+    class Logger:
+        write = staticmethod(handler)
+
+    old = np.seterrcall(handler if mode == "call" else Logger())
+    try:
+        with np.errstate(invalid=mode):
+            with pytest.raises(RuntimeError, match="factor cast handler"):
+                solver((factor, option), np.ones(3), check_finite=solver is sl.lu_solve)
+    finally:
+        np.seterrcall(old)
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_single_lu_bad_pivots_decline_before_lapack():
+    from fastscipy import _linalg
+
+    calls = []
+
+    def fallback(*args, **kwargs):
+        calls.append("fallback")
+        return "declined"
+
+    def core(*args):
+        raise AssertionError("invalid pivots must not reach LAPACK")
+
+    solve = _linalg._lu_solver(fallback, core)
+    for piv in (
+        np.array([-1, 1, 2], np.int32),
+        np.array([0, 1, 3], np.int32),
+        np.array([0, 1], np.int32),
+        np.arange(3, dtype=np.int64),
+    ):
+        assert solve((np.eye(3), piv), np.ones(3)) == "declined"
+    assert calls == ["fallback"] * 4
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_single_factor_public_keyword_arguments():
+    a = np.array([[4.0, 1.0], [1.0, 3.0]])
+    lu, cho, b = sl.lu_factor(a), sl.cho_factor(a), np.ones(2)
+    check(lambda: sl.lu_solve(lu_and_piv=lu, b=b, trans=1))
+    check(lambda: sl.cho_solve(c_and_lower=cho, b=b))

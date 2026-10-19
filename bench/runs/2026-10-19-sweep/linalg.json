@@ -2,7 +2,7 @@
   "meta": {
     "threads": 2,
     "budget": 0.12,
-    "scope": "single NumPy triangular solves"
+    "scope": "single NumPy triangular and factor solves; previous 8 triangular cases preserved"
   },
   "cases": {
     "solve_triangular single 8x8 float32 C, check_finite=True": {
@@ -76,6 +76,150 @@
       "x1t": 2.236895809968561,
       "nt_ms": 0.0015409896150231361,
       "xnt": 2.297858276044421
+    },
+    "lu_solve single 8x8 float32, check_finite=True": {
+      "scipy_ms": 0.0037910067476332188,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0029579969123005867,
+      "x1t": 1.2816128143571175,
+      "nt_ms": 0.00291600008495152,
+      "xnt": 1.3000708632339584
+    },
+    "lu_solve single 8x8 float32, check_finite=False": {
+      "scipy_ms": 0.003207998815923929,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024579931050539017,
+      "x1t": 1.30512929809605,
+      "nt_ms": 0.0024579931050539017,
+      "xnt": 1.30512929809605
+    },
+    "cho_solve single 8x8 float32, check_finite=True": {
+      "scipy_ms": 0.003749999450519681,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0022919848561286926,
+      "x1t": 1.6361362251117433,
+      "nt_ms": 0.0022910244297236204,
+      "xnt": 1.6368221141020591
+    },
+    "cho_solve single 8x8 float32, check_finite=False": {
+      "scipy_ms": 0.002749991836026311,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.001374981366097927,
+      "x1t": 2.000021166709,
+      "nt_ms": 0.001374981366097927,
+      "xnt": 2.000021166709
+    },
+    "lu_solve single 8x8 float64, check_finite=True": {
+      "scipy_ms": 0.003749999450519681,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0029579969123005867,
+      "x1t": 1.267749616277697,
+      "nt_ms": 0.0029579969123005867,
+      "xnt": 1.267749616277697
+    },
+    "lu_solve single 8x8 float64, check_finite=False": {
+      "scipy_ms": 0.003249995643272996,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024999899324029684,
+      "x1t": 1.3000034924737192,
+      "nt_ms": 0.0024579931050539017,
+      "xnt": 1.3222151179312305
+    },
+    "cho_solve single 8x8 float64, check_finite=True": {
+      "scipy_ms": 0.003749999450519681,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0023329921532422304,
+      "x1t": 1.6073776524743952,
+      "nt_ms": 0.0023329921532422304,
+      "xnt": 1.6073776524743952
+    },
+    "cho_solve single 8x8 float64, check_finite=False": {
+      "scipy_ms": 0.0027909991331398487,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.001374981366097927,
+      "x1t": 2.0298450596901194,
+      "nt_ms": 0.001374981366097927,
+      "xnt": 2.0298450596901194
+    },
+    "lu_solve single 8x8 complex64, check_finite=True": {
+      "scipy_ms": 0.0038329744711518288,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0029999937396496534,
+      "x1t": 1.2776608232520688,
+      "nt_ms": 0.0029579969123005867,
+      "xnt": 1.295800700539179
+    },
+    "lu_solve single 8x8 complex64, check_finite=False": {
+      "scipy_ms": 0.003290973836556077,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024999899324029684,
+      "x1t": 1.3163948357955273,
+      "nt_ms": 0.0024999899324029684,
+      "xnt": 1.3163948357955273
+    },
+    "cho_solve single 8x8 complex64, check_finite=True": {
+      "scipy_ms": 0.0037910067476332188,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002375018084421754,
+      "x1t": 1.5962012131609582,
+      "nt_ms": 0.0023339816834777594,
+      "xnt": 1.6242658519857847
+    },
+    "cho_solve single 8x8 complex64, check_finite=False": {
+      "scipy_ms": 0.0028339854907244444,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014579854905605316,
+      "x1t": 1.943767965506228,
+      "nt_ms": 0.0014170072972774506,
+      "xnt": 1.9999794610581663
+    },
+    "lu_solve single 8x8 complex128, check_finite=True": {
+      "scipy_ms": 0.0038750004023313522,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0029999937396496534,
+      "x1t": 1.2916694962116435,
+      "nt_ms": 0.0029999937396496534,
+      "xnt": 1.2916694962116435
+    },
+    "lu_solve single 8x8 complex128, check_finite=False": {
+      "scipy_ms": 0.0032920215744525194,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024999899324029684,
+      "x1t": 1.3168139326418236,
+      "nt_ms": 0.002540997229516506,
+      "xnt": 1.2955628350208457
+    },
+    "cho_solve single 8x8 complex128, check_finite=True": {
+      "scipy_ms": 0.0038329744711518288,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002415996277704835,
+      "x1t": 1.586498500234903,
+      "nt_ms": 0.002374988980591297,
+      "xnt": 1.6138914759080438
+    },
+    "cho_solve single 8x8 complex128, check_finite=False": {
+      "scipy_ms": 0.0028329959604889154,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014580145943909883,
+      "x1t": 1.9430504820647942,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 1.8886862376064728
     }
   },
   "rejected": [
@@ -85,7 +229,37 @@
     }
   ],
   "remaining": [
-    "float32 and complex native batch kernels require Rust LAPACK support/build",
-    "Other unbatched solvers not yet profiled"
+    "float32 and complex native batch kernels require Rust LAPACK support/build"
+  ],
+  "legacy_batch_checks": {
+    "lu_solve batch=4, broadcast_rhs=False": {
+      "incremental_speedup": 1.0017024737721647,
+      "identical": true
+    },
+    "cho_solve batch=4, broadcast_rhs=False": {
+      "incremental_speedup": 0.9858339430260042,
+      "identical": true
+    },
+    "lu_solve batch=32, broadcast_rhs=False": {
+      "incremental_speedup": 0.9667824420077404,
+      "identical": true
+    },
+    "cho_solve batch=32, broadcast_rhs=False": {
+      "incremental_speedup": 1.0646591297396002,
+      "identical": true
+    },
+    "lu_solve batch=32, broadcast_rhs=True": {
+      "incremental_speedup": 0.9948999366582025,
+      "identical": true
+    },
+    "cho_solve batch=32, broadcast_rhs=True": {
+      "incremental_speedup": 1.0164337265571555,
+      "identical": true
+    }
+  },
+  "retained": [
+    "Single cho_solve and lu_solve call original SciPy nonbatch core, preserving validation and LAPACK arithmetic; no-retry accepted branches",
+    "LU checks only RHS finiteness, and pivot ranges are guarded before LAPACK",
+    "Typed wrappers retain prior native-batch try/fallback dispatch without stacking another public wrapper"
   ]
 }

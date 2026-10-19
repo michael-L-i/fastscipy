@@ -4,6 +4,22 @@ import scipy.linalg as sl
 
 def cases():
     rng = np.random.default_rng(0)
+    factor_rng = np.random.default_rng(354)
+    for dtype in (np.float32, np.float64, np.complex64, np.complex128):
+        factor_a = factor_rng.standard_normal((8, 8)) + 5 * np.eye(8)
+        if np.dtype(dtype).kind == "c":
+            factor_a = factor_a + 1j * factor_rng.standard_normal(factor_a.shape)
+        factor_a = factor_a.astype(dtype)
+        factor_b = factor_rng.standard_normal((8, 2)).astype(dtype)
+        for solver, factor in (
+            (sl.lu_solve, sl.lu_factor(factor_a)),
+            (sl.cho_solve, sl.cho_factor(factor_a @ factor_a.conj().T)),
+        ):
+            for finite in (True, False):
+                yield (
+                    f"{solver.__name__} single 8x8 {np.dtype(dtype).name}, check_finite={finite}",
+                    lambda f=solver, a=factor, b=factor_b, finite=finite: f(a, b, check_finite=finite),
+                )
     single_rng = np.random.default_rng(322)
     for dtype, layout in ((np.float32, "C"), (np.float64, "F"), (np.complex64, "strided"), (np.complex128, "C")):
         single_a = single_rng.standard_normal((8, 8)) + 5 * np.eye(8)

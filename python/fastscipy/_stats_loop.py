@@ -1,9 +1,10 @@
 """Lean per-function fast paths for the most used scipy.stats functions.
 
-Each applies only to exact float64, 1-D, NaN-free ndarrays with default options and
-reproduces SciPy's arithmetic op for op (array ``**2`` squares, a numpy scalar's calls libm
+Most apply only to exact float64, 1-D, NaN-free ndarrays with default options and
+reproduce SciPy's arithmetic op for op (array ``**2`` squares, a numpy scalar's calls libm
 ``pow``). Everything runs under ``np.errstate(raise)``: any floating-point event, precision
 loss, constant input or too-small sample declines, so SciPy decides every warning.
+``sem`` additionally covers float32/complex128 arrays, arbitrary axes and flattening.
 """
 
 import functools
@@ -115,14 +116,26 @@ def _kurtosis(a, axis=0, fisher=True, bias=True, nan_policy="propagate"):
 
 # ---------------------------------------------------------------------------------------------------------- sem
 def _sem(a, axis=0, ddof=1, nan_policy="propagate"):
-    if axis not in (0, -1) or type(axis) is not int or nan_policy != "propagate" or not _clean(a):
+    if (
+        type(a) is not ND
+        or a.dtype not in (F64, np.float32, np.complex128)
+        or a.ndim < 1
+        or not a.size
+        or nan_policy != "propagate"
+    ):
+        return NotImplemented
+    if axis is None:
+        a, axis = a.reshape(-1), 0
+    elif type(axis) is not int or not -a.ndim <= axis < a.ndim:
         return NotImplemented
     if type(ddof) is not int or ddof < 0:
         return NotImplemented
-    n = a.shape[0]
+    n = a.shape[axis]
     if n <= ddof or n <= 1:  # too_small=1 in the decorator, correction >= n -> let SciPy warn
         return NotImplemented
-    with np.errstate(**_ESTATE):
+    with np.errstate(all="raise"):
+        if np.isnan(a.max()):
+            return NotImplemented
         # xp.std(a, axis=axis, correction=ddof) -> np.std(a, axis=axis, ddof=ddof)
         s = np.std(a, axis=axis, ddof=ddof) / n**0.5
     return s

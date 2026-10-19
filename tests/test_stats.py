@@ -31,6 +31,46 @@ def same(call):
     return fast_calls() > before
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128])
+@pytest.mark.parametrize("layout", ["C", "F", "strided"])
+def test_sem_nd_and_dtypes(dtype, layout, threads):
+    local = np.random.default_rng(836)
+    a = local.standard_normal((9, 7, 5)).astype(dtype)
+    if np.iscomplexobj(a):
+        a += 1j * local.standard_normal(a.shape)
+    if layout == "F":
+        a = np.asfortranarray(a)
+    elif layout == "strided":
+        a = a[::-1, ::2, ::-1]
+    a.flags.writeable = False
+    before = a.tobytes()
+    for axis in (0, 1, 2, -1, None):
+        for ddof in (0, 1, 2):
+            check(lambda: st.sem(a, axis=axis, ddof=ddof))
+    check(lambda: st.sem(a.ravel()))
+    assert a.tobytes() == before
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128])
+def test_sem_nd_warning_and_error_events(dtype, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    for data in (
+        np.empty((0, 7), dtype=dtype),
+        np.ones((1, 7), dtype=dtype),
+        np.full((9, 7), np.inf, dtype=dtype),
+        np.full((9, 7), np.nan, dtype=dtype),
+        np.full((9, 7), 1e30, dtype=dtype),
+        np.zeros((9, 7), dtype=dtype),
+    ):
+        for opts in ({}, {"axis": None}, {"ddof": 20}, {"axis": 5}, {"keepdims": True}, {"nan_policy": "omit"}):
+            for err in ({}, {"all": "warn"}, {"all": "raise"}):
+                with np.errstate(**err):
+                    same(lambda: st.sem(data, **opts))
+
+
 @pytest.fixture(params=[1, 4], ids=["1t", "4t"])
 def threads(request):
     old = fastscipy.get_num_threads()
@@ -137,7 +177,7 @@ def test_functions_decline_odd_input():
     a = rng.standard_normal(20)
     for f, args in [
         (st.skew, ([1.0, 2.0, 4.0],)),
-        (st.sem, (a.astype(np.float32),)),
+        (st.sem, (a.astype(np.int32),)),
         (st.zscore, (np.ones(5),)),
         (st.ttest_ind, (a, a[:1])),
         (st.pearsonr, (a, a[:2])),

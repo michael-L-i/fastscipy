@@ -3,6 +3,19 @@ import scipy.stats as st
 
 
 def cases():
+    sem_rng = np.random.default_rng(837)
+    for shape, dtype in (
+        ((10,), np.float32),
+        ((30, 8), np.float64),
+        ((30, 8), np.float32),
+        ((30, 8), np.complex128),
+        ((1000, 30), np.float64),
+        ((10000, 100), np.float64),
+    ):
+        sem_data = sem_rng.normal(size=shape).astype(dtype)
+        if np.iscomplexobj(sem_data):
+            sem_data += 1j * sem_rng.normal(size=shape)
+        yield f"sem {np.dtype(dtype)} {shape}", lambda a=sem_data: st.sem(a)
     rng = np.random.default_rng(0)
     for n in (10, 1000):
         a, b = rng.standard_normal(n), rng.standard_normal(n) + 0.1

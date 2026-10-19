@@ -8,7 +8,7 @@ Measured on a MacBook Pro with M5 Pro; results vary by workload and hardware.
 | Published benchmarks | 1 and 18 | [Full table](RESULTS.md) |
 | Additional workloads | 1 and 2 | [Results](runs/2026-10-19-sweep/summary.json) |
 
-[Nine visual examples](../examples/README.md) · [Raw benchmark data](results/)
+[Eight visual examples](../examples/README.md) · [Raw benchmark data](results/)
 
 Run locally with a release build:
 

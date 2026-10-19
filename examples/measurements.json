@@ -312,34 +312,6 @@
       "speedup": 4.042498546963229,
       "replay_slowdown": 613.3184143319428,
       "gif_bytes": 99806
-    },
-    "bellman": {
-      "slug": "bellman",
-      "title": "Bellman-Ford on a 50,000-node graph",
-      "area": "csgraph",
-      "description": "Find routes from two origins through a 50,000-node, 100,000-edge network with negative costs and no negative cycles.",
-      "code": "csgraph.bellman_ford(network, indices=origin)",
-      "threads": 2,
-      "jobs": 2,
-      "byte_identical": true,
-      "fast_calls": 6,
-      "measured_at_utc": "2026-10-19T22:53:21.137564+00:00",
-      "scipy_completed_seconds": [
-        5.111508250003681,
-        10.328372167015914
-      ],
-      "fastscipy_completed_seconds": [
-        0.0004027920076623559,
-        0.0009257500059902668
-      ],
-      "scipy_seconds": 10.328372167015914,
-      "fastscipy_seconds": 0.0009257500059902668,
-      "speedup": 11156.761652912703,
-      "replay_slowdown": 1.0001576078938446,
-      "replay_seconds": 10.33,
-      "gif_bytes": 221060,
-      "replay_quantum_ms": 10,
-      "visualization": "Real-time route planner. Displayed paths are recovered from measured all-node distances. Moving markers illustrate completed routes, not solver progress."
     }
   }
 }

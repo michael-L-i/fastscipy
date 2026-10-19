@@ -17,7 +17,7 @@ clean = ndimage.median_filter(image, size=3)
 
 *Run on a MacBook Pro with M5 Pro.*
 
-[Explore nine more examples →](examples/README.md)
+[Explore eight more examples →](examples/README.md)
 
 ## Install
 

@@ -1,4 +1,4 @@
-"""Measure and render the nine-task gallery. Run from the repository root.
+"""Measure and render the eight-task gallery. Run from the repository root.
 
 pip install 'pillow>=10.1' matplotlib
 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 python examples/gallery.py
@@ -88,9 +88,6 @@ def previews(task, results):
 
 
 def render(task, results, record, path):
-    if task.animation is not None:
-        task.animation(results, record, path)
-        return
     pictures = previews(task, results)
     fonts = {n: ImageFont.load_default(size=n) for n in (15, 17, 19, 23, 29)}
     totals = record["scipy_seconds"], record["fastscipy_seconds"]
@@ -157,7 +154,7 @@ def render(task, results, record, path):
 
 def readme(records):
     rows = [
-        "# Nine everyday SciPy tasks, faster",
+        "# Eight everyday SciPy tasks, faster",
         "",
         "Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.",
         "",

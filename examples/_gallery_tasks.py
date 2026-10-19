@@ -8,8 +8,6 @@ from scipy import integrate, interpolate, linalg, signal, sparse, stats
 from scipy.sparse import csgraph
 from scipy.cluster import hierarchy
 
-from _route_animation import render_route_planner
-
 
 @dataclass
 class Task:
@@ -20,43 +18,11 @@ class Task:
     code: str
     unit: str
     jobs: list
-    plot: Callable | None
-    animation: Callable | None = None
+    plot: Callable
 
 
 def heatmap(ax, data, **kw):
     ax.imshow(data, origin="lower", aspect="auto", interpolation="nearest", **kw)
-
-
-def bellman():
-    height, width = 200, 250
-    ids = np.arange(height * width).reshape(height, width)
-    x, y = np.meshgrid(np.linspace(0, 1, width, endpoint=False), np.linspace(0, 1, height, endpoint=False))
-    potential = np.rint(150 * np.sin(2 * np.pi * x) * np.cos(2 * np.pi * y)).astype(np.int64).ravel()
-    rows = np.repeat(ids.ravel(), 2)
-    cols = np.stack((np.roll(ids, -1, axis=1), np.roll(ids, -1, axis=0)), axis=-1).ravel()
-    base_cost = np.random.default_rng(79).integers(1, 5, cols.size)
-    # The potential differences telescope to zero around every cycle. Positive
-    # base costs therefore rule out negative cycles, despite negative edges.
-    cost = base_cost + potential[cols] - potential[rows]
-    graph = sparse.csr_matrix((cost.astype(float), (rows, cols)), shape=(ids.size, ids.size))
-    origins = np.array([[0, 0], [135, 165]])
-    jobs = [lambda source=int(ids[y, x]): csgraph.bellman_ford(graph, indices=source) for y, x in origins]
-
-    return Task(
-        "bellman",
-        "Bellman-Ford on a 50,000-node graph",
-        "csgraph",
-        "Find routes from two origins through a 50,000-node, 100,000-edge network "
-        "with negative costs and no negative cycles.",
-        "csgraph.bellman_ford(network, indices=origin)",
-        "origins",
-        jobs,
-        plot=None,
-        animation=lambda results, record, path: render_route_planner(
-            graph, origins, np.array([[14, 18], [150, 185]]), (height, width), results, record, path
-        ),
-    )
 
 
 def temperature():
@@ -322,4 +288,4 @@ def routes():
     )
 
 
-TASKS = (bellman, temperature, sensors, calibration, uncertainty, expression, peaks, systems, routes)
+TASKS = (temperature, sensors, calibration, uncertainty, expression, peaks, systems, routes)

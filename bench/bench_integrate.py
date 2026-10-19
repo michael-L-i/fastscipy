@@ -7,6 +7,19 @@ _y2 = np.random.default_rng(2).standard_normal((1000, 30))
 
 
 def cases():
+    simpson = np.random.default_rng(920).standard_normal(100)
+    yield "cumulative_simpson 100 uniform points", lambda: integrate.cumulative_simpson(simpson)
+    large_simpson = np.random.default_rng(921).standard_normal(100_000)
+    yield "cumulative_simpson 100000 uniform points", lambda: integrate.cumulative_simpson(large_simpson)
+    multi_simpson = np.random.default_rng(922).standard_normal((64, 1000))
+    yield "cumulative_simpson (64, 1000) uniform", lambda: integrate.cumulative_simpson(multi_simpson)
+    for n in (17, 257, 4097):
+        romberg = np.random.default_rng(923).standard_normal(n)
+        yield f"romb {n} points", lambda y=romberg: integrate.romb(y)
+    f32 = _y.astype(np.float32)
+    yield "cumulative_trapezoid float32 100 points", lambda: integrate.cumulative_trapezoid(f32)
+    yield "cumulative_trapezoid (1000, 30) axis=0", lambda: integrate.cumulative_trapezoid(_y2, axis=0)
+    yield "cumulative_trapezoid (16, 30) axis=0", lambda: integrate.cumulative_trapezoid(_y2[:16], axis=0)
     odd = np.random.default_rng(21).standard_normal(101)
     yield "simpson 101 uniform points", lambda: integrate.simpson(odd)
     odd2 = np.random.default_rng(22).standard_normal((101, 30))

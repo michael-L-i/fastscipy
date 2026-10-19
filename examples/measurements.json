@@ -337,8 +337,9 @@
       "speedup": 11156.761652912703,
       "replay_slowdown": 1.0001576078938446,
       "replay_seconds": 10.33,
-      "gif_bytes": 85203,
-      "replay_quantum_ms": 10
+      "gif_bytes": 221060,
+      "replay_quantum_ms": 10,
+      "visualization": "Real-time route planner. Displayed paths are recovered from measured all-node distances. Moving markers illustrate completed routes, not solver progress."
     }
   }
 }

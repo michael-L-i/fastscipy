@@ -88,6 +88,9 @@ def previews(task, results):
 
 
 def render(task, results, record, path):
+    if task.animation is not None:
+        task.animation(results, record, path)
+        return
     pictures = previews(task, results)
     fonts = {n: ImageFont.load_default(size=n) for n in (15, 17, 19, 23, 29)}
     totals = record["scipy_seconds"], record["fastscipy_seconds"]

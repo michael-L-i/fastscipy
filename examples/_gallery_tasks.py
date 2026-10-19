@@ -8,6 +8,8 @@ from scipy import integrate, interpolate, linalg, signal, sparse, stats
 from scipy.sparse import csgraph
 from scipy.cluster import hierarchy
 
+from _route_animation import render_route_planner
+
 
 @dataclass
 class Task:
@@ -18,7 +20,8 @@ class Task:
     code: str
     unit: str
     jobs: list
-    plot: Callable
+    plot: Callable | None
+    animation: Callable | None = None
 
 
 def heatmap(ax, data, **kw):
@@ -40,38 +43,6 @@ def bellman():
     origins = np.array([[0, 0], [135, 165]])
     jobs = [lambda source=int(ids[y, x]): csgraph.bellman_ford(graph, indices=source) for y, x in origins]
 
-    def plot(ax, results):
-        if results:
-            costs = np.minimum.reduce(results).reshape(height, width)
-            heatmap(ax, costs, cmap="magma", vmin=-100, vmax=650)
-            ax.scatter(origins[: len(results), 1], origins[: len(results), 0], c="#68e2c2", s=32, edgecolors="#101824")
-        else:
-            ax.scatter(
-                np.tile(np.arange(width), height)[::10],
-                np.repeat(np.arange(height), width)[::10],
-                c="#506179",
-                s=0.25,
-                linewidths=0,
-            )
-        ax.set(
-            xlim=(0, width - 1),
-            ylim=(0, height - 1),
-            xticks=[],
-            yticks=[],
-            xlabel="50,000 nodes / 100,000 directed edges",
-            ylabel="Minimum route cost, including credits",
-        )
-        ax.text(
-            0.03,
-            0.94,
-            "11,571 negative edges / no negative cycles",
-            transform=ax.transAxes,
-            color="#f1f5fa",
-            fontsize=8,
-            va="top",
-            bbox={"facecolor": "#101824", "alpha": 0.7, "edgecolor": "none"},
-        )
-
     return Task(
         "bellman",
         "Bellman-Ford on a 50,000-node graph",
@@ -81,7 +52,10 @@ def bellman():
         "csgraph.bellman_ford(network, indices=origin)",
         "origins",
         jobs,
-        plot,
+        plot=None,
+        animation=lambda results, record, path: render_route_planner(
+            graph, origins, np.array([[14, 18], [150, 185]]), (height, width), results, record, path
+        ),
     )
 
 

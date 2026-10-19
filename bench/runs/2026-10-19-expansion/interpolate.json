@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "new PPoly/BPoly dispatch cases"
+  },
+  "cases": {
+    "PPoly 100 knots, 1 queries": {
+      "scipy_ms": 0.0019999861251562834,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014159886632114649,
+      "x1t": 1.4124308881261176,
+      "nt_ms": 0.0014169781934469938,
+      "xnt": 1.4114445334483539
+    },
+    "PPoly 100 knots, 10 queries": {
+      "scipy_ms": 0.002082990249618888,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014999823179095984,
+      "x1t": 1.3886765362152933,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 1.3886765362152933
+    },
+    "PPoly 100 knots, 100 queries": {
+      "scipy_ms": 0.0028329959604889154,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.002249988028779626,
+      "x1t": 1.259116014952981,
+      "nt_ms": 0.002249988028779626,
+      "xnt": 1.259116014952981
+    },
+    "BPoly 100 knots, 1 queries": {
+      "scipy_ms": 0.0019999861251562834,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.001374981366097927,
+      "x1t": 1.4545550757768182,
+      "nt_ms": 0.001374981366097927,
+      "xnt": 1.4545550757768182
+    },
+    "BPoly 100 knots, 10 queries": {
+      "scipy_ms": 0.0021249870769679546,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0014579854905605316,
+      "x1t": 1.4574816352603002,
+      "nt_ms": 0.0014999823179095984,
+      "xnt": 1.4166747511593163
+    },
+    "BPoly 100 knots, 100 queries": {
+      "scipy_ms": 0.0031249946914613247,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0024999899324029684,
+      "x1t": 1.2500029103947659,
+      "nt_ms": 0.0024999899324029684,
+      "xnt": 1.2500029103947659
+    }
+  }
+}

@@ -8,12 +8,16 @@ lies on a shared face, so queries are visited in grid-cell order and the
 queries near a face are replayed in their original order (``_locate``).
 """
 
+import math
+
 import numpy as np
+from scipy._lib._array_api import array_namespace
 
 from . import _native, _patch, _threads
 
 _k = _native.interp
 _orig = {}
+_NP = array_namespace(np.empty(0))
 
 # Break-evens measured on one thread against SciPy 1.18.1 (Apple M-series).
 SPLINE_MIN_QUERIES = 300
@@ -114,6 +118,31 @@ def _splev(x, tck, der=0, ext=0):
     )
     flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
     return _spline(flat, x.shape, t, c, k, kernel_ok, 0, lambda xs: _orig["splev"](xs, tck, der, ext))
+
+
+def _ppoly_call(self, x, nu=0, extrapolate=None):
+    """Skip namespace conversions for NumPy queries, keeping SciPy's evaluator."""
+    d = self._delegate_to
+    if (
+        type(d) not in _orig["numpy_ppoly_types"]
+        or self._xp is not _NP
+        or self._xp_internal is not _NP
+        or type(x) is not np.ndarray
+        or x.dtype != np.float64
+        or not x.flags.c_contiguous
+        or type(nu) is not int
+        or not 0 <= nu <= 2**31 - 1
+        or d.__dict__
+    ):
+        return NotImplemented
+    ext = d.extrapolate if extrapolate is None else extrapolate
+    if type(ext) is not bool:
+        return NotImplemented
+    c = d.c
+    out = np.empty((x.size, math.prod(c.shape[2:])), dtype=c.dtype)
+    d._ensure_c_contiguous()
+    d._evaluate(x.reshape(-1), nu, ext, out)
+    return _on_axis(out.reshape(x.shape + c.shape[2:]), x.ndim, d.axis)
 
 
 # ---------------------------------------------------------------- Delaunay
@@ -240,7 +269,7 @@ def _evaluate_spline(self, xi, method):
 def patch():
     _patch.require_validated("1.18.")
     import scipy.interpolate as si
-    from scipy.interpolate import _bsplines, _fitpack_py, _interpnd
+    from scipy.interpolate import _bsplines, _fitpack_py, _interpnd, _interpolate
     from scipy.spatial import Delaunay
 
     _orig.update(
@@ -248,7 +277,10 @@ def patch():
         bspline=si.BSpline.__call__,
         splev=_fitpack_py.splev,
         find_simplex=Delaunay.find_simplex,
+        numpy_ppoly_types=(_interpolate._PPoly, _interpolate._BPoly),
     )
+    for cls in (si.PPoly, si.BPoly):
+        _patch.replace(cls, "__call__", _patch.wrap(cls.__call__, _ppoly_call, f"{cls.__name__}.__call__"))
     _patch.replace(si.BSpline, "__call__", _patch.wrap(_orig["bspline"], _bspline_call, "BSpline.__call__"))
     _patch.replace(Delaunay, "find_simplex", _patch.wrap(_orig["find_simplex"], _find_simplex, "Delaunay.find_simplex"))
     rgi = si.RegularGridInterpolator
@@ -273,6 +305,8 @@ def smoke():
     spl(q)
     si.splev(q, spl.tck)
     si.interp1d(x, np.sin(x * 6), kind="cubic")(q)
+    si.PPoly.from_spline(spl)(q[:10])
+    si.BPoly(np.ones((4, 3)), np.arange(4.0))(q[:10])
     pts = rng.random((1500, 2))
     tri = sp.Delaunay(pts)
     xq = rng.random((2000, 2))

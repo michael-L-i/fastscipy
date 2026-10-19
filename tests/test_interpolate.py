@@ -327,3 +327,73 @@ def test_rgi_pchip_declined():
     nan = si.RegularGridInterpolator(g, v, method="pchip")
     with pytest.raises(ValueError, match="finite"):
         nan(q)
+
+
+# NumPy PPoly/BPoly keep SciPy's arithmetic while avoiding namespace adapters.
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+@pytest.mark.parametrize("complex_", [False, True])
+@pytest.mark.parametrize("axis", [0, 1, 2])
+@pytest.mark.parametrize("descending", [False, True])
+def test_piecewise_numpy_dispatch(cls, complex_, axis, descending):
+    r = rng(205)
+    c = r.standard_normal((4, 13, 2, 3))
+    if complex_:
+        c = c + 1j * r.standard_normal(c.shape)
+    x = np.linspace(-2, 3, 14)
+    if descending:
+        x = x[::-1]
+    c = np.moveaxis(c, (0, 1), (axis, axis + 1))
+    p = cls(c, x, axis=axis)
+    q = np.r_[r.uniform(-3, 4, 73), x, np.nan, np.inf, -np.inf, -0.0]
+    q.flags.writeable = False
+    for query in (q, q[:84].reshape(7, 12), np.array(0.0), np.empty((0, 2))):
+        for nu in (0, 1, 3, 5):
+            for ext in (None, True, False):
+                check(lambda: p(query, nu=nu, extrapolate=ext))
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+def test_piecewise_mutated_coefficients(cls):
+    r = rng(206)
+    p = cls(r.standard_normal((4, 13, 2)), np.linspace(0, 1, 14))
+    p.c = p.c[:, :, ::-1]
+    p.x = p.x.copy()[::-1]
+    q = r.random(11)
+    check(lambda: p(q))
+    assert p._delegate_to.c.flags.c_contiguous
+    assert p._delegate_to.x.flags.c_contiguous
+
+
+@pytest.mark.parametrize("cls", [si.CubicSpline, si.PchipInterpolator, si.Akima1DInterpolator])
+def test_piecewise_derived_evaluation(cls):
+    x = np.linspace(0, 1, 14)
+    p = cls(x, np.sin(x * 6))
+    q = rng(207).random(17)
+    for obj in (p, p.derivative(), p.antiderivative()):
+        check(lambda: obj(q))
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+def test_piecewise_declined_options(cls):
+    p = cls(np.ones((4, 3)), np.arange(4.0))
+    for q in ([0.2, 0.8], np.array([0.2], dtype=np.float32), np.arange(8.0)[::2]):
+        check(lambda: p(q), fast=False)
+    for opts in ({"nu": -1}, {"nu": 0.5}, {"extrapolate": "periodic"}, {"extrapolate": np.bool_(False)}):
+        check(lambda: p(np.array([0.2, 3.2]), **opts), fast=False)
+    p._xp = np
+    check(lambda: p(np.array([0.2])), fast=False)
+
+
+@pytest.mark.parametrize("cls", [si.PPoly, si.BPoly])
+def test_piecewise_custom_evaluator_not_retried(cls):
+    p = cls(np.ones((4, 3)), np.arange(4.0))
+    calls = []
+
+    def evaluate(*args):
+        calls.append(1)
+        raise RuntimeError("custom evaluator")
+
+    p._delegate_to._evaluate = evaluate
+    with pytest.raises(RuntimeError, match="custom evaluator"):
+        p(np.array([0.2]))
+    assert calls == [1]

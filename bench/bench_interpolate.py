@@ -14,6 +14,14 @@ def cases():
     short_q = short_rng.random(1000)
     yield "BSpline 30 knots, 1000 random queries", lambda: short_spline(short_q), False
 
+    piece_rng = np.random.default_rng(208)
+    piece_x = np.linspace(0, 1, 100)
+    for cls in (si.PPoly, si.BPoly):
+        piece = cls(piece_rng.standard_normal((4, 99)), piece_x)
+        for nq in (1, 10, 100):
+            piece_q = piece_rng.random(nq)
+            yield f"{cls.__name__} 100 knots, {nq} queries", lambda p=piece, q=piece_q: p(q)
+
     t = np.sort(r.random(1000))
     spl = si.make_interp_spline(t, r.standard_normal(1000), k=3)
     q = r.uniform(t[0], t[-1], 1_000_000)

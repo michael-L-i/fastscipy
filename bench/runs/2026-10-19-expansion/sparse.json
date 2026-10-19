@@ -1,0 +1,44 @@
+{
+ "meta": {
+  "threads": 2,
+  "note": "New block_diag cases only; existing large generators not materialized"
+ },
+ "cases": {
+  "block_diag 50 small CSR arrays": {
+   "scipy_ms": 0.5422499962151051,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.15595898730680346,
+   "x1t": 3.4768755913270173,
+   "nt_ms": 0.15574999270029366,
+   "xnt": 3.481541069851252
+  },
+  "block_diag 5 medium CSR arrays": {
+   "scipy_ms": 0.09662500815466046,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.026708992663770914,
+   "x1t": 3.6176957091207065,
+   "nt_ms": 0.02641597529873252,
+   "xnt": 3.657824746652329
+  },
+  "block_diag 50 small CSC arrays": {
+   "scipy_ms": 0.5531659990083426,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.15408301260322332,
+   "x1t": 3.5900518146850584,
+   "nt_ms": 0.1512089802417904,
+   "xnt": 3.6582880072585877
+  },
+  "block_diag 5 medium CSC arrays": {
+   "scipy_ms": 0.10054200538434088,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.025874993298202753,
+   "x1t": 3.88568237392836,
+   "nt_ms": 0.02633300027810037,
+   "xnt": 3.8180991274266547
+  }
+ }
+}

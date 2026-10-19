@@ -11,11 +11,11 @@ DECLINED_DTYPES = [np.bool_, np.int16, np.uint8, np.longdouble]
 FORMATS = [sp.csr_array, sp.csc_array, sp.coo_array, sp.csr_matrix, sp.csc_matrix, sp.coo_matrix]
 
 
-@pytest.fixture(params=["1 thread", "4 threads, no size thresholds"], autouse=True)
+@pytest.fixture(params=["1 thread", "2 threads, no size thresholds"], autouse=True)
 def threads(request, monkeypatch):
     old = fastscipy.get_num_threads()
-    fastscipy.set_num_threads(1 if request.param[0] == "1" else 4)
-    if request.param[0] == "4":
+    fastscipy.set_num_threads(1 if request.param[0] == "1" else 2)
+    if request.param[0] == "2":
         monkeypatch.setattr(_sparse, "_PAR", dict.fromkeys(_sparse._PAR, 0))
     yield
     fastscipy.set_num_threads(old)
@@ -205,6 +205,107 @@ def test_find_preserves_input_and_returns_detached_arrays(dtype, index, canonica
         assert output.flags.writeable
         assert output.flags.c_contiguous
         assert not any(np.shares_memory(output, arr) for arr in (a.data, a.indices, a.indptr))
+
+
+@pytest.mark.parametrize("fmt", ["csr", "csc"])
+@pytest.mark.parametrize("kind", ["array", "matrix", "mixed"])
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128, np.int64, np.bool_])
+def test_block_diag_compressed(fmt, kind, dtype):
+    rng = np.random.default_rng(20)
+    blocks = []
+    for i, shape in enumerate(((3, 5), (2, 1), (0, 4), (4, 0), (6, 3))):
+        cls = getattr(sp, fmt + ("_matrix" if kind == "matrix" or kind == "mixed" and i % 2 else "_array"))
+        x = rng.integers(-2, 3, shape).astype(dtype)
+        if np.dtype(dtype).kind in "fc" and x.size:
+            x.flat[0] = np.nan
+        block = cls(x)
+        if block.nnz:
+            block.data[-1] = -0.0 if np.dtype(dtype).kind in "fc" else 0
+        if i == 4 and kind == "array":
+            block.indices = block.indices.astype(np.int64)
+            block.indptr = block.indptr.astype(np.int64)
+        # Empty constructors don't populate their cached canonical property.
+        assert block.has_canonical_format
+        for array in (block.data, block.indices, block.indptr):
+            array.flags.writeable = False
+        blocks.append(block)
+    before = [(b.data.copy(), b.indices.copy(), b.indptr.copy()) for b in blocks]
+    flags = [(b._has_canonical_format, b._has_sorted_indices) for b in blocks]
+    fast_before = fastscipy.stats().get(("block_diag", "fast"), 0)
+    result = check(lambda: sp.block_diag(blocks, format=fmt))
+    assert fastscipy.stats().get(("block_diag", "fast"), 0) > fast_before
+    assert flags == [(b._has_canonical_format, b._has_sorted_indices) for b in blocks]
+    for block, buffers in zip(blocks, before):
+        for actual, expected in zip((block.data, block.indices, block.indptr), buffers):
+            assert_identical(actual, expected)
+            assert not actual.flags.writeable
+            assert not any(np.shares_memory(actual, array) for array in (result.data, result.indices, result.indptr))
+    empty = [getattr(sp, fmt + "_array")((0, 3)), getattr(sp, fmt + "_array")((4, 0))]
+    for block in empty:
+        assert block.has_canonical_format
+    check(lambda: sp.block_diag(empty, format=fmt))
+
+
+def test_block_diag_fallbacks():
+    a = sp.csr_array([[1.0, 0], [0, 2.0]])
+    for call in (
+        lambda: sp.block_diag([a, a], format="coo"),
+        lambda: sp.block_diag([a, a.tocsc()], format="csr"),
+        lambda: sp.block_diag([a, a], format="csr", dtype=np.float32),
+    ):
+        check(call, fast=False)
+    # Explicitly stale flags must not bypass SciPy's sorting and duplicate sum.
+    invalid = sp.csr_array((np.array([2.0, 3.0]), np.array([1, 1]), np.array([0, 2, 2])), shape=(2, 2))
+    invalid.has_canonical_format = True
+    assert _sparse._block_diag([invalid, a], format="csr") is NotImplemented
+    check(lambda: sp.block_diag([invalid, a], format="csr"))
+
+
+@pytest.mark.parametrize("fmt", ["csr", "csc"])
+def test_block_diag_rejects_malformed_buffers_without_touching_them(fmt):
+    cls = getattr(sp, fmt + "_array")
+    mutations = (
+        ("indptr", np.array([], dtype=np.int32)),
+        ("indptr", np.array([0, 3, 2], dtype=np.int32)),
+        ("indptr", np.array([0, -1, 2], dtype=np.int32)),
+        ("indptr", np.array([0, 99, 2], dtype=np.int32)),
+        ("indptr", np.array([[0, 1, 2]], dtype=np.int32)),
+        ("indices", np.array([-1, 1], dtype=np.int32)),
+        ("indices", np.array([0, 9], dtype=np.int32)),
+        ("indices", np.array([0, 1], dtype=">i4")),
+        ("data", np.array([1, 2], dtype=np.float16)),
+        ("data", np.array([1, 2], dtype=">f8")),
+    )
+    for attribute, values in mutations:
+        block = cls(np.eye(2))
+        block.has_canonical_format = True
+        setattr(block, attribute, values)
+        before = [
+            (array.tobytes(), array.shape, array.strides, array.dtype, array.flags.writeable)
+            for array in (block.indptr, block.indices, block.data)
+        ]
+        flags = block._has_canonical_format, block._has_sorted_indices
+        assert _sparse._block_diag([block], format=fmt) is NotImplemented
+        after = [
+            (array.tobytes(), array.shape, array.strides, array.dtype, array.flags.writeable)
+            for array in (block.indptr, block.indices, block.data)
+        ]
+        assert before == after
+        assert flags == (block._has_canonical_format, block._has_sorted_indices)
+
+
+def test_block_diag_preserves_uncached_inputs_and_nan_payloads():
+    data = np.array([0x7FF8000000000003, 0x8000000000000000], dtype=np.uint64).view(np.float64)
+    block = sp.csr_array((data, np.array([0, 1], np.int32), np.array([0, 1, 2], np.int32)), shape=(2, 2))
+    original_keys = set(vars(block))
+    original_data = block.data.tobytes()
+    result = _sparse._block_diag([block, block], format="csr")
+    assert result is not NotImplemented
+    assert set(vars(block)) == original_keys
+    assert block.data.tobytes() == original_data
+    with fastscipy.disabled():
+        expected = sp.block_diag([block, block], format="csr")
+    assert_identical(result, expected)
 
 
 def test_small_calls_match_scipy():

@@ -224,9 +224,78 @@ def _find(A):
     return row[keep], col[keep], A.data[keep]
 
 
+# ---- structured construction -----------------------------------------------------------------
+
+
+def _block_diag(mats, format=None, dtype=None):
+    from scipy.sparse import csc_array, csc_matrix, csr_array, csr_matrix
+    from scipy.sparse._sparsetools import csr_has_canonical_format
+
+    if (
+        type(mats) not in (list, tuple)
+        or not mats
+        or type(format) is not str
+        or format not in ("csr", "csc")
+        or dtype is not None
+    ):
+        return NotImplemented
+    types = (csr_array, csr_matrix) if format == "csr" else (csc_array, csc_matrix)
+    major, minor = (0, 1) if format == "csr" else (1, 0)
+    for block in mats:
+        if (
+            type(block) not in types
+            or block.ndim != 2
+            or not _contig(block.indptr, block.indices, block.data)
+            or block.dtype.char not in "?bBhHiIlLqQfdFD"
+            or not block.dtype.isnative
+            or block.indices.dtype.char not in _IDX
+            or not block.indices.dtype.isnative
+            or block.indptr.dtype != block.indices.dtype
+            or type(block) is types[1]
+            and block.indices.dtype != np.int32
+            or len(block.data) != len(block.indices)
+            or len(block.indptr) != block.shape[major] + 1
+            or len(block.indptr) == 0
+            or block.indptr[0] != 0
+            or len(block.data) != block.indptr[-1]
+            or (block.indptr[1:] < block.indptr[:-1]).any()
+            or block.indices.min(initial=0) < 0
+            or block.indices.max(initial=-1) >= block.shape[minor]
+            or not csr_has_canonical_format(block.shape[major], block.indptr, block.indices)
+        ):
+            return NotImplemented
+    shape = tuple(sum(b.shape[d] for b in mats) for d in (0, 1))
+    nnz = sum(len(b.data) for b in mats)
+    if max(*shape, nnz) > _I32MAX:
+        return NotImplemented
+    is_array = any(type(b) is types[0] for b in mats)
+    constructor = types[0] if is_array else types[1]
+    if nnz == 0:
+        return constructor(shape, dtype=np.result_type(*(b.dtype for b in mats)))
+    idx_dtype = np.int64 if any(b.indices.dtype == np.int64 for b in mats) else np.int32
+    indices, pointers = [], []
+    offset = used = 0
+    for block in mats:
+        indices.append(block.indices + offset)
+        pointers.append(block.indptr[:-1] + used)
+        offset += block.shape[minor]
+        used += len(block.data)
+    pointers.append(np.array([used], dtype=idx_dtype))
+    result = constructor(
+        (
+            np.concatenate([b.data for b in mats]),
+            np.concatenate(indices, dtype=idx_dtype),
+            np.concatenate(pointers, dtype=idx_dtype),
+        ),
+        shape=shape,
+    )
+    result.has_canonical_format = True
+    return result
+
+
 def patch():
     _patch.require_validated("1.18.")
-    from scipy.sparse import _coo, _compressed, _data, _extract
+    from scipy.sparse import _coo, _compressed, _construct, _data, _extract
 
     _native.sparse  # noqa: B018  (fail early if the extension lacks the module)
     _small_calls()
@@ -238,6 +307,8 @@ def patch():
     _dense_inits(_compressed._cs_matrix, _coo._coo_base)
     old = _extract.find
     _patch.rebind(old, _patch.wrap(old, _find, "find"))
+    old = _construct.block_diag
+    _patch.rebind(old, _patch.wrap(old, _block_diag, "block_diag"))
 
 
 def smoke():
@@ -252,3 +323,6 @@ def smoke():
     c = sp.coo_array((rng.random(500), (r, rng.integers(0, 50, 500))), shape=(50, 50))
     c.sum_duplicates()
     sp.find(sp.csr_array(d))
+    for fmt in ("csr", "csc"):
+        block = sp.csr_array(d).asformat(fmt)
+        sp.block_diag([block, block], format=fmt)

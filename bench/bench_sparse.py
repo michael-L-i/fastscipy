@@ -3,6 +3,21 @@ import scipy.sparse as sp
 
 
 def cases():
+    construction_rng = np.random.default_rng(22)
+    for fmt in ("csr", "csc"):
+        cls = getattr(sp, fmt + "_array")
+        blocks = [cls(construction_rng.standard_normal((4, 4))) for _ in range(50)]
+        yield (
+            f"block_diag 50 small {fmt.upper()} arrays",
+            lambda blocks=blocks, fmt=fmt: sp.block_diag(blocks, format=fmt),
+        )
+        medium = [
+            cls(construction_rng.random((100, 100)) * (construction_rng.random((100, 100)) < 0.1)) for _ in range(5)
+        ]
+        yield (
+            f"block_diag 5 medium {fmt.upper()} arrays",
+            lambda blocks=medium, fmt=fmt: sp.block_diag(blocks, format=fmt),
+        )
     rng = np.random.default_rng(0)
     # many small matrices
     data, ind, ptr = (

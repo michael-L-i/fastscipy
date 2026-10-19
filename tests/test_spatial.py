@@ -83,7 +83,9 @@ def test_distance_statistics(metric, key, layout, threads):
     v = np.arange(1, 8, dtype=np.float64)
     supplied = v if key == "V" else np.diag(v)
     supplied.flags.writeable = False
-    for options in ({}, {key: None}, {key: supplied}):
+    exceptional = supplied.copy()
+    exceptional.flat[0] = np.nan
+    for options in ({}, {key: None}, {key: supplied}, {key: supplied[::-1]}, {key: exceptional}):
         check(lambda: dist.cdist(a, b, metric=metric, **options), fast=threads > 1)
         check(lambda: dist.pdist(a, metric, **options), fast=threads > 1)
 

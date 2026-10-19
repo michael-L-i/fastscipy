@@ -81,11 +81,14 @@ the GIL that is slower.
 | Functions | How |
 |---|---|
 | `BSpline.__call__`, `splev`, `interp1d` (spline kinds) | Rust de Boor kernel with binary search for queries in random order; threads |
+| `PPoly`, `BPoly`, and derived spline evaluation | contiguous float64 NumPy queries bypass namespace adapters and use SciPy's own evaluator, including small query batches |
 | `Delaunay.find_simplex`, `LinearNDInterpolator`, `CloughTocher2DInterpolator`, `griddata` | queries sorted into grid-cell order, then SciPy's own search on chunks (threads); Rust barycentric kernel for real-valued `LinearNDInterpolator`. Points near a face are replayed in the original order, so ties resolve as in SciPy |
 | `RegularGridInterpolator(method="pchip")`, `interpn(method="pchip")` | local-window Rust kernel for 1 to 3 dimensions |
 
-Queries that are already ordered, fewer than about 300 queries, `tol=`,
-`bruteforce=True`, NaN queries and periodic extrapolation go to SciPy.
+For the spline and triangulation kernels, ordered queries, fewer than about
+300 queries, `tol=`, `bruteforce=True`, NaN queries and periodic extrapolation
+go to SciPy. The `PPoly`/`BPoly` dispatch shortcut also handles ordered,
+small and nonfinite NumPy queries; periodic extrapolation uses SciPy's full dispatch.
 
 ## linalg
 
@@ -119,6 +122,7 @@ deprecated column-vector inputs use SciPy's original dispatch.
 | COO `sum_duplicates` | counting sort in Rust, threads |
 | `csr_array`/`csc_array`/`coo_array` (and `*_matrix`) from dense arrays | Rust scan, threads |
 | `find` | canonicalises through CSR instead of a lexsort |
+| `block_diag` with canonical CSR blocks and `format="csr"`, or CSC blocks and `format="csc"` | joins compressed buffers directly, preserving sparse array/matrix classes, explicit zeros and index dtypes |
 | small constructors and format checks | less per-call overhead |
 | `csgraph.dijkstra`, `bellman_ford`, `johnson`, `shortest_path`, `connected_components` | Rust ports with SciPy's tie-breaking; many sources run in parallel; Bellman-Ford stops when a pass changes nothing |
 
@@ -127,8 +131,11 @@ sparse kernels; negative weights in Dijkstra; negative cycles; Floyd-Warshall.
 
 ## spatial
 
-`cdist` (17 metrics) and `pdist` (16) split rows across threads (*threads
-only*; `mahalanobis`, `seuclidean` and custom callables go to SciPy).
+`cdist` (19 metrics) and `pdist` (18) split rows across threads (*threads
+only*; custom callables go to SciPy). `mahalanobis` and `seuclidean` use
+SciPy's own whole-input covariance or variance calculation once, before
+splitting. Explicit float64 NumPy `VI` matrices and `V` vectors are supported;
+exceptional statistics and unsupported options keep SciPy's own path.
 Large float64 Fortran-order and strided inputs are copied once to contiguous
 storage before splitting; small inputs keep SciPy's own path.
 `KDTree`/`cKDTree` `query` and `query_ball_point` use several workers when
@@ -149,16 +156,23 @@ themselves remain SciPy's implementations.
 
 ## integrate and optimize
 
-`integrate.trapezoid` on float64 arrays and `cumulative_trapezoid` on 1-D
-float64 arrays skip the array-API dispatch. Cumulative integration covers
-uniform spacing or matching 1-D float64 coordinates, with `initial=None`
-or zero. Other dtypes, shapes and options go to SciPy.
+`integrate.trapezoid` on float64 arrays and `cumulative_trapezoid` on
+float32, float64 and complex128 arrays skip the array-API dispatch.
+Cumulative trapezoid integration supports arbitrary axes, uniform spacing,
+or float32/float64 coordinates matching the integration axis or full input
+shape, with `initial=None` or zero. Unsupported options go to SciPy.
 
 `simpson` covers uniformly spaced float64 arrays with an odd sample count
 of at least three along any valid axis. Gaussian `fixed_quad` skips generic
 dispatch for ordinary finite scalar limits; it uses SciPy's cached nodes
 and weights and calls the integrand exactly once. Callback exceptions and
 malformed results propagate without retrying the callback.
+
+`cumulative_simpson` on uniformly spaced float64 arrays evaluates only the
+interval estimates SciPy retains. Extreme inputs and unusual underflow
+reporting use SciPy so discarded arithmetic still produces its warnings.
+`romb` on float64 arrays retains two rows of the same Richardson table,
+preserving its extrapolation arithmetic; `show=True` uses SciPy.
 
 `optimize.lsq_linear` covers dense float64 inputs with unbounded limits and
 the exact solver, retaining the complete SciPy result object. `rosen_hess`

@@ -1,0 +1,85 @@
+{
+ "date": "2026-10-19",
+ "scope": "23 new cases, separate from the original-case 18-thread benchmark table; not comprehensive SciPy coverage",
+ "benchmark_threads": [
+  1,
+  2
+ ],
+ "blas_threads": 1,
+ "concurrent_benchmark_processes": 1,
+ "areas": {
+  "integrate": {
+   "cases": 9,
+   "identical": true,
+   "expected_fast_paths": true,
+   "single_thread_check_passed": true,
+   "speedup_1t_range": [
+    1.0134409653711287,
+    1.627282065329042
+   ],
+   "speedup_2t_range": [
+    1.008927800896581,
+    1.596495706972307
+   ]
+  },
+  "interpolate": {
+   "cases": 6,
+   "identical": true,
+   "expected_fast_paths": true,
+   "single_thread_check_passed": true,
+   "speedup_1t_range": [
+    1.2500029103947659,
+    1.4574816352603002
+   ],
+   "speedup_2t_range": [
+    1.2500029103947659,
+    1.4545550757768182
+   ]
+  },
+  "sparse": {
+   "cases": 4,
+   "identical": true,
+   "expected_fast_paths": true,
+   "single_thread_check_passed": true,
+   "speedup_1t_range": [
+    3.4768755913270173,
+    3.88568237392836
+   ],
+   "speedup_2t_range": [
+    3.481541069851252,
+    3.8180991274266547
+   ]
+  },
+  "spatial": {
+   "cases": 4,
+   "identical": true,
+   "expected_fast_paths": true,
+   "single_thread_check_passed": true,
+   "speedup_1t_range": [
+    0.9726814942696437,
+    1.0059984562843682
+   ],
+   "speedup_2t_range": [
+    1.2032299124709134,
+    1.9346570201131172
+   ]
+  }
+ },
+ "validation": {
+  "project_tests_passed": 5821,
+  "project_warnings": 89,
+  "project_seconds": 104.95,
+  "maximum_resident_set_bytes": 507510784,
+  "swaps": 0,
+  "upstream_paired_tests": {
+   "interpolate": 50,
+   "integrate": 240,
+   "sparse": 6,
+   "spatial": 298
+  },
+  "upstream_changed_outcomes": 0,
+  "upstream_note": "Sparse/spatial upstream cases used fallback paths; directed local tests exercise the new fast paths. Interpolation/integration upstream tests exercised 1203/328 fast calls respectively.",
+  "ruff_check": "passed",
+  "ruff_format_check": "passed"
+ }
+}

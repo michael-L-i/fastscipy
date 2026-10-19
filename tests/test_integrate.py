@@ -157,6 +157,121 @@ def test_romb_printed_table_fallback(show, capsys):
     assert capsys.readouterr().out == text
 
 
+@pytest.mark.parametrize("n", [2, 4, 6, 100, 1000])
+def test_simpson_even_uniform(n, integration_threads):
+    local = np.random.default_rng(971 + n)
+    y = local.standard_normal((2, n, 3))
+    for data, axis in ((y, 1), (y[:, ::-1], -2), (y[0, :, 0], 0), (np.zeros(n), -1), (np.empty((0, n)), -1)):
+        data.flags.writeable = False
+        before = data.tobytes()
+        for dx in (1.0, 0.25, 0.1, -2, 0.0, -0.0):
+            check(lambda: integrate.simpson(data, dx=dx, axis=axis))
+        assert data.tobytes() == before
+
+
+@pytest.mark.parametrize("n", [3, 4, 5, 16, 17, 257])
+def test_cumulative_simpson_irregular(n, integration_threads):
+    local = np.random.default_rng(972 + n)
+    y = local.standard_normal((2, n, 3))
+    x = np.cumsum(local.uniform(0.01, 1.0, n))
+    full = np.cumsum(local.uniform(0.01, 1.0, y.shape), axis=1)
+    for data, coords, axis in (
+        (y, x, 1),
+        (y, full, -2),
+        (y[:, ::-1], x, 1),
+        (y.swapaxes(0, 1), full.swapaxes(0, 1), 0),
+        (y[0, :, 0], x, -1),
+        (np.empty((0, n)), x, -1),
+        (np.empty((0, n)), np.empty((0, n)), -1),
+    ):
+        data.flags.writeable = False
+        coords.flags.writeable = False
+        before = data.tobytes(), coords.tobytes()
+        for initial in (None, 0.0, -0.0, 2.5):
+            check(lambda: integrate.cumulative_simpson(data, x=coords, axis=axis, initial=initial))
+        assert (data.tobytes(), coords.tobytes()) == before
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.complex128])
+def test_romb_extended_dtypes(dtype, integration_threads):
+    local = np.random.default_rng(973)
+    for n in (2, 3, 17, 257):
+        y = local.standard_normal((2, n, 3)).astype(dtype)
+        if dtype == np.complex128:
+            y += 1j * local.standard_normal(y.shape)
+        for data, axis in ((y, 1), (y[:, ::-1], -2), (y[0, :, 0], -1), (np.empty((0, n), dtype=dtype), -1)):
+            data.flags.writeable = False
+            before = data.tobytes()
+            for dx in (1.0, 0.1, 0.0, -0.0, -2.0):
+                check(lambda: integrate.romb(data, dx=dx, axis=axis))
+            assert data.tobytes() == before
+
+
+@pytest.mark.parametrize(
+    "name,kwargs",
+    [
+        ("simpson", {"dx": 0.0}),
+        ("simpson", {"dx": 1e200}),
+        ("simpson", {"dx": 1e-200}),
+        ("cumulative_simpson", {"x": np.array([-1e300, -1e-300, 0.0, 1e-300, 1e300])}),
+        ("cumulative_simpson", {"x": np.array([0.0, 1.0, np.inf, np.inf, np.inf])}),
+        ("cumulative_simpson", {"x": np.array([0.0, 1.0, 1.0, 2.0, 3.0])}),
+        ("cumulative_simpson", {"x": np.arange(4.0)}),
+    ],
+)
+def test_expanded_sampled_warning_modes(name, kwargs, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    y = np.array([0.0, 4e307, 0.0, 4e307, 0.0])
+    if name == "simpson":
+        y = y[:-1]
+    for settings in ({}, {"all": "warn"}, {"all": "raise"}, {"over": "warn", "invalid": "raise"}):
+        with np.errstate(**settings):
+            with fastscipy.disabled():
+                expected = _sampled_outcome(name, y, **kwargs)
+            assert_identical(expected, _sampled_outcome(name, y, **kwargs))
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.complex128])
+def test_romb_extended_dtype_warnings(dtype):
+    for special in (np.nan, np.inf, -np.inf, 1e38):
+        y = np.array([special, 1.0, 0.0, -1.0, special], dtype=dtype)
+        for mode in ("warn", "raise"):
+            with np.errstate(all=mode):
+                with fastscipy.disabled():
+                    expected = _sampled_outcome("romb", y)
+                assert_identical(expected, _sampled_outcome("romb", y))
+
+
+@pytest.mark.parametrize(
+    "name,kwargs,y",
+    [
+        ("simpson", {"dx": 1e200}, np.ones(4)),
+        ("cumulative_simpson", {"x": np.array([-1e300, -1e-300, 0.0, 1e-300, 1e300])}, np.ones(5)),
+        ("romb", {"dx": 1e308}, np.ones(5, dtype=np.complex128)),
+    ],
+)
+def test_expanded_sampled_numpy_callbacks_not_retried(name, kwargs, y, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    calls = []
+    error = RuntimeError("numeric callback")
+
+    def callback(*args):
+        calls.append(args)
+        raise error
+
+    for disabled in (True, False):
+        calls.clear()
+        with np.errstate(over="call", invalid="call", call=callback):
+            context = fastscipy.disabled() if disabled else warnings.catch_warnings()
+            with context, pytest.raises(RuntimeError) as caught:
+                getattr(integrate, name)(y, **kwargs)
+        assert caught.value is error and len(calls) == 1
+
+
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex128])
 def test_cumulative_trapezoid_nd_dtypes(dtype, integration_threads):
     local = np.random.default_rng(950)

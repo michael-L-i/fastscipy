@@ -7,6 +7,30 @@ _y2 = np.random.default_rng(2).standard_normal((1000, 30))
 
 
 def cases():
+    wave_rng = np.random.default_rng(970)
+    for n in (100, 100_001):
+        irregular_y = wave_rng.standard_normal(n)
+        irregular_x = np.cumsum(wave_rng.uniform(0.01, 1.0, n))
+        yield (
+            f"cumulative_simpson {n} irregular points",
+            lambda y=irregular_y, x=irregular_x: integrate.cumulative_simpson(y, x=x),
+        )
+    irregular_channels = wave_rng.standard_normal((32, 1000))
+    channel_x = np.cumsum(wave_rng.uniform(0.01, 1.0, 1000))
+    yield (
+        "cumulative_simpson (32, 1000) irregular points",
+        lambda: integrate.cumulative_simpson(irregular_channels, x=channel_x),
+    )
+    odd_control = wave_rng.standard_normal(101)
+    yield "cumulative_simpson 101 uniform points", lambda: integrate.cumulative_simpson(odd_control)
+    even = wave_rng.standard_normal(100)
+    yield "simpson 100 uniform even points", lambda: integrate.simpson(even)
+    yield "simpson 2 uniform points", lambda: integrate.simpson(even[:2])
+    for dtype in (np.float32, np.complex128):
+        typed = wave_rng.standard_normal(257).astype(dtype)
+        if dtype == np.complex128:
+            typed += 1j * wave_rng.standard_normal(257)
+        yield f"romb 257 {np.dtype(dtype).name} points", lambda y=typed: integrate.romb(y)
     simpson = np.random.default_rng(920).standard_normal(100)
     yield "cumulative_simpson 100 uniform points", lambda: integrate.cumulative_simpson(simpson)
     large_simpson = np.random.default_rng(921).standard_normal(100_000)

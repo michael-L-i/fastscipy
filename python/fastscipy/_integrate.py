@@ -91,25 +91,43 @@ def _cumulative_trapezoid(y, x=None, dx=1.0, axis=-1, initial=None):
 
 
 def _simpson(y, x=None, *, dx=1.0, axis=-1):
-    """Uniform spacing and an odd sample count: SciPy's same composite rule."""
+    """Uniform spacing: SciPy's composite rule and even-length end correction."""
     if (
         type(y) is not np.ndarray
         or y.dtype != np.float64
         or x is not None
         or type(dx) not in (float, int)
+        or (type(dx) is int and not -(2**63) <= dx < 2**64)
         or type(axis) is not int
         or not -y.ndim <= axis < y.ndim
     ):
         return NotImplemented
     n = y.shape[axis]
-    if n < 3 or n % 2 == 0:
+    if n < 2:
         return NotImplemented
     s0, s1, s2 = ([slice(None)] * y.ndim for _ in range(3))
-    s0[axis], s1[axis], s2[axis] = slice(0, n - 2, 2), slice(1, n - 1, 2), slice(2, n, 2)
+    stop = n - 2 if n % 2 else n - 3
+    s0[axis], s1[axis], s2[axis] = slice(0, stop, 2), slice(1, stop + 1, 2), slice(2, stop + 2, 2)
     try:
         with np.errstate(all="raise"):
             spacing = np.asarray(dx, dtype=np.float64)
-            return spacing / 3.0 * np.sum(y[tuple(s0)] + 4.0 * y[tuple(s1)] + y[tuple(s2)], axis=axis)
+            if n == 2:
+                s1[axis], s2[axis] = -1, -2
+                return 0.0 + 0.5 * spacing * (y[tuple(s1)] + y[tuple(s2)])
+            result = spacing / 3.0 * np.sum(y[tuple(s0)] + 4.0 * y[tuple(s1)] + y[tuple(s2)], axis=axis)
+            if n % 2:
+                return result
+            h0, h1 = np.stack((spacing, spacing))
+            num, den = 2 * h1**2 + 3 * h0 * h1, 6 * (h1 + h0)
+            alpha = np.asarray(num / den if den != 0 else 0.0)
+            num, den = h1**2 + 3.0 * h0 * h1, 6 * h0
+            beta = np.asarray(num / den if den != 0 else 0.0)
+            num, den = 1 * h1**3, 6 * h0 * (h0 + h1)
+            eta = np.asarray(num / den if den != 0 else 0.0)
+            s0[axis], s1[axis], s2[axis] = -1, -2, -3
+            result += alpha * y[tuple(s0)] + beta * y[tuple(s1)] - eta * y[tuple(s2)]
+            result += 0.0
+            return result
     except (FloatingPointError, OverflowError):
         return NotImplemented
 
@@ -142,7 +160,6 @@ def _cumulative_simpson(y, *, x=None, dx=1.0, axis=-1, initial=None):
         and type(axis) is int
         and -y.ndim <= axis < y.ndim
         and y.shape[axis] >= 3
-        and x is None
         and type(dx) in (float, int)
         and (type(dx) is not int or -(2**63) <= dx < 2**64)
         and (initial is None or type(initial) in (float, int))
@@ -157,15 +174,37 @@ def _cumulative_simpson(y, *, x=None, dx=1.0, axis=-1, initial=None):
     n = values.shape[-1]
     try:
         with np.errstate(all="raise"):
-            spacing = np.asarray(dx, dtype=np.float64)
+            if x is None:
+                spacing = np.asarray(dx, dtype=np.float64)
+            elif type(x) is np.ndarray and x.dtype == np.float64:
+                if x.ndim == 1 and x.size == n:
+                    spacing = np.diff(x)
+                elif x.shape == y.shape:
+                    spacing = np.diff(np.swapaxes(x, axis, -1), axis=-1)
+                else:
+                    return NotImplemented
+                # Besides monotonicity, these bounds keep arithmetic in the
+                # discarded unequal-interval estimates finite too.
+                if not (np.min(spacing, initial=np.inf) >= 1e-20 and np.max(spacing, initial=0) <= 1e20):
+                    return NotImplemented
+            else:
+                return NotImplemented
             sub = np.empty(values.shape[:-1] + (n - 1,))
             f1, f2, f3 = values[..., :-2:2], values[..., 1:-1:2], values[..., 2::2]
-            sub[..., :-1:2] = spacing / 3 * (5 * f1 / 4 + 2 * f2 - f3 / 4)
-            sub[..., 1::2] = spacing / 3 * (5 * f3 / 4 + 2 * f2 - f1 / 4)
-            # The last interval always uses the backward estimate, even when
-            # it falls on an even index and was not included above.
-            last = values[..., -3:]
-            sub[..., -1:] = spacing / 3 * (5 * last[..., 2:] / 4 + 2 * last[..., 1:2] - last[..., :1] / 4)
+            if x is None:
+                sub[..., :-1:2] = spacing / 3 * (5 * f1 / 4 + 2 * f2 - f3 / 4)
+                sub[..., 1::2] = spacing / 3 * (5 * f3 / 4 + 2 * f2 - f1 / 4)
+                if n % 2 == 0:
+                    last = values[..., -3:]
+                    sub[..., -1:] = spacing / 3 * (5 * last[..., 2:] / 4 + 2 * last[..., 1:2] - last[..., :1] / 4)
+            else:
+                d1, d2 = spacing[..., :-1:2], spacing[..., 1::2]
+                sub[..., :-1:2] = _unequal_interval(f1, f2, f3, d1, d2)
+                sub[..., 1::2] = _unequal_interval(f3, f2, f1, d2, d1)
+                if n % 2 == 0:
+                    sub[..., -1:] = _unequal_interval(
+                        values[..., -1:], values[..., -2:-1], values[..., -3:-2], spacing[..., -1:], spacing[..., -2:-1]
+                    )
             out = np.cumsum(sub, axis=-1)
             if initial is not None:
                 start = np.full(values.shape[:-1] + (1,), initial, dtype=np.float64)
@@ -176,11 +215,21 @@ def _cumulative_simpson(y, *, x=None, dx=1.0, axis=-1, initial=None):
     return np.swapaxes(out, -1, axis)
 
 
+def _unequal_interval(f1, f2, f3, x21, x32):
+    """SciPy's unequal-interval formula, with its exact operation order."""
+    x31 = x21 + x32
+    x21_x31 = x21 / x31
+    x21_x32 = x21 / x32
+    product = x21_x31 * x21_x32
+    coeff1, coeff2, coeff3 = 3 - x21_x31, 3 + product + x21_x31, -product
+    return x21 / 6 * (coeff1 * f1 + coeff2 * f2 + coeff3 * f3)
+
+
 def _romb(y, dx=1.0, axis=-1, show=False):
     """Two rows of the same Richardson table instead of a dictionary of all rows."""
     if not (
         type(y) is np.ndarray
-        and y.dtype == np.float64
+        and y.dtype in (np.float64, np.float32, np.complex128)
         and type(axis) is int
         and -y.ndim <= axis < y.ndim
         and type(dx) in (float, int)
@@ -265,6 +314,9 @@ def smoke():
     integrate.trapezoid(y, y * y)
     integrate.cumulative_trapezoid(y, initial=0)
     integrate.simpson(y[:19])
+    integrate.simpson(y)
     integrate.cumulative_simpson(y)
+    integrate.cumulative_simpson(y, x=y * y)
     integrate.romb(y[:17])
+    integrate.romb(y[:17].astype(np.float32))
     integrate.fixed_quad(np.cos, 0.0, 1.0)

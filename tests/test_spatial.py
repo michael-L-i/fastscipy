@@ -1,3 +1,4 @@
+import contextlib
 import pickle
 
 import numpy as np
@@ -7,7 +8,7 @@ import scipy.spatial.distance as dist
 
 import fastscipy
 from fastscipy import _spatial
-from fastscipy.testing import check
+from fastscipy.testing import assert_identical, check
 
 RNG = np.random.default_rng(0)
 
@@ -57,10 +58,8 @@ def test_declined_still_correct():
     r = dist.cdist(A, B, out=out)
     assert r is out and np.array_equal(out, dist.cdist.__wrapped__(A, B))
     for call in (
-        lambda: dist.cdist(A, B, "minkowski", p=3.0),
-        lambda: dist.cdist(A, B, "euclidean", w=np.ones(16)),
         lambda: dist.cdist(A[:5], B[:5], lambda u, v: 1.0),
-        lambda: dist.cdist(A.astype(np.float32), B),
+        lambda: dist.cdist(A.astype(np.int32), B),
         lambda: dist.cdist(A.T, A.T),
         lambda: dist.cdist(A[:10], B[:10]),
         lambda: dist.cdist(A.tolist(), B.tolist()),
@@ -68,6 +67,102 @@ def test_declined_still_correct():
         lambda: dist.pdist(A[:20]),
     ):
         check(call, fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("metric", sorted(_spatial._WEIGHTED))
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_weighted_distances(metric, dtype, threads, monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1000)
+    monkeypatch.setattr(_spatial, "_BLOCK", 2000)
+    rng = np.random.default_rng(820)
+    a, b = rng.random((97, 7)).astype(dtype), rng.random((81, 7)).astype(dtype)
+    a[::7], b[::7] = np.round(a[::7]), np.round(b[::7])
+    w = rng.random(14)[::2]
+    w[0] = -0.0
+    w.flags.writeable = False
+    for aa, bb in ((a, b), (a[::-1], np.asfortranarray(b))):
+        for ww in (None, w, np.zeros(7)):
+            before = aa.tobytes(), bb.tobytes(), None if ww is None else ww.tobytes()
+            check(lambda: dist.cdist(aa, bb, metric, w=ww), fast=threads > 1)
+            check(lambda: dist.pdist(aa, metric, w=ww), fast=threads > 1 and metric in _spatial._PDIST)
+            assert before == (aa.tobytes(), bb.tobytes(), None if ww is None else ww.tobytes())
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("metric", sorted(_spatial._CDIST))
+def test_float32_distances(metric, threads, monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1000)
+    monkeypatch.setattr(_spatial, "_BLOCK", 2000)
+    rng = np.random.default_rng(821)
+    a, b = rng.random((97, 7)).astype(np.float32), rng.random((81, 7)).astype(np.float32)
+    a[0, 0], b[0, 0] = -0.0, np.nan
+    for aa, bb in ((a, b), (np.asfortranarray(a), b[::-1])):
+        check(lambda: dist.cdist(aa, bb, metric), fast=threads > 1 and metric not in _spatial._STATISTICS)
+        check(lambda: dist.pdist(aa, metric), fast=threads > 1 and metric in _spatial._PDIST)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("p", [0.5, 1, 2, 3.5, np.inf])
+def test_minkowski_options(p, threads, monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1000)
+    monkeypatch.setattr(_spatial, "_BLOCK", 2000)
+    rng = np.random.default_rng(822)
+    a, b = rng.normal(size=(97, 7)), rng.normal(size=(81, 7))
+    for options in ({"p": p}, {"p": p, "w": rng.random(7)}):
+        check(lambda: dist.cdist(a, b, "minkowski", **options), fast=threads > 1)
+        check(lambda: dist.pdist(a, "minkowski", **options), fast=threads > 1)
+
+
+def test_distance_options_invalid(monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1000)
+    monkeypatch.setattr(_spatial, "_BLOCK", 2000)
+    a, b = np.ones((97, 7)), np.ones((81, 7))
+    for w in ([1.0] * 7, np.ones(8), np.ones(7, dtype=np.float32), np.full(7, -1.0), np.full(7, np.inf)):
+        check(lambda: dist.cdist(a, b, "euclidean", w=w), fast=False)
+        check(lambda: dist.pdist(a, "euclidean", w=w), fast=False)
+    for p in (0, -1, np.nan, "invalid", np.array([2.0])):
+        check(lambda: dist.cdist(a, b, "minkowski", p=p), fast=False)
+        check(lambda: dist.pdist(a, "minkowski", p=p), fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_float32_cast_warning_events(threads, monkeypatch):
+    import warnings
+
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_spatial, "_WORK", 1000)
+    monkeypatch.setattr(_spatial, "_BLOCK", 2000)
+    monkeypatch.setattr(_patch, "STRICT", False)
+    a = np.ones((97, 7), dtype=np.float32)
+    a.view(np.uint32)[0, 0] = 0x7F800001
+    b = np.zeros((81, 7), dtype=np.float32)
+    before = a.tobytes()
+    for call in (lambda: dist.cdist(a, b), lambda: dist.pdist(a)):
+
+        def outcome():
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                result = call()
+            return result, [(w.category, str(w.message)) for w in caught]
+
+        with fastscipy.disabled():
+            expected = outcome()
+        assert_identical(expected, outcome())
+        for enabled in (False, True):
+            events = []
+
+            def handler(error, flag):
+                events.append((error, flag))
+                raise RuntimeError("cast callback")
+
+            context = fastscipy.disabled() if not enabled else contextlib.nullcontext()
+            with context, np.errstate(invalid="call", call=handler):
+                with pytest.raises(RuntimeError, match="cast callback"):
+                    call()
+            assert len(events) == 1
+    assert a.tobytes() == before
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

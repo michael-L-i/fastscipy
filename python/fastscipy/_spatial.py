@@ -38,6 +38,14 @@ _CDIST = {
 }
 _PDIST = _CDIST - {"dice"}
 _STATISTICS = {"seuclidean": "V", "mahalanobis": "VI"}
+_WEIGHTED = _CDIST - {"cosine", "correlation", "jensenshannon", *_STATISTICS}
+_OPTIONS = {
+    m: {"metric"}
+    | ({"w"} if m in _WEIGHTED else set())
+    | ({"p"} if m == "minkowski" else set())
+    | ({_STATISTICS[m]} if m in _STATISTICS else set())
+    for m in _CDIST
+}
 _WORK = 1_000_000  # pair-coordinates below which a block split loses to hand-off cost
 _BLOCK = 200_000  # about 100 us per block
 _QUERIES = 2000  # KDTree queries below which threads cost more than they save
@@ -51,8 +59,8 @@ def _metric(args, kw, names, *arrays):
     if (
         isinstance(metric, str)
         and metric in names
-        and kw.keys() <= {"metric", _STATISTICS.get(metric)}
-        and all(type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == 2 for a in arrays)
+        and kw.keys() <= _OPTIONS[metric]
+        and all(type(a) is np.ndarray and a.dtype in (np.float64, np.float32) and a.ndim == 2 for a in arrays)
     ):
         return metric
 
@@ -61,7 +69,20 @@ def _parameters(metric, kw, *arrays):
     """Use SciPy's full-input statistics before splitting either distance kernel."""
     key = _STATISTICS.get(metric)
     if key is None:
-        return {}
+        params = {k: v for k, v in kw.items() if k != "metric"}
+        w = params.get("w")
+        if w is not None and not (
+            type(w) is np.ndarray
+            and w.dtype == np.float64
+            and w.shape == (arrays[0].shape[1],)
+            and np.isfinite(w).all()
+            and (w >= 0).all()
+        ):
+            return None
+        p = params.get("p", 2.0)
+        if type(p) not in (int, float) or not 0 < p <= np.inf:
+            return None
+        return params
     value = kw.get(key)
     d = arrays[0].shape[1]
     if value is not None:
@@ -90,7 +111,11 @@ def _cdist_fast(original):
         blocks = chunks(ma, -(-_BLOCK // max(1, mb * d)))
         if len(blocks) < 2:
             return NotImplemented
-        XA, XB = np.ascontiguousarray(XA), np.ascontiguousarray(XB)
+        try:
+            with np.errstate(all="raise"):
+                XA, XB = np.ascontiguousarray(XA, dtype=np.float64), np.ascontiguousarray(XB, dtype=np.float64)
+        except FloatingPointError:
+            return NotImplemented  # SciPy owns signaling-NaN cast warnings and callbacks.
         params = _parameters(metric, kw, XA, XB)
         if params is None:
             return NotImplemented
@@ -109,7 +134,11 @@ def _pdist_fast(cdist):
         m, d = X.shape
         if m * m * d < 2 * _WORK:
             return NotImplemented
-        X = np.ascontiguousarray(X)
+        try:
+            with np.errstate(all="raise"):
+                X = np.ascontiguousarray(X, dtype=np.float64)
+        except FloatingPointError:
+            return NotImplemented
         params = _parameters(metric, kw, X)
         if params is None:
             return NotImplemented

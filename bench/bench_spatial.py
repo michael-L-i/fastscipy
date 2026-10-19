@@ -22,6 +22,17 @@ def cases():
     for metric in ("seuclidean", "mahalanobis"):
         yield f"cdist {metric} 1500x1000x12", lambda m=metric: dist.cdist(sa, sb, m)
         yield f"pdist {metric} 1500x12", lambda m=metric: dist.pdist(sa, m)
+    sweep = np.random.default_rng(825)
+    wa, wb, weights = sweep.random((1200, 16)), sweep.random((900, 16)), sweep.random(16)
+    for metric, options in (("euclidean", {}), ("minkowski", {"p": 3.5})):
+        yield (
+            f"weighted cdist {metric} 1200x900x16",
+            lambda m=metric, opts=options: dist.cdist(wa, wb, m, w=weights, **opts),
+        )
+        yield f"weighted pdist {metric} 1200x16", lambda m=metric, opts=options: dist.pdist(wa, m, w=weights, **opts)
+    fa, fb = wa.astype(np.float32), wb.astype(np.float32)
+    yield "float32 cdist euclidean 1200x900x16", lambda: dist.cdist(fa, fb)
+    yield "float32 pdist euclidean 1200x16", lambda: dist.pdist(fa)
     pts = rng.random((1_000_000, 3))
     tree, q = sp.cKDTree(pts), rng.random((200_000, 3))
     for k in (1, 8):

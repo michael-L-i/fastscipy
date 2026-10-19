@@ -6,6 +6,7 @@ validation, negative weights in Dijkstra, int64 indices, a negative cycle) goes 
 
 import numpy as np
 import scipy.sparse as sp
+from scipy.sparse import _sparsetools
 from scipy.sparse._sputils import safely_cast_index_arrays
 from scipy.sparse.csgraph import _shortest_path as _paths, _traversal
 from scipy.sparse.csgraph._validation import validate_graph
@@ -15,6 +16,31 @@ from . import _native, _patch
 _k = _native.csgraph
 I32, NULL_IDX = np.int32, -9999
 _EMPTY_F, _EMPTY_I = np.empty(0), np.empty(0, I32)
+
+
+def _unit_csr(g):
+    """Whether integer CSR weights can be omitted without changing astype's ordering."""
+    if g.ndim != 2 or g.shape[0] != g.shape[1] or type(g.data) is not np.ndarray or g.data.ndim != 1:
+        return False
+    ip, ix = g.indptr, g.indices
+    if not (
+        type(ip) is np.ndarray
+        and type(ix) is np.ndarray
+        and ip.ndim == ix.ndim == 1
+        and ip.dtype in (np.dtype("i4"), np.dtype("i8"))
+        and ix.dtype in (np.dtype("i4"), np.dtype("i8"))
+        and ip.flags.c_contiguous
+        and ix.flags.c_contiguous
+        and len(ip) == g.shape[0] + 1
+        and ip[0] == 0
+        and ip[-1] == len(ix) == len(g.data)
+    ):
+        return False
+    # Validate before the C++ canonical check; cached flags may be stale after
+    # the caller changes indices. astype(float64) sorts and merges duplicates.
+    if np.any(ip[1:] < ip[:-1]) or (len(ix) and (ix.min() < 0 or ix.max() >= g.shape[0])):
+        return False
+    return bool(_sparsetools.csr_has_canonical_format(g.shape[0], ip, ix))
 
 
 def _csr(g, directed, **kw):
@@ -58,7 +84,13 @@ def _transposed(g):
 def _dijkstra(
     csgraph, directed=True, indices=None, return_predecessors=False, unweighted=False, limit=np.inf, min_only=False
 ):
-    g = _csr(csgraph, directed)
+    unit_csr = (
+        unweighted is True
+        and type(csgraph) in (sp.csr_array, sp.csr_matrix)
+        and csgraph.dtype.kind in "biu"
+        and _unit_csr(csgraph)
+    )
+    g = _csr(csgraph, directed, dtype=csgraph.dtype) if unit_csr else _csr(csgraph, directed)
     min_only, limit = bool(min_only), float(limit)
     if g is None or (g.data < 0).any() or not limit >= 0:
         return NotImplemented
@@ -68,13 +100,28 @@ def _dijkstra(
     t = _transposed(g) if not directed and ix is not None else (_EMPTY_I, _EMPTY_I, _EMPTY_F)
     if ix is None or src is None or t is None:
         return NotImplemented
+    if unit_csr and not directed:
+        t = (t[0], t[1], _EMPTY_F)
     srcs, shape = src
     shape = (n,) if min_only else shape + (n,)
     rows = (n,) if min_only else (len(srcs), n)
     dist = np.full(rows, np.inf)
     pred = np.full(rows, NULL_IDX, I32) if return_predecessors else np.empty(0, I32)
     source = np.full(n, NULL_IDX, I32) if return_predecessors and min_only else np.empty(0, I32)
-    _k.dijkstra(srcs, ip, ix, g.data, *t, dist.reshape(-1), pred.reshape(-1), source, limit, min_only, bool(unweighted))
+    # Rust's unit-weight branch never reads either data buffer.
+    _k.dijkstra(
+        srcs,
+        ip,
+        ix,
+        _EMPTY_F if unit_csr else g.data,
+        *t,
+        dist.reshape(-1),
+        pred.reshape(-1),
+        source,
+        limit,
+        min_only,
+        bool(unweighted),
+    )
     if not return_predecessors:
         return dist.reshape(shape)
     out = dist.reshape(shape), pred.reshape(shape)
@@ -191,3 +238,4 @@ def smoke():
         cg.johnson(g, directed, [0, 1])
         cg.connected_components(g, directed, "strong")
     cg.shortest_path(g, unweighted=True, indices=0)
+    cg.dijkstra(g.astype(np.uint8), unweighted=True, indices=0)

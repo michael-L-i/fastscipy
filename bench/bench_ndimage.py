@@ -5,6 +5,15 @@ import scipy.ndimage as ndi
 
 
 def cases():
+    com_rng = np.random.default_rng(333)
+    com_labels = com_rng.integers(1, 30, (64, 64))
+    com_index = np.arange(1, 30)
+    for dtype in (np.int16, np.uint16):
+        com_values = com_rng.integers(1, 100, (64, 64), dtype=dtype)
+        yield (
+            f"center_of_mass {np.dtype(dtype).name} 64x64, 29 labels",
+            lambda x=com_values: ndi.center_of_mass(x, com_labels, com_index),
+        )
     rng = np.random.default_rng(0)
     img = rng.random((2048, 2048))
     img32 = img.astype(np.float32)

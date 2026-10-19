@@ -49,4 +49,5 @@ def smoke():
     ndi.minimum(x, lab, idx)
     ndi.maximum_position(x, lab, idx)
     ndi.center_of_mass(x, lab, idx)
+    ndi.center_of_mass((x * 100).astype(np.uint16) + 1, lab, idx)
     ndi.watershed_ift((x * 255).astype(np.uint8), lab.astype(np.int32))

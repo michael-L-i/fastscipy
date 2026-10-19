@@ -162,13 +162,13 @@ def _center_of_mass(input, labels=None, index=None):
     if labels is None or index is None or np.isscalar(index) or np.ndim(index) != 1:
         return NotImplemented
     inp = np.asarray(input)
-    if not (inp.dtype.kind in "iuf" and inp.dtype.itemsize != 2 or inp.dtype == np.bool_):
+    if not (inp.dtype.kind in "iu" or inp.dtype.kind == "f" and inp.dtype.itemsize != 2 or inp.dtype == np.bool_):
         return NotImplemented
     p = _prep(input, labels, index)
     if p is None:
         return NotImplemented
     r = core.label_com_sums(*p[:5])
-    if r is None:
+    if r is None or (r[0] == 0).any():
         return NotImplemented
     return [tuple(v) for v in np.array([r[d + 1] / r[0] for d in range(inp.ndim)]).T]
 

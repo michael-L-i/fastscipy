@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "new directed cases"
+  },
+  "cases": {
+    "dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=True": {
+      "scipy_ms": 0.11366599937900901,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.07691601058468223,
+      "x1t": 1.4777937456060093,
+      "nt_ms": 0.08037500083446503,
+      "xnt": 1.414195934045561
+    },
+    "dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=False": {
+      "scipy_ms": 0.2837080101016909,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.2571250079199672,
+      "x1t": 1.1033855181834276,
+      "nt_ms": 0.2538750122766942,
+      "xnt": 1.1175105716685587
+    },
+    "dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=True": {
+      "scipy_ms": 0.11520899715833366,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.07974999607540667,
+      "x1t": 1.4446269947072994,
+      "nt_ms": 0.08108298061415553,
+      "xnt": 1.4208776772350225
+    },
+    "dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=False": {
+      "scipy_ms": 0.2851249882951379,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.28841698076575994,
+      "x1t": 0.9885859963519427,
+      "nt_ms": 0.28845801716670394,
+      "xnt": 0.9884453588626041
+    }
+  },
+  "retained": [
+    "Canonical compact integer/bool CSR unweighted Dijkstra omits float64 weight copies; same Rust unit kernel"
+  ],
+  "rejected": [
+    "Float32 unweighted conversion elimination: could suppress signaling-NaN conversion warnings",
+    "Trusting CSR canonical flags: stale after caller mutation; validate actual buffers instead"
+  ],
+  "remaining": [
+    "New traversal/order algorithms and median labelled reductions require native kernels/build and exact-order validation",
+    "Weighted graph kernels already native; no mutable graph/query cache"
+  ]
+}

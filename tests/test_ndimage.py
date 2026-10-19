@@ -528,3 +528,40 @@ def test_disabled_runs_scipy_and_counts():
     with fastscipy.disabled():
         ndi.gaussian_filter(x, 1.0)
     assert fastscipy.stats()[("correlate1d", "scipy")] > before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.int16, np.uint16])
+@pytest.mark.parametrize("shape", [(73,), (17, 19), (5, 7, 9)])
+def test_center_of_mass_two_byte_integers(dtype, shape):
+    rng = np.random.default_rng(331)
+    x = rng.integers(1, 300, shape, dtype=dtype)
+    labels = np.arange(x.size).reshape(shape) % 7 + 1
+    index = np.array([7, 2, 1, 3, 3, 6, 5, 4])
+    for negative in (False, True) if dtype is np.int16 else (False,):
+        if negative:
+            x = -x
+        for values, labs in ((x, labels), (x[..., ::-1], labels[..., ::-1]), (np.asfortranarray(x), labels)):
+            values.flags.writeable = False
+            before = values.tobytes()
+            check(lambda: ndi.center_of_mass(values, labs, index))
+            assert values.tobytes() == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("dtype", [np.int16, np.uint16])
+def test_center_of_mass_zero_mass_handler_once(dtype):
+    calls = []
+
+    def handler(*args):
+        calls.append(args)
+        raise RuntimeError("zero mass handler")
+
+    old = np.seterrcall(handler)
+    try:
+        with np.errstate(invalid="call"):
+            with pytest.raises(RuntimeError, match="zero mass handler"):
+                ndi.center_of_mass(np.zeros((3, 3), dtype=dtype), np.ones((3, 3), int), [1])
+    finally:
+        np.seterrcall(old)
+    assert len(calls) == 1

@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "new directed cases"
+  },
+  "cases": {
+    "center_of_mass int16 64x64, 29 labels": {
+      "scipy_ms": 0.05979099660180509,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.01883300137706101,
+      "x1t": 3.1747991413961123,
+      "nt_ms": 0.018291990272700787,
+      "xnt": 3.268698250459819
+    },
+    "center_of_mass uint16 64x64, 29 labels": {
+      "scipy_ms": 0.05800000508315861,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.018082995666190982,
+      "x1t": 3.207433444868805,
+      "nt_ms": 0.018082995666190982,
+      "xnt": 3.207433444868805
+    }
+  },
+  "retained": [
+    "Center of mass now accepts int16 and uint16 through existing exact native sums",
+    "Zero-mass sums decline before numpy division so raising seterr handler runs once"
+  ],
+  "rejected": [
+    "Broad float16 support: SciPy/kernel dtype and warning behavior not matched"
+  ],
+  "remaining": [
+    "Labelled median and new reducers need native algorithms and summation-order tests",
+    "Float32 filtering/interpolation and layouts already handled by existing native paths",
+    "Complex filters use SciPy wrappers splitting real/imaginary data to the existing real kernels"
+  ]
+}

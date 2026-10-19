@@ -206,3 +206,103 @@ def test_unweighted_transpose_ignores_stored_weights():
             )
         )
     assert_identical(original, g.data)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("cls", [sp.csr_array, sp.csr_matrix])
+@pytest.mark.parametrize("dtype", [np.bool_, np.int8, np.int16, np.int64, np.uint8, np.uint64])
+def test_integer_unit_graph_ignores_weight_buffers(cls, dtype):
+    from fastscipy import _csgraph
+
+    g = cls(graph(330, n=37, density=0.12).astype(dtype))
+    g.indices, g.indptr = g.indices.astype(np.int32), g.indptr.astype(np.int32)
+    g.data[::7] = 0  # Stored zeros still represent edges in unweighted mode.
+    g.data.flags.writeable = g.indices.flags.writeable = g.indptr.flags.writeable = False
+    before = tuple(a.tobytes() for a in (g.data, g.indices, g.indptr))
+    assert _csgraph._unit_csr(g)
+    for directed in (True, False):
+        for min_only in (True, False):
+            for limit in (0, 1, np.inf):
+                check(
+                    lambda: cg.dijkstra(
+                        g,
+                        directed=directed,
+                        indices=[0, 3],
+                        unweighted=True,
+                        min_only=min_only,
+                        limit=limit,
+                        return_predecessors=True,
+                    )
+                )
+        check(lambda: cg.johnson(g, directed=directed, indices=0, unweighted=True, return_predecessors=True))
+        check(lambda: cg.shortest_path(g, directed=directed, indices=0, unweighted=True, return_predecessors=True))
+    assert tuple(a.tobytes() for a in (g.data, g.indices, g.indptr)) == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_integer_unit_graph_canonical_validation():
+    from fastscipy import _csgraph
+
+    # Deliberately stale flags: astype(float64) reorders/merges this input.
+    for columns in ([2, 1], [1, 1]):
+        g = sp.csr_array(
+            (np.array([3, 4], np.int16), np.array(columns, np.int32), np.array([0, 2, 2, 2], np.int32)), shape=(3, 3)
+        )
+        g.has_sorted_indices = g.has_canonical_format = True
+        assert not _csgraph._unit_csr(g)
+        for directed in (True, False):
+            check(lambda: cg.dijkstra(g, directed=directed, unweighted=True, indices=0, return_predecessors=True))
+    for pointer, index in (([0, 2, 1, 2], [0, 1]), ([0, 1, 1, 1], [3]), ([0, 1, 1, 1], [-1])):
+        g = sp.csr_array((3, 3), dtype=np.int16)
+        g.indptr, g.indices, g.data = (
+            np.array(pointer, np.int32),
+            np.array(index, np.int32),
+            np.ones(len(index), np.int16),
+        )
+        assert not _csgraph._unit_csr(g)  # Decline before calling the C++ canonical checker.
+    assert not _csgraph._unit_csr(sp.csr_array((2, 3), dtype=np.int16))
+    g = sp.csr_array(np.eye(3, dtype=np.int16))
+    g.data = g.data.reshape(-1, 1)
+    assert not _csgraph._unit_csr(g)
+    g.data = g.data.reshape(-1).view(type("ArraySubclass", (np.ndarray,), {}))
+    assert not _csgraph._unit_csr(g)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_integer_unit_graph_negative_warnings():
+    import warnings
+
+    g = sp.csr_array((np.array([-3, 1], np.int16), ([0, 1], [1, 2])), shape=(3, 3))
+    outputs, warnings_seen = [], []
+    for enabled in (False, True):
+        with warnings.catch_warnings(record=True) as seen:
+            warnings.simplefilter("always")
+            if enabled:
+                out = cg.dijkstra(g, unweighted=True, indices=0)
+            else:
+                with fastscipy.disabled():
+                    out = cg.dijkstra(g, unweighted=True, indices=0)
+        outputs.append(out)
+        warnings_seen.append([(type(w.message), str(w.message)) for w in seen])
+    assert_identical(*outputs)
+    assert warnings_seen[0] == warnings_seen[1]
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+def test_integer_unit_graph_passes_empty_native_weight_buffers(monkeypatch):
+    from fastscipy import _csgraph
+
+    original = _csgraph._k.dijkstra
+    calls = []
+
+    def capture(*args):
+        assert args[3].dtype == args[6].dtype == np.float64
+        assert args[3].size == args[6].size == 0
+        calls.append(1)
+        return original(*args)
+
+    monkeypatch.setattr(_csgraph._k, "dijkstra", capture)
+    g = sp.csr_matrix((np.array([0, 2, 3], np.uint8), ([0, 1, 2], [1, 2, 3])), shape=(4, 4))
+    for directed in (False, True):
+        check(lambda: cg.dijkstra(g, directed=directed, unweighted=True, indices=0))
+    assert len(calls) == 2

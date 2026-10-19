@@ -18,6 +18,15 @@ def random_graph(n, m, seed=0, weights=True):
 
 
 def cases():
+    unit_rng = np.random.default_rng(332)
+    unit_rows, unit_cols = unit_rng.integers(0, 10000, (2, 100000), dtype=np.int32)
+    for dtype in (np.uint8, np.int32):
+        integer_unit = sp.csr_matrix((np.ones(100000, dtype=dtype), (unit_rows, unit_cols)), shape=(10000, 10000))
+        for directed in (True, False):
+            yield (
+                f"dijkstra unweighted {np.dtype(dtype).name} CSR, 10k nodes, radius 1, directed={directed}",
+                lambda g=integer_unit, d=directed: cg.dijkstra(g, directed=d, unweighted=True, indices=0, limit=1),
+            )
     scalar_graph = random_graph(200, 400)
     scalar_graph.indices = scalar_graph.indices.astype(np.int32)
     scalar_graph.indptr = scalar_graph.indptr.astype(np.int32)

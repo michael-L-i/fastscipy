@@ -6,7 +6,7 @@ from typing import Callable
 import numpy as np
 from scipy import integrate, interpolate, linalg, signal, sparse, stats
 from scipy.sparse import csgraph
-from scipy.spatial import distance
+from scipy.cluster import hierarchy
 
 
 @dataclass
@@ -146,52 +146,72 @@ def uncertainty():
     )
 
 
-def descriptors():
+def expression():
     rng = np.random.default_rng(74)
-    centers = rng.normal(size=(8, 32))
-    reference = np.repeat(centers, 188, axis=0)[:1500] + rng.normal(0, 0.25, (1500, 32))
-    queries = centers[:, None, :] + rng.normal(0, 0.25, (8, 400, 32))
-    jobs = [lambda q=q: distance.cdist(q, reference, metric="cosine") for q in queries]
+    samples = np.linspace(0, 2 * np.pi, 32)
+    profiles = np.array([np.sin(samples + phase) for phase in (0, 1.5, 3, 4.5)])
+    panels, trees = [], []
+    for _ in range(8):
+        panel = np.repeat(profiles, 32, axis=0) + rng.normal(0, 0.15, (128, 32))
+        panel = panel[rng.permutation(128)]
+        panels.append(panel)
+        trees.append(hierarchy.linkage(panel, method="average"))
+    jobs = [lambda tree=tree: hierarchy.leaves_list(tree) for tree in trees]
 
     def plot(ax, results):
-        canvas = np.full((160, 150), np.nan)
-        for i, result in enumerate(results):
-            canvas[i * 20 : (i + 1) * 20] = result[::20, ::10]
-        heatmap(ax, canvas, cmap="magma", vmin=0, vmax=1.5, extent=(0, 1500, 0, 3200))
-        ax.set(xlabel="Reference descriptors", ylabel="Query descriptors")
+        canvas = np.concatenate(
+            [panels[i][results[i]] if i < len(results) else np.full((128, 32), np.nan) for i in range(8)], axis=1
+        )
+        heatmap(ax, canvas, cmap="magma", vmin=-1.4, vmax=1.4)
+        for col in range(32, 256, 32):
+            ax.axvline(col - 0.5, color="#506179", linewidth=1)
+        ax.set(xticks=[], yticks=[], xlabel="Eight expression panels / samples", ylabel="Genes in cluster order")
 
     return Task(
-        "descriptors",
-        "Compare image feature descriptors",
-        "spatial",
-        "Compute cosine distances from 3,200 query descriptors to 1,500 references, with 32 features each.",
-        'distance.cdist(query, reference, metric="cosine")',
-        "query batches",
+        "expression",
+        "Order clustered gene-expression panels",
+        "cluster",
+        "Arrange 128 genes in each of eight expression panels using precomputed hierarchical clusters.",
+        "hierarchy.leaves_list(linkage)",
+        "panels",
         jobs,
         plot,
     )
 
 
-def flow():
+def peaks():
     rng = np.random.default_rng(75)
-    time = np.arange(1000) * 0.1
-    readings = np.asarray(
-        [0.5 + i * 0.08 + 0.2 * np.sin(time / 8 + i) + rng.normal(0, 0.02, (16, 1000)) for i in range(8)]
-    )
-    jobs = [lambda group=group: integrate.cumulative_simpson(group, dx=0.1, initial=0) for group in readings]
+    groups = []
+    for group in range(8):
+        traces = []
+        for replicate in range(16):
+            time = np.cumsum(rng.uniform(0.05, 0.15, 100 + replicate % 9))
+            time = time / time[-1] * 10
+            intensity = (1 + group * 0.1) * np.exp(-0.5 * ((time - 3 - group * 0.45) / 0.8) ** 2)
+            traces.append((time, intensity))
+        groups.append(traces)
+    jobs = [lambda traces=traces: np.array([integrate.simpson(y, x=x) for x, y in traces]) for traces in groups]
 
     def plot(ax, results):
-        for i, result in enumerate(results):
-            ax.plot(time, result[0], color=(0.4 + i * 0.04, 0.88, 0.76 - i * 0.05), linewidth=1.7)
-        ax.set(xlim=(0, 100), ylim=(0, 115), xlabel="Time / seconds", ylabel="Accumulated volume / liters")
+        for traces in groups:
+            time, intensity = traces[0]
+            ax.plot(time, intensity, color="#506179", linewidth=0.7, alpha=0.5)
+        for i, _ in enumerate(results):
+            time, intensity = groups[i][0]
+            color = (0.4 + i * 0.04, 0.88, 0.76 - i * 0.05)
+            ax.fill_between(time, 0, intensity, color=color, alpha=0.12)
+            ax.plot(time, intensity, color=color, linewidth=1.2)
+        total = sum(result.sum() for result in results)
+        ax.text(0.04, 0.91, f"Integrated area: {total:.1f}", transform=ax.transAxes, color="#a7b8ca", fontsize=9)
+        ax.set(xlim=(0, 10), ylim=(0, 2), xlabel="Retention time / minutes", ylabel="Peak intensity")
 
     return Task(
-        "flow",
-        "Turn flow readings into total volume",
+        "peaks",
+        "Measure chromatography peak areas",
         "integrate",
-        "Integrate 1,000 readings from each of 128 flow meters, using cumulative Simpson integration.",
-        "integrate.cumulative_simpson(flow_rate, dx=0.1, initial=0)",
-        "meter groups",
+        "Integrate 128 chromatograms with different, irregularly sampled time coordinates.",
+        "integrate.simpson(intensity, x=retention_time)",
+        "trace batches",
         jobs,
         plot,
     )
@@ -268,4 +288,4 @@ def routes():
     )
 
 
-TASKS = (temperature, sensors, calibration, uncertainty, descriptors, flow, systems, routes)
+TASKS = (temperature, sensors, calibration, uncertainty, expression, peaks, systems, routes)

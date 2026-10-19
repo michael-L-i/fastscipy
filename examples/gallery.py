@@ -194,6 +194,8 @@ def main():
     args = parser.parse_args()
     database = HERE / "measurements.json"
     data = json.loads(database.read_text()) if database.exists() else {"meta": {}, "tasks": {}}
+    names = {factory.__name__ for factory in TASKS}
+    data["tasks"] = {name: record for name, record in data["tasks"].items() if name in names}
     data["meta"] = {
         "python": platform.python_version(),
         "numpy": np.__version__,

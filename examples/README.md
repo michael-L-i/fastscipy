@@ -6,13 +6,13 @@ Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
 
 | Task | SciPy area | Speedup |
 |---|---|---:|
-| [Fill in a temperature map](#temperature) | `interpolate` | **745.2×** |
-| [Clean noisy sensor recordings](#sensors) | `signal` | **6.6×** |
-| [Calibrate 8,000 3D points](#calibration) | `linalg` | **111.8×** |
-| [Put uncertainty around measurements](#uncertainty) | `stats` | **13.7×** |
-| [Compare image feature descriptors](#descriptors) | `spatial` | **1.8×** |
-| [Turn flow readings into total volume](#flow) | `integrate` | **1.3×** |
-| [Build independent sparse systems](#systems) | `sparse` | **3.2×** |
+| [Fill in a temperature map](#temperature) | `interpolate` | **779.3×** |
+| [Clean noisy sensor recordings](#sensors) | `signal` | **6.4×** |
+| [Calibrate 8,000 3D points](#calibration) | `linalg` | **105.9×** |
+| [Put uncertainty around measurements](#uncertainty) | `stats` | **13.1×** |
+| [Order clustered gene-expression panels](#expression) | `cluster` | **3.0×** |
+| [Measure chromatography peak areas](#peaks) | `integrate` | **4.0×** |
+| [Build independent sparse systems](#systems) | `sparse` | **3.3×** |
 | [Map walking distances to depots](#routes) | `csgraph` | **5.2×** |
 
 <a id="temperature"></a>
@@ -63,29 +63,29 @@ stats.sem(repeated_measurements, axis=0)
 
 ![Put uncertainty around measurements: SciPy and fastscipy](assets/uncertainty.gif)
 
-<a id="descriptors"></a>
+<a id="expression"></a>
 
-## 5. Compare image feature descriptors
+## 5. Order clustered gene-expression panels
 
-Compute cosine distances from 3,200 query descriptors to 1,500 references, with 32 features each.
-
-```python
-distance.cdist(query, reference, metric="cosine")
-```
-
-![Compare image feature descriptors: SciPy and fastscipy](assets/descriptors.gif)
-
-<a id="flow"></a>
-
-## 6. Turn flow readings into total volume
-
-Integrate 1,000 readings from each of 128 flow meters, using cumulative Simpson integration.
+Arrange 128 genes in each of eight expression panels using precomputed hierarchical clusters.
 
 ```python
-integrate.cumulative_simpson(flow_rate, dx=0.1, initial=0)
+hierarchy.leaves_list(linkage)
 ```
 
-![Turn flow readings into total volume: SciPy and fastscipy](assets/flow.gif)
+![Order clustered gene-expression panels: SciPy and fastscipy](assets/expression.gif)
+
+<a id="peaks"></a>
+
+## 6. Measure chromatography peak areas
+
+Integrate 128 chromatograms with different, irregularly sampled time coordinates.
+
+```python
+integrate.simpson(intensity, x=retention_time)
+```
+
+![Measure chromatography peak areas: SciPy and fastscipy](assets/peaks.gif)
 
 <a id="systems"></a>
 

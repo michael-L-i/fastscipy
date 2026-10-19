@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "threads": 2,
+    "budget": 0.12,
+    "scope": "exact built-in adjoint sparse matvec and LSQR/LSMR"
+  },
+  "cases": {
+    "LinearOperator CSR rmatvec float64 n=32 x100 calls": {
+      "scipy_ms": 0.2787080011330545,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.1727909839246422,
+      "x1t": 1.6129776843831443,
+      "nt_ms": 0.17154100351035595,
+      "xnt": 1.6247310872017189
+    },
+    "lsqr tridiagonal float64 n=32": {
+      "scipy_ms": 0.43112499406561255,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.349290989106521,
+      "x1t": 1.2342860466238228,
+      "nt_ms": 0.3525000065565109,
+      "xnt": 1.2230496058061686
+    },
+    "lsmr tridiagonal float64 n=32": {
+      "scipy_ms": 0.43104198994114995,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.35208300687372684,
+      "x1t": 1.2242624083693463,
+      "nt_ms": 0.35112499608658254,
+      "xnt": 1.2276026906237714
+    },
+    "LinearOperator CSR rmatvec float64 n=128 x100 calls": {
+      "scipy_ms": 0.301499996567145,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.19970801076851785,
+      "x1t": 1.5097040694908055,
+      "nt_ms": 0.19970801076851785,
+      "xnt": 1.5097040694908055
+    },
+    "lsqr tridiagonal float64 n=128": {
+      "scipy_ms": 2.031167008681223,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 1.6629580059088767,
+      "x1t": 1.2214181004354974,
+      "nt_ms": 1.6564579855185002,
+      "xnt": 1.2262110035018077
+    },
+    "lsmr tridiagonal float64 n=128": {
+      "scipy_ms": 1.7330000118818134,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 1.42170800245367,
+      "x1t": 1.2189563601603823,
+      "nt_ms": 1.4111250056885183,
+      "xnt": 1.2280981521096674
+    },
+    "LinearOperator CSR rmatvec complex128 n=32 x100 calls": {
+      "scipy_ms": 0.27445898740552366,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.17808398115448654,
+      "x1t": 1.5411772896487108,
+      "nt_ms": 0.1840410113800317,
+      "xnt": 1.4912925404370074
+    },
+    "lsqr tridiagonal complex128 n=32": {
+      "scipy_ms": 0.5073749925941229,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.41641699499450624,
+      "x1t": 1.218430080167157,
+      "nt_ms": 0.4147500148974359,
+      "xnt": 1.2233272438087612
+    },
+    "lsmr tridiagonal complex128 n=32": {
+      "scipy_ms": 0.49120798939839005,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.41316699935123324,
+      "x1t": 1.1888848581074942,
+      "nt_ms": 0.41137501830235124,
+      "xnt": 1.1940637314961198
+    },
+    "LinearOperator CSR rmatvec complex128 n=128 x100 calls": {
+      "scipy_ms": 0.2981249999720603,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.19991598674096167,
+      "x1t": 1.4912514243213155,
+      "nt_ms": 0.19858399173244834,
+      "xnt": 1.5012539398126477
+    },
+    "lsqr tridiagonal complex128 n=128": {
+      "scipy_ms": 2.3592500074300915,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 2.0071250037290156,
+      "x1t": 1.1754375054104087,
+      "nt_ms": 2.0329580001998693,
+      "xnt": 1.1605011058753516
+    },
+    "lsmr tridiagonal complex128 n=128": {
+      "scipy_ms": 1.9471659907139838,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 1.6755840042605996,
+      "x1t": 1.1620819879891535,
+      "nt_ms": 1.6651249898131937,
+      "xnt": 1.1693812792590612
+    }
+  },
+  "retained": [
+    "Existing no-retry MatrixLinearOperator sparse vector shortcut now also accepts exact SciPy _AdjointMatrixOperator class",
+    "Same stored conjugate-transpose matrix and sparse kernel; namespace/custom-subclass guards unchanged"
+  ],
+  "incremental_prototype": {
+    "rmatvec_vs_previous_fastscipy": "1.25-1.37x",
+    "lsqr_vs_previous_fastscipy": "1.04-1.14x",
+    "lsmr_vs_previous_fastscipy": "0.98-1.11x; solver arithmetic dominates and timing is noisy"
+  },
+  "remaining": [
+    "Block matmat wrappers and additional solver setup need independent profiling",
+    "Native sparse kernels remain SciPy; no changed iteration arithmetic"
+  ]
+}

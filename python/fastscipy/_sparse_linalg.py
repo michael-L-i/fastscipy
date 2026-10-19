@@ -19,6 +19,7 @@ _OPERATORS = frozenset(
     cls for cls in vars(_interface).values() if isinstance(cls, type) and issubclass(cls, LinearOperator)
 )
 _COMPRESSED = (sparse.csr_array, sparse.csc_array, sparse.csr_matrix, sparse.csc_matrix)
+_MATRIX_OPERATORS = (_interface.MatrixLinearOperator, _interface._AdjointMatrixOperator)
 
 
 def patch():
@@ -53,7 +54,7 @@ def patch():
     def matrix_matvec(self, x):
         if (
             not _patch.enabled
-            or type(self) is not _interface.MatrixLinearOperator
+            or type(self) not in _MATRIX_OPERATORS
             or self._xp is not _NP
             or type(self.A) not in _COMPRESSED
             or self.A.ndim != 2
@@ -74,7 +75,8 @@ def patch():
 
 def smoke():
     from scipy.sparse import diags_array
-    from scipy.sparse.linalg import cg
+    from scipy.sparse.linalg import aslinearoperator, cg
 
-    a = diags_array([np.full(5, -1.0), np.full(6, 3.0), np.full(5, -1.0)], offsets=[-1, 0, 1])
+    a = diags_array([np.full(5, -1.0), np.full(6, 3.0), np.full(5, -1.0)], offsets=[-1, 0, 1], format="csr")
     cg(a, np.arange(6.0))
+    aslinearoperator(a).rmatvec(np.arange(6.0))

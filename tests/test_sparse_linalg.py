@@ -184,3 +184,74 @@ def test_declined_inputs_preserve_warnings_and_errors(kind):
     before = fast_calls()
     assert_identical(expected, outcome())
     assert fast_calls() == before
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+@pytest.mark.parametrize("cls", [sparse.csr_array, sparse.csc_array, sparse.csr_matrix, sparse.csc_matrix])
+def test_exact_adjoint_uses_sparse_vector_kernel(dtype, cls):
+    r = np.random.default_rng(341)
+    dense = r.standard_normal((13, 7)).astype(dtype)
+    if np.dtype(dtype).kind == "c":
+        dense += 1j * r.standard_normal(dense.shape).astype(dtype)
+    matrix = cls(dense)
+    operator = sl.aslinearoperator(matrix)
+    x = r.standard_normal(13).astype(dtype)[::-1]
+    x.flags.writeable = False
+    before = matrix.data.tobytes(), x.tobytes()
+    key = ("MatrixLinearOperator sparse matvec", "fast")
+    calls = fastscipy.stats().get(key, 0)
+    check(lambda: operator.rmatvec(x))
+    assert fastscipy.stats().get(key, 0) == calls + 1
+    check(lambda: operator.H.matvec(x))
+    assert (matrix.data.tobytes(), x.tobytes()) == before
+
+
+@pytest.mark.parametrize("solver", [sl.lsqr, sl.lsmr])
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
+def test_adjoint_least_squares_results_and_inputs(solver, dtype):
+    r = np.random.default_rng(342)
+    dense = r.standard_normal((23, 11)).astype(dtype)
+    if np.dtype(dtype).kind == "c":
+        dense += 1j * r.standard_normal(dense.shape).astype(dtype)
+    matrix = sparse.csc_array(dense)
+    b = r.standard_normal(23).astype(dtype)
+    before = matrix.data.tobytes(), b.tobytes()
+    for damp in (0.0, 0.1):
+
+        def run():
+            with warnings.catch_warnings(record=True) as seen:
+                warnings.simplefilter("always")
+                result = solver(matrix, b, damp=damp, atol=1e-9, btol=1e-9)
+            return result, [(w.category, str(w.message)) for w in seen]
+
+        check(run)
+    assert (matrix.data.tobytes(), b.tobytes()) == before
+
+
+def test_adjoint_sparse_callback_warning_and_error_once():
+    operator = sl.aslinearoperator(sparse.csr_array(np.eye(3)))
+    calls = []
+
+    def fail(x):
+        calls.append(x)
+        warnings.warn("adjoint callback", RuntimeWarning, stacklevel=2)
+        raise RuntimeError("adjoint sparse kernel")
+
+    operator.H.A._matmul_vector = fail
+    with pytest.warns(RuntimeWarning, match="adjoint callback") as seen:
+        with pytest.raises(RuntimeError, match="adjoint sparse kernel"):
+            operator.rmatvec(np.ones(3))
+    assert len(calls) == len(seen) == 1
+
+
+def test_adjoint_explicit_namespace_and_subclass_decline():
+    from scipy.sparse.linalg._interface import _AdjointMatrixOperator
+
+    class Custom(_AdjointMatrixOperator):
+        pass
+
+    matrix = sparse.csr_array(np.eye(3))
+    for operator in (_AdjointMatrixOperator(matrix, xp=np), Custom(matrix)):
+        before = fast_calls()
+        assert_identical(operator.matvec(np.arange(3.0)), np.arange(3.0))
+        assert fast_calls() == before

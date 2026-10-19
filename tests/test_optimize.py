@@ -1,9 +1,11 @@
+import warnings
+
 import numpy as np
 import pytest
 from scipy import optimize
 
 import fastscipy
-from fastscipy.testing import check
+from fastscipy.testing import assert_identical, check
 
 rng = np.random.default_rng(0)
 
@@ -154,6 +156,124 @@ def test_minimize_with_accelerated_hessian(method, threads):
             method=method,
             jac=optimize.rosen_der,
             hess=optimize.rosen_hess,
+            callback=lambda point: history.append(point.copy()),
+        )
+        return result, history
+
+    check(run)
+
+
+@pytest.mark.parametrize("n", [2, 3, 10, 17, 1000])
+def test_rosen_derivative_family(n, threads):
+    local = np.random.default_rng(982 + n)
+    for _ in range(12):
+        x, p = local.standard_normal(2 * n), local.standard_normal(2 * n)
+        x[::5], p[::3] = -0.0, 0.0
+        for point, vector in ((x[:n], p[:n]), (x[::2], p[::-2]), (np.zeros(n), np.zeros(n))):
+            point.flags.writeable = False
+            vector.flags.writeable = False
+            before = point.tobytes(), vector.tobytes()
+            check(lambda: optimize.rosen_der(point))
+            check(lambda: optimize.rosen_hess_prod(point, vector))
+            assert (point.tobytes(), vector.tobytes()) == before
+
+
+@pytest.mark.parametrize(
+    "x,p",
+    [
+        (np.empty(0), np.empty(0)),
+        (np.ones(1), np.ones(1)),
+        (np.ones(3, dtype=np.float32), np.ones(3, dtype=np.float32)),
+        (np.ones((2, 3)), np.ones((2, 3))),
+        ([1.0, 2.0], [1.0, 2.0]),
+    ],
+)
+def test_rosen_derivative_family_declines(x, p):
+    check(lambda: optimize.rosen_der(x), fast=False)
+    check(lambda: optimize.rosen_hess_prod(x, p), fast=False)
+    check(lambda: optimize.rosen_hess_prod(np.ones(3), np.ones(2)), fast=False)
+
+
+@pytest.mark.parametrize("name", ["rosen_der", "rosen_hess_prod"])
+@pytest.mark.parametrize("special", [np.nan, np.inf, -np.inf, 1e200, 1e-310])
+def test_rosen_derivative_family_warnings(name, special, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    x = np.array([special, -special, 1.0])
+
+    def outcome():
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            try:
+                out = (
+                    getattr(optimize, name)(x, np.ones(3)) if name == "rosen_hess_prod" else getattr(optimize, name)(x)
+                )
+            except Exception as error:
+                out = type(error), str(error)
+        return out, [(w.category, str(w.message)) for w in caught]
+
+    for settings in ({"all": "warn"}, {"all": "raise"}, {"over": "warn", "invalid": "raise"}):
+        with np.errstate(**settings):
+            with fastscipy.disabled():
+                expected = outcome()
+            assert_identical(expected, outcome())
+
+
+@pytest.mark.parametrize("name", ["rosen_der", "rosen_hess_prod"])
+def test_rosen_derivative_family_error_callback_once(name, monkeypatch):
+    from fastscipy import _patch
+
+    monkeypatch.setattr(_patch, "STRICT", False)
+    calls = []
+    error = RuntimeError("numeric derivative callback")
+
+    def callback(*args):
+        calls.append(args)
+        raise error
+
+    with np.errstate(over="call", call=callback), pytest.raises(RuntimeError) as caught:
+        args = (
+            (np.array([1e200, 1.0, 0.0]), np.ones(3)) if name == "rosen_hess_prod" else (np.array([1e200, 1.0, 0.0]),)
+        )
+        getattr(optimize, name)(*args)
+    assert caught.value is error and len(calls) == 1
+
+
+@pytest.mark.parametrize("name", ["rosen_der", "rosen_hess_prod"])
+def test_rosen_derivative_family_mutating_numeric_callback(name):
+    outcomes = []
+    for disabled in (True, False):
+        x = np.array([1e200, 1.0, 0.0])
+        calls = []
+
+        def callback(*args):
+            calls.append(args)
+            x[0] = 1.0
+
+        with np.errstate(all="call", call=callback):
+            context = fastscipy.disabled() if disabled else warnings.catch_warnings()
+            with context:
+                out = (
+                    getattr(optimize, name)(x, np.ones(3)) if name == "rosen_hess_prod" else getattr(optimize, name)(x)
+                )
+        outcomes.append((out, calls, x))
+    assert outcomes[0][1]
+    assert_identical(outcomes[0], outcomes[1])
+
+
+@pytest.mark.parametrize("method", ["Newton-CG", "trust-ncg"])
+def test_minimize_with_accelerated_hessian_product(method, threads):
+    x = np.array([-1.2, 1.0, 0.8])
+
+    def run():
+        history = []
+        result = optimize.minimize(
+            optimize.rosen,
+            x,
+            method=method,
+            jac=optimize.rosen_der,
+            hessp=optimize.rosen_hess_prod,
             callback=lambda point: history.append(point.copy()),
         )
         return result, history

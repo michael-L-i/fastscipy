@@ -1,4 +1,4 @@
-"""Dense unbounded linear least squares and Rosenbrock Hessians, plus numerical gradients.
+"""Dense unbounded linear least squares and Rosenbrock derivatives, plus numerical gradients.
 
 The dense least-squares path uses SciPy's exact NumPy solve and result packing.
 Rosenbrock Hessians allocate their three diagonals directly in one output matrix.
@@ -8,6 +8,8 @@ Finite-difference gradients (``approx_fprime``, and the numerical Jacobians of
 which re-derives the array namespace and copies the point on every call. For a
 float64 NumPy point that is only overhead, so the wrapper skips it. The point is still
 copied when it is ``x0`` itself, as the user function may modify its argument."""
+
+import functools
 
 import numpy as np
 import scipy.optimize as optimize
@@ -36,6 +38,57 @@ def _rosen_hess_fast(x):
     H.flat[n :: n + 1] = off
     H.flat[:: n + 1] = diagonal
     return H
+
+
+def _rosen_der_fast(x):
+    if not (_dense(x, 1) and x.size >= 2):
+        return NotImplemented
+    xm, xm_m1, xm_p1 = x[1:-1], x[:-2], x[2:]
+    der = np.empty_like(x)  # every component is assigned below
+    der[1:-1] = 200 * (xm - xm_m1**2) - 400 * (xm_p1 - xm**2) * xm - 2 * (1 - xm)
+    der[0] = -400 * x[0] * (x[1] - x[0] ** 2) - 2 * (1 - x[0])
+    der[-1] = 200 * (x[-1] - x[-2] ** 2)
+    return der
+
+
+def _rosen_hess_prod_fast(x, p):
+    if not (_dense(x, 1) and _dense(p, 1) and x.size >= 2 and p.shape == x.shape):
+        return NotImplemented
+    result = np.empty(x.size, dtype=x.dtype)
+    result[0] = (1200 * x[0] ** 2 - 400 * x[1] + 2) * p[0] - 400 * x[0] * p[1]
+    result[1:-1] = -400 * x[:-2] * p[:-2] + (202 + 1200 * x[1:-1] ** 2 - 400 * x[2:]) * p[1:-1] - 400 * x[1:-1] * p[2:]
+    result[-1] = -400 * x[-2] * p[-2] + 200 * p[-1]
+    return result
+
+
+def _rosen_der_wrapper(original):
+    @functools.wraps(original)
+    def rosen_der(x):
+        if _patch.enabled:
+            result = _rosen_der_fast(x)
+            if result is not NotImplemented:
+                _patch.counts["rosen_der", "fast"] += 1
+                return result
+        _patch.counts["rosen_der", "scipy"] += 1
+        return original(x)
+
+    rosen_der.fast = _rosen_der_fast
+    return rosen_der
+
+
+def _rosen_hess_prod_wrapper(original):
+    @functools.wraps(original)
+    def rosen_hess_prod(x, p):
+        if _patch.enabled:
+            result = _rosen_hess_prod_fast(x, p)
+            if result is not NotImplemented:
+                _patch.counts["rosen_hess_prod", "fast"] += 1
+                return result
+        _patch.counts["rosen_hess_prod", "scipy"] += 1
+        return original(x, p)
+
+    rosen_hess_prod.fast = _rosen_hess_prod_fast
+    return rosen_hess_prod
 
 
 def _lsq_linear_fast(
@@ -117,9 +170,17 @@ def patch():
         return f
 
     _patch.replace(_numdiff._Fun_Wrapper, "__call__", call)
-    for name, fast in (("rosen_hess", _rosen_hess_fast), ("lsq_linear", _lsq_linear_fast)):
+    for name, fast in (
+        ("rosen_hess", _rosen_hess_fast),
+        ("lsq_linear", _lsq_linear_fast),
+    ):
         old = getattr(optimize, name)
         _patch.rebind(old, _patch.wrap(old, fast))
+    # Accepted formulas can warn before raising; preserve numerical callbacks
+    # and errors without retrying the calculation.
+    for name, wrapper in (("rosen_der", _rosen_der_wrapper), ("rosen_hess_prod", _rosen_hess_prod_wrapper)):
+        old = getattr(optimize, name)
+        _patch.rebind(old, wrapper(old))
 
 
 def smoke():
@@ -129,3 +190,4 @@ def smoke():
     A = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
     b = np.array([1.0, 2.0, 1.0])
     optimize.rosen_hess(b), optimize.lsq_linear(A, b)
+    optimize.rosen_der(b), optimize.rosen_hess_prod(b, b)

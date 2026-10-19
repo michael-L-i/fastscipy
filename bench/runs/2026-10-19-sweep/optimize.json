@@ -1,0 +1,178 @@
+{
+ "meta": {
+  "baseline": "71637e8",
+  "threads": 2,
+  "blas_threads": 1,
+  "cpu": 18,
+  "platform": "darwin",
+  "budget_s": 0.025,
+  "rejected_candidates": [
+   {
+    "candidate": "bounded dense lsq_linear dispatch",
+    "observations": "Scalar feasible ~1.08x; active TRF/BVLS ~0.99\u20131.04x; vector bounds ~0.90\u20130.97x versus prior fastscipy.",
+    "reason": "Added validation/allocation/dispatch complexity was not justified; prototype fully reverted."
+   }
+  ],
+  "remaining_opportunities": [
+   "Numerical-gradient vectorization requires preserving callback order, side effects, and mutation semantics.",
+   "Specialized linear-solver kernels would require native work and strict arithmetic validation."
+  ]
+ },
+ "cases": {
+  "rosen_der n=10": {
+   "scipy_ms": 0.004915986210107803,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0031659728847444057,
+   "x1t": 1.5527568899266422,
+   "nt_ms": 0.0031669915188103914,
+   "xnt": 1.5522574597719105,
+   "rounds": [
+    {
+     "scipy_ms": 0.004875008016824722,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0031660019885748625,
+     "x1t": 1.5397994171883473,
+     "nt_ms": 0.0031669915188103914,
+     "xnt": 1.5393183050442485
+    },
+    {
+     "scipy_ms": 0.004915986210107803,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.0031659728847444057,
+     "x1t": 1.5527568899266422,
+     "nt_ms": 0.0031669915188103914,
+     "xnt": 1.5522574597719105
+    }
+   ],
+   "before_ms": 0.004750007065013051,
+   "x_before": 1.500330937103565
+  },
+  "rosen_hess_prod n=10": {
+   "scipy_ms": 0.005915993824601173,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.00391600769944489,
+   "x1t": 1.5107206825563162,
+   "nt_ms": 0.0039579754229635,
+   "xnt": 1.4947020111033493,
+   "rounds": [
+    {
+     "scipy_ms": 0.00595799065195024,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.003915978595614433,
+     "x1t": 1.5214563886081218,
+     "nt_ms": 0.0038750004023313522,
+     "xnt": 1.5375458150573815
+    },
+    {
+     "scipy_ms": 0.005915993824601173,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.00391600769944489,
+     "x1t": 1.5107206825563162,
+     "nt_ms": 0.0039579754229635,
+     "xnt": 1.4947020111033493
+    }
+   ],
+   "before_ms": 0.005750014679506421,
+   "x_before": 1.4683358973787282
+  },
+  "rosen_der n=1000": {
+   "scipy_ms": 0.006459013093262911,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.004582980182021856,
+   "x1t": 1.4093478122817045,
+   "nt_ms": 0.004583009285852313,
+   "xnt": 1.4093388623937106,
+   "rounds": [
+    {
+     "scipy_ms": 0.006459013093262911,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.004624977009370923,
+     "x1t": 1.3965503136936563,
+     "nt_ms": 0.004582980182021856,
+     "xnt": 1.4093478122817045
+    },
+    {
+     "scipy_ms": 0.006459013093262911,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.004582980182021856,
+     "x1t": 1.4093478122817045,
+     "nt_ms": 0.004583009285852313,
+     "xnt": 1.4093388623937106
+    }
+   ],
+   "before_ms": 0.006290996680036187,
+   "x_before": 1.3726868609893947
+  },
+  "rosen_hess_prod n=1000": {
+   "scipy_ms": 0.0077500008046627045,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005374982720240951,
+   "x1t": 1.441865250185453,
+   "nt_ms": 0.005541980499401689,
+   "xnt": 1.3984171913812027,
+   "rounds": [
+    {
+     "scipy_ms": 0.007499998901039362,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.005374982720240951,
+     "x1t": 1.395353118586984,
+     "nt_ms": 0.005457986844703555,
+     "xnt": 1.3741328285386727
+    },
+    {
+     "scipy_ms": 0.0077500008046627045,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 0.005374982720240951,
+     "x1t": 1.441865250185453,
+     "nt_ms": 0.005541980499401689,
+     "xnt": 1.3984171913812027
+    }
+   ],
+   "before_ms": 0.007541995728388429,
+   "x_before": 1.4031665069335022
+  },
+  "minimize Newton-CG rosen analytic jac+hessp n=3": {
+   "scipy_ms": 6.9900419912301,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.611125001451001,
+   "x1t": 1.2457469739887315,
+   "nt_ms": 5.81766600953415,
+   "xnt": 1.2015199875301588,
+   "rounds": [
+    {
+     "scipy_ms": 7.008124986896291,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 5.588458006968722,
+     "x1t": 1.2540355457904966,
+     "nt_ms": 5.847291002282873,
+     "xnt": 1.1985250920742976
+    },
+    {
+     "scipy_ms": 6.9900419912301,
+     "identical": true,
+     "fast_path": true,
+     "1t_ms": 5.611125001451001,
+     "x1t": 1.2457469739887315,
+     "nt_ms": 5.81766600953415,
+     "xnt": 1.2015199875301588
+    }
+   ],
+   "before_ms": 6.768457998987287,
+   "x_before": 1.2062568553074486
+  }
+ }
+}

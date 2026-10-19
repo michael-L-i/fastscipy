@@ -5,6 +5,18 @@ _x = np.random.default_rng(0).random(1000)
 
 
 def cases():
+    derivative_rng = np.random.default_rng(984)
+    for n in (10, 1000):
+        point, vector = derivative_rng.standard_normal(n), derivative_rng.standard_normal(n)
+        yield f"rosen_der n={n}", lambda point=point: optimize.rosen_der(point)
+        yield f"rosen_hess_prod n={n}", lambda point=point, vector=vector: optimize.rosen_hess_prod(point, vector)
+    initial = np.array([-1.2, 1.0, 0.8])
+    yield (
+        "minimize Newton-CG rosen analytic jac+hessp n=3",
+        lambda: optimize.minimize(
+            optimize.rosen, initial, method="Newton-CG", jac=optimize.rosen_der, hessp=optimize.rosen_hess_prod
+        ),
+    )
     rng = np.random.default_rng(614)
     for m, n in ((12, 4), (40, 10), (100, 20)):
         A, b = rng.standard_normal((m, n)), rng.standard_normal(m)

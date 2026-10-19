@@ -31,8 +31,8 @@ jobs:
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
       - run: pip install ruff
-      - run: ruff check python tests bench tools
-      - run: ruff format --check python tests bench tools
+      - run: ruff check python tests bench tools examples
+      - run: ruff format --check python tests bench tools examples
       - run: cargo fmt --check
       - run: cargo clippy --profile dev-release --all-targets -- -D warnings
 

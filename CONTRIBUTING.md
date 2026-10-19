@@ -19,7 +19,7 @@ maturin develop --profile dev-release     # rebuild after every Rust change
 pytest tests -n auto                                   # identity tests
 python tools/scipy_suite.py --pyargs scipy.ndimage -n auto   # SciPy's suite, with vs without
 python bench/run.py ndimage --check                    # benchmarks
-ruff check python tests bench tools && ruff format --check python tests bench tools
+ruff check python tests bench tools examples && ruff format --check python tests bench tools examples
 cargo fmt --check && cargo clippy --profile dev-release --all-targets -- -D warnings
 ```
 

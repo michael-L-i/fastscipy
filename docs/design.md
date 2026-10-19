@@ -28,10 +28,12 @@ original function, so call `patch()` early.
 
 Every fast path takes the same arguments as the SciPy function it replaces,
 and returns its result or declines by returning `NotImplemented`. A declined
-call runs SciPy on the untouched arguments, and so does a fast path that
-raises. That rule is how warnings, errors and unusual inputs stay SciPy's:
-the fast path covers a common, well-defined case and leaves the rest to
-SciPy.
+call runs SciPy on the untouched arguments. General wrappers also fall back
+on internal errors. Paths that invoke user callbacks or accept computations
+that can raise instead use wrappers that propagate those exceptions without
+retrying the call. This preserves callback side effects and error-handler
+counts. The fast path covers a common, well-defined case and leaves the rest
+to SciPy.
 
 Byte-identical output takes more than the same algorithm:
 
@@ -49,6 +51,11 @@ Byte-identical output takes more than the same algorithm:
 These details depend on how SciPy was built, which is why `patch()` refuses
 platforms and SciPy versions that have not been validated (currently macOS
 arm64 with SciPy 1.18).
+
+For porting tests, `FASTSCIPY_ANY_PLATFORM=1` bypasses the platform guard and
+`FASTSCIPY_ANY_VERSION=1` bypasses the version guard. Neither override makes
+an unvalidated configuration byte-identical; run the identity tests when
+developing a port.
 
 ## Threads
 

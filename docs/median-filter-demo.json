@@ -1,0 +1,42 @@
+{
+  "task": "3x3 median filtering, reflect mode, synthetic noisy uint8 images",
+  "measured_at_utc": "2026-10-19T21:53:14.364277+00:00",
+  "images": 8,
+  "shape": [
+    1024,
+    1024
+  ],
+  "threads": 1,
+  "python": "3.13.6",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "scipy_completed_seconds": [
+    0.027316166000673547,
+    0.05391925000003539,
+    0.08041037499788217,
+    0.10723475000122562,
+    0.1341889580071438,
+    0.160610082995845,
+    0.18713041601586156,
+    0.21339337501558475
+  ],
+  "fastscipy_completed_seconds": [
+    0.00022291700588539243,
+    0.00042058399412781,
+    0.0006333340134005994,
+    0.0008243749907705933,
+    0.0010187090083491057,
+    0.0012074169935658574,
+    0.0013962500088382512,
+    0.0015722090029157698
+  ],
+  "scipy_seconds": 0.21339337501558475,
+  "fastscipy_seconds": 0.0015722090029157698,
+  "speedup": 135.7283762017849,
+  "byte_identical": true,
+  "fast_calls": 8,
+  "method": "One warmed sequential batch per implementation; timers include calls and output allocation, exclude inputs, warmup, validation and rendering. Illustrative workload, not a benchmark-suite aggregate.",
+  "replay_slowdown": 16.87025194543683
+}

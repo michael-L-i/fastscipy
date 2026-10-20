@@ -514,6 +514,7 @@ unsafe fn strip(job: &Job, blk: &Block, scr: &mut Scratch, c0: usize, cw: usize)
                         &mut scr.tmp,
                         size,
                         out0,
+                        i + 1 == r1 && r1 % 2 == 0,
                     )
                 };
                 store(i, out0);
@@ -656,8 +657,8 @@ fn uniform_line(ext: &[f64], out: &mut [f64], fs: usize, size: f64) {
     let n = out.len();
     // Step i adds ext[i - 1 + fs] and drops ext[i - 1].
     let (enter, leave) = (&ext[fs..fs + n - 1], &ext[..n - 1]);
-    for ((o, &e), &l) in out[1..].iter_mut().zip(enter).zip(leave) {
-        tmp = tmp.add_ordered(e - l);
+    for (j, ((o, &e), &l)) in out[1..].iter_mut().zip(enter).zip(leave).enumerate() {
+        tmp = tmp.uniform_update(e - l, j + 2 == n && n % 2 == 0);
         *o = tmp / size;
     }
 }
@@ -703,9 +704,9 @@ unsafe fn uniform_lines(
                     V::load(ext[r1].add(i - 1 + fs)),
                 );
                 let (l0, l1) = zip(V::load(ext[r0].add(i - 1)), V::load(ext[r1].add(i - 1)));
-                tmp[p] = tmp[p].add_ordered(e0.sub(l0));
+                tmp[p] = tmp[p].uniform_update(e0.sub(l0), false);
                 let o0 = tmp[p].div(vsize);
-                tmp[p] = tmp[p].add_ordered(e1.sub(l1));
+                tmp[p] = tmp[p].uniform_update(e1.sub(l1), false);
                 let o1 = tmp[p].div(vsize);
                 let (a, b) = zip(o0, o1);
                 a.store(out[r0].add(i));
@@ -719,7 +720,7 @@ unsafe fn uniform_lines(
                 tmp[p].store(s.as_mut_ptr().add(2 * p));
             }
             for r in 0..R {
-                s[r] = s[r].add_ordered(*ext[r].add(i - 1 + fs) - *ext[r].add(i - 1));
+                s[r] = s[r].uniform_update(*ext[r].add(i - 1 + fs) - *ext[r].add(i - 1), true);
                 *out[r].add(i) = s[r] / size;
             }
         }

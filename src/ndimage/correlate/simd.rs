@@ -11,10 +11,23 @@ pub trait Lane: Copy {
     unsafe fn store(self, p: *mut f64);
     fn splat(x: f64) -> Self;
     fn add(self, o: Self) -> Self;
-    /// Accumulator-first addition, including the choice of NaN payload.
+    /// First-operand-preserving addition, including the choice of NaN payload.
     #[inline(always)]
     fn add_ordered(self, o: Self) -> Self {
         self.add(o)
+    }
+    /// One uniform-filter rolling update, with SciPy's NaN operand order.
+    #[inline(always)]
+    fn uniform_update(self, delta: Self, final_unpaired: bool) -> Self {
+        // Both official MacIntel wheels unroll the rolling loop twice:
+        // the paired body adds delta first; its odd remaining update adds
+        // the accumulator first. Initialization always adds it first.
+        #[cfg(all(target_arch = "x86_64", target_os = "macos"))]
+        if !final_unpaired {
+            return delta.add_ordered(self);
+        }
+        let _ = final_unpaired;
+        self.add_ordered(delta)
     }
     fn sub(self, o: Self) -> Self;
     fn mul(self, o: Self) -> Self;
@@ -43,15 +56,11 @@ impl Lane for f64 {
     }
     #[inline(always)]
     fn add_ordered(self, o: f64) -> f64 {
-        #[cfg(all(
-            target_arch = "x86_64",
-            any(target_os = "linux", target_os = "windows")
-        ))]
+        #[cfg(target_arch = "x86_64")]
         {
             let mut sum = self;
-            // SciPy's Linux and Windows x86-64 wheels keep the old uniform-
-            // filter accumulator in the destination. LLVM may commute fadd,
-            // changing which payload survives when both operands are NaN.
+            // Keep the requested first operand in the destination. LLVM
+            // may commute fadd, changing which NaN payload survives.
             // Do not promise preserves_flags: addsd can set MXCSR flags.
             unsafe {
                 std::arch::asm!(
@@ -78,13 +87,7 @@ impl Lane for f64 {
             }
             sum
         }
-        #[cfg(not(any(
-            target_arch = "aarch64",
-            all(
-                target_arch = "x86_64",
-                any(target_os = "linux", target_os = "windows")
-            )
-        )))]
+        #[cfg(not(any(target_arch = "aarch64", target_arch = "x86_64")))]
         {
             self + o
         }
@@ -201,7 +204,6 @@ mod imp {
         fn add(self, o: V) -> V {
             unsafe { V(_mm_add_pd(self.0, o.0)) }
         }
-        #[cfg(any(target_os = "linux", target_os = "windows"))]
         #[inline(always)]
         fn add_ordered(self, o: V) -> V {
             let mut sum = self.0;

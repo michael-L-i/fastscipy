@@ -549,6 +549,7 @@ unsafe fn uni_block<L: Lane, const K: usize>(
     size: L,
     out: *mut f64,
     j: usize,
+    final_unpaired: bool,
 ) {
     unsafe {
         let e: [L; K] = load_k(enter.add(j));
@@ -556,7 +557,7 @@ unsafe fn uni_block<L: Lane, const K: usize>(
         let mut t: [L; K] = load_k(tmp.add(j));
         let mut o = t;
         for k in 0..K {
-            t[k] = t[k].add_ordered(e[k].sub(l[k]));
+            t[k] = t[k].uniform_update(e[k].sub(l[k]), final_unpaired);
             o[k] = t[k].div(size);
         }
         store_k(tmp.add(j), t);
@@ -572,6 +573,7 @@ pub unsafe fn uniform_step(
     tmp: &mut [f64],
     size: f64,
     out: *mut f64,
+    final_unpaired: bool,
 ) {
     assert!(tmp.len() >= lanes);
     let tmp = tmp.as_mut_ptr();
@@ -582,7 +584,8 @@ pub unsafe fn uniform_step(
             tmp,
             L::splat(size),
             out,
-            j
+            j,
+            final_unpaired
         ))
     }
 }

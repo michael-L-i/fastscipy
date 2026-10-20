@@ -190,15 +190,20 @@ def test_filter_compiler_cast_fallback(monkeypatch, dtype):
 
 @pytest.mark.parametrize("rows", [1, 7, 8, 9])
 @pytest.mark.parametrize("axis", [0, 1])
-def test_uniform_filter_nan_payloads(rows, axis):
+@pytest.mark.parametrize("length", [1, 2, 7, 8, 9])
+def test_uniform_filter_nan_payloads(rows, axis, length):
     # Last-axis groups below/at/above eight lines take scalar, SIMD, and
     # remainder paths. Transposing exercises non-last-axis SIMD and tails.
     bits = np.array([0x7FF8002460000000, 0xFFF800ACE0000000, 0, 0, 0, 0, 0, 0, 0], np.uint64)
     for values in (
         [np.inf, -np.inf, np.nan, 0.0, -0.0, 0.4, -0.4, 0.9999, -0.9999],
         bits.view(np.float64),
+        # Repeated distinct payloads exercise the final rolling update too:
+        # MacIntel's paired body and even-length final tail use opposite
+        # operand orders. Length 1 initializes only; length 2 has only a tail.
+        bits[:2].view(np.float64),
     ):
-        x = np.tile(values, (rows, 1))
+        x = np.tile(np.resize(values, length), (rows, 1))
         if axis == 0:
             x = x.T.copy()
         x.flags.writeable = False

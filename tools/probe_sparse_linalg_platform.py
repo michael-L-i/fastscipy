@@ -202,6 +202,148 @@ def main():
             flush=True,
         )
         save()
+
+    # Repeat the exact rectangular test after installing every component. This
+    # includes patched sparse construction, not just LinearOperator dispatch.
+    report["all_components"] = {"patch_status": fastscipy.patch(threads=1), "matrices": {}, "cases": {}}
+    for dtype in (np.float64, np.complex128):
+        rng = np.random.default_rng(82)
+        dense = rng.standard_normal((13, 7)).astype(dtype)
+        if np.dtype(dtype).kind == "c":
+            dense += 1j * rng.standard_normal(dense.shape)
+        rhs = rng.standard_normal(13).astype(dtype)
+        for cls in (sparse.csr_array, sparse.csc_matrix):
+            if not budget():
+                return
+            with fastscipy.disabled():
+                reference_matrix = cls(dense)
+            matrix = cls(dense)
+            label = f"{np.dtype(dtype).name}-{cls.__name__}"
+            buffers = lambda m: (m.data, m.indices, m.indptr)
+            matrix_record = {
+                "reference_buffers_sha256": digest(buffers(reference_matrix)),
+                "patched_buffers_sha256": digest(buffers(matrix)),
+                "reference_indices_dtype": str(reference_matrix.indices.dtype),
+                "patched_indices_dtype": str(matrix.indices.dtype),
+                "rhs_sha256": digest(rhs),
+                "direct_checks": [],
+            }
+            matrix_record["buffers_identical"] = (
+                matrix_record["reference_buffers_sha256"] == matrix_record["patched_buffers_sha256"]
+            )
+            report["all_components"]["matrices"][label] = matrix_record
+            np.savez(
+                output / f"all-inputs-{label}.npz",
+                dense=dense,
+                rhs=rhs,
+                reference_data=reference_matrix.data,
+                reference_indices=reference_matrix.indices,
+                reference_indptr=reference_matrix.indptr,
+                patched_data=matrix.data,
+                patched_indices=matrix.indices,
+                patched_indptr=matrix.indptr,
+            )
+            operator = sl.aslinearoperator(matrix)
+            values = np.random.default_rng(482).standard_normal(7).astype(dtype)
+            for offset in range(8):
+                xb, yb = np.empty(15, dtype), np.empty(21, dtype)
+                x, y = xb[offset : offset + 7], yb[offset : offset + 13]
+                x[:], y[:] = values, rhs
+                for operation, call in (
+                    ("matrix", lambda: matrix @ x),
+                    ("operator", lambda: operator.matvec(x)),
+                    ("adjoint", lambda: operator.rmatvec(y)),
+                ):
+                    with fastscipy.disabled():
+                        expected = call()
+                    actual = call()
+                    identical = digest(expected) == digest(actual)
+                    matrix_record["direct_checks"].append(
+                        {
+                            "operation": operation,
+                            "x_mod64": x.ctypes.data % 64,
+                            "y_mod64": y.ctypes.data % 64,
+                            "identical": identical,
+                            "reference_sha256": digest(expected),
+                            "patched_sha256": digest(actual),
+                        }
+                    )
+                    if not identical:
+                        np.savez(
+                            output / f"direct-{label}-{operation}-{offset}.npz",
+                            expected=expected,
+                            actual=actual,
+                            x=x,
+                            y=y,
+                        )
+            for solver in (sl.lsqr, sl.lsmr):
+                name = f"all-{solver.__name__}-{label}"
+                record = {"runs": [], "distinct_results": {}, "pairs": []}
+                report["all_components"]["cases"][name] = record
+                before = digest((buffers(matrix), rhs))
+
+                def solve(solver=solver, matrix=matrix, rhs=rhs):
+                    return solver(matrix, rhs)
+
+                def stash(result, phase):
+                    fingerprint = digest(result)
+                    record["runs"].append({"phase": phase, "sha256": fingerprint})
+                    if fingerprint not in record["distinct_results"]:
+                        path = output / f"{name}-{fingerprint[:12]}.npz"
+                        np.savez(path, **{f"result_{i}": np.asarray(v) for i, v in enumerate(result)})
+                        record["distinct_results"][fingerprint] = path.name
+                    return fingerprint
+
+                for patched in (False, True):
+                    phase = "patched" if patched else "baseline"
+                    for allocation in ("retained", "released", "churn"):
+                        held = []
+                        for _ in range(8):
+                            if not budget():
+                                return
+                            junk = [np.empty(n, dtype) for n in (7, 13, 7, 13, 14, 26)] if allocation == "churn" else []
+                            if patched:
+                                result = solve()
+                            else:
+                                with fastscipy.disabled():
+                                    result = solve()
+                            del junk
+                            if allocation == "retained":
+                                held.append(result)
+                            else:
+                                stash(result, phase + "-" + allocation)
+                            del result
+                        for result in held:
+                            stash(result, phase + "-retained")
+                        if held:
+                            del result
+                        del held
+                for _ in range(4):
+                    if not budget():
+                        return
+                    with fastscipy.disabled():
+                        expected = solve()
+                    actual = solve()
+                    plain_digest = stash(expected, "interleaved-baseline")
+                    fast_digest = stash(actual, "interleaved-patched")
+                    record["pairs"].append(
+                        {"baseline": plain_digest, "patched": fast_digest, "identical": plain_digest == fast_digest}
+                    )
+                    del expected, actual
+                record["baseline_variants"] = len({r["sha256"] for r in record["runs"] if "baseline" in r["phase"]})
+                record["patched_variants"] = len({r["sha256"] for r in record["runs"] if "patched" in r["phase"]})
+                record["input_unchanged"] = before == digest((buffers(matrix), rhs))
+                print(
+                    name,
+                    "baseline variants",
+                    record["baseline_variants"],
+                    "patched variants",
+                    record["patched_variants"],
+                    "unequal pairs",
+                    sum(not p["identical"] for p in record["pairs"]),
+                    flush=True,
+                )
+                save()
     budget()
     report["fastscipy_counts"] = {str(key): value for key, value in fastscipy.stats().items()}
     save()

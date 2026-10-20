@@ -87,6 +87,17 @@ plus paired upstream SciPy comparisons.
 Builds use one Cargo job and bounded numerical thread and memory budgets.
 Publish a target only after its wheel validation finishes successfully.
 
+For an initial build-only preflight, dispatch the candidate branch containing
+the validation-only input (currently `portability`):
+
+```sh
+gh workflow run release.yml --ref portability -f publish=none -f validation_only=true
+```
+
+This builds and validates eight Python 3.13 wheels plus one source archive,
+with publishing disabled. It does not replace the full 32-wheel publication
+gate or establish published platform support.
+
 To rehearse, run the workflow manually with `publish: none`. After all jobs
 succeed, download the 32 `release-dist-<target>-<interpreter>` wheel artifacts
 and the `release-dist-sdist` source archive. Review the corresponding

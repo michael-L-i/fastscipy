@@ -34,6 +34,12 @@ def versions():
     )
     assert Version(version) == Version(cargo) == Version(locked) == Version(declared), "Version mismatch"
     ref = os.environ.get("GITHUB_REF", "")
+    if os.environ.get("VALIDATION_ONLY"):
+        assert os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch", (
+            "Validation-only builds require manual dispatch"
+        )
+        assert os.environ.get("RELEASE_TARGET") == "none", "Validation-only builds cannot publish"
+        assert not ref.startswith("refs/tags/"), "Validation-only builds cannot use a release tag"
     if ref.startswith("refs/tags/"):
         assert ref == f"refs/tags/v{version}", f"Tag must be v{version}"
     if os.environ.get("RELEASE_TARGET") == "pypi":
@@ -41,7 +47,7 @@ def versions():
     return project
 
 
-def archives(directory, project, complete=False):
+def archives(directory, project, complete=False, complete_python=None):
     found = list(directory.glob("*.whl")) + list(directory.glob("*.tar.gz"))
     assert found, f"No distributions in {directory}"
     targets = set()
@@ -105,9 +111,10 @@ def archives(directory, project, complete=False):
             "musllinux-aarch64",
             "musllinux-x86_64",
         }
-        expected = {(python, target) for python in ("cp312", "cp313", "cp314", "cp315") for target in platforms}
+        interpreters = (complete_python,) if complete_python else ("cp312", "cp313", "cp314", "cp315")
+        expected = {(python, target) for python in interpreters for target in platforms}
         assert targets == expected, f"Missing {expected - targets}; unexpected {targets - expected}"
-        assert len(list(directory.glob("*.whl"))) == 32, "Expected exactly 32 wheels"
+        assert len(list(directory.glob("*.whl"))) == len(expected), f"Expected exactly {len(expected)} wheels"
         assert len(list(directory.glob("*.tar.gz"))) == 1, "Expected exactly one source distribution"
 
 
@@ -142,10 +149,15 @@ def main():
     parser.add_argument("--dist", type=Path)
     parser.add_argument("--installed", action="store_true")
     parser.add_argument("--complete", action="store_true", help="Require all eight platforms and four Python versions")
+    parser.add_argument(
+        "--complete-python", choices=["cp313"], help="Explicit eight-platform Python 3.13 preflight set"
+    )
     args = parser.parse_args()
+    if args.complete_python and not (args.complete and args.dist):
+        parser.error("--complete-python requires --complete and --dist")
     project = versions()
     if args.dist:
-        archives(args.dist, project, args.complete)
+        archives(args.dist, project, args.complete, args.complete_python)
     if args.installed:
         installed(project)
     print("Release version:", project["version"])

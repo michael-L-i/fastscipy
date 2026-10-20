@@ -1,5 +1,6 @@
 import importlib
 import os
+import subprocess
 import sys
 import threading
 import time
@@ -232,6 +233,22 @@ def test_identical():
     assert identical(a, a.copy()) and not identical(a, a.astype(np.float32))
     assert not identical(np.float64(0.0), np.float64(-0.0))
     assert identical(scipy.stats.ttest_ind(a, a + 1), scipy.stats.ttest_ind(a, a + 1))
+
+
+def test_import_without_fork_hooks():
+    """Windows has no register_at_fork; imports and patching must still work."""
+    subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import os; "
+            "getattr(os, 'register_at_fork', None) and delattr(os, 'register_at_fork'); "
+            "import fastscipy; "
+            "assert all(v == 'on' for v in fastscipy.patch(threads=1).values()), fastscipy.status()",
+        ],
+        check=True,
+        timeout=30,
+    )
 
 
 @pytest.mark.skipif(not hasattr(os, "fork"), reason="needs fork")

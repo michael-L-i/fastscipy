@@ -35,7 +35,8 @@ def _after_fork():
     _pool, _busy = None, threading.Lock()
 
 
-os.register_at_fork(after_in_child=_after_fork)
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_after_fork)
 
 
 def chunks(n, min_size, threads=None):

@@ -77,7 +77,8 @@ def _after_fork():
     _A_cache._bytes = sum(a.nbytes for a in _A_cache.values())
 
 
-os.register_at_fork(after_in_child=_after_fork)
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_after_fork)
 
 
 def _quiet(fn, *a):
@@ -428,7 +429,7 @@ def hilbert(x, N=None, axis=-1):
     try:
         with np.errstate(**_RAISE):
             Xf[..., 1:h] *= 2.0
-            Xf[..., h + (N % 2 == 0) :] *= 0.0  # SciPy multiplies by h, so signed zeros and NaN match
+            Xf[..., h + (N % 2 == 0) :] = 0.0
     except FloatingPointError:
         return NI
     return scipy.fft.ifft(np.moveaxis(Xf, -1, axis), axis=axis)

@@ -1,0 +1,129 @@
+"""Small, deterministic diagnostics for ndimage compiler/platform differences."""
+
+import platform
+import sys
+import traceback
+
+import numpy as np
+import scipy
+import scipy.ndimage as ndi
+
+import fastscipy
+from fastscipy import _ndimage_correlate as corr
+from fastscipy._ndimage_seam import core, orig
+
+
+def compare(name, ref, got):
+    a, b = np.asarray(ref), np.asarray(got)
+    if a.dtype == b.dtype and a.shape == b.shape and a.tobytes() == b.tobytes():
+        return True
+    print(name, "MISMATCH", a.dtype, b.dtype, a.shape, b.shape, flush=True)
+    if a.dtype == b.dtype and a.shape == b.shape:
+        width = a.dtype.itemsize
+        av = np.ascontiguousarray(a).view(np.uint8).reshape(-1, width)
+        bv = np.ascontiguousarray(b).view(np.uint8).reshape(-1, width)
+        ix = np.flatnonzero(np.any(av != bv, axis=1))
+        print("different elements:", ix.size, flush=True)
+        for i in ix[:4]:
+            print(int(i), repr(a.flat[i]), repr(b.flat[i]), av[i].tobytes().hex(), bv[i].tobytes().hex(), flush=True)
+    return False
+
+
+def filters():
+    rng = np.random.default_rng(20261015)
+    x = rng.standard_normal(61) * 100
+    probes = []
+    for halfsize in list(range(26)) + [31, 32, 33, 40]:
+        half = rng.standard_normal(halfsize)
+        probes.append(("sym", np.r_[half, rng.standard_normal(1), half[::-1]]))
+        if halfsize:
+            probes.append(("anti", np.r_[half, rng.standard_normal(1), -half[::-1]]))
+    for size in list(range(2, 26)) + [40, 41]:
+        probes.append(("general", rng.standard_normal(size)))
+    for scheme in range(3):
+        matches = 0
+        first = set()
+        for kind, weights in probes:
+            ref, got = np.zeros_like(x), np.zeros_like(x)
+            orig.correlate1d(x, weights, 0, ref, 2, 0.0, 0)
+            accepted = core.corr_correlate1d(x, weights, 0, got, 2, 0.0, 0, scheme)
+            same = ref.tobytes() == got.tobytes()
+            matches += accepted and same
+            if not same and kind not in first:
+                compare(f"correlate1d scheme={scheme} {kind} size={weights.size} accepted={accepted}", ref, got)
+                first.add(kind)
+        print("correlate1d scheme", scheme, "matches", matches, "/", len(probes), flush=True)
+    for size in [1, 2, 3, 11, 31, 80]:
+        ref, got = np.zeros_like(x), np.zeros_like(x)
+        orig.uniform_filter1d(x, size, 0, ref, 2, 0.0, 0)
+        accepted = core.corr_uniform_filter1d(x, size, 0, got, 2, 0.0, 0)
+        print("uniform", size, "accepted", accepted, "same", compare("uniform", ref, got), flush=True)
+    x2 = rng.standard_normal((13, 11)) * 100
+    for fused in [False, True]:
+        for shape in [(3, 3), (5, 5), (2, 4), (1, 7), (6, 1)]:
+            w = rng.standard_normal(shape)
+            ref, got = np.zeros_like(x2), np.zeros_like(x2)
+            orig.correlate(x2, w, ref, 2, 0.0, [0, 0])
+            accepted = core.corr_correlate(x2, w, got, 2, 0.0, [0, 0], fused)
+            print("nd", fused, shape, "accepted", accepted, "same", compare("nd", ref, got), flush=True)
+    x = corr._probe_values()
+    for char in sorted(corr._CHARS):
+        ref = np.zeros(x.shape, np.dtype(char))
+        got = np.zeros_like(ref)
+        orig.uniform_filter1d(x, 1, 0, ref, 2, 0.0, 0)
+        accepted = core.corr_uniform_filter1d(x, 1, 0, got, 2, 0.0, 0)
+        print("cast", char, "accepted", accepted, "same", compare("line cast " + char, ref, got), flush=True)
+
+
+def public_case(name, fn):
+    with fastscipy.disabled():
+        ref = fn()
+    before = fastscipy.stats()
+    got = fn()
+    if isinstance(ref, tuple):
+        same = all([compare(f"{name}[{i}]", a, b) for i, (a, b) in enumerate(zip(ref, got, strict=True))])
+    else:
+        same = compare(name, ref, got)
+    after = fastscipy.stats()
+    delta = {str(k): v - before.get(k, 0) for k, v in after.items() if v != before.get(k, 0)}
+    print(name, "same", same, "calls", delta, flush=True)
+
+
+def main():
+    print(
+        sys.version,
+        platform.platform(),
+        platform.machine(),
+        "numpy",
+        np.__version__,
+        "scipy",
+        scipy.__version__,
+        flush=True,
+    )
+    fastscipy.patch(threads=2)
+    try:
+        print("raw calibration:", corr._calibrate(), flush=True)
+    except Exception:
+        traceback.print_exc()
+    filters()
+    rng = np.random.default_rng(901)
+    x = rng.standard_normal((7, 11, 13)) > 0
+    for sampling in [None, [0.7, 1.3, 2.1], [1.0, 1.0, 1.0]]:
+        public_case(
+            f"EDT sampling={sampling}",
+            lambda s=sampling: ndi.distance_transform_edt(x, sampling=s, return_indices=True),
+        )
+    for dtype in [np.float64, np.float32, np.int16, np.uint64]:
+        with np.errstate(invalid="ignore"):
+            x = (rng.standard_normal((7, 13)) * 100).astype(dtype)
+        for order in [0, 1, 2, 3, 4, 5]:
+            public_case(f"spline {dtype} order={order}", lambda o=max(order, 2): ndi.spline_filter(x, o))
+            public_case(f"shift {dtype} order={order}", lambda o=order: ndi.shift(x, [0.3, -1.2], order=o))
+            public_case(
+                f"affine {dtype} order={order}",
+                lambda o=order: ndi.affine_transform(x, [[0.91, 0.13], [-0.07, 1.1]], [0.3, -1.2], order=o),
+            )
+
+
+if __name__ == "__main__":
+    main()

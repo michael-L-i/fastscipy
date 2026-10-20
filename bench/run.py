@@ -68,12 +68,13 @@ def main():
     ap.add_argument("--budget", type=float, default=0.3)
     ap.add_argument("--only", default="")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--output-dir", type=pathlib.Path, default=HERE / "results")
     args = ap.parse_args()
     areas = args.areas or sorted(p.stem[6:] for p in HERE.glob("bench_*.py"))
     threads = fastscipy.get_num_threads()
     print(fastscipy.patch())
     sys.path.insert(0, str(HERE))
-    (HERE / "results").mkdir(exist_ok=True)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
     bad = []
     print(f"\n| case | SciPy ms | 1 thread ms | {threads} threads ms | x 1T | x {threads}T | identical |")
     print("|---|---:|---:|---:|---:|---:|---|")
@@ -84,7 +85,9 @@ def main():
         for name, call, *expect in mod.cases():
             if args.only not in name:
                 continue
-            r = rows[name] = run_case(call, args.budget, threads, *(expect or [default]))
+            expected = expect[0] if expect else default
+            r = rows[name] = run_case(call, args.budget, threads, expected)
+            r["expected_fast_path"] = expected
             flag = "yes" if r["identical"] else "**NO**"
             if not r["fast_path"]:
                 flag += " (no fast path)"
@@ -102,7 +105,7 @@ def main():
                 f"| **{geomean([r['xnt'] for r in rows.values()]):.1f}** | |"
             )
             meta = {"threads": threads, "cpu": os.cpu_count(), "platform": sys.platform}
-            (HERE / "results" / f"{area}.json").write_text(json.dumps({"meta": meta, "cases": rows}, indent=1))
+            (args.output_dir / f"{area}.json").write_text(json.dumps({"meta": meta, "cases": rows}, indent=1))
     if bad:
         print("\nNot identical, no fast path, or slower than SciPy on 1 thread:\n  " + "\n  ".join(bad))
     if args.check and bad:

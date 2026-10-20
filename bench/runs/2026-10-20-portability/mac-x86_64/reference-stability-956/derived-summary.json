@@ -1,0 +1,95 @@
+{
+  "description": "Derived counts only; exact evidence is in unchanged raw reports. No tests/builds rerun.",
+  "stats": {
+    "alignment_sizes": 12,
+    "alignment_variable_sizes": [
+      9,
+      10,
+      17,
+      30,
+      64,
+      100,
+      257,
+      1000,
+      4096
+    ],
+    "unpatched_stability_groups": 72,
+    "unstable_unpatched_groups": 28,
+    "seeded_mismatches": 4,
+    "seeded_mismatches_without_fastpath": 1
+  },
+  "optimize": {
+    "lsq_reference_pairs": 24,
+    "unstable_lsq_reference_pairs": 1,
+    "bfgs_modes": [
+      {
+        "mode": "reference",
+        "stable_x": false,
+        "iterations": [
+          58,
+          58,
+          58,
+          59
+        ]
+      },
+      {
+        "mode": "patched",
+        "stable_x": false,
+        "iterations": [
+          58,
+          58,
+          58,
+          58
+        ]
+      },
+      {
+        "mode": "patched_with_copy_experiment",
+        "stable_x": false,
+        "iterations": [
+          58,
+          58,
+          58,
+          58
+        ]
+      }
+    ]
+  },
+  "sparse": {
+    "cases": {
+      "cg-100": {
+        "baseline_variants": 4,
+        "patched_variants": 3
+      },
+      "bicg-100": {
+        "baseline_variants": 3,
+        "patched_variants": 3
+      },
+      "lgmres-100": {
+        "baseline_variants": 10,
+        "patched_variants": 7
+      },
+      "qmr-100": {
+        "baseline_variants": 2,
+        "patched_variants": 7
+      },
+      "tfqmr-100": {
+        "baseline_variants": 5,
+        "patched_variants": 2
+      },
+      "gcrotmk-100": {
+        "baseline_variants": 3,
+        "patched_variants": 4
+      },
+      "lsqr-csr_array": {
+        "baseline_variants": 1,
+        "patched_variants": 1
+      },
+      "lsqr-csc_matrix": {
+        "baseline_variants": 1,
+        "patched_variants": 1
+      }
+    },
+    "external_npz_count": 42,
+    "lsqr_status": "Two observed cases stable in this probe; independent LSQR discrepancies are not resolved or excused by other solvers baseline instability."
+  }
+}

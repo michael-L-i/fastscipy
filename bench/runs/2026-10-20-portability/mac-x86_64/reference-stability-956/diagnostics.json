@@ -1,0 +1,38 @@
+{
+  "probe_interpolate_platform": {
+    "returncode": 0,
+    "seconds": 55.15620095099999,
+    "peak_rss_bytes": 91848704,
+    "stopped": null
+  },
+  "probe_ndimage_platform": {
+    "returncode": 0,
+    "seconds": 2.461680876999992,
+    "peak_rss_bytes": 91426816,
+    "stopped": null
+  },
+  "probe_optimize_platform": {
+    "returncode": 0,
+    "seconds": 3.7441519820000053,
+    "peak_rss_bytes": 91009024,
+    "stopped": null
+  },
+  "probe_sparse_linalg_platform": {
+    "returncode": 0,
+    "seconds": 1.62480992899998,
+    "peak_rss_bytes": 52592640,
+    "stopped": null
+  },
+  "probe_stats_platform": {
+    "returncode": 0,
+    "seconds": 4.242883491999976,
+    "peak_rss_bytes": 99745792,
+    "stopped": null
+  },
+  "probe_upstream_platform": {
+    "returncode": 0,
+    "seconds": 0.25662231500001553,
+    "peak_rss_bytes": 2928640,
+    "stopped": null
+  }
+}

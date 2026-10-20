@@ -1,0 +1,9 @@
+cg-100 baseline variants 4 patched variants 3
+bicg-100 baseline variants 3 patched variants 3
+lgmres-100 baseline variants 10 patched variants 7
+qmr-100 baseline variants 2 patched variants 7
+tfqmr-100 baseline variants 5 patched variants 2
+gcrotmk-100 baseline variants 3 patched variants 4
+lsqr-csr_array baseline variants 1 patched variants 1
+lsqr-csc_matrix baseline variants 1 patched variants 1
+Sparse linalg diagnostic: artifacts/sparse-linalg-probe/summary.json

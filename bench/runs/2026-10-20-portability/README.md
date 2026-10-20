@@ -112,5 +112,13 @@ hashes. Those successful upstream comparisons do not make the failed Mac
 Intel wheel or overall preflight successful. Full release validation remains
 pending for the final source and all 32 wheels.
 
+The [Intel Mac reference-repeatability diagnostics](mac-x86_64/reference-stability-956/README.md)
+reuse the unchanged `daf9acd` wheel with probe checkout `956fc49`. Raw stats,
+optimization, and sparse probes demonstrate varying repeated unpatched
+results and alignment-dependent NumPy reductions. The archive retains exact
+reports, provenance, source/wheel hashes, and hashes for external sparse
+arrays. It does not establish a numerical exception or resolve independent
+LSQR discrepancies.
+
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.

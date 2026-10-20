@@ -7,7 +7,7 @@
 //! unless all matrices finished with `info == 0` and finite input (when asked);
 //! the Python layer then lets SciPy redo the call and raise or warn itself.
 
-use std::ffi::{c_char, c_int, c_void};
+use std::ffi::{CStr, c_char, c_int, c_void};
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
@@ -102,15 +102,14 @@ fn init(py: Python<'_>) -> PyResult<()> {
         .import("scipy.linalg.cython_lapack")?
         .getattr("__pyx_capi__")?;
     let capi = capi.cast::<PyDict>()?;
-    let get = |name: &str| -> PyResult<*mut c_void> {
+    let get = |name: &str, signature: &CStr| -> PyResult<*mut c_void> {
         let cap = capi
             .get_item(name)?
             .ok_or_else(|| PyRuntimeError::new_err(format!("no {name}")))?;
         unsafe {
-            let p = pyo3::ffi::PyCapsule_GetPointer(
-                cap.as_ptr(),
-                pyo3::ffi::PyCapsule_GetName(cap.as_ptr()),
-            );
+            // Passing our expected name, rather than the capsule's own name,
+            // checks the complete C ABI before any function-pointer cast.
+            let p = pyo3::ffi::PyCapsule_GetPointer(cap.as_ptr(), signature.as_ptr());
             if p.is_null() {
                 Err(PyErr::fetch(py))
             } else {
@@ -120,11 +119,11 @@ fn init(py: Python<'_>) -> PyResult<()> {
     };
     unsafe {
         let l = Lapack {
-            getrf: std::mem::transmute::<*mut c_void, Getrf>(get("dgetrf")?),
-            getrs: std::mem::transmute::<*mut c_void, Getrs>(get("dgetrs")?),
-            potrs: std::mem::transmute::<*mut c_void, Potrs>(get("dpotrs")?),
-            trtrs: std::mem::transmute::<*mut c_void, Trtrs>(get("dtrtrs")?),
-            syevr: std::mem::transmute::<*mut c_void, Syevr>(get("dsyevr")?),
+            getrf: std::mem::transmute::<*mut c_void, Getrf>(get("dgetrf", c"void (int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, int *)")?),
+            getrs: std::mem::transmute::<*mut c_void, Getrs>(get("dgetrs", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            potrs: std::mem::transmute::<*mut c_void, Potrs>(get("dpotrs", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            trtrs: std::mem::transmute::<*mut c_void, Trtrs>(get("dtrtrs", c"void (char *, char *, char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            syevr: std::mem::transmute::<*mut c_void, Syevr>(get("dsyevr", c"void (char *, char *, char *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, int *, int *)")?),
         };
         let _ = LAPACK.set(l);
     }

@@ -16,11 +16,12 @@ F8 = np.dtype(np.float64)
 MIN_PEAKS, MIN_SAMPLES, MIN_WIDTHS, MIN_STEPS, MIN_CORR = 16, 4096, 1 << 15, 2000, 1 << 14
 _sig = _native.signal
 _fused_width = _fused_corr = _fused_conv = None
+_blas_available = False
 
 
 def configure(widths, correlate, convolve):
     """Read contraction rules from the installed SciPy kernels, not the host CPU."""
-    global _fused_width, _fused_corr, _fused_conv
+    global _fused_width, _fused_corr, _fused_conv, _blas_available
     e = 2.0**-27
     pk, lo, hi = np.array([1], np.intp), np.array([0], np.intp), np.array([2], np.intp)
     height = widths(np.array([0.0, 1.0, 0.0]), pk, 1 - e, np.array([1 + e]), lo, hi)[1][0]
@@ -32,7 +33,7 @@ def configure(widths, correlate, convolve):
     tail = convolve(a, k, 0, 0, 0, 0.0)[0, 0]
     group = convolve(np.array([[1 + e, -1.0, 0.0, 0.0]]), np.array([[1 - e, 1.0, 0.0, 0.0]]), 0, 0, 0, 0.0)[0, 0]
     _fused_conv = {0.0: False, -(2.0**-54): True}.get(tail) if tail == group else None
-    _sig.init_blas()
+    _blas_available = _sig.init_blas()
 
 
 def _arr(a, dtype, ndim=1):
@@ -155,7 +156,7 @@ def _gemv_matches(shape, matrix=None):
         if use_caller and matrix is None:
             return None
         batch = 1 if use_caller else max(1, _GEMV_CALIBRATION_BYTES // trial_bytes)
-        candidates = [0, 1, 2]
+        candidates = [0, 1, 2] if _blas_available else [0]
         rng = np.random.default_rng(12345)
         for start in range(0, _GEMV_TRIALS, batch):
             count = min(batch, _GEMV_TRIALS - start)

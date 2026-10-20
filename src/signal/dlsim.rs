@@ -1,17 +1,19 @@
-//! The `dlsim` state loop with `np.dot(M, v)` (Accelerate `dgemv`) reproduced bit for bit.
+//! The `dlsim` state loop with `np.dot(M, v)` reproduced bit for bit.
 //!
 //! Measured on Accelerate: for a row of `c` products the sum runs in two lane chains
 //! (even and odd columns). A chain of `m` products starts with the first product, adds
 //! products 1 to m-2 with a fused multiply-add, and adds the last one plainly; the two
 //! chains are added, then a leftover odd column is added plainly. That holds for some
 //! shapes only, so Python checks each shape against `np.dot` before using this
-//! (`gemv_matches`), and any other BLAS fails that check.
+//! (`gemv_matches`). Other backends can use the installed SciPy `dgemv`/`ddot`
+//! capsules, also checked against NumPy per shape. Unsupported capsule ABIs are
+//! rejected at initialization; the Accelerate model remains independently usable.
 
 use numpy::{PyReadonlyArray2, PyReadonlyArray3, PyReadwriteArray2, PyUntypedArrayMethods};
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use std::ffi::{c_char, c_int, c_void};
+use std::ffi::{CStr, c_char, c_int, c_void};
 use std::sync::OnceLock;
 
 type Gemv = unsafe extern "C" fn(
@@ -32,38 +34,37 @@ type Dot =
 static BLAS: OnceLock<(Gemv, Dot)> = OnceLock::new();
 
 #[pyfunction]
-pub fn init_blas(py: Python<'_>) -> PyResult<()> {
+pub fn init_blas(py: Python<'_>) -> PyResult<bool> {
     if BLAS.get().is_some() {
-        return Ok(());
+        return Ok(true);
     }
     let capi = py
         .import("scipy.linalg.cython_blas")?
         .getattr("__pyx_capi__")?;
     let capi = capi.cast::<PyDict>()?;
-    let get = |name: &str| -> PyResult<*mut c_void> {
+    let get = |name: &str, signature: &CStr| -> PyResult<*mut c_void> {
         let cap = capi
             .get_item(name)?
             .ok_or_else(|| PyRuntimeError::new_err(format!("no {name}")))?;
-        let ptr = unsafe {
-            pyo3::ffi::PyCapsule_GetPointer(
-                cap.as_ptr(),
-                pyo3::ffi::PyCapsule_GetName(cap.as_ptr()),
-            )
-        };
+        let ptr = unsafe { pyo3::ffi::PyCapsule_GetPointer(cap.as_ptr(), signature.as_ptr()) };
         if ptr.is_null() {
             Err(PyErr::fetch(py))
         } else {
             Ok(ptr)
         }
     };
+    let (Ok(gemv), Ok(dot)) = (
+        get("dgemv", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_11cython_blas_d *, __pyx_t_5scipy_6linalg_11cython_blas_d *, int *, __pyx_t_5scipy_6linalg_11cython_blas_d *, int *, __pyx_t_5scipy_6linalg_11cython_blas_d *, __pyx_t_5scipy_6linalg_11cython_blas_d *, int *)"),
+        get("ddot", c"__pyx_t_5scipy_6linalg_11cython_blas_d (int *, __pyx_t_5scipy_6linalg_11cython_blas_d *, int *, __pyx_t_5scipy_6linalg_11cython_blas_d *, int *)"),
+    ) else { return Ok(false); };
     let funcs = unsafe {
         (
-            std::mem::transmute::<*mut c_void, Gemv>(get("dgemv")?),
-            std::mem::transmute::<*mut c_void, Dot>(get("ddot")?),
+            std::mem::transmute::<*mut c_void, Gemv>(gemv),
+            std::mem::transmute::<*mut c_void, Dot>(dot),
         )
     };
     let _ = BLAS.set(funcs);
-    Ok(())
+    Ok(true)
 }
 
 fn dot(row: &[f64], x: &[f64]) -> f64 {

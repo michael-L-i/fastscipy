@@ -1,5 +1,7 @@
 import warnings
 import threading
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -901,6 +903,43 @@ def test_dlsim_calibration_memory_bound(monkeypatch):
     calls.clear()
     assert algo._gemv_matches(caller.shape, caller) == 0
     assert len(calls) == 33 and all(shared for _, shared in calls)
+
+
+@pytest.mark.parametrize("routine", ["dgemv", "ddot"])
+def test_signal_blas_capsule_abi_rejected_in_fresh_process(routine):
+    script = r"""
+import ctypes
+import sys
+import fastscipy
+from fastscipy import _native
+from scipy.linalg import cython_blas
+
+capi = cython_blas.__pyx_capi__
+name = sys.argv[1]
+original = capi[name]
+get_name = ctypes.pythonapi.PyCapsule_GetName
+get_name.argtypes, get_name.restype = [ctypes.py_object], ctypes.c_char_p
+get_pointer = ctypes.pythonapi.PyCapsule_GetPointer
+get_pointer.argtypes, get_pointer.restype = [ctypes.py_object, ctypes.c_char_p], ctypes.c_void_p
+new_capsule = ctypes.pythonapi.PyCapsule_New
+new_capsule.argtypes, new_capsule.restype = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_void_p], ctypes.py_object
+wrong_name = get_name(original).replace(b"int *", b"int64_t *", 1)
+assert wrong_name != get_name(original)
+capi[name] = new_capsule(get_pointer(original, get_name(original)), wrong_name, None)
+assert _native.signal.init_blas() is False
+assert fastscipy.patch(["signal"])["signal"] == "on"
+from fastscipy import _signal_algo as algo
+assert not algo._blas_available
+def model_only(ms, vs, refs, mode):
+    assert mode == 0
+    return True
+_native.signal.gemv_matches = model_only
+assert algo._gemv_matches((2, 2)) == 0
+capi[name] = original
+assert _native.signal.init_blas() is True
+"""
+    result = subprocess.run([sys.executable, "-c", script, routine], capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.mark.parametrize("mode", ["full", "same", "valid"])

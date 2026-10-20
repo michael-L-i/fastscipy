@@ -1,4 +1,6 @@
 import warnings
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -10,6 +12,43 @@ from fastscipy.testing import assert_identical, check, fast_calls
 SIZES = [1, 2, 3, 8, 32]
 BATCHES = [(5,), (2, 3), (700,)]
 THREADS = [1, 4]
+
+
+@pytest.mark.parametrize("routine", ["dgetrf", "dgetrs", "dpotrs", "dtrtrs", "dsyevr"])
+def test_lapack_capsule_abi_rejected_in_fresh_process(routine):
+    script = r"""
+import ctypes
+import sys
+import fastscipy
+from fastscipy import _native
+from scipy.linalg import cython_lapack
+
+capi = cython_lapack.__pyx_capi__
+name = sys.argv[1]
+original = capi[name]
+get_name = ctypes.pythonapi.PyCapsule_GetName
+get_name.argtypes, get_name.restype = [ctypes.py_object], ctypes.c_char_p
+get_pointer = ctypes.pythonapi.PyCapsule_GetPointer
+get_pointer.argtypes, get_pointer.restype = [ctypes.py_object, ctypes.c_char_p], ctypes.c_void_p
+new_capsule = ctypes.pythonapi.PyCapsule_New
+new_capsule.argtypes, new_capsule.restype = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_void_p], ctypes.py_object
+# The pointer is real; only its advertised ABI is changed. Keep both the
+# original capsule and the replacement name bytes alive until process exit.
+wrong_name = get_name(original).replace(b"int *", b"int64_t *", 1)
+assert wrong_name != get_name(original)
+capi[name] = new_capsule(get_pointer(original, get_name(original)), wrong_name, None)
+try:
+    _native.linalg.init()
+except ValueError as error:
+    assert "incorrect name" in str(error)
+else:
+    raise AssertionError("unsupported LAPACK ABI accepted")
+assert fastscipy.patch(["linalg"])["linalg"].startswith("off:")
+capi[name] = original
+assert _native.linalg.init() is None
+"""
+    result = subprocess.run([sys.executable, "-c", script, routine], capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.fixture(params=THREADS, autouse=True)

@@ -43,11 +43,14 @@ impl Lane for f64 {
     }
     #[inline(always)]
     fn add_ordered(self, o: f64) -> f64 {
-        #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+        #[cfg(all(
+            target_arch = "x86_64",
+            any(target_os = "linux", target_os = "windows")
+        ))]
         {
             let mut sum = self;
-            // SciPy's GCC uniform-filter loop keeps the old accumulator in
-            // the destination operand. LLVM may commute an ordinary fadd,
+            // SciPy's Linux and Windows x86-64 wheels keep the old uniform-
+            // filter accumulator in the destination. LLVM may commute fadd,
             // changing which payload survives when both operands are NaN.
             // Do not promise preserves_flags: addsd can set MXCSR flags.
             unsafe {
@@ -77,7 +80,10 @@ impl Lane for f64 {
         }
         #[cfg(not(any(
             target_arch = "aarch64",
-            all(target_arch = "x86_64", target_os = "linux")
+            all(
+                target_arch = "x86_64",
+                any(target_os = "linux", target_os = "windows")
+            )
         )))]
         {
             self + o
@@ -195,7 +201,7 @@ mod imp {
         fn add(self, o: V) -> V {
             unsafe { V(_mm_add_pd(self.0, o.0)) }
         }
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "windows"))]
         #[inline(always)]
         fn add_ordered(self, o: V) -> V {
             let mut sum = self.0;

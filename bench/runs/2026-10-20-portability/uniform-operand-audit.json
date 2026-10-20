@@ -1,0 +1,94 @@
+{
+  "scope": "Read-only official SciPy 1.18.1 cp313 NI_UniformFilter1D disassembly audit; no foreign binary executed",
+  "interpretation": "AT&T addsd source,destination; destination is first arithmetic operand. Ordinary Rust floating addition permits operand commutation. Binary evidence establishes reference operand order, not actual current fastscipy output on these targets.",
+  "binaries": [
+    {
+      "platform": "windows-x86_64",
+      "wheel": "scipy-1.18.1-cp313-cp313-win_amd64.whl",
+      "wheel_url": "https://files.pythonhosted.org/packages/93/0e/e0348fbc0dbab65c114cf78957e7dfeb49f8e8b556b4d930cc12ff195e18/scipy-1.18.1-cp313-cp313-win_amd64.whl",
+      "wheel_sha256": "559ed65f60c1af5a03f3912605a1b5114f522c7c32fb23c3376ae8f03219fe28",
+      "nd_image_sha256": "6e08479ba26603611b7033e561a4569dd3a072b86c6bb6a8c802b9f2098c293e",
+      "function_va": "0x3422588e0",
+      "initialization": {
+        "order": "accumulator first (destination)",
+        "addresses": [
+          "0x342258ba0",
+          "0x342258ba8",
+          "0x342258bba"
+        ]
+      },
+      "rolling": {
+        "order": "accumulator first (destination)",
+        "addresses": [
+          "0x342258c0d"
+        ]
+      }
+    },
+    {
+      "platform": "macos-x86_64-10.15",
+      "wheel": "scipy-1.18.1-cp313-cp313-macosx_10_15_x86_64.whl",
+      "wheel_url": "https://files.pythonhosted.org/packages/b6/55/4540ee0f9c42a9ad7109d0d1a8cc70de54c3572b01c6693a2b1c70e90ceb/scipy-1.18.1-cp313-cp313-macosx_10_15_x86_64.whl",
+      "wheel_sha256": "3ab3523da44749156e1f68b464dc56af11ae4cbc5c739a49d05f32b982eca9f3",
+      "nd_image_sha256": "6f3529923f3d97992ee0cbcb6fe503ab18440ec61a094097a78f2c50014b86bd",
+      "function_va": "0x6e50",
+      "initialization": {
+        "order": "accumulator first (destination)",
+        "addresses": [
+          "0x7100..0x7131",
+          "0x7150",
+          "0x7380..0x73b1",
+          "0x73d0"
+        ]
+      },
+      "rolling": {
+        "two_iteration_body_order": "delta first (destination), accumulator source",
+        "body_addresses": [
+          "0x71cd",
+          "0x71eb",
+          "0x768e",
+          "0x76ad"
+        ],
+        "odd_final_tail_order": "accumulator first (destination)",
+        "tail_addresses": [
+          "0x7231",
+          "0x7705"
+        ]
+      }
+    },
+    {
+      "platform": "macos-x86_64-14.0",
+      "wheel": "scipy-1.18.1-cp313-cp313-macosx_14_0_x86_64.whl",
+      "wheel_url": "https://files.pythonhosted.org/packages/ec/01/798430ecea2e78ec7c02663d5f71c007bb6abeca931080debd40d7fa55ea/scipy-1.18.1-cp313-cp313-macosx_14_0_x86_64.whl",
+      "wheel_sha256": "75b00eb8fb802090aa903f4ea1c7f5a584779f967361e68b7e98e531cc2d7174",
+      "nd_image_sha256": "79a9e774af3b46da917daff54eb2f8a8e0963c22e6834d6e76a45041f8c575f8",
+      "function_va": "0x6e50",
+      "initialization": {
+        "order": "accumulator first (destination)",
+        "addresses": [
+          "0x7100..0x7131",
+          "0x7150",
+          "0x7380..0x73b1",
+          "0x73d0"
+        ]
+      },
+      "rolling": {
+        "two_iteration_body_order": "delta first (destination), accumulator source",
+        "body_addresses": [
+          "0x71cd",
+          "0x71eb",
+          "0x768e",
+          "0x76ad"
+        ],
+        "odd_final_tail_order": "accumulator first (destination)",
+        "tail_addresses": [
+          "0x7231",
+          "0x7705"
+        ]
+      }
+    }
+  ],
+  "implementation_checkpoint": {
+    "windows_x86_64": "Extended the existing Linux scalar and SIMD ordered-add assembly configuration to Windows, matching the known SciPy initialization and rolling instruction contract. Actual Windows CI validation is pending.",
+    "macos_x86_64": "No extension applied: the reference rolling body and final tail have different operand orders; native CI and a separate design are required."
+  }
+}

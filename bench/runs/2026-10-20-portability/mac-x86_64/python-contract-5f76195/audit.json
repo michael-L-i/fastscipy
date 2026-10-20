@@ -1,0 +1,135 @@
+{
+  "purpose": "derived_failed_selected_test_contract_audit_not_release_certification",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39462230112",
+  "overall": "FAILED: selected linregress validator rejected a numerical comparison",
+  "source_head": "5f76195df686771395aa860be4b0574ac85498cf",
+  "reused_native_source": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "source_files_verified_against_git": [
+    "python/fastscipy/__init__.py",
+    "python/fastscipy/_cluster.py",
+    "python/fastscipy/_csgraph.py",
+    "python/fastscipy/_integrate.py",
+    "python/fastscipy/_interpolate.py",
+    "python/fastscipy/_linalg.py",
+    "python/fastscipy/_ndimage.py",
+    "python/fastscipy/_ndimage_correlate.py",
+    "python/fastscipy/_ndimage_generic.py",
+    "python/fastscipy/_ndimage_interp.py",
+    "python/fastscipy/_ndimage_label.py",
+    "python/fastscipy/_ndimage_morph.py",
+    "python/fastscipy/_ndimage_rank.py",
+    "python/fastscipy/_ndimage_seam.py",
+    "python/fastscipy/_optimize.py",
+    "python/fastscipy/_patch.py",
+    "python/fastscipy/_signal.py",
+    "python/fastscipy/_signal_algo.py",
+    "python/fastscipy/_signal_small.py",
+    "python/fastscipy/_signal_threads.py",
+    "python/fastscipy/_sparse.py",
+    "python/fastscipy/_sparse_linalg.py",
+    "python/fastscipy/_spatial.py",
+    "python/fastscipy/_special.py",
+    "python/fastscipy/_stats.py",
+    "python/fastscipy/_stats_algos.py",
+    "python/fastscipy/_stats_dist.py",
+    "python/fastscipy/_stats_loop.py",
+    "python/fastscipy/_stats_rank.py",
+    "python/fastscipy/_threads.py",
+    "python/fastscipy/pytest_plugin.py",
+    "python/fastscipy/testing.py",
+    "tools/probe_python_source_platform.py",
+    "tools/probe_python_remaining_platform.py",
+    "tools/probe_python_contract_platform.py",
+    "tools/platform_suite.py",
+    "bench/run.py",
+    "bench/bench_special.py",
+    "bench/bench_stats.py",
+    "tests/test_sparse_linalg.py",
+    "tests/test_stats.py",
+    "tests/test_reference_variance.py",
+    "tests/test_bench_reference.py",
+    "tests/test_optimize.py"
+  ],
+  "native_source_git_diff_empty_independently_verified": true,
+  "override_absence_recorded_at_runtime": true,
+  "overlay_import_verified": true,
+  "selected_tests": {
+    "tests": 829,
+    "passed": 828,
+    "failed": 1,
+    "skipped": 0
+  },
+  "benchmarks_requested": false,
+  "benchmark_cases_executed": 0,
+  "full_project_rerun": false,
+  "full_407_case_validation": false,
+  "upstream_requested": false,
+  "outer_monitor": {
+    "returncode": 1,
+    "seconds": 87.31920438999998,
+    "peak_rss_bytes": 227770368,
+    "stopped": null
+  },
+  "inner_monitor": {
+    "returncode": 1,
+    "seconds": 85.26941476099998,
+    "peak_rss_bytes": 191168512,
+    "stopped": null,
+    "purpose": "partial_selected_tests_reused_native_not_release_certification",
+    "memory_limit_mib": 4096,
+    "timeout_seconds": 600
+  },
+  "interpretation": "Four previous failed parameters now pass. The remaining linregress comparison is explicitly rejected; no passing result, production fix, or release certification is inferred.",
+  "original_files": [
+    {
+      "file": "provenance.json",
+      "bytes": 702,
+      "sha256": "04e865fc54e24f302d37598f536202ef2839d3898b2b449e5026e6e865e9f9ad"
+    },
+    {
+      "file": "diagnostics.json",
+      "bytes": 153,
+      "sha256": "f0705a2e6d92de6a94a36166977285c8250fa0ab01efad6721c60eb52410a5ea"
+    },
+    {
+      "file": "sources.json",
+      "bytes": 7925,
+      "sha256": "ad2e78f32495b7fa77bd35cda719cca4c52ea0e560a0e935a5a98973257affd3"
+    },
+    {
+      "file": "monitor.json",
+      "bytes": 236,
+      "sha256": "a909e5a4b8eb3edd5dee5140105b6f137b3a1a026da36888be4bcc6a28f40a2c"
+    },
+    {
+      "file": "overlay-import.json",
+      "bytes": 801,
+      "sha256": "eb13a6904520e8ab957617d68661b6785b33d1b0fd9dae7e101a11a88398396a"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 56882,
+      "sha256": "68d0c906d69ee45e5d6b4a1f797a4c450dc6367a2d0924ec070de110c3489a4b"
+    },
+    {
+      "file": "summary.runner.json",
+      "bytes": 56440,
+      "sha256": "260d20868c61cd8606973587ae16fa82b4b5b7b40cd7906efef9a392f7147d74"
+    },
+    {
+      "file": "reference-variance.jsonl",
+      "bytes": 49413,
+      "sha256": "9700a44950c02871541d66e9c4cd431db786fc87f6802948496ac246cc4f894a"
+    },
+    {
+      "file": "selected_tests.log",
+      "bytes": 6893,
+      "sha256": "622d5d336d3e9e56f7cf6dc90a0fb751a650f3a2a67f738a7b2a3df366131141"
+    },
+    {
+      "file": "suite.log",
+      "bytes": 44,
+      "sha256": "cec1e08de4432a30b4173f258c76e854671bcc7ecf5489bba4d3d0df5c48c216"
+    }
+  ]
+}

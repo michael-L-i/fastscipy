@@ -169,3 +169,10 @@ type). The targeted special/stats benchmarks completed all 95 cases with
 byte identity and expected acceleration. Original reports and distinct
 Python-source/reused-native provenance are retained; this is not a complete
 project, 407-case, or newly built release-wheel pass.
+
+The [Intel tests-only contract diagnostic](mac-x86_64/python-contract-5f76195/README.md)
+**failed** at Python source `5f76195`, with 828 selected tests passing and
+one rejected linregress comparison. Both earlier BiCGSTAB and Pearson
+parameters passed; exact failure diagnostics remain archived. This reused
+the unchanged `daf9acd` native wheel and ran no benchmarks or upstream
+comparisons. It is not a complete-project or release-wheel pass.

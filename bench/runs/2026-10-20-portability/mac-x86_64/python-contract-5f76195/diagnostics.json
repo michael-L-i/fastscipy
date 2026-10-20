@@ -1,0 +1,8 @@
+{
+  "probe_python_contract_platform": {
+    "returncode": 1,
+    "seconds": 87.31920438999998,
+    "peak_rss_bytes": 227770368,
+    "stopped": null
+  }
+}

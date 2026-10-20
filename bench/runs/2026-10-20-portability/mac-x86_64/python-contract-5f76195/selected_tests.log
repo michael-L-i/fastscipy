@@ -1,0 +1,54 @@
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+................................................F....................... [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 52%]
+........................................................................ [ 60%]
+........................................................................ [ 69%]
+........................................................................ [ 78%]
+........................................................................ [ 86%]
+........................................................................ [ 95%]
+.....................................                                    [100%]
+=================================== FAILURES ===================================
+___________________ test_function_randomized[4t-linregress] ____________________
+tests/test_stats.py:371: in test_function_randomized
+    fast += same(lambda: f(*args, **kw), reference_validation=validation)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_stats.py:35: in same
+    check(lambda: outcome(call), fast=False, reference_validation=validated)
+/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: in check
+    if reference_variance(call, expected, got, reference_validation) is None:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:79: in reference_variance
+    validated(expected, actual)
+/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:76: in validated
+    result = validate(a, b)
+             ^^^^^^^^^^^^^^
+tests/test_stats.py:31: in validated
+    assert accepted is True or accepted is None, _stats_validation_rejection(expected, got)
+E   AssertionError: stats reference validator rejected: warnings_equal=True; result_types=<class 'scipy.stats._stats_py.LinregressResult'>/<class 'scipy.stats._stats_py.LinregressResult'>; metadata_equal={'intercept_stderr': True}; fields={'slope': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-19.733333333333334)', 'actual': 'np.float64(-19.2)'}, 'intercept': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.84375934276339)', 'actual': 'np.float64(1.817006339803941)'}, 'rvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-2.0314134264790633e-16)', 'actual': 'np.float64(-1.9765103608985478e-16)'}, 'pvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(0.9999999999999991)', 'actual': 'np.float64(0.9999999999999992)'}, 'stderr': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.8357904985830864e+16)', 'actual': 'np.float64(1.8357904985830864e+16)'}}
+E   assert (False is True or False is None)
+=============================== warnings summary ===============================
+tests/test_sparse_linalg.py: 16 warnings
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_sparse_linalg._iteration_reference_validation.<locals>.validate passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicgstab]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-bicgstab]
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_sparse_linalg._bicgstab_reference_validation.<locals>.validate passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_stats.py: 59 warnings
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_stats.same.<locals>.validated passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4]
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_optimize._validate_lsq_cost passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_stats.py::test_function_randomized[4t-linregress] - AssertionError: stats reference validator rejected: warnings_equal=True; result_types=<class 'scipy.stats._stats_py.LinregressResult'>/<class 'scipy.stats._stats_py.LinregressResult'>; metadata_equal={'intercept_stderr': True}; fields={'slope': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-19.733333333333334)', 'actual': 'np.float64(-19.2)'}, 'intercept': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.84375934276339)', 'actual': 'np.float64(1.817006339803941)'}, 'rvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-2.0314134264790633e-16)', 'actual': 'np.float64(-1.9765103608985478e-16)'}, 'pvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(0.9999999999999991)', 'actual': 'np.float64(0.9999999999999992)'}, 'stderr': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.8357904985830864e+16)', 'actual': 'np.float64(1.8357904985830864e+16)'}}
+assert (False is True or False is None)
+1 failed, 828 passed, 78 warnings in 82.60s (0:01:22)

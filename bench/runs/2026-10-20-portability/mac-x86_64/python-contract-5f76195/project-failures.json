@@ -1,0 +1,28 @@
+{
+  "description": "Derived exact selected-test failure; original selected_tests.log is retained unchanged",
+  "tests": 829,
+  "passed": 828,
+  "failed": 1,
+  "skipped": 0,
+  "raw_xml": {
+    "file": "python-source-intel-contract/suite/tests.xml",
+    "bytes": 92563,
+    "sha256": "c23b2f9ef2b15a9a86294d1e4f14384e3947decf0740da54e7f288fe906519e3"
+  },
+  "trace_hash_encoding": "UTF-8 of XML-decoded message/trace",
+  "failures": [
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-linregress]",
+      "message": "AssertionError: stats reference validator rejected: warnings_equal=True; result_types=<class 'scipy.stats._stats_py.LinregressResult'>/<class 'scipy.stats._stats_py.LinregressResult'>; metadata_equal={'intercept_stderr': True}; fields={'slope': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-19.733333333333334)', 'actual': 'np.float64(-19.2)'}, 'intercept': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.84375934276339)', 'actual': 'np.float64(1.817006339803941)'}, 'rvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-2.0314134264790633e-16)', 'actual': 'np.float64(-1.9765103608985478e-16)'}, 'pvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(0.9999999999999991)', 'actual': 'np.float64(0.9999999999999992)'}, 'stderr': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.8357904985830864e+16)', 'actual': 'np.float64(1.8357904985830864e+16)'}}\nassert (False is True or False is None)",
+      "trace": "tests/test_stats.py:371: in test_function_randomized\n    fast += same(lambda: f(*args, **kw), reference_validation=validation)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_stats.py:35: in same\n    check(lambda: outcome(call), fast=False, reference_validation=validated)\n/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:149: in check\n    if reference_variance(call, expected, got, reference_validation) is None:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:79: in reference_variance\n    validated(expected, actual)\n/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-i9jbay8a/fastscipy/testing.py:76: in validated\n    result = validate(a, b)\n             ^^^^^^^^^^^^^^\ntests/test_stats.py:31: in validated\n    assert accepted is True or accepted is None, _stats_validation_rejection(expected, got)\nE   AssertionError: stats reference validator rejected: warnings_equal=True; result_types=<class 'scipy.stats._stats_py.LinregressResult'>/<class 'scipy.stats._stats_py.LinregressResult'>; metadata_equal={'intercept_stderr': True}; fields={'slope': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-19.733333333333334)', 'actual': 'np.float64(-19.2)'}, 'intercept': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.84375934276339)', 'actual': 'np.float64(1.817006339803941)'}, 'rvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(-2.0314134264790633e-16)', 'actual': 'np.float64(-1.9765103608985478e-16)'}, 'pvalue': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(0.9999999999999991)', 'actual': 'np.float64(0.9999999999999992)'}, 'stderr': {'expected_dtype': '<f8', 'actual_dtype': '<f8', 'expected_shape': (), 'actual_shape': (), 'expected': 'np.float64(1.8357904985830864e+16)', 'actual': 'np.float64(1.8357904985830864e+16)'}}\nE   assert (False is True or False is None)",
+      "message_sha256": "98569c84a24bd3392b72cda5b04a265b465a99c003ddba9981116731901b2e94",
+      "trace_sha256": "1756c7610fc8a7e0f8edd966e07ec58641cd2f5c6ea079126fd785b1e139dcf5"
+    }
+  ],
+  "previous_four_failed_parameters_now_passed": [
+    "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicgstab]",
+    "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-bicgstab]",
+    "tests.test_stats::test_function_randomized[1t-pearsonr]",
+    "tests.test_stats::test_function_randomized[4t-pearsonr]"
+  ]
+}

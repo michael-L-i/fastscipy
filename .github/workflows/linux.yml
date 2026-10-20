@@ -202,7 +202,9 @@ jobs:
           Path("artifacts").mkdir(exist_ok=True)
           results = {}
           for probe in sorted(Path("tools").glob("probe_*_platform.py")):
-              results[probe.stem] = run([sys.executable, str(probe)], Path("artifacts") / f"{probe.stem}.log", 1024, 120)
+              # Only the full Python-overlay diagnostic needs the full-suite budget.
+              memory, timeout = (4096, 1200) if probe.name == "probe_python_source_platform.py" else (1024, 120)
+              results[probe.stem] = run([sys.executable, str(probe)], Path("artifacts") / f"{probe.stem}.log", memory, timeout)
           Path("artifacts/diagnostics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
           sys.exit(any(result["returncode"] for result in results.values()))
           PY

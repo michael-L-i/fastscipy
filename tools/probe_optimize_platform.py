@@ -119,7 +119,9 @@ def main():
                 {
                     "mode": mode,
                     "stable_x": all(identical(rows[0].x, r.x) for r in rows[1:]),
+                    "repeat_changed_fields": [differences(rows[0], r) for r in rows[1:]],
                     "reference_x_matches": [identical(outputs["reference"][0].x, r.x) for r in rows],
+                    "reference_changed_fields": [differences(outputs["reference"][0], r) for r in rows],
                     "iterations": [int(r.nit) for r in rows],
                     "x_hex": [[float(v).hex() for v in r.x] for r in rows],
                 }

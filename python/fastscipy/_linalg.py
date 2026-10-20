@@ -267,11 +267,7 @@ def _single_triangular(a, b, trans, lower, unit_diagonal, overwrite_b, check_fin
         or type(lower) is not bool
         or type(unit_diagonal) is not bool
         or type(check_finite) is not bool
-        or not all(
-            (x.dtype.kind == "f" and x.dtype.itemsize in (4, 8))
-            or (x.dtype.kind == "c" and x.dtype.itemsize in (8, 16))
-            for x in (a, b)
-        )
+        or not all(x.dtype.char in "fdFD" for x in (a, b))
     ):
         return NotImplemented
     if type(trans) is str:

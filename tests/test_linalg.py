@@ -281,6 +281,25 @@ def test_single_triangular_unchecked_nonfinite():
     check(lambda: sl.solve_triangular(a, b, check_finite=False))
 
 
+@pytest.mark.parametrize("dtype", [np.longdouble, np.clongdouble])
+@pytest.mark.parametrize("operand", ["a", "b", "both"])
+def test_single_triangular_extended_precision_warning(dtype, operand):
+    # On Apple Silicon longdouble has eight bytes but remains dtype 'g'.
+    a, b = np.eye(3), np.ones(3)
+    if operand in ("a", "both"):
+        a = a.astype(dtype)
+    if operand in ("b", "both"):
+        b = b.astype(dtype)
+    with fastscipy.disabled(), pytest.warns(DeprecationWarning) as expected_warnings:
+        expected = sl.solve_triangular(a, b)
+    before = fast_calls()
+    with pytest.warns(DeprecationWarning) as actual_warnings:
+        actual = sl.solve_triangular(a, b)
+    assert fast_calls() == before
+    assert_identical(expected, actual)
+    assert [str(w.message) for w in actual_warnings] == [str(w.message) for w in expected_warnings]
+
+
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
 @pytest.mark.parametrize("layout", ["C", "F", "strided"])

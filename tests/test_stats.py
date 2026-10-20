@@ -25,8 +25,14 @@ def outcome(call):
 def same(call, *, reference_validation=None):
     """Assert patched == plain SciPy (result bytes, exceptions, warnings); return whether a fast path ran."""
     if reference_validation is not None:
+
+        def validated(expected, got):
+            accepted = reference_validation(expected, got)
+            assert accepted is True or accepted is None, _stats_validation_rejection(expected, got)
+            return accepted
+
         before = fast_calls()
-        check(lambda: outcome(call), fast=False, reference_validation=reference_validation)
+        check(lambda: outcome(call), fast=False, reference_validation=validated)
         return fast_calls() > before
     with fastscipy.disabled():
         expected = outcome(call)
@@ -34,6 +40,35 @@ def same(call, *, reference_validation=None):
     got = outcome(call)
     assert identical(expected[0], got[0]) and expected[1] == got[1], f"{expected!r}\n{got!r}"
     return fast_calls() > before
+
+
+def _stats_validation_rejection(expected, got):
+    a, aw = expected
+    b, bw = got
+    metadata = (
+        {key: identical(value, vars(b).get(key)) for key, value in vars(a).items()}
+        if hasattr(a, "__dict__") and hasattr(b, "__dict__")
+        else None
+    )
+    fields = (
+        {
+            name: {
+                "expected_dtype": np.asarray(aa).dtype.str,
+                "actual_dtype": np.asarray(bb).dtype.str,
+                "expected_shape": np.shape(aa),
+                "actual_shape": np.shape(bb),
+                "expected": repr(aa),
+                "actual": repr(bb),
+            }
+            for name, aa, bb in zip(getattr(a, "_fields", ()), a, b)
+        }
+        if isinstance(a, tuple) and isinstance(b, tuple)
+        else None
+    )
+    return (
+        f"stats reference validator rejected: warnings_equal={identical(aw, bw)}; "
+        f"result_types={type(a)!r}/{type(b)!r}; metadata_equal={metadata!r}; fields={fields!r}"
+    )
 
 
 def _stats_reference_validation(x, y):
@@ -57,7 +92,7 @@ def _stats_reference_validation(x, y):
             return False  # NaN payloads and infinity signs stay exact.
         if aa == 0 and bb == 0:
             return False  # Preserve signed zero when both values are zero.
-        return bool(np.isclose(aa, bb, rtol=eps64, atol=atol))
+        return bool(np.isclose(aa, bb, rtol=64 * np.finfo(aa.dtype).eps, atol=atol))
 
     def validate(expected, got):
         a, aw = expected
@@ -80,7 +115,9 @@ def _stats_reference_validation(x, y):
                 return False
             if not all(identical(v, vars(b)[k]) for k, v in vars(a).items() if k != "correlation"):
                 return False
-            return close(a.statistic, b.statistic, eps64) and close(a.pvalue, b.pvalue, eps64)
+            statistic_floor = 64 * np.finfo(np.asarray(a.statistic).dtype).eps
+            pvalue_floor = 64 * np.finfo(np.asarray(a.pvalue).dtype).eps
+            return close(a.statistic, b.statistic, statistic_floor) and close(a.pvalue, b.pvalue, pvalue_floor)
 
         if not (-1 <= b.rvalue <= 1 or identical(a.rvalue, b.rvalue)):
             return False
@@ -163,6 +200,37 @@ def test_stats_reference_validator_preserves_tiny_regression_units():
     expected = LinregressResult(**values)
     wrong = LinregressResult(**dict(values, slope=np.float64(1e-15)))
     assert not validate((expected, []), (wrong, []))
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("n", [7, 30])
+def test_stats_reference_validator_real_pearson_returns_literal_true(dtype, n):
+    local = np.random.default_rng(718 + n)
+    x, y = local.standard_normal((2, n)).astype(dtype)
+    with fastscipy.disabled():
+        expected = st.pearsonr(x, y)
+    validate = _stats_reference_validation(x, y)
+    assert validate((expected, []), (expected, [])) is True
+
+    def other(statistic=expected.statistic, pvalue=expected.pvalue):
+        return PearsonRResult(
+            statistic,
+            pvalue,
+            alternative=expected._alternative,
+            n=expected._n,
+            x=expected._x,
+            y=expected._y,
+            axis=expected._axis,
+        )
+
+    assert validate((expected, []), (other(statistic=np.nextafter(expected.statistic, dtype(1))), [])) is True
+    assert validate((expected, []), (other(pvalue=np.nextafter(expected.pvalue, dtype(1))), [])) is True
+    assert validate((expected, []), (other(statistic=dtype(expected.statistic + 1e-3)), [])) is False
+    assert validate((expected, []), (other(pvalue=dtype(expected.pvalue + 1e-3)), [])) is False
+    assert validate((expected, []), (expected, [(RuntimeWarning, "changed warning")])) is False
+    changed_metadata = other()
+    changed_metadata._alternative = "less"
+    assert validate((expected, []), (changed_metadata, [])) is False
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

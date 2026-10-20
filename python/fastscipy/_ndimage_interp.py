@@ -9,6 +9,7 @@ so SciPy's C code runs instead.
 """
 
 import operator
+import platform
 import sys
 
 import numpy as np
@@ -24,7 +25,9 @@ _TYPES = frozenset(
 # Coordinate dtypes SciPy's C code accepts (converted to float64 here, which
 # is the same conversion the C code performs per element).
 _COORD_TYPES = _TYPES | {np.dtype(np.bool_)}
-_SCIPY_INT_CAST = sys.platform != "darwin"
+# Native integer casts were verified on Darwin ARM. Other targets compute
+# in Rust float64 and retain SciPy's compiler-specific integer conversion.
+_SCIPY_INT_CAST = not (sys.platform == "darwin" and platform.machine().lower() in ("arm64", "aarch64"))
 
 
 def _int(v):

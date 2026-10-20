@@ -1,0 +1,33 @@
+{
+  "description": "Derived from original cibuildwheel log, summary, and Actions metadata; original reports are retained unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479157044,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "target": "windows-arm64",
+  "job_conclusion": "success",
+  "wheel_validation_passed": true,
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-win_arm64.whl",
+  "wheel_sha256": "692ff8102c552fea2d540d428f520fc517a5ad4be888f63d6544126c14ebd7ee",
+  "distribution_artifact_uploaded": true,
+  "profile": "release",
+  "maturin": "1.15.0",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed before project validation; it rejects platform/version overrides and checks installed native imports and all 13 component smoke paths",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 21758,
+      "sha256": "c40158f63ed18bfb1ecfd9daa4dd322fd9b0fa24dbbcee1b08fcf808e4377da8"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-windows-arm64-job.log",
+      "bytes": 73308,
+      "sha256": "6d64adee01e038fe7fd2c3493ecb388678682f7e2bc08f590667fe0a2f1ae81a"
+    }
+  ],
+  "project_junit": {
+    "file": "tests.xml",
+    "bytes": 819416,
+    "sha256": "8993b393bdea769f67e3ab9b2d9fbc18113b9e43bc391ee11d4ea65cd9006fc1"
+  }
+}

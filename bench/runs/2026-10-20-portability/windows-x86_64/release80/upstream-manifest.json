@@ -1,0 +1,95 @@
+{
+  "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\cibw-run-bqx9zppw\\cp313-win_amd64\\venv-test\\Scripts\\python.exe",
+  "revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "scipy_available_memory": "2048Mib",
+  "batches": [
+    [
+      "--pyargs",
+      "scipy._lib"
+    ],
+    [
+      "--pyargs",
+      "scipy.cluster"
+    ],
+    [
+      "--pyargs",
+      "scipy.constants"
+    ],
+    [
+      "--pyargs",
+      "scipy.datasets"
+    ],
+    [
+      "--pyargs",
+      "scipy.differentiate"
+    ],
+    [
+      "--pyargs",
+      "scipy.fft"
+    ],
+    [
+      "--pyargs",
+      "scipy.fftpack"
+    ],
+    [
+      "--pyargs",
+      "scipy.integrate"
+    ],
+    [
+      "--pyargs",
+      "scipy.interpolate"
+    ],
+    [
+      "--pyargs",
+      "scipy.io"
+    ],
+    [
+      "--pyargs",
+      "scipy.linalg"
+    ],
+    [
+      "--pyargs",
+      "scipy.ndimage"
+    ],
+    [
+      "--pyargs",
+      "scipy.odr"
+    ],
+    [
+      "--pyargs",
+      "scipy.optimize"
+    ],
+    [
+      "--pyargs",
+      "scipy.signal"
+    ],
+    [
+      "--pyargs",
+      "scipy.sparse"
+    ],
+    [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    [
+      "--pyargs",
+      "scipy.special"
+    ],
+    [
+      "--pyargs",
+      "scipy.stats"
+    ]
+  ],
+  "paired_quarantine": {
+    "plugin": "scipy_upstream_quarantine",
+    "source_sha256": "aec02657bf17d698fc1d6adfb25e38856babdf2847e96f4eafc1b6619dad5351",
+    "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+    "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs"
+  }
+}

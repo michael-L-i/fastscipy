@@ -1,0 +1,333 @@
+{
+  "recorded_utc": "2026-10-20T06:39:00.769184+00:00",
+  "benchmark_commit": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "fastscipy": "0.1.0a2",
+  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.28",
+  "machine": "x86_64",
+  "processor": "x86_64",
+  "logical_cpus": 4,
+  "python": "3.13.16 (main, Oct  9 2026, 20:46:02) [GCC 14.2.1 20250110 (Red Hat 14.2.1-11)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "gcc",
+        "linker": "ld.bfd",
+        "version": "14.2.1",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "gcc",
+        "linker": "ld.bfd",
+        "version": "14.2.1",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "linux"
+      },
+      "build": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "linux"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "scipy-openblas",
+        "found": true,
+        "version": "0.3.34.106.0",
+        "detection method": "pkgconfig",
+        "include directory": "/opt/_internal/cpython-3.13.14/lib/python3.13/site-packages/scipy_openblas64/include",
+        "lib directory": "/opt/_internal/cpython-3.13.14/lib/python3.13/site-packages/scipy_openblas64/lib",
+        "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY SkylakeX MAX_THREADS=64",
+        "pc file directory": "/project/.openblas"
+      },
+      "lapack": {
+        "name": "scipy-openblas",
+        "found": true,
+        "version": "0.3.34.106.0",
+        "detection method": "pkgconfig",
+        "include directory": "/opt/_internal/cpython-3.13.14/lib/python3.13/site-packages/scipy_openblas64/include",
+        "lib directory": "/opt/_internal/cpython-3.13.14/lib/python3.13/site-packages/scipy_openblas64/lib",
+        "openblas configuration": "OpenBLAS 0.3.34.106.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY SkylakeX MAX_THREADS=64",
+        "pc file directory": "/project/.openblas"
+      }
+    },
+    "Python Information": {
+      "path": "/tmp/build-env-au6kdu2e/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "X86_V2"
+      ],
+      "found": [
+        "X86_V3",
+        "X86_V4",
+        "AVX512_ICL"
+      ],
+      "not found": [
+        "AVX512_SPR"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.1,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "tests": {
+      "returncode": 0,
+      "seconds": 187.70852949400023,
+      "peak_rss_bytes": 449273856,
+      "stopped": null
+    },
+    "cluster": {
+      "returncode": 0,
+      "seconds": 4.412344243999996,
+      "peak_rss_bytes": 111616000,
+      "stopped": null
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 19.860333596000146,
+      "peak_rss_bytes": 207503360,
+      "stopped": null
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 10.230425401000048,
+      "peak_rss_bytes": 115961856,
+      "stopped": null
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 36.313868292999814,
+      "peak_rss_bytes": 331251712,
+      "stopped": null
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 21.66633754500026,
+      "peak_rss_bytes": 490725376,
+      "stopped": null
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 50.56323453999994,
+      "peak_rss_bytes": 498225152,
+      "stopped": null
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 5.215349994999997,
+      "peak_rss_bytes": 118468608,
+      "stopped": null
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 26.48124168000004,
+      "peak_rss_bytes": 916619264,
+      "stopped": null
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 19.266035399999964,
+      "peak_rss_bytes": 524525568,
+      "stopped": null
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 7.023072791999766,
+      "peak_rss_bytes": 110608384,
+      "stopped": null
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 34.90722553100022,
+      "peak_rss_bytes": 309080064,
+      "stopped": null
+    },
+    "special": {
+      "returncode": 0,
+      "seconds": 134.33089422000012,
+      "peak_rss_bytes": 524025856,
+      "stopped": null
+    },
+    "stats": {
+      "returncode": 0,
+      "seconds": 34.09649383199985,
+      "peak_rss_bytes": 392654848,
+      "stopped": null
+    },
+    "upstream": {
+      "returncode": 0,
+      "seconds": 968.2326579790001,
+      "peak_rss_bytes": 1139535872,
+      "stopped": null
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.5426414586833421,
+      "speedup_nt": 1.5329629660595063,
+      "all_case_speedup_1t": 1.5426414586833421,
+      "all_case_speedup_nt": 1.5329629660595063
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 4.768152076236121,
+      "speedup_nt": 5.646337806439018,
+      "all_case_speedup_1t": 4.768152076236121,
+      "all_case_speedup_nt": 5.646337806439018
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6987856528920526,
+      "speedup_nt": 1.7060766639295863,
+      "all_case_speedup_1t": 1.6987856528920526,
+      "all_case_speedup_nt": 1.7060766639295863
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.4161908020560623,
+      "speedup_nt": 4.1808847534999725,
+      "all_case_speedup_1t": 2.907180916344317,
+      "all_case_speedup_nt": 3.507594187418416
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.888634392873586,
+      "speedup_nt": 3.926298617089885,
+      "all_case_speedup_1t": 3.888634392873586,
+      "all_case_speedup_nt": 3.926298617089885
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 8.747269970270152,
+      "speedup_nt": 15.08438502501736,
+      "all_case_speedup_1t": 8.747269970270152,
+      "all_case_speedup_nt": 15.08438502501736
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.809071766134868,
+      "speedup_nt": 1.8163342737249475,
+      "all_case_speedup_1t": 1.809071766134868,
+      "all_case_speedup_nt": 1.8163342737249475
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.4741417943614015,
+      "speedup_nt": 4.090705921158031,
+      "all_case_speedup_1t": 3.4741417943614015,
+      "all_case_speedup_nt": 4.090705921158031
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.5705396192235477,
+      "speedup_nt": 4.217001913793302,
+      "all_case_speedup_1t": 3.5705396192235477,
+      "all_case_speedup_nt": 4.217001913793302
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.2832728044423858,
+      "speedup_nt": 1.2856717036985172,
+      "all_case_speedup_1t": 1.2832728044423858,
+      "all_case_speedup_nt": 1.2856717036985172
+    },
+    "spatial": {
+      "cases": 24,
+      "controls": 3,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 0.9926356786738215,
+      "speedup_nt": 1.7682133020192299,
+      "all_case_speedup_1t": 0.9916795452176418,
+      "all_case_speedup_nt": 1.640537191137141
+    },
+    "special": {
+      "cases": 37,
+      "controls": 2,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.0002124765248985,
+      "speedup_nt": 1.8793126498216108,
+      "all_case_speedup_1t": 0.9998449410982754,
+      "all_case_speedup_nt": 1.8154277422544862
+    },
+    "stats": {
+      "cases": 58,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 5.753195883140555,
+      "speedup_nt": 5.906963376850537,
+      "all_case_speedup_1t": 5.753195883140555,
+      "all_case_speedup_nt": 5.906963376850537
+    }
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "7221",
+      "time": "185.577",
+      "timestamp": "2026-10-20T06:39:00.957431+00:00",
+      "hostname": "52866624c341"
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+{
+  "recorded_utc": "2026-10-20T08:17:17.793056+00:00",
+  "benchmark_commit": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "fastscipy": "0.1.0a2",
+  "platform": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "logical_cpus": 3,
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      },
+      "build": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      },
+      "lapack": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      }
+    },
+    "Python Information": {
+      "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/build-env-q3ulyt3x/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "NEON",
+        "NEON_FP16",
+        "NEON_VFPV4",
+        "ASIMD"
+      ],
+      "found": [
+        "ASIMDHP",
+        "ASIMDDP"
+      ],
+      "not found": [
+        "ASIMDFHM"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.1,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "tests": {
+      "returncode": 0,
+      "seconds": 235.2539233340001,
+      "peak_rss_bytes": 723746816,
+      "stopped": null
+    },
+    "cluster": {
+      "returncode": 0,
+      "seconds": 4.940569041000117,
+      "peak_rss_bytes": 103907328,
+      "stopped": null
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 19.364118957999835,
+      "peak_rss_bytes": 300040192,
+      "stopped": null
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 9.994566500000019,
+      "peak_rss_bytes": 118210560,
+      "stopped": null
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 31.869465333000107,
+      "peak_rss_bytes": 455311360,
+      "stopped": null
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 24.297023167000134,
+      "peak_rss_bytes": 715784192,
+      "stopped": null
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 62.09072004100017,
+      "peak_rss_bytes": 1070333952,
+      "stopped": null
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 6.101388709000048,
+      "peak_rss_bytes": 120373248,
+      "stopped": null
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 38.49614683300001,
+      "peak_rss_bytes": 1584742400,
+      "stopped": null
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 33.550701666999885,
+      "peak_rss_bytes": 1136312320,
+      "stopped": null
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 7.541380290999996,
+      "peak_rss_bytes": 106348544,
+      "stopped": null
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 35.04651075000015,
+      "peak_rss_bytes": 587563008,
+      "stopped": null
+    },
+    "special": {
+      "returncode": 0,
+      "seconds": 145.34528658299996,
+      "peak_rss_bytes": 633061376,
+      "stopped": null
+    },
+    "stats": {
+      "returncode": 0,
+      "seconds": 32.4993531250002,
+      "peak_rss_bytes": 661897216,
+      "stopped": null
+    },
+    "upstream": {
+      "returncode": 0,
+      "seconds": 1141.26165375,
+      "peak_rss_bytes": 1846050816,
+      "stopped": null
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6300395008433466,
+      "speedup_nt": 1.6484220112200494,
+      "all_case_speedup_1t": 1.6300395008433466,
+      "all_case_speedup_nt": 1.6484220112200494
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.7254557298926922,
+      "speedup_nt": 4.403997688145229,
+      "all_case_speedup_1t": 3.7254557298926922,
+      "all_case_speedup_nt": 4.403997688145229
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6203872204162353,
+      "speedup_nt": 1.6471528421304005,
+      "all_case_speedup_1t": 1.6203872204162353,
+      "all_case_speedup_nt": 1.6471528421304005
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.6625261424206075,
+      "speedup_nt": 4.354330403389954,
+      "all_case_speedup_1t": 3.0919813012228645,
+      "all_case_speedup_nt": 3.576435773890015
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.8327882537441487,
+      "speedup_nt": 4.810584770133891,
+      "all_case_speedup_1t": 3.8327882537441487,
+      "all_case_speedup_nt": 4.810584770133891
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 11.460837050640507,
+      "speedup_nt": 16.8653598941888,
+      "all_case_speedup_1t": 11.460837050640507,
+      "all_case_speedup_nt": 16.8653598941888
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.5394062669318456,
+      "speedup_nt": 1.5318298924184932,
+      "all_case_speedup_1t": 1.5394062669318456,
+      "all_case_speedup_nt": 1.5318298924184932
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.0964836256542485,
+      "speedup_nt": 3.4665321009276844,
+      "all_case_speedup_1t": 3.0964836256542485,
+      "all_case_speedup_nt": 3.4665321009276844
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.999830061019357,
+      "speedup_nt": 4.297502951650335,
+      "all_case_speedup_1t": 3.999830061019357,
+      "all_case_speedup_nt": 4.297502951650335
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.2821803817694686,
+      "speedup_nt": 1.3041815910765298,
+      "all_case_speedup_1t": 1.2821803817694686,
+      "all_case_speedup_nt": 1.3041815910765298
+    },
+    "spatial": {
+      "cases": 24,
+      "controls": 3,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 0.9891115279053918,
+      "speedup_nt": 1.5747994860668115,
+      "all_case_speedup_1t": 0.9858967509116048,
+      "all_case_speedup_nt": 1.4828584910281943
+    },
+    "special": {
+      "cases": 37,
+      "controls": 2,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 0.9964804722879771,
+      "speedup_nt": 1.8178276484621356,
+      "all_case_speedup_1t": 0.9962718853148939,
+      "all_case_speedup_nt": 1.7594192629709307
+    },
+    "stats": {
+      "cases": 58,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 5.7322806410319425,
+      "speedup_nt": 5.949381617119049,
+      "all_case_speedup_1t": 5.7322806410319425,
+      "all_case_speedup_nt": 5.949381617119049
+    }
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "7221",
+      "time": "233.727",
+      "timestamp": "2026-10-20T08:17:18.011781+00:00",
+      "hostname": "sat12-bq165-00341660-e7dd-48cd-8757-3db2bc9652e7-522B536E2FEA.local"
+    }
+  ]
+}

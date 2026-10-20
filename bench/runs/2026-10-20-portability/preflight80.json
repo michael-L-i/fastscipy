@@ -1,0 +1,176 @@
+{
+  "description": "Derived final overview of the eight-wheel CP313 preflight; individual original reports and source metadata remain unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "validation_only": true,
+  "publish": "none",
+  "conclusion": "failure",
+  "successful_wheel_jobs": 7,
+  "failed_wheel_jobs": 1,
+  "complete_set_verification": "skipped",
+  "pypi": "skipped",
+  "testpypi": "skipped",
+  "release_status": "Not published; this failed preflight does not complete the 32-wheel publication gate",
+  "targets": [
+    {
+      "target": "manylinux-aarch64",
+      "archive": "linux-arm64/release80/",
+      "job_id": 118479156993,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "passed": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "manylinux-x86_64",
+      "archive": "linux-x86_64/release80/",
+      "job_id": 118479157007,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7221
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "musllinux-aarch64",
+      "archive": "musllinux-aarch64/release80/",
+      "job_id": 118479157118,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7221
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "musllinux-x86_64",
+      "archive": "musllinux-x86_64/release80/",
+      "job_id": 118479156975,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7221
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "macos-arm64",
+      "archive": "mac-arm64/release80/",
+      "job_id": 118479157017,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7221
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "macos-x86_64",
+      "archive": "mac-x86_64/release80/",
+      "job_id": 118479156969,
+      "conclusion": "failure",
+      "project": {
+        "tests": 7221,
+        "failures": 32,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7189
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [
+        {
+          "area": "optimize",
+          "nonidentical": [
+            "minimize BFGS rosen n=10 (numerical gradient)"
+          ],
+          "missing_fast_path": []
+        }
+      ],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "windows-amd64",
+      "archive": "windows-x86_64/release80/",
+      "job_id": 118479157177,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 4,
+        "passed": 7217
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 0
+    },
+    {
+      "target": "windows-arm64",
+      "archive": "windows-arm64/release80/",
+      "job_id": 118479157044,
+      "conclusion": "success",
+      "project": {
+        "tests": 7221,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 4,
+        "passed": 7217
+      },
+      "benchmark_cases": 407,
+      "benchmark_failures": [],
+      "upstream_common_executions": 95772,
+      "upstream_changed_outcomes": 0,
+      "upstream_incomplete_pairs": 0,
+      "explicit_reference_quarantine_per_side": 8
+    }
+  ]
+}

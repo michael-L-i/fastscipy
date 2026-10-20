@@ -1,0 +1,169 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "win32"
+ },
+ "cases": {
+  "dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=True": {
+   "scipy_ms": 0.335700000050565,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.16970000001492735,
+   "x1t": 1.9781968180379244,
+   "nt_ms": 0.16939999977694242,
+   "xnt": 1.9817001209716543,
+   "expected_fast_path": true
+  },
+  "dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=False": {
+   "scipy_ms": 0.8478999998260406,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.6006999999499385,
+   "x1t": 1.4115198932856723,
+   "nt_ms": 0.5991999998968822,
+   "xnt": 1.4150534044925864,
+   "expected_fast_path": true
+  },
+  "dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=True": {
+   "scipy_ms": 0.3338000001349428,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.18369999997958075,
+   "x1t": 1.8170930874907267,
+   "nt_ms": 0.18109999996340775,
+   "xnt": 1.8431805643422912,
+   "expected_fast_path": true
+  },
+  "dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=False": {
+   "scipy_ms": 0.8305000001200824,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.6376999999702093,
+   "x1t": 1.3023365221246352,
+   "nt_ms": 0.6356000001233042,
+   "xnt": 1.3066393957818885,
+   "expected_fast_path": true
+  },
+  "dijkstra int32 CSR, scalar source, 200 nodes x100 calls": {
+   "scipy_ms": 3.2111999998960528,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.2513000001490582,
+   "x1t": 2.566291056911633,
+   "nt_ms": 1.253499999847918,
+   "xnt": 2.5617869966379376,
+   "expected_fast_path": true
+  },
+  "connected_components int32 CSR, 200 nodes x100 calls": {
+   "scipy_ms": 4.729200000156197,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.47769999991942313,
+   "x1t": 9.899937201075787,
+   "nt_ms": 0.4776000000674685,
+   "xnt": 9.902010049179488,
+   "expected_fast_path": true
+  },
+  "dijkstra unweighted undirected, grid 100^2, scalar source": {
+   "scipy_ms": 0.9900999998535553,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.2918999998655636,
+   "x1t": 3.3919150404575276,
+   "nt_ms": 0.29450000010911026,
+   "xnt": 3.361969437985501,
+   "expected_fast_path": true
+  },
+  "shortest_path unweighted BFS, grid 600^2, 1 source": {
+   "scipy_ms": 30.041100000062215,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.683899999894493,
+   "x1t": 5.285297067263649,
+   "nt_ms": 5.735200000117402,
+   "xnt": 5.238021341792311,
+   "expected_fast_path": true
+  },
+  "dijkstra unweighted + predecessors, grid 600^2": {
+   "scipy_ms": 28.224999999793,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.822399999942718,
+   "x1t": 4.847657323452646,
+   "nt_ms": 5.7510999999976775,
+   "xnt": 4.907756776930396,
+   "expected_fast_path": true
+  },
+  "dijkstra weighted, 18 sources, grid 300^2": {
+   "scipy_ms": 99.56880000004276,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 70.2736000000641,
+   "x1t": 1.416873477379157,
+   "nt_ms": 38.83469999982481,
+   "xnt": 2.5639132013506463,
+   "expected_fast_path": true
+  },
+  "dijkstra weighted + predecessors, 12 sources, undirected": {
+   "scipy_ms": 150.47760000015842,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 95.37980000004609,
+   "x1t": 1.5776673886932633,
+   "nt_ms": 51.33420000015576,
+   "xnt": 2.9313323281496904,
+   "expected_fast_path": true
+  },
+  "bellman_ford 2000 nodes, 40k edges, 20 sources": {
+   "scipy_ms": 3470.055499999944,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.511900000054084,
+   "x1t": 461.9411200861247,
+   "nt_ms": 3.8491000000249187,
+   "xnt": 901.5238627153046,
+   "expected_fast_path": true
+  },
+  "johnson 2000 nodes, 40k edges, 100 sources": {
+   "scipy_ms": 206.20870000016112,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 36.543799999890325,
+   "x1t": 5.642782086175493,
+   "nt_ms": 19.26799999978357,
+   "xnt": 10.702133070504328,
+   "expected_fast_path": true
+  },
+  "connected_components weak, 1M nodes": {
+   "scipy_ms": 238.0807999998069,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 35.255100000085804,
+   "x1t": 6.753088205656131,
+   "nt_ms": 35.450900000114416,
+   "xnt": 6.715790008124999,
+   "expected_fast_path": true
+  },
+  "connected_components strong, 1M nodes": {
+   "scipy_ms": 211.29949999999553,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 146.84289999991051,
+   "x1t": 1.4389493805973887,
+   "nt_ms": 132.0491999999831,
+   "xnt": 1.6001573655881487,
+   "expected_fast_path": true
+  },
+  "connected_components, 200 nodes x100 calls": {
+   "scipy_ms": 4.662300000063624,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.7447000000411208,
+   "x1t": 6.260641868948813,
+   "nt_ms": 0.7404000000406086,
+   "xnt": 6.297001620486104,
+   "expected_fast_path": true
+  }
+ }
+}

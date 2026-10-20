@@ -1,0 +1,34 @@
+{
+  "description": "Derived from original cibuildwheel log, summary, and Actions metadata; original reports are retained unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479156969,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "target": "macos-x86_64",
+  "job_conclusion": "failure",
+  "wheel_validation_passed": false,
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-macosx_14_0_x86_64.whl",
+  "wheel_sha256": null,
+  "distribution_artifact_uploaded": false,
+  "profile": "release",
+  "maturin": "1.15.0",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed before project validation; it rejects platform/version overrides and checks installed native imports and all 13 component smoke paths",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 21865,
+      "sha256": "0844f56cc35ce8a4cf3b530cdea7785093e6dfb00ff40425fa15b0cd5556e684"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-macos-x86_64-job.log",
+      "bytes": 67645,
+      "sha256": "9a136680a1b2540c3e43a474eccf36e8627d0ea2d293782a404212ecbb9ced61"
+    }
+  ],
+  "project_junit": {
+    "file": "tests.xml",
+    "bytes": 2766024,
+    "sha256": "5633b70fd66f8aa1236ac1dec608a1901da13f9b3fafa4ca78a8d7e1f454c7b9"
+  },
+  "distribution_note": "The wheel built, repaired, and installed, but numerical/fast-path validation failed. No release distribution artifact was uploaded."
+}

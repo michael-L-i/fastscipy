@@ -1,0 +1,33 @@
+{
+  "description": "Derived from original cibuildwheel log, summary, and Actions metadata; original reports are retained unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479156975,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "target": "musllinux-x86_64",
+  "job_conclusion": "success",
+  "wheel_validation_passed": true,
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-musllinux_1_2_x86_64.whl",
+  "wheel_sha256": "a1808d0587f633145fc7cb9cb17b4a5c25711bdc2e78b690700e1a32ebaaf8c3",
+  "distribution_artifact_uploaded": true,
+  "profile": "release",
+  "maturin": "1.15.0",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed before project validation; it rejects platform/version overrides and checks installed native imports and all 13 component smoke paths",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 25636,
+      "sha256": "615c0c4945c8284f1b45f66790128036cf3c01154e6ac4c0b190945432f8972c"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-musllinux-x86_64-job.log",
+      "bytes": 44669,
+      "sha256": "8086402ed280f3cdffecb9303db3cfabbd64e8be3e0f7879cac398ce2a710664"
+    }
+  ],
+  "project_junit": {
+    "file": "tests.xml",
+    "bytes": 818907,
+    "sha256": "aa5259a4099383b9b94e0c6315f77668e01e121f7b43a683e7262cd37a707b8a"
+  }
+}

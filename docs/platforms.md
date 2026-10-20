@@ -21,71 +21,50 @@ Python 3.13 development checks below.
 
 ## Evidence
 
-The [wheel preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
-checks repaired, installed Python 3.13 wheels on all eight target variants.
-The [Intel Mac and Windows x86 development run](https://github.com/michael-L-i/fastscipy/actions/runs/39376214465)
-checks the latest native arithmetic fixes. Completed jobs retain raw logs,
-JUnit results, per-case timings, and resource reports. Inspect each source
-revision and artifact; a workflow still running is not a passing result.
+The [eight-wheel CP313 preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
+finished at source `80dec52`: seven wheel jobs passed and Mac Intel failed
+numerical and fast-path validation. Complete-set verification and both
+publishers were skipped. This is a failed preflight, not release approval.
+The [compact overview](../bench/runs/2026-10-20-portability/preflight80.json)
+retains every target's outcome and archive path.
 
-The following are development checkpoints at different source revisions,
-not final release validation:
+Each job built and repaired its wheel, installed it in an isolated environment,
+and passed installed-package/native smoke checks with default activation and
+no version/platform overrides. Project and benchmark outcomes were:
 
-- macOS arm64: 7,048 project tests passed on each of
-  [Python 3.13](../bench/runs/2026-10-20-portability/mac-arm64/tests-py313.json)
-  and [Python 3.15](../bench/runs/2026-10-20-portability/mac-arm64/tests-py315.json).
-  A separate [paired upstream comparison](../bench/runs/2026-10-20-portability/mac-arm64/upstream-corrected-comparison.json)
-  found no changed outcomes across 95,772 common test executions. Three
-  failures occurred in both the unpatched and patched runs; the report
-  retains those failures, expected collection differences, and the corrected
-  comparison's source revision.
-- macOS arm64, newer revision `b471`: all 7,116 project tests passed on
-  each of [Python 3.13](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py313.json)
-  and [Python 3.15](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py315.json).
-  All 407 benchmark cases across 13 areas matched SciPy and met their expected
-  fast-path checks in the [benchmark report](../bench/runs/2026-10-20-portability/mac-arm64/b471/summary.json).
-  The [paired upstream comparison](../bench/runs/2026-10-20-portability/mac-arm64/b471/upstream-comparison.json)
-  found no changed outcomes across 95,772 common executions, including the
-  same three baseline failures. Its manifest retains the later harness
-  checkout separately from the `b471` benchmark revision.
-- Linux aarch64 (glibc), revision `80dec52`: the official repaired
-  `manylinux_2_28` CP313 wheel passed installed-wheel checks with default
-  activation, all 7,221 project tests, and all 407 benchmark cases across
-  13 areas. All 19 paired upstream partitions completed: 95,772 common
-  executions, no changed outcomes, and no failures. The
-  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-arm64/release80/README.md)
-  retains raw reports, resource scope, and wheel provenance from the
-  [eight-wheel preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130).
-  This validates that wheel checkpoint, not later source changes or the full
-  32-wheel release. Earlier development reports, including the
-  [override-enabled `021c329` run](../bench/runs/2026-10-20-portability/linux-arm64/021/README.md),
-  remain archived separately.
-- Linux x86_64 (glibc), revision `675bd52`: all 7,131 project tests and
-  407 benchmark cases across 13 areas passed. All 19 paired upstream
-  partitions completed: 95,772 common executions, no changed outcomes,
-  no unexpected collection differences, and no failures. The
-  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-x86_64/675/README.md)
-  retains unchanged reports and provenance from
-  [run 39374986938](https://github.com/michael-L-i/fastscipy/actions/runs/39374986938),
-  plus a compact comparison with all 38 raw XML hashes. ndimage achieved
-  8.59× / 14.91× geometric-mean speedups on one/two threads; hosted-VM
-  differences prevent a controlled incremental comparison with the older
-  [4b checkpoint](../bench/runs/2026-10-20-portability/linux-x86_64/4b/README.md),
-  whose four initialization failures are now fixed. The tested source includes
-  candidate platform-gate change `277fc71`, but the workflow still set
-  `FASTSCIPY_ANY_PLATFORM=1`; default activation and final release-wheel
-  validation remain separate pending checks.
-- Windows arm64, revision `b4710e6`: 7,112 project tests passed and four
-  were skipped; all 407 benchmark cases matched SciPy and met their expected
-  fast-path checks. The [checkpoint archive](../bench/runs/2026-10-20-portability/windows-arm64/b471/README.md)
-  retains unchanged reports and provenance from
-  [run 39372506350](https://github.com/michael-L-i/fastscipy/actions/runs/39372506350).
-  Upstream comparison completed 12,324 common executions across ten package
-  partitions without changed outcomes, then unpatched NumPy crashed inside
-  `linalg.solve` during SciPy's `TestSolve.test_structure_detection` reference
-  calculation. Patched linalg and the remaining eight partitions were not
-  run. The archive records this baseline crash and partial coverage; a full
-  upstream comparison is still pending.
+| Official CP313 wheel checkpoint | Project tests | Benchmark identity |
+|---|---|---|
+| [manylinux aarch64](../bench/runs/2026-10-20-portability/linux-arm64/release80/README.md) | 7,221 passed | 407/407 |
+| [manylinux x86_64](../bench/runs/2026-10-20-portability/linux-x86_64/release80/README.md) | 7,221 passed | 407/407 |
+| [musllinux aarch64](../bench/runs/2026-10-20-portability/musllinux-aarch64/release80/README.md) | 7,221 passed | 407/407 |
+| [musllinux x86_64](../bench/runs/2026-10-20-portability/musllinux-x86_64/release80/README.md) | 7,221 passed | 407/407 |
+| [macOS arm64](../bench/runs/2026-10-20-portability/mac-arm64/release80/README.md) | 7,221 passed | 407/407 |
+| [macOS x86_64 — failed](../bench/runs/2026-10-20-portability/mac-x86_64/release80/README.md) | 7,189 passed; 32 failed | 406/407 |
+| [Windows AMD64](../bench/runs/2026-10-20-portability/windows-x86_64/release80/README.md) | 7,217 passed; 4 skipped | 407/407 |
+| [Windows ARM64](../bench/runs/2026-10-20-portability/windows-arm64/release80/README.md) | 7,217 passed; 4 skipped | 407/407 |
+
+All expected benchmark fast paths ran. Mac Intel's project failures comprised
+18 ndimage interpolation fast-path misses, two dense `lsq_linear` identity
+failures, eight sparse iterative-solver identity failures, and four
+`pearsonr`/`linregress` identity failures. Its BFGS numerical-gradient benchmark
+also differed from SciPy. The [failure record](../bench/runs/2026-10-20-portability/mac-x86_64/release80/project-failures.json)
+retains identifiers, excerpts, and full-trace hashes. Later candidate fixes,
+including the Mac selector change, require their own validation.
+
+All eight upstream comparisons completed 19 partition pairs with 95,772
+common executions, no changed outcomes, no incomplete pairs, and no failures.
+Windows ARM visibly skipped the same eight known NumPy-reference crash cases
+on both sides; those cases remain coverage exceptions. Every checkpoint
+retains original project/resource/case JSON, upstream manifests/completion
+records, and a derived comparison with all 38 raw XML hashes. Passing upstream
+comparisons do not override Mac Intel's failed project/benchmark results.
+
+These source-specific CP313 wheel checks do not validate later source changes,
+other Python versions, or the final 32-wheel publication gate. The
+[archive index](../bench/runs/2026-10-20-portability/README.md) separately retains
+earlier development checkpoints, including override-enabled runs and the
+[failed native Intel build](../bench/runs/2026-10-20-portability/mac-x86_64/daf9/README.md)
+from [run 39376214465](https://github.com/michael-L-i/fastscipy/actions/runs/39376214465).
 
 The Windows ARM [bounded reproduction](../bench/runs/2026-10-20-portability/windows-arm64/b471/upstream-crash-reproduction/sources.json)
 independently reproduces eight NumPy reference-solve crashes in baseline and

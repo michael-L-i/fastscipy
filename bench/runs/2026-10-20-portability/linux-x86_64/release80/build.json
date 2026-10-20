@@ -1,0 +1,10 @@
+{
+  "returncode": 0,
+  "seconds": 4076.133145304,
+  "peak_rss_bytes": 94109696,
+  "stopped": null,
+  "rss_scope": "host_cibuildwheel_process_tree_excludes_docker_containers",
+  "container_memory_limit_bytes": 6442450944,
+  "container_cpu_limit": 2,
+  "container_peak_memory_bytes": null
+}

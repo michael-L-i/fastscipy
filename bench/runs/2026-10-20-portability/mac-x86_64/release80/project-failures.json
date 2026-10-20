@@ -1,0 +1,319 @@
+{
+  "description": "Derived compact failure identifiers/messages; full exact output remains in raw tests.xml/tests.log outside git",
+  "raw_project_xml": {
+    "file": "tests.xml",
+    "bytes": 2766024,
+    "sha256": "5633b70fd66f8aa1236ac1dec608a1901da13f9b3fafa4ca78a8d7e1f454c7b9"
+  },
+  "raw_project_log": {
+    "file": "tests.log",
+    "bytes": 1914950,
+    "sha256": "77dbb612662ae4be93762a160cde3bdecda7bca9c7887cc2659298ffd2c775b5"
+  },
+  "groups": [
+    {
+      "module": "tests.test_ndimage",
+      "function": "test_spline_zoom_shift",
+      "kind": "fast-path miss",
+      "count": 6
+    },
+    {
+      "module": "tests.test_ndimage",
+      "function": "test_affine_rotate_map_coordinates",
+      "kind": "fast-path miss",
+      "count": 12
+    },
+    {
+      "module": "tests.test_optimize",
+      "function": "test_lsq_linear_dense_unbounded",
+      "kind": "identity mismatch",
+      "count": 2
+    },
+    {
+      "module": "tests.test_sparse_linalg",
+      "function": "test_solver_results_and_iteration_history",
+      "kind": "identity mismatch",
+      "count": 7
+    },
+    {
+      "module": "tests.test_sparse_linalg",
+      "function": "test_iterative_rectangular_least_squares",
+      "kind": "identity mismatch",
+      "count": 1
+    },
+    {
+      "module": "tests.test_stats",
+      "function": "test_function_randomized",
+      "kind": "identity mismatch",
+      "count": 4
+    }
+  ],
+  "failures": [
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-4]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-7]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-11]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-4]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-7]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-11]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "b5e34cfe3a58b1b87cc59060cdfe0df7d197ff4841701676d5bbc8f2da7ed9a9"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-6]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-7]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-8]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-9]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-10]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-11]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-6]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-7]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-8]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-9]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-10]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-11]",
+      "kind": "fast-path miss",
+      "message": "AssertionError: fast path did not run",
+      "message_truncated": false,
+      "complete_message_sha256": "eee4374c1bc7ed4bfe6b61ace36e0462209d18d5a2c5e976dcb63b98aa77e72c",
+      "complete_trace_sha256": "bc5bc97b40c8e96f4a310c76430f4ccaa6b638b63c471efb338c264f8208151d"
+    },
+    {
+      "test": "tests.test_optimize::test_lsq_linear_dense_unbounded[1-shape4]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n       message: The unconstrained solution is optimal.\n       success: True\n        status: 3\n           fun: [-9.726e-01 -1.591e-01 ... -1.105e-01 -2.310e-01]\n             x: [ 1.472e-01 -3.131e-01 -1.986e-01  2.353e-02  5.921e-02\n                  1.907e-01 -7.983e-02 -1.226e-01  1.364e-01  1.173e-01]\n           nit: 0\n          cost: 10.047381825512833\n    optimality: 1.1546319456101628e-14\n   active_mask: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00\n                  0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00]\n unbounded_sol: (array([ 1.472e-01, -3.131e-01, -1.986e-01,  2.353e-02,\n                        5.921e-02,  1.907e-01, -7.983e-02, -1.226e-01,\n                        1.364e-01,  1.173e-01]), array([ 2.009e+01]), np.int32(10), array([ 8.081e+00,  7.919e+00,  7.078e+00,  6.856e+00,\n                        6.426e+00,  6.210e+00,  5.267e+00,  4.812e+00,\n                        4.646e+00,  3.001e+00]))\n       message: The unconstrained solution is optimal.\n       success: True\n        status: 3\n           fun: [-9.726e-01 -1.591e-01 ... -1.105e-01 -2.310e-01]\n             x: [ 1.472e-01 -3.131e-01 -1.986e-01  2.353e-02  5.921e-02\n                  1.907e-01 -7.983e-02 -1.226e-01  1.364e-01  1.173e-01]\n           nit: 0\n          cost: 10.047381825512835\n    optimality: 1.1546319456101628e-14\n   active_mask: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00\n                  0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00]\n unbounded_sol: (array([ 1.472e-01, -3.131e-01, -1.986e-01,  2.353e-02,\n                        5.921e-02,  1.907e-01, -7.983e-02, -1.226e-01,\n                        1.364e-01,  1.173e-01]), array([ 2.009e+01]), np.int32(10), array([ 8.081e+00,  7.919e+00,  7.078e+00,  6.856e+00,\n                        6.426e+00,  6.210e+00,  5.267e+00,  4.812e+00,\n                        4.646e+00,  3.001e+00]))",
+      "message_truncated": false,
+      "complete_message_sha256": "f0b02d6fb5f7e4102810619c08cfe1ce96c7b7fc20a2e8d535903b5511441a03",
+      "complete_trace_sha256": "e6cc567c157be2bf235de12fc63c36a7d20a201aa59268cf6ec53e7b084c08bd"
+    },
+    {
+      "test": "tests.test_optimize::test_lsq_linear_dense_unbounded[2-shape4]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n       message: The unconstrained solution is optimal.\n       success: True\n        status: 3\n           fun: [-9.726e-01 -1.591e-01 ... -1.105e-01 -2.310e-01]\n             x: [ 1.472e-01 -3.131e-01 -1.986e-01  2.353e-02  5.921e-02\n                  1.907e-01 -7.983e-02 -1.226e-01  1.364e-01  1.173e-01]\n           nit: 0\n          cost: 10.047381825512835\n    optimality: 1.1546319456101628e-14\n   active_mask: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00\n                  0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00]\n unbounded_sol: (array([ 1.472e-01, -3.131e-01, -1.986e-01,  2.353e-02,\n                        5.921e-02,  1.907e-01, -7.983e-02, -1.226e-01,\n                        1.364e-01,  1.173e-01]), array([ 2.009e+01]), np.int32(10), array([ 8.081e+00,  7.919e+00,  7.078e+00,  6.856e+00,\n                        6.426e+00,  6.210e+00,  5.267e+00,  4.812e+00,\n                        4.646e+00,  3.001e+00]))\n       message: The unconstrained solution is optimal.\n       success: True\n        status: 3\n           fun: [-9.726e-01 -1.591e-01 ... -1.105e-01 -2.310e-01]\n             x: [ 1.472e-01 -3.131e-01 -1.986e-01  2.353e-02  5.921e-02\n                  1.907e-01 -7.983e-02 -1.226e-01  1.364e-01  1.173e-01]\n           nit: 0\n          cost: 10.047381825512833\n    optimality: 1.1546319456101628e-14\n   active_mask: [ 0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00\n                  0.000e+00  0.000e+00  0.000e+00  0.000e+00  0.000e+00]\n unbounded_sol: (array([ 1.472e-01, -3.131e-01, -1.986e-01,  2.353e-02,\n                        5.921e-02,  1.907e-01, -7.983e-02, -1.226e-01,\n                        1.364e-01,  1.173e-01]), array([ 2.009e+01]), np.int32(10), array([ 8.081e+00,  7.919e+00,  7.078e+00,  6.856e+00,\n                        6.426e+00,  6.210e+00,  5.267e+00,  4.812e+00,\n                        4.646e+00,  3.001e+00]))",
+      "message_truncated": false,
+      "complete_message_sha256": "704270b227f84b12a5fa679722cf055df4d8099014f2fb58d3367303d8bf126f",
+      "complete_trace_sha256": "2aeb551288a73024a9241edce19214fb9f1e019d24ffd2dcae96e72131def3f5"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-cg]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231784e-02,  2.14446494e-01,  1.16440639e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314398e-02,\n        8.45865884e-02,  1.12875127e-01,  1.89971721e-01, -3.94986045e-02,\n        6.05080713e-03,  1.14498835e-01, -7.95551158e-02,  1.56971911e-02,\n       -3.78893278e-02, -1.47756261e-03,  2.13855727e-02, -9.26060262e-02,\n       -4.86358405e-02, -6.24143957e-02, -1.14841981e-02, -2.66360979e-02,\n        5.73734757e-02, -2.01547272e-02,  6.06143471e-02, -1.28108070e-02,\n        8.85723092e-03,  1.42561884e-03, -1.49263137e-04, -3.40150945e-02,\n        9.50904301e-03,  1.12040692e-02,  6.99270378e-03,  1.65995739e-02,\n       -2.14475888e-02, -8.12522542e-03, -1.71615815e-02, -4.16758844e-02,\n        8.07971466e-03, -1.47007284e-02, -1.36477362e-03,  5.00416632e-02,\n        5.57879027e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060894e-03,  3.44228994e-02, -2.35773311e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844459e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599020e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155139e-03,  4.54860630e-03,\n        1.18055936e-02, -5.74388083e-03, -1.22654186e-02,  8.79846062e-03,\n       -2.38463652e-03, -7.31850872e-03,  8.28004514e-03, -2.70680472e-03,\n        4.81338918e-03, -1.21360933e-02,  8.90159848e-03, -1.16625958e-02,\n       -4.91136435e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455493e-03, -1.95298837e-02,  1.60913569e-03, -4.34814052e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357060e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911851e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416262e-03, -6.81956225e-03]), 0), [array([-0.02348049,  0.00587759,  0.01583935,  0.01103431, -0.01950131,\n        0.02",
+      "message_truncated": true,
+      "complete_message_sha256": "77cc4658112d14ef3366b61ee30c15711525491b0b3d5e6e3c592b5dc5f43939",
+      "complete_trace_sha256": "ed18516d71afcd213d89f97c8784aec926a55031054a056e88141a3252bcc02c"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicg]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231784e-02,  2.14446494e-01,  1.16440639e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314398e-02,\n        8.45865884e-02,  1.12875127e-01,  1.89971721e-01, -3.94986045e-02,\n        6.05080713e-03,  1.14498835e-01, -7.95551158e-02,  1.56971911e-02,\n       -3.78893278e-02, -1.47756261e-03,  2.13855727e-02, -9.26060262e-02,\n       -4.86358405e-02, -6.24143957e-02, -1.14841981e-02, -2.66360979e-02,\n        5.73734757e-02, -2.01547272e-02,  6.06143471e-02, -1.28108070e-02,\n        8.85723092e-03,  1.42561884e-03, -1.49263137e-04, -3.40150945e-02,\n        9.50904301e-03,  1.12040692e-02,  6.99270378e-03,  1.65995739e-02,\n       -2.14475888e-02, -8.12522542e-03, -1.71615815e-02, -4.16758844e-02,\n        8.07971466e-03, -1.47007284e-02, -1.36477362e-03,  5.00416632e-02,\n        5.57879027e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060894e-03,  3.44228994e-02, -2.35773311e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844459e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599020e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155139e-03,  4.54860630e-03,\n        1.18055936e-02, -5.74388083e-03, -1.22654186e-02,  8.79846062e-03,\n       -2.38463652e-03, -7.31850872e-03,  8.28004514e-03, -2.70680472e-03,\n        4.81338918e-03, -1.21360933e-02,  8.90159848e-03, -1.16625958e-02,\n       -4.91136435e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455493e-03, -1.95298837e-02,  1.60913569e-03, -4.34814052e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357060e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911851e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416262e-03, -6.81956225e-03]), 0), [array([-0.02348049,  0.00587759,  0.01583935,  0.01103431, -0.01950131,\n        0.02",
+      "message_truncated": true,
+      "complete_message_sha256": "77cc4658112d14ef3366b61ee30c15711525491b0b3d5e6e3c592b5dc5f43939",
+      "complete_trace_sha256": "ed18516d71afcd213d89f97c8784aec926a55031054a056e88141a3252bcc02c"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-lgmres]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419026e-01,  3.74231788e-02,  2.14446495e-01,  1.16440638e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314397e-02,\n        8.45865885e-02,  1.12875127e-01,  1.89971721e-01, -3.94986045e-02,\n        6.05080712e-03,  1.14498835e-01, -7.95551158e-02,  1.56971911e-02,\n       -3.78893278e-02, -1.47756255e-03,  2.13855726e-02, -9.26060262e-02,\n       -4.86358404e-02, -6.24143957e-02, -1.14841981e-02, -2.66360978e-02,\n        5.73734756e-02, -2.01547272e-02,  6.06143471e-02, -1.28108069e-02,\n        8.85723089e-03,  1.42561884e-03, -1.49263128e-04, -3.40150945e-02,\n        9.50904300e-03,  1.12040692e-02,  6.99270376e-03,  1.65995738e-02,\n       -2.14475888e-02, -8.12522541e-03, -1.71615815e-02, -4.16758844e-02,\n        8.07971463e-03, -1.47007284e-02, -1.36477363e-03,  5.00416633e-02,\n        5.57879030e-03,  2.58598549e-03,  2.26720453e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060892e-03,  3.44228994e-02, -2.35773310e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844458e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599029e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155136e-03,  4.54860628e-03,\n        1.18055936e-02, -5.74388085e-03, -1.22654186e-02,  8.79846060e-03,\n       -2.38463651e-03, -7.31850872e-03,  8.28004516e-03, -2.70680471e-03,\n        4.81338917e-03, -1.21360933e-02,  8.90159849e-03, -1.16625958e-02,\n       -4.91136436e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455492e-03, -1.95298837e-02,  1.60913571e-03, -4.34814051e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357058e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911842e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416262e-03, -6.81956224e-03]), 0), [array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n       0.",
+      "message_truncated": true,
+      "complete_message_sha256": "1e6723fea15eb031ff5d749ca61007114886ca781c7d7b8bf8997989fea4fc1a",
+      "complete_trace_sha256": "02a1417e50d2c7819802a5333e7483a311fb242634655321b15478a8a2f618c2"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-qmr]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231784e-02,  2.14446494e-01,  1.16440639e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314398e-02,\n        8.45865884e-02,  1.12875127e-01,  1.89971721e-01, -3.94986045e-02,\n        6.05080716e-03,  1.14498835e-01, -7.95551158e-02,  1.56971911e-02,\n       -3.78893279e-02, -1.47756259e-03,  2.13855726e-02, -9.26060261e-02,\n       -4.86358405e-02, -6.24143957e-02, -1.14841982e-02, -2.66360979e-02,\n        5.73734757e-02, -2.01547273e-02,  6.06143471e-02, -1.28108069e-02,\n        8.85723091e-03,  1.42561884e-03, -1.49263136e-04, -3.40150945e-02,\n        9.50904300e-03,  1.12040692e-02,  6.99270376e-03,  1.65995738e-02,\n       -2.14475888e-02, -8.12522542e-03, -1.71615815e-02, -4.16758844e-02,\n        8.07971466e-03, -1.47007284e-02, -1.36477362e-03,  5.00416632e-02,\n        5.57879028e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060893e-03,  3.44228994e-02, -2.35773311e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844459e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599029e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155138e-03,  4.54860629e-03,\n        1.18055936e-02, -5.74388084e-03, -1.22654186e-02,  8.79846061e-03,\n       -2.38463652e-03, -7.31850873e-03,  8.28004515e-03, -2.70680471e-03,\n        4.81338917e-03, -1.21360933e-02,  8.90159849e-03, -1.16625958e-02,\n       -4.91136436e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455492e-03, -1.95298837e-02,  1.60913570e-03, -4.34814051e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357059e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911850e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416262e-03, -6.81956225e-03]), 0), [array([-0.01774024,  0.00444071,  0.01196712,  0.00833677, -0.01473385,\n        0.01",
+      "message_truncated": true,
+      "complete_message_sha256": "2008f51606c14a52771db96a47b33d4879f970653730033dbe59eab971be7eb4",
+      "complete_trace_sha256": "3694ec6e6d325c5b900a0e9146757132e724a16559d0337a5b8eee093e7d5513"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-tfqmr]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231784e-02,  2.14446494e-01,  1.16440639e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314396e-02,\n        8.45865886e-02,  1.12875127e-01,  1.89971721e-01, -3.94986045e-02,\n        6.05080703e-03,  1.14498835e-01, -7.95551158e-02,  1.56971910e-02,\n       -3.78893279e-02, -1.47756251e-03,  2.13855726e-02, -9.26060262e-02,\n       -4.86358404e-02, -6.24143957e-02, -1.14841981e-02, -2.66360978e-02,\n        5.73734757e-02, -2.01547272e-02,  6.06143472e-02, -1.28108070e-02,\n        8.85723089e-03,  1.42561884e-03, -1.49263110e-04, -3.40150945e-02,\n        9.50904302e-03,  1.12040692e-02,  6.99270376e-03,  1.65995738e-02,\n       -2.14475887e-02, -8.12522540e-03, -1.71615815e-02, -4.16758844e-02,\n        8.07971463e-03, -1.47007284e-02, -1.36477363e-03,  5.00416633e-02,\n        5.57879029e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060893e-03,  3.44228994e-02, -2.35773310e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844458e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599034e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155136e-03,  4.54860628e-03,\n        1.18055936e-02, -5.74388085e-03, -1.22654186e-02,  8.79846060e-03,\n       -2.38463651e-03, -7.31850872e-03,  8.28004516e-03, -2.70680472e-03,\n        4.81338917e-03, -1.21360933e-02,  8.90159849e-03, -1.16625958e-02,\n       -4.91136436e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455492e-03, -1.95298837e-02,  1.60913571e-03, -4.34814050e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357059e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911850e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416262e-03, -6.81956225e-03]), 0), [array([-0.01774024,  0.00444071,  0.01196712,  0.00833677, -0.01473385,\n        0.01",
+      "message_truncated": true,
+      "complete_message_sha256": "4bca07e2bcb9a464d6d42d180a00c381e555cd36f9635b4cd078fa91904e9909",
+      "complete_trace_sha256": "e1c46c7ba3fe7244fd5470d10db25360bf85a25463a4acc02999a0efc94bb4a6"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-gcrotmk]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231798e-02,  2.14446494e-01,  1.16440638e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314398e-02,\n        8.45865886e-02,  1.12875127e-01,  1.89971721e-01, -3.94986047e-02,\n        6.05080701e-03,  1.14498835e-01, -7.95551158e-02,  1.56971909e-02,\n       -3.78893278e-02, -1.47756249e-03,  2.13855726e-02, -9.26060262e-02,\n       -4.86358404e-02, -6.24143958e-02, -1.14841981e-02, -2.66360978e-02,\n        5.73734757e-02, -2.01547272e-02,  6.06143472e-02, -1.28108070e-02,\n        8.85723087e-03,  1.42561883e-03, -1.49263090e-04, -3.40150945e-02,\n        9.50904305e-03,  1.12040692e-02,  6.99270377e-03,  1.65995738e-02,\n       -2.14475887e-02, -8.12522540e-03, -1.71615815e-02, -4.16758843e-02,\n        8.07971462e-03, -1.47007284e-02, -1.36477363e-03,  5.00416633e-02,\n        5.57879029e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060892e-03,  3.44228994e-02, -2.35773310e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844459e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599039e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155137e-03,  4.54860629e-03,\n        1.18055936e-02, -5.74388085e-03, -1.22654186e-02,  8.79846060e-03,\n       -2.38463652e-03, -7.31850872e-03,  8.28004515e-03, -2.70680471e-03,\n        4.81338917e-03, -1.21360933e-02,  8.90159850e-03, -1.16625958e-02,\n       -4.91136436e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455492e-03, -1.95298837e-02,  1.60913571e-03, -4.34814050e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357059e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911852e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416261e-03, -6.81956225e-03]), 0), [array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n       0.",
+      "message_truncated": true,
+      "complete_message_sha256": "512945d716f396d5e1766cbcd2d38793e54d48de7319e1dc413fdaa218045b24",
+      "complete_trace_sha256": "059916dee1ae5780a1b369dbe19e2806061e811597c621df48e70b993610882a"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-gcrotmk]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n((array([-5.69419029e-01,  3.74231798e-02,  2.14446494e-01,  1.16440638e-01,\n       -1.37987397e-01,  1.50475882e-01,  1.02632415e-01,  8.87314398e-02,\n        8.45865886e-02,  1.12875127e-01,  1.89971721e-01, -3.94986047e-02,\n        6.05080701e-03,  1.14498835e-01, -7.95551158e-02,  1.56971909e-02,\n       -3.78893278e-02, -1.47756249e-03,  2.13855726e-02, -9.26060262e-02,\n       -4.86358404e-02, -6.24143958e-02, -1.14841981e-02, -2.66360978e-02,\n        5.73734757e-02, -2.01547272e-02,  6.06143472e-02, -1.28108070e-02,\n        8.85723087e-03,  1.42561883e-03, -1.49263090e-04, -3.40150945e-02,\n        9.50904305e-03,  1.12040692e-02,  6.99270377e-03,  1.65995738e-02,\n       -2.14475887e-02, -8.12522540e-03, -1.71615815e-02, -4.16758843e-02,\n        8.07971462e-03, -1.47007284e-02, -1.36477363e-03,  5.00416633e-02,\n        5.57879029e-03,  2.58598549e-03,  2.26720454e-02,  2.60388042e-02,\n        3.64229359e-02, -9.53060892e-03,  3.44228994e-02, -2.35773310e-03,\n       -2.16270118e-02, -1.69059535e-02,  1.97547576e-02,  1.37450469e-02,\n        2.20974601e-02, -1.54873721e-02, -5.95844459e-03, -1.99460704e-02,\n       -3.20279125e-02, -3.43599039e-04,  2.48613856e-02,  1.72117029e-02,\n       -1.15142572e-02,  1.72768937e-02, -8.32155137e-03,  4.54860629e-03,\n        1.18055936e-02, -5.74388085e-03, -1.22654186e-02,  8.79846060e-03,\n       -2.38463652e-03, -7.31850872e-03,  8.28004515e-03, -2.70680471e-03,\n        4.81338917e-03, -1.21360933e-02,  8.90159850e-03, -1.16625958e-02,\n       -4.91136436e-03, -2.24971005e-02,  1.36706844e-02,  1.21299406e-03,\n        5.27455492e-03, -1.95298837e-02,  1.60913571e-03, -4.34814050e-03,\n        1.31808206e-02, -1.71649560e-02,  3.80357059e-03,  1.13028997e-02,\n       -1.26186931e-02,  1.02284820e-03, -1.12878142e-02,  4.04911852e-04,\n        3.46950971e-03,  1.33287040e-02,  1.71416261e-03, -6.81956225e-03]), 0), [array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n       0.",
+      "message_truncated": true,
+      "complete_message_sha256": "512945d716f396d5e1766cbcd2d38793e54d48de7319e1dc413fdaa218045b24",
+      "complete_trace_sha256": "059916dee1ae5780a1b369dbe19e2806061e811597c621df48e70b993610882a"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_iterative_rectangular_least_squares[1-float64-lsqr]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: results differ:\n(array([-0.95908671, -0.08199668,  0.83749449, -0.10290868, -0.81353933,\n       -0.03978334,  0.41763236]), 2, 7, 2.2453583544943894, 2.2453583544943894, 9.593675560150746, 10.980415423226761, np.float64(4.8201177818300874e-15), 1.573659345299086, array([0., 0., 0., 0., 0., 0., 0.]))\n(array([-0.95908671, -0.08199668,  0.83749449, -0.10290868, -0.81353933,\n       -0.03978334,  0.41763236]), 2, 7, 2.2453583544943894, 2.2453583544943894, 9.593675560150748, 10.980415423226763, np.float64(4.819585619298557e-15), 1.573659345299086, array([0., 0., 0., 0., 0., 0., 0.]))",
+      "message_truncated": false,
+      "complete_message_sha256": "00b900ba1204ba29ba0b8569b043898212e0b615184dcd66b0a7586d4d7cb461",
+      "complete_trace_sha256": "2fa5844392eb2c187e28f0e68dd1e2fd70369173e5de1681c31bafe26df52280"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[1t-pearsonr]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: (PearsonRResult(statistic=np.float64(-0.001214540249186609), pvalue=np.float64(0.49745890202062426)), [])\n  (PearsonRResult(statistic=np.float64(-0.0012145402491865812), pvalue=np.float64(0.497458902020624)), [])\nassert (False)\n +  where False = identical(PearsonRResult(statistic=np.float64(-0.001214540249186609), pvalue=np.float64(0.49745890202062426)), PearsonRResult(statistic=np.float64(-0.0012145402491865812), pvalue=np.float64(0.497458902020624)))",
+      "message_truncated": false,
+      "complete_message_sha256": "7dc8ac66423cb681331b87d7d43631628125e1ef2a2dfa51bf8ed5561e44a4e6",
+      "complete_trace_sha256": "234130bbd7711fac5b350e1d696181ad5be56a2ebef494ec9bbde625d89c4414"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[1t-linregress]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: (LinregressResult(slope=np.float64(0.07393007581563352), intercept=np.float64(2.3860816220515626), rvalue=np.float64(0.06276041203542133), pvalue=np.float64(0.7324782648061066), stderr=np.float64(0.11875866967922821), intercept_stderr=np.float64(0.12189156112138261)), [])\n  (LinregressResult(slope=np.float64(0.0739300758156335), intercept=np.float64(2.3860816220515626), rvalue=np.float64(0.0627604120354213), pvalue=np.float64(0.7324782648061063), stderr=np.float64(0.11875866967922824), intercept_stderr=np.float64(0.12189156112138264)), [])\nassert (False)\n +  where False = identical(LinregressResult(slope=np.float64(0.07393007581563352), intercept=np.float64(2.3860816220515626), rvalue=np.float64(0.....float64(0.7324782648061066), stderr=np.float64(0.11875866967922821), intercept_stderr=np.float64(0.12189156112138261)), LinregressResult(slope=np.float64(0.0739300758156335), intercept=np.float64(2.3860816220515626), rvalue=np.float64(0.0....float64(0.7324782648061063), stderr=np.float64(0.11875866967922824), intercept_stderr=np.float64(0.12189156112138264)))",
+      "message_truncated": false,
+      "complete_message_sha256": "ef68ae233767e5d7181c56b3236c6cd7bca4e9cd92fe35912546ac2a83fd7d20",
+      "complete_trace_sha256": "d4c92308b0cae24db39647e362250a2bb95a9d61eb020f5a864e05a652d1c614"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-pearsonr]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: (PearsonRResult(statistic=np.float64(-0.13938761040121717), pvalue=np.float64(0.8640060500910082)), [])\n  (PearsonRResult(statistic=np.float64(-0.1393876104012172), pvalue=np.float64(0.8640060500910082)), [])\nassert (False)\n +  where False = identical(PearsonRResult(statistic=np.float64(-0.13938761040121717), pvalue=np.float64(0.8640060500910082)), PearsonRResult(statistic=np.float64(-0.1393876104012172), pvalue=np.float64(0.8640060500910082)))",
+      "message_truncated": false,
+      "complete_message_sha256": "bdc5438d35f7b22c995968dc9976c7d8100ce5e3880892771f63679aac2a0f46",
+      "complete_trace_sha256": "8c904629b177344bb9ac7b431af3443f71ab1f9ceac39d47aef248cf92ac353b"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-linregress]",
+      "kind": "identity mismatch",
+      "message": "AssertionError: (LinregressResult(slope=np.float64(0.02066393625474198), intercept=np.float64(-0.030970148216992954), rvalue=np.float64(0.03166464555162772), pvalue=np.float64(0.9308029960381536), stderr=np.float64(0.23060865196442343), intercept_stderr=np.float64(0.19680049361850313)), [])\n  (LinregressResult(slope=np.float64(0.02066393625474194), intercept=np.float64(-0.030970148216992958), rvalue=np.float64(0.03166464555162766), pvalue=np.float64(0.9308029960381538), stderr=np.float64(0.23060865196442343), intercept_stderr=np.float64(0.19680049361850313)), [])\nassert (False)\n +  where False = identical(LinregressResult(slope=np.float64(0.02066393625474198), intercept=np.float64(-0.030970148216992954), rvalue=np.float64....float64(0.9308029960381536), stderr=np.float64(0.23060865196442343), intercept_stderr=np.float64(0.19680049361850313)), LinregressResult(slope=np.float64(0.02066393625474194), intercept=np.float64(-0.030970148216992958), rvalue=np.float64....float64(0.9308029960381538), stderr=np.float64(0.23060865196442343), intercept_stderr=np.float64(0.19680049361850313)))",
+      "message_truncated": false,
+      "complete_message_sha256": "41fd46707641dbc25728a7832b70f907d802488166eccd051fdb27d4ce4eb0c0",
+      "complete_trace_sha256": "539297e0b48df10305aa515e857f7407d6cd469d5a7800ec25171e7a7adb5c05"
+    }
+  ],
+  "benchmark_failures": [
+    {
+      "area": "optimize",
+      "nonidentical": [
+        "minimize BFGS rosen n=10 (numerical gradient)"
+      ],
+      "missing_fast_path": []
+    }
+  ],
+  "trace_hash_encoding": "SHA256 of UTF-8 encoded XML-decoded message/text strings"
+}

@@ -1,0 +1,507 @@
+{
+  "description": "Derived from all 38 completed raw JUnit records; no tests rerun or results reused from another run",
+  "manifest": {
+    "python": "3.13.16 (main, Oct  9 2026, 20:43:12) [Clang 22.1.8 ]",
+    "executable": "/tmp/tmp.kfdlFn/venv/bin/python",
+    "revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "fastscipy": "0.1.0a2"
+    },
+    "scipy_available_memory": "2048Mib",
+    "batches": [
+      [
+        "--pyargs",
+        "scipy._lib"
+      ],
+      [
+        "--pyargs",
+        "scipy.cluster"
+      ],
+      [
+        "--pyargs",
+        "scipy.constants"
+      ],
+      [
+        "--pyargs",
+        "scipy.datasets"
+      ],
+      [
+        "--pyargs",
+        "scipy.differentiate"
+      ],
+      [
+        "--pyargs",
+        "scipy.fft"
+      ],
+      [
+        "--pyargs",
+        "scipy.fftpack"
+      ],
+      [
+        "--pyargs",
+        "scipy.integrate"
+      ],
+      [
+        "--pyargs",
+        "scipy.interpolate"
+      ],
+      [
+        "--pyargs",
+        "scipy.io"
+      ],
+      [
+        "--pyargs",
+        "scipy.linalg"
+      ],
+      [
+        "--pyargs",
+        "scipy.ndimage"
+      ],
+      [
+        "--pyargs",
+        "scipy.odr"
+      ],
+      [
+        "--pyargs",
+        "scipy.optimize"
+      ],
+      [
+        "--pyargs",
+        "scipy.signal"
+      ],
+      [
+        "--pyargs",
+        "scipy.sparse"
+      ],
+      [
+        "--pyargs",
+        "scipy.spatial"
+      ],
+      [
+        "--pyargs",
+        "scipy.special"
+      ],
+      [
+        "--pyargs",
+        "scipy.stats"
+      ]
+    ],
+    "paired_quarantine": {
+      "plugin": "scipy_upstream_quarantine",
+      "source_sha256": "ead990fbe13a21611634e37e50f4fdab5006c504e8847e3204a43fca0ebb3051",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs"
+    }
+  },
+  "run": {
+    "returncode": 0,
+    "seconds": 1961.52348781,
+    "peak_rss_bytes": 1145122816,
+    "stopped": null
+  },
+  "completed_partition_pairs": 19,
+  "incomplete_partition_pairs": 0,
+  "common_test_executions": 95772,
+  "changed_outcomes": [],
+  "unexpected_missing": [],
+  "unexpected_extra": [],
+  "expected_baseline_only": 684,
+  "expected_patched_only_skips": 2,
+  "plain_outcomes": {
+    "passed": 88031,
+    "skipped": 8425
+  },
+  "patched_outcomes": {
+    "passed": 87347,
+    "skipped": 8427
+  },
+  "unchanged_failures": [],
+  "explicit_reference_quarantine_per_side": 0,
+  "quarantined_cases": [],
+  "raw_junit_files": [
+    {
+      "file": "0-False.xml",
+      "bytes": 250105,
+      "sha256": "d387857a5c70ab3ab327a22d2c484c4448bac77887dbfafe57b62fc6b87daf8f"
+    },
+    {
+      "file": "0-True.xml",
+      "bytes": 250105,
+      "sha256": "dd2fc1fc63566110b7a3a6eaaebf09ab9201024b36c0b30955c997f02ce65048"
+    },
+    {
+      "file": "1-False.xml",
+      "bytes": 28436,
+      "sha256": "b00d5d66f26a3f8ed89806ed91dec409f7a25875d9f322fe1042185363e78bc4"
+    },
+    {
+      "file": "1-True.xml",
+      "bytes": 28436,
+      "sha256": "754261f27910b6ab5e9048f15ea8962e6b4d17f3d1576a5e581449be0897f594"
+    },
+    {
+      "file": "2-False.xml",
+      "bytes": 1743,
+      "sha256": "efa97b9c58f7ffde0d23859f7ebe49a11a2b8beab5f61bb065a12773c7d0318b"
+    },
+    {
+      "file": "2-True.xml",
+      "bytes": 1743,
+      "sha256": "6966e6b99e09a1ae6435b9443b1db4d4616206337f69f9d4ae99ebab1d99f00d"
+    },
+    {
+      "file": "3-False.xml",
+      "bytes": 681,
+      "sha256": "4e06fe13b24435082c25289ad4ea7cac88c711c06a7c3dab02723fe043fa076b"
+    },
+    {
+      "file": "3-True.xml",
+      "bytes": 681,
+      "sha256": "ed75cb6035c89f01df3a53d761b45e6ff00d8e77350d728546c5129d73e8bf33"
+    },
+    {
+      "file": "4-False.xml",
+      "bytes": 22603,
+      "sha256": "dbd73381f5a4ffe1c15ff01c66f20100006b441990781b7a89777572a0f680f3"
+    },
+    {
+      "file": "4-True.xml",
+      "bytes": 22603,
+      "sha256": "f9639652a816b38501f9b8af594d061eb91b29cfd29e8a3f93190fcde0b60e32"
+    },
+    {
+      "file": "5-False.xml",
+      "bytes": 734033,
+      "sha256": "a202e4a92abc4fdd7b6f3330852c66c241e937073ad58b0fd88798d509e7e47a"
+    },
+    {
+      "file": "5-True.xml",
+      "bytes": 734033,
+      "sha256": "bbc91287ebda87643de271573c40c8ba53a9d573e1d8036d69ee39b569c24a41"
+    },
+    {
+      "file": "6-False.xml",
+      "bytes": 64108,
+      "sha256": "d3bf701cf079c480819b96b61619df3f682df068f895da2b221d6f73ee5766ed"
+    },
+    {
+      "file": "6-True.xml",
+      "bytes": 64108,
+      "sha256": "08eb3b8beb6d0c4195205e2cf2eb1bd314b03850b6d83e5273f01e8978fcfb06"
+    },
+    {
+      "file": "7-False.xml",
+      "bytes": 158508,
+      "sha256": "f558714acbf33d0f5fefecc94ac8e8be9e2152e46bd153009dff5f1c1d3719b1"
+    },
+    {
+      "file": "7-True.xml",
+      "bytes": 158508,
+      "sha256": "6a2851bbd37b01d502a72b0584b0823743b7485f6271a5cccfad0d53a576bf6d"
+    },
+    {
+      "file": "8-False.xml",
+      "bytes": 185447,
+      "sha256": "5924ef10f038af6393a14d5ca474f8f87fc8e94ce95dac14543090c557e23c0c"
+    },
+    {
+      "file": "8-True.xml",
+      "bytes": 185447,
+      "sha256": "be68e2961d0e876c0b36915385f77ed7034383deb73996d1c2d1114111f69b95"
+    },
+    {
+      "file": "9-False.xml",
+      "bytes": 77411,
+      "sha256": "4c4e2a9f91c175b74b4acdc8a7cf3144556127b73264ff086829b44df4e98b28"
+    },
+    {
+      "file": "9-True.xml",
+      "bytes": 77411,
+      "sha256": "441a66f6e7b2934ec70e51d2a5b5cec70daac443fca181cd1227f80b2ac548ef"
+    },
+    {
+      "file": "10-False.xml",
+      "bytes": 1390781,
+      "sha256": "13d24eaf76dc5581b688ad680a0f7e6f238896a4f39054410da666732cccbcb9"
+    },
+    {
+      "file": "10-True.xml",
+      "bytes": 1390781,
+      "sha256": "71a6cafe881e9aa11b0bdade392f0b5e013c0064852593dd8269f7bce78d17ef"
+    },
+    {
+      "file": "11-False.xml",
+      "bytes": 704580,
+      "sha256": "a5cbaa180534ea0713263bca4750c508f64d92e11c77dcc6ba6093a98530864b"
+    },
+    {
+      "file": "11-True.xml",
+      "bytes": 704580,
+      "sha256": "6af60343fad5bc3d7cb196d9e7cb332c8dd9193a799707cb089d1e0818f0de7c"
+    },
+    {
+      "file": "12-False.xml",
+      "bytes": 2698,
+      "sha256": "208c67c25a1af63885623308b04051699fc336632e3f587b5e31a555a8910fc8"
+    },
+    {
+      "file": "12-True.xml",
+      "bytes": 2698,
+      "sha256": "bfef44cafb04ce3eb609fb52201e3757dae2e2ae6264511dd383a28f0c66087f"
+    },
+    {
+      "file": "13-False.xml",
+      "bytes": 557164,
+      "sha256": "799dc72c91404f7a7e5b272f624e43e9afe22fc4d87deff8dd5e3b2bee44ce3e"
+    },
+    {
+      "file": "13-True.xml",
+      "bytes": 557164,
+      "sha256": "5604b996505c931996f04ac02ad08b1900ac572ed3a2dbda7cb53dc73ef9213d"
+    },
+    {
+      "file": "14-False.xml",
+      "bytes": 1865315,
+      "sha256": "930c466ceb6158a6cfc39fcecd8bcf893b986c7ff81b28a71a71b79956c41186"
+    },
+    {
+      "file": "14-True.xml",
+      "bytes": 1865315,
+      "sha256": "b8a76cbc2013f56d354e39fc48fe5821dc9d95d84909670c1ec060ab104b9119"
+    },
+    {
+      "file": "15-False.xml",
+      "bytes": 4166441,
+      "sha256": "9df59d349c839489b5d233359dbed3353bc083d78df7a49ec9ccd85746ab845f"
+    },
+    {
+      "file": "15-True.xml",
+      "bytes": 4166441,
+      "sha256": "b07450f83bb5817441f92bf228543505071973a5e5354f632b05391c05e4ba0a"
+    },
+    {
+      "file": "16-False.xml",
+      "bytes": 197513,
+      "sha256": "411b0ed0898f3bf5305859da4a1efa1b8bc9bdc2346ae7b5aadb0f2cec49cbe9"
+    },
+    {
+      "file": "16-True.xml",
+      "bytes": 197513,
+      "sha256": "7c2c1fb2995c4b8bab66519af51a7e3edf8fe7db5bf52cc5d44c3a9a4850e7b7"
+    },
+    {
+      "file": "17-False.xml",
+      "bytes": 1235375,
+      "sha256": "a04c681d7dda0155ebe66f5062213dfca0767a583e329fe9ddc8182327a67ff7"
+    },
+    {
+      "file": "17-True.xml",
+      "bytes": 1169334,
+      "sha256": "4ec2c19024ed79516e37eaabe26cbf28ad9cdd36d01545b0c7d3e867a2a6c135"
+    },
+    {
+      "file": "18-False.xml",
+      "bytes": 2084278,
+      "sha256": "a8c91023a7f2b28c4e855900f8f71741ba9a464833992e5b7b46d819fe1dd63b"
+    },
+    {
+      "file": "18-True.xml",
+      "bytes": 2084294,
+      "sha256": "a6bb3a3db3086f5c00df83070e331a1632c459f48e2356a98be3e5fd560334e1"
+    }
+  ],
+  "raw_auxiliary_json_files": [
+    {
+      "file": "0-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "0-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "1-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "1-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "10-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "10-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "11-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "11-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "12-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "12-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "13-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "13-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "14-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "14-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "15-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "15-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "16-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "16-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "17-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "17-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "18-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "18-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "2-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "2-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "3-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "3-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "4-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "4-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "5-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "5-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "6-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "6-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "7-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "7-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "8-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "8-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "9-False.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    },
+    {
+      "file": "9-True.quarantine.json",
+      "bytes": 809,
+      "sha256": "d3fa37026b96a8ec0404638258c7b9d320104889d0aeeec0c0821953f9572b51"
+    }
+  ]
+}

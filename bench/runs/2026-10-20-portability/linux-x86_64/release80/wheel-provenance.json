@@ -1,0 +1,33 @@
+{
+  "description": "Derived from original cibuildwheel log, summary, and Actions metadata; original reports are retained unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479157007,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "target": "manylinux-x86_64",
+  "job_conclusion": "success",
+  "wheel_validation_passed": true,
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-manylinux_2_28_x86_64.whl",
+  "wheel_sha256": "0f9b324a3f65875926e9e6f917e4de79295ef6500aa4b0e5c934cb62ac60978b",
+  "distribution_artifact_uploaded": true,
+  "profile": "release",
+  "maturin": "1.15.0",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed before project validation; it rejects platform/version overrides and checks installed native imports and all 13 component smoke paths",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 25961,
+      "sha256": "86f27a885798be7c9551f6780804f8e1ccb0b4b9ceec4fa1a797a294fc616a9a"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-manylinux-x86_64-job.log",
+      "bytes": 44663,
+      "sha256": "509d280aae8f99d96faeba9931430f292e07d453f814b22dffeed3df425bc253"
+    }
+  ],
+  "project_junit": {
+    "file": "tests.xml",
+    "bytes": 818906,
+    "sha256": "5146b0ce26b06a741b9830b83b8bb364575b59881ac4d64a87a25e0b25f2e662"
+  }
+}

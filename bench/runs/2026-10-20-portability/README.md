@@ -81,5 +81,36 @@ explicitly labeled and retain hashes of their raw evidence.
   hashes, and project failure identifiers are retained. Later fixes require
   their own validation.
 
+## Official CP313 preflight at `80dec52`: failed overall
+
+[Run 39377562130](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
+finished with seven passing wheel jobs and one failed Mac Intel job. The
+[compact overview](preflight80.json) records all eight outcomes. Complete-set
+verification and both publishers were skipped; nothing was published by this
+run. Default activation and installed native smoke checks passed on each
+wheel before the project/benchmark checks.
+
+- `linux-x86_64/release80/`, `musllinux-aarch64/release80/`,
+  `musllinux-x86_64/release80/`, and `mac-arm64/release80/`: each passed
+  7,221 project tests and all 407 benchmark identity/expected-path checks.
+  The previously archived `linux-arm64/release80/` checkpoint covers the
+  manylinux aarch64 wheel with the same passing counts.
+- `windows-x86_64/release80/` and `windows-arm64/release80/`: each passed
+  7,217 project tests with four fork-dependent skips; all 407 benchmark cases
+  passed. Windows ARM's upstream records retain eight explicit, identical
+  NumPy-reference quarantine skips per side; these are not passing cases.
+- `mac-x86_64/release80/`: **failed**, with 7,189 project tests passing and
+  32 failing. Benchmark identity passed 406/407 cases; numerical-gradient
+  BFGS differed. The project failure record retains all identifiers, bounded
+  message excerpts, complete-message/trace hashes, and raw project-file hashes.
+
+Each of the eight upstream comparisons completed all 19 pairs with 95,772
+common executions, no changed outcomes, no incomplete pairs, and no failures.
+All expected benchmark fast paths ran. Each new folder retains 17 original
+JSON reports unchanged, plus derived comparison/wheel provenance and log/XML
+hashes. Those successful upstream comparisons do not make the failed Mac
+Intel wheel or overall preflight successful. Full release validation remains
+pending for the final source and all 32 wheels.
+
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.

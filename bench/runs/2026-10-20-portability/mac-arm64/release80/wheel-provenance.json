@@ -1,0 +1,33 @@
+{
+  "description": "Derived from original cibuildwheel log, summary, and Actions metadata; original reports are retained unchanged",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479157017,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "target": "macos-arm64",
+  "job_conclusion": "success",
+  "wheel_validation_passed": true,
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-macosx_14_0_arm64.whl",
+  "wheel_sha256": "ef25011e260df3794ff3545a2ca5f0387eac4ca08683e3f12cce68b10f4560c4",
+  "distribution_artifact_uploaded": true,
+  "profile": "release",
+  "maturin": "1.15.0",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed before project validation; it rejects platform/version overrides and checks installed native imports and all 13 component smoke paths",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 20129,
+      "sha256": "55c6a37742edbca6602d372456a3aa20f3d6bc99f2a4b9391f91dd4dbcf7a23d"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-macos-arm64-job.log",
+      "bytes": 73399,
+      "sha256": "bd314a320b94287c4899a214c6546389cd5b9ecd7aeb45568082fd5c7081bba0"
+    }
+  ],
+  "project_junit": {
+    "file": "tests.xml",
+    "bytes": 818961,
+    "sha256": "7fb7e5ffab4de4dd0cd4d2ad77a697997863859af48d309a0474c305d9d24f1a"
+  }
+}

@@ -1,0 +1,249 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "linux"
+ },
+ "cases": {
+  "cdist euclidean 4000x2000x16": {
+   "scipy_ms": 56.305931999759196,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 56.87004799983697,
+   "x1t": 0.9900806132592083,
+   "nt_ms": 29.308636999758164,
+   "xnt": 1.9211378543541209,
+   "expected_fast_path": "threads"
+  },
+  "cdist cityblock 4000x2000x16": {
+   "scipy_ms": 44.00918100009221,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 44.3455320000794,
+   "x1t": 0.9924152223500986,
+   "nt_ms": 22.911244000169972,
+   "xnt": 1.9208551486669916,
+   "expected_fast_path": "threads"
+  },
+  "cdist cosine 4000x2000x16": {
+   "scipy_ms": 48.8747350000267,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 49.039170000014565,
+   "x1t": 0.9966468641294742,
+   "nt_ms": 25.57951399967351,
+   "xnt": 1.9106983424568007,
+   "expected_fast_path": "threads"
+  },
+  "pdist euclidean 3000x16": {
+   "scipy_ms": 32.817987999806064,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 32.782268000119075,
+   "x1t": 1.001089613436351,
+   "nt_ms": 35.73007900013181,
+   "xnt": 0.9184974933776384,
+   "expected_fast_path": "threads"
+  },
+  "pdist cityblock 3000x16": {
+   "scipy_ms": 25.578889999906096,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 25.31465600031879,
+   "x1t": 1.0104379849990448,
+   "nt_ms": 32.0048659996246,
+   "xnt": 0.7992187813005098,
+   "expected_fast_path": "threads"
+  },
+  "cdist euclidean Fortran 4000x2000x16": {
+   "scipy_ms": 61.01250799974878,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 60.46208499992645,
+   "x1t": 1.009103606000736,
+   "nt_ms": 29.471830000147747,
+   "xnt": 2.070197473297142,
+   "expected_fast_path": "threads"
+  },
+  "pdist euclidean Fortran 3000x16": {
+   "scipy_ms": 34.615646000020206,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 35.002576999886514,
+   "x1t": 0.9889456424917639,
+   "nt_ms": 36.146391999864136,
+   "xnt": 0.9576514856628102,
+   "expected_fast_path": "threads"
+  },
+  "cdist euclidean strided 4000x2000x8": {
+   "scipy_ms": 35.66689899980702,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 35.34059399999023,
+   "x1t": 1.0092331498394418,
+   "nt_ms": 17.04385299990463,
+   "xnt": 2.0926546949217757,
+   "expected_fast_path": "threads"
+  },
+  "cdist seuclidean 1500x1000x12": {
+   "scipy_ms": 34.0263429998231,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 33.949444999962,
+   "x1t": 1.0022650738432157,
+   "nt_ms": 18.07093600018561,
+   "xnt": 1.8829319632073074,
+   "expected_fast_path": "threads"
+  },
+  "pdist seuclidean 1500x12": {
+   "scipy_ms": 25.90967100013586,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 25.869463000162796,
+   "x1t": 1.001554264963784,
+   "nt_ms": 21.17949800003771,
+   "xnt": 1.2233373520037976,
+   "expected_fast_path": "threads"
+  },
+  "cdist mahalanobis 1500x1000x12": {
+   "scipy_ms": 73.14308500008337,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 73.32897900005264,
+   "x1t": 0.9974649312931367,
+   "nt_ms": 37.666718999844306,
+   "xnt": 1.9418491162021758,
+   "expected_fast_path": "threads"
+  },
+  "pdist mahalanobis 1500x12": {
+   "scipy_ms": 55.1862240004084,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 55.43102199999339,
+   "x1t": 0.9955837364935285,
+   "nt_ms": 39.037566999923,
+   "xnt": 1.4136696582683355,
+   "expected_fast_path": "threads"
+  },
+  "weighted cdist euclidean 1200x900x16": {
+   "scipy_ms": 11.330087999795069,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 11.297822999949858,
+   "x1t": 1.0028558599161408,
+   "nt_ms": 6.454957999721955,
+   "xnt": 1.7552535586262696,
+   "expected_fast_path": "threads"
+  },
+  "weighted pdist euclidean 1200x16": {
+   "scipy_ms": 8.075200999883236,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.6292549997560855,
+   "x1t": 1.0584521031400063,
+   "nt_ms": 9.320260000095004,
+   "xnt": 0.8664137051757058,
+   "expected_fast_path": "threads"
+  },
+  "weighted cdist minkowski 1200x900x16": {
+   "scipy_ms": 275.76904899979127,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 275.8165610002834,
+   "x1t": 0.9998277405812043,
+   "nt_ms": 138.6895740001819,
+   "xnt": 1.9883906269654386,
+   "expected_fast_path": "threads"
+  },
+  "weighted pdist minkowski 1200x16": {
+   "scipy_ms": 184.52757000022757,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 183.95001299995783,
+   "x1t": 1.0031397497116235,
+   "nt_ms": 111.94843599969317,
+   "xnt": 1.648326467023919,
+   "expected_fast_path": "threads"
+  },
+  "float32 cdist euclidean 1200x900x16": {
+   "scipy_ms": 8.193314999971335,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 8.160090999808745,
+   "x1t": 1.004071523242004,
+   "nt_ms": 4.959251999935077,
+   "xnt": 1.652127175646367,
+   "expected_fast_path": "threads"
+  },
+  "float32 pdist euclidean 1200x16": {
+   "scipy_ms": 6.0717729998032155,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.613378999896668,
+   "x1t": 1.081660974595691,
+   "nt_ms": 8.240325000315352,
+   "xnt": 0.7368365931648149,
+   "expected_fast_path": "threads"
+  },
+  "cKDTree.query 1M pts, 200k queries, k=1": {
+   "scipy_ms": 322.5185239998609,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 316.1654020000242,
+   "x1t": 1.0200942986160018,
+   "nt_ms": 1009.6194060001835,
+   "xnt": 0.3194456466299364,
+   "expected_fast_path": "threads"
+  },
+  "cKDTree.query 1M pts, 200k queries, k=8": {
+   "scipy_ms": 2019.314845000281,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2012.8079229998548,
+   "x1t": 1.0032327585389909,
+   "nt_ms": 1219.7272449998309,
+   "xnt": 1.6555462323878491,
+   "expected_fast_path": "threads"
+  },
+  "cKDTree.query_ball_point 200k, r=0.01": {
+   "scipy_ms": 542.9000499998438,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 632.5382049999462,
+   "x1t": 0.8582881566812078,
+   "nt_ms": 914.7887889998856,
+   "xnt": 0.5934703797511358,
+   "expected_fast_path": "threads"
+  },
+  "cdist 300x100x16 (control)": {
+   "scipy_ms": 0.25277300028392347,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.2564299998084607,
+   "x1t": 0.985738799956055,
+   "nt_ms": 0.2598460000626801,
+   "xnt": 0.9727800321072847,
+   "expected_fast_path": false
+  },
+  "pdist 100x16 (control)": {
+   "scipy_ms": 0.057313000070280395,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.05907299964746926,
+   "x1t": 0.9702063618287198,
+   "nt_ms": 0.061576999996759696,
+   "xnt": 0.9307533668950472,
+   "expected_fast_path": false
+  },
+  "cKDTree.query 100 queries (control)": {
+   "scipy_ms": 0.2512129999558965,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.28211800008648424,
+   "x1t": 0.8904536395369538,
+   "nt_ms": 0.25819800021054107,
+   "xnt": 0.9729471171389833,
+   "expected_fast_path": false
+  }
+ }
+}

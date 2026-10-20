@@ -1,0 +1,379 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "linux"
+ },
+ "cases": {
+  "erf Fortran 512x1024 float64": {
+   "scipy_ms": 7.141542999761441,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.138494000173523,
+   "x1t": 1.000427120844795,
+   "nt_ms": 4.156252000029781,
+   "xnt": 1.7182651580583346,
+   "expected_fast_path": "threads"
+  },
+  "gammaln Fortran 512x1024 float64": {
+   "scipy_ms": 10.158858000067994,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 10.119224999925791,
+   "x1t": 1.0039166042994887,
+   "nt_ms": 5.620780999834096,
+   "xnt": 1.8073748115017902,
+   "expected_fast_path": "threads"
+  },
+  "airy Fortran 512x1024 float64": {
+   "scipy_ms": 79.0610399999423,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 79.00748700012628,
+   "x1t": 1.0006778218349854,
+   "nt_ms": 40.72782700040989,
+   "xnt": 1.9412044742565475,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+05 float64": {
+   "scipy_ms": 1.464849000058166,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.4702160001434095,
+   "x1t": 0.996349515931863,
+   "nt_ms": 1.1021770001207187,
+   "xnt": 1.3290505970436006,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+05 float64": {
+   "scipy_ms": 2.1315849999155034,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.1506580001187103,
+   "x1t": 0.9911315512730736,
+   "nt_ms": 1.4495909999823198,
+   "xnt": 1.4704733955588174,
+   "expected_fast_path": "threads"
+  },
+  "i0 1e+05 float64": {
+   "scipy_ms": 6.670257000223501,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.679744999928516,
+   "x1t": 0.998579586540337,
+   "nt_ms": 3.7205709995760117,
+   "xnt": 1.792804653098578,
+   "expected_fast_path": "threads"
+  },
+  "expit 1e+05 float64": {
+   "scipy_ms": 0.7502359999307373,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.7615559998157551,
+   "x1t": 0.9851356960121692,
+   "nt_ms": 0.7301320001715794,
+   "xnt": 1.0275347468052811,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+05 float64": {
+   "scipy_ms": 36.27956899981655,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 36.33917900015149,
+   "x1t": 0.9983596217092661,
+   "nt_ms": 18.788327000038407,
+   "xnt": 1.930963251796841,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+05 float64": {
+   "scipy_ms": 32.289282999954594,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 32.21284100027333,
+   "x1t": 1.0023730288080028,
+   "nt_ms": 16.90012899962312,
+   "xnt": 1.9105938777552915,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+05 float32": {
+   "scipy_ms": 1.4102860000093642,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.418702000137273,
+   "x1t": 0.9940678168303884,
+   "nt_ms": 1.0211839999101358,
+   "xnt": 1.381030255207161,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+05 float32": {
+   "scipy_ms": 2.0980409999538097,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.1004410000386997,
+   "x1t": 0.9988573827663592,
+   "nt_ms": 1.3586690001829993,
+   "xnt": 1.5441884665589811,
+   "expected_fast_path": "threads"
+  },
+  "i0 1e+05 float32": {
+   "scipy_ms": 6.67964900003426,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.681561000277725,
+   "x1t": 0.9997138392894437,
+   "nt_ms": 3.7037950000922137,
+   "xnt": 1.803460774656253,
+   "expected_fast_path": "threads"
+  },
+  "expit 1e+05 float32": {
+   "scipy_ms": 0.5223279999881925,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.5246800001259544,
+   "x1t": 0.9955172674064243,
+   "nt_ms": 0.5720889998883649,
+   "xnt": 0.913018778704218,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+05 float32": {
+   "scipy_ms": 36.14317600022332,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 36.16477599962309,
+   "x1t": 0.9994027337705619,
+   "nt_ms": 18.631028999607224,
+   "xnt": 1.9399452387189824,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+05 float32": {
+   "scipy_ms": 25.083554000048025,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 25.068906000342395,
+   "x1t": 1.0005843094910256,
+   "nt_ms": 13.144789999842033,
+   "xnt": 1.9082506453392916,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+06 float64": {
+   "scipy_ms": 13.613396999971883,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 13.573812999766233,
+   "x1t": 1.0029162034430805,
+   "nt_ms": 7.473508999737533,
+   "xnt": 1.821553570143554,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+06 float64": {
+   "scipy_ms": 20.368479999888223,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 20.389273000091634,
+   "x1t": 0.9989801990388123,
+   "nt_ms": 10.920602999703988,
+   "xnt": 1.8651424285307623,
+   "expected_fast_path": "threads"
+  },
+  "i0 1e+06 float64": {
+   "scipy_ms": 65.63322300007712,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 65.67535199974373,
+   "x1t": 0.9993585264732686,
+   "nt_ms": 33.585210000183,
+   "xnt": 1.9542299422787444,
+   "expected_fast_path": "threads"
+  },
+  "expit 1e+06 float64": {
+   "scipy_ms": 6.534304000069824,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.538000000091415,
+   "x1t": 0.9994346895042001,
+   "nt_ms": 4.000040000391891,
+   "xnt": 1.6335596642607688,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+06 float64": {
+   "scipy_ms": 361.5455889998884,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 361.4139940000314,
+   "x1t": 1.0003641115231887,
+   "nt_ms": 181.54646599987245,
+   "xnt": 1.9914768762292647,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+06 float64": {
+   "scipy_ms": 319.21200699980545,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 319.16648600008557,
+   "x1t": 1.000142624622937,
+   "nt_ms": 162.09074600010354,
+   "xnt": 1.9693413404340896,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+06 float32": {
+   "scipy_ms": 14.325090000056662,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 14.312151000012818,
+   "x1t": 1.0009040569823384,
+   "nt_ms": 7.899893999820051,
+   "xnt": 1.8133268624089092,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+06 float32": {
+   "scipy_ms": 21.325249000256008,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 21.26266300001589,
+   "x1t": 1.0029434695099138,
+   "nt_ms": 11.41399999960413,
+   "xnt": 1.8683414229013167,
+   "expected_fast_path": "threads"
+  },
+  "i0 1e+06 float32": {
+   "scipy_ms": 67.10483599999861,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 67.05412200017236,
+   "x1t": 1.0007563144265184,
+   "nt_ms": 34.52889399977721,
+   "xnt": 1.943440065020084,
+   "expected_fast_path": "threads"
+  },
+  "expit 1e+06 float32": {
+   "scipy_ms": 5.447905999972136,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.412954000348691,
+   "x1t": 1.0064571026506401,
+   "nt_ms": 3.4758490000967868,
+   "xnt": 1.5673598018269597,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+06 float32": {
+   "scipy_ms": 362.17785700000604,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 362.24982900012037,
+   "x1t": 0.9998013194366082,
+   "nt_ms": 182.0923209998,
+   "xnt": 1.9889792991347717,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+06 float32": {
+   "scipy_ms": 249.9664990000383,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 249.91535400022258,
+   "x1t": 1.0002046492902381,
+   "nt_ms": 126.91149800002677,
+   "xnt": 1.9696127060133322,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+07 float64": {
+   "scipy_ms": 131.7225679999865,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 132.2168579999925,
+   "x1t": 0.9962615205996952,
+   "nt_ms": 66.91645299997617,
+   "xnt": 1.96846309232848,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+07 float64": {
+   "scipy_ms": 198.98918800026877,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 199.44798100004846,
+   "x1t": 0.9976996859156996,
+   "nt_ms": 100.32089700007418,
+   "xnt": 1.9835268019994041,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+07 float64": {
+   "scipy_ms": 3606.483084000047,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3607.4373319997903,
+   "x1t": 0.9997354775947793,
+   "nt_ms": 1803.3504999998513,
+   "xnt": 1.9998791604850772,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+07 float64": {
+   "scipy_ms": 3180.592974999854,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3180.9134089999134,
+   "x1t": 0.9998992635262712,
+   "nt_ms": 1602.4155169998267,
+   "xnt": 1.9848740487453718,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e+07 float32": {
+   "scipy_ms": 134.8771839998335,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 134.72770999987915,
+   "x1t": 1.0011094525391584,
+   "nt_ms": 68.81928000029802,
+   "xnt": 1.9598749652604535,
+   "expected_fast_path": "threads"
+  },
+  "gammaln 1e+07 float32": {
+   "scipy_ms": 203.82692599969232,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 203.56105500013655,
+   "x1t": 1.0013060995363559,
+   "nt_ms": 102.99219299986362,
+   "xnt": 1.9790521986454082,
+   "expected_fast_path": "threads"
+  },
+  "jv 1e+07 float32": {
+   "scipy_ms": 3610.740036000152,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3611.137627000062,
+   "x1t": 0.9998898986854068,
+   "nt_ms": 1807.593450999775,
+   "xnt": 1.9975398970399352,
+   "expected_fast_path": "threads"
+  },
+  "betainc 1e+07 float32": {
+   "scipy_ms": 2476.9629590000477,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2477.097853000032,
+   "x1t": 0.999945543531992,
+   "nt_ms": 1244.901900000059,
+   "xnt": 1.9896852587339857,
+   "expected_fast_path": "threads"
+  },
+  "erf 1e3 (control)": {
+   "scipy_ms": 0.013503999980457593,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.013672000022779685,
+   "x1t": 0.9877121092713446,
+   "nt_ms": 0.013712000054511009,
+   "xnt": 0.9848307997938647,
+   "expected_fast_path": false
+  },
+  "jv 1e3 (control)": {
+   "scipy_ms": 0.36343600004329346,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.3637569998318213,
+   "x1t": 0.9991175433361386,
+   "nt_ms": 0.3639329997895402,
+   "xnt": 0.9986343647140157,
+   "expected_fast_path": false
+  }
+ }
+}

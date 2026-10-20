@@ -1,0 +1,1446 @@
+[
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy._lib"
+    ],
+    "patched": false,
+    "junit": "0-False.xml",
+    "quarantine": "0-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 2061,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy._lib"
+    ],
+    "patched": true,
+    "junit": "0-True.xml",
+    "quarantine": "0-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 2061,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 1,
+    "args": [
+      "--pyargs",
+      "scipy.cluster"
+    ],
+    "patched": false,
+    "junit": "1-False.xml",
+    "quarantine": "1-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 225,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 1,
+    "args": [
+      "--pyargs",
+      "scipy.cluster"
+    ],
+    "patched": true,
+    "junit": "1-True.xml",
+    "quarantine": "1-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 225,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 2,
+    "args": [
+      "--pyargs",
+      "scipy.constants"
+    ],
+    "patched": false,
+    "junit": "2-False.xml",
+    "quarantine": "2-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 16,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 2,
+    "args": [
+      "--pyargs",
+      "scipy.constants"
+    ],
+    "patched": true,
+    "junit": "2-True.xml",
+    "quarantine": "2-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 16,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 3,
+    "args": [
+      "--pyargs",
+      "scipy.datasets"
+    ],
+    "patched": false,
+    "junit": "3-False.xml",
+    "quarantine": "3-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 3,
+    "args": [
+      "--pyargs",
+      "scipy.datasets"
+    ],
+    "patched": true,
+    "junit": "3-True.xml",
+    "quarantine": "3-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 4,
+    "args": [
+      "--pyargs",
+      "scipy.differentiate"
+    ],
+    "patched": false,
+    "junit": "4-False.xml",
+    "quarantine": "4-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 202,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 4,
+    "args": [
+      "--pyargs",
+      "scipy.differentiate"
+    ],
+    "patched": true,
+    "junit": "4-True.xml",
+    "quarantine": "4-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 202,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 5,
+    "args": [
+      "--pyargs",
+      "scipy.fft"
+    ],
+    "patched": false,
+    "junit": "5-False.xml",
+    "quarantine": "5-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5811,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 5,
+    "args": [
+      "--pyargs",
+      "scipy.fft"
+    ],
+    "patched": true,
+    "junit": "5-True.xml",
+    "quarantine": "5-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5811,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 6,
+    "args": [
+      "--pyargs",
+      "scipy.fftpack"
+    ],
+    "patched": false,
+    "junit": "6-False.xml",
+    "quarantine": "6-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 554,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 6,
+    "args": [
+      "--pyargs",
+      "scipy.fftpack"
+    ],
+    "patched": true,
+    "junit": "6-True.xml",
+    "quarantine": "6-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 554,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 7,
+    "args": [
+      "--pyargs",
+      "scipy.integrate"
+    ],
+    "patched": false,
+    "junit": "7-False.xml",
+    "quarantine": "7-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1159,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 7,
+    "args": [
+      "--pyargs",
+      "scipy.integrate"
+    ],
+    "patched": true,
+    "junit": "7-True.xml",
+    "quarantine": "7-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1159,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 8,
+    "args": [
+      "--pyargs",
+      "scipy.interpolate"
+    ],
+    "patched": false,
+    "junit": "8-False.xml",
+    "quarantine": "8-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1580,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 8,
+    "args": [
+      "--pyargs",
+      "scipy.interpolate"
+    ],
+    "patched": true,
+    "junit": "8-True.xml",
+    "quarantine": "8-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1580,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 9,
+    "args": [
+      "--pyargs",
+      "scipy.io"
+    ],
+    "patched": false,
+    "junit": "9-False.xml",
+    "quarantine": "9-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 711,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 9,
+    "args": [
+      "--pyargs",
+      "scipy.io"
+    ],
+    "patched": true,
+    "junit": "9-True.xml",
+    "quarantine": "9-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 711,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 10,
+    "args": [
+      "--pyargs",
+      "scipy.linalg"
+    ],
+    "patched": false,
+    "junit": "10-False.xml",
+    "quarantine": "10-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 11605,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 10,
+    "args": [
+      "--pyargs",
+      "scipy.linalg"
+    ],
+    "patched": true,
+    "junit": "10-True.xml",
+    "quarantine": "10-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 11605,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 11,
+    "args": [
+      "--pyargs",
+      "scipy.ndimage"
+    ],
+    "patched": false,
+    "junit": "11-False.xml",
+    "quarantine": "11-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5404,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 11,
+    "args": [
+      "--pyargs",
+      "scipy.ndimage"
+    ],
+    "patched": true,
+    "junit": "11-True.xml",
+    "quarantine": "11-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 5404,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 12,
+    "args": [
+      "--pyargs",
+      "scipy.odr"
+    ],
+    "patched": false,
+    "junit": "12-False.xml",
+    "quarantine": "12-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 25,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 12,
+    "args": [
+      "--pyargs",
+      "scipy.odr"
+    ],
+    "patched": true,
+    "junit": "12-True.xml",
+    "quarantine": "12-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 25,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 13,
+    "args": [
+      "--pyargs",
+      "scipy.optimize"
+    ],
+    "patched": false,
+    "junit": "13-False.xml",
+    "quarantine": "13-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 3916,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 13,
+    "args": [
+      "--pyargs",
+      "scipy.optimize"
+    ],
+    "patched": true,
+    "junit": "13-True.xml",
+    "quarantine": "13-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 3916,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 14,
+    "args": [
+      "--pyargs",
+      "scipy.signal"
+    ],
+    "patched": false,
+    "junit": "14-False.xml",
+    "quarantine": "14-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 15907,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 14,
+    "args": [
+      "--pyargs",
+      "scipy.signal"
+    ],
+    "patched": true,
+    "junit": "14-True.xml",
+    "quarantine": "14-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 15907,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 15,
+    "args": [
+      "--pyargs",
+      "scipy.sparse"
+    ],
+    "patched": false,
+    "junit": "15-False.xml",
+    "quarantine": "15-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 22320,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 15,
+    "args": [
+      "--pyargs",
+      "scipy.sparse"
+    ],
+    "patched": true,
+    "junit": "15-True.xml",
+    "quarantine": "15-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 22320,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 16,
+    "args": [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    "patched": false,
+    "junit": "16-False.xml",
+    "quarantine": "16-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1781,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 16,
+    "args": [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    "patched": true,
+    "junit": "16-True.xml",
+    "quarantine": "16-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1781,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 17,
+    "args": [
+      "--pyargs",
+      "scipy.special"
+    ],
+    "patched": false,
+    "junit": "17-False.xml",
+    "quarantine": "17-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 8941,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 17,
+    "args": [
+      "--pyargs",
+      "scipy.special"
+    ],
+    "patched": true,
+    "junit": "17-True.xml",
+    "quarantine": "17-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 8259,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 18,
+    "args": [
+      "--pyargs",
+      "scipy.stats"
+    ],
+    "patched": false,
+    "junit": "18-False.xml",
+    "quarantine": "18-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 14233,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 18,
+    "args": [
+      "--pyargs",
+      "scipy.stats"
+    ],
+    "patched": true,
+    "junit": "18-True.xml",
+    "quarantine": "18-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 14233,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "implementation": "cpython",
+        "python_platform": "linux-x86_64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/tmp/tmp.tF433dfDQV/venv/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  }
+]

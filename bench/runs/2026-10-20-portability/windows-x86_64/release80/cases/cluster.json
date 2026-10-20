@@ -1,0 +1,129 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "win32"
+ },
+ "cases": {
+  "whiten float64 (100,)": {
+   "scipy_ms": 0.021800000467919745,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.017800000023271423,
+   "x1t": 1.2247191258100443,
+   "nt_ms": 0.01779999911377672,
+   "xnt": 1.2247191883873259,
+   "expected_fast_path": true
+  },
+  "whiten complex64 (200, 8)": {
+   "scipy_ms": 0.040299999454873614,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.03699999979289714,
+   "x1t": 1.0891891805526435,
+   "nt_ms": 0.037000000702391844,
+   "xnt": 1.0891891537793523,
+   "expected_fast_path": true
+  },
+  "whiten complex128 (200, 8)": {
+   "scipy_ms": 0.04169999920122791,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.03870000000461005,
+   "x1t": 1.0775193590764987,
+   "nt_ms": 0.03790000027947826,
+   "xnt": 1.1002638230535116,
+   "expected_fast_path": true
+  },
+  "whiten float32 (30, 4, 3)": {
+   "scipy_ms": 0.025800000003073364,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.02249999943160219,
+   "x1t": 1.1466666957704978,
+   "nt_ms": 0.022500000341096893,
+   "xnt": 1.1466666494199527,
+   "expected_fast_path": true
+  },
+  "vq 200x8, 10 centroids": {
+   "scipy_ms": 0.016399999367422424,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.011399999493733048,
+   "x1t": 1.4385964996259901,
+   "nt_ms": 0.011399999493733048,
+   "xnt": 1.4385964996259901,
+   "expected_fast_path": true
+  },
+  "vq 200x8, finite check disabled": {
+   "scipy_ms": 0.011699999959091656,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.008799999704933725,
+   "x1t": 1.3295454944767833,
+   "nt_ms": 0.008799999704933725,
+   "xnt": 1.3295454944767833,
+   "expected_fast_path": true
+  },
+  "whiten 200x8": {
+   "scipy_ms": 0.030499999411404133,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.027099999897473026,
+   "x1t": 1.12546123715108,
+   "nt_ms": 0.02719999974942766,
+   "xnt": 1.1213235181020877,
+   "expected_fast_path": true
+  },
+  "kmeans 200x8, explicit centroids": {
+   "scipy_ms": 0.23300000066228677,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.19659999998111743,
+   "x1t": 1.185147511112235,
+   "nt_ms": 0.19739999970624922,
+   "xnt": 1.1803444833283379,
+   "expected_fast_path": true
+  },
+  "is_valid_linkage 20 merges": {
+   "scipy_ms": 0.05979999968985794,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.014700000065204222,
+   "x1t": 4.068027171741863,
+   "nt_ms": 0.014500000361294951,
+   "xnt": 4.124137806884674,
+   "expected_fast_path": true
+  },
+  "leaves_list 20 merges": {
+   "scipy_ms": 0.07580000055895653,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.023499999770137947,
+   "x1t": 3.2255319702291034,
+   "nt_ms": 0.023099999452824704,
+   "xnt": 3.281385383309504,
+   "expected_fast_path": true
+  },
+  "is_valid_linkage 2000 merges": {
+   "scipy_ms": 0.1712000002953573,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0884000000951346,
+   "x1t": 1.9366515849673613,
+   "nt_ms": 0.08829999933368526,
+   "xnt": 1.9388448650876355,
+   "expected_fast_path": true
+  },
+  "leaves_list 2000 merges": {
+   "scipy_ms": 0.20799999947485048,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.11409999933675863,
+   "x1t": 1.822962319753852,
+   "nt_ms": 0.11410000024625333,
+   "xnt": 1.8229623052229618,
+   "expected_fast_path": true
+  }
+ }
+}

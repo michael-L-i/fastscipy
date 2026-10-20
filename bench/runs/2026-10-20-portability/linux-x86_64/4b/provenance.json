@@ -1,0 +1,14 @@
+{
+  "purpose": "validation",
+  "mode": "full",
+  "target": "linux-x86_64",
+  "checkout_sha": "4b1342d3694cd166ceb0097c5a169ced181f0847",
+  "run_id": "39368833274",
+  "wheel_reused": false,
+  "wheel_artifact_run_id": "39368833274",
+  "wheel_artifact_run_head_sha": "4b1342d3694cd166ceb0097c5a169ced181f0847",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-manylinux_2_34_x86_64.whl"
+  ]
+}

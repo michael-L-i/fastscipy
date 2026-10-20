@@ -9,6 +9,12 @@ rewritten to match a newer checkout.
   platform summary, and all 13 raw per-area benchmark reports. The summary
   records 7,048 passing project tests and 407 benchmark cases with no
   numerical mismatches or missing expected fast paths.
+- `linux-x86_64/4b/`: glibc x86_64 revision `4b1342d`; unchanged build and
+  provenance reports, platform summary, and 13 raw per-area reports. Project
+  tests reported 7,060 passed and four NaN initialization failures; all 407
+  benchmark cases passed identity and expected fast-path checks. Its README
+  compares float-filter timings with archived raw revision `5914b77` results
+  and links the pending latest-source validation.
 - `mac-arm64/tests-py313.json` and `tests-py315.json`: project-test summaries
   for the ABI-guard builds, with 7,048 passing tests on each Python version.
   These summaries contain no benchmark results.

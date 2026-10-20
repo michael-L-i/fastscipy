@@ -53,10 +53,15 @@ not final release validation:
   [summary](../bench/runs/2026-10-20-portability/linux-arm64/summary.json),
   [13 per-area case reports](../bench/runs/2026-10-20-portability/linux-arm64/cases/),
   and [build resource report](../bench/runs/2026-10-20-portability/linux-arm64/build.json).
-- Linux x86_64: all 407 benchmark cases matched SciPy and met their
-  expected fast-path checks. Four project tests exposed NaN-bit differences
-  in uniform filtering; the fix awaits fresh native CI. The initial
-  job also contained a stale Windows-platform simulation test, since fixed.
+- Linux x86_64 (glibc), revision `4b1342d`: 7,060 project tests passed;
+  four new NaN initialization tests failed. All 407 benchmark cases across
+  13 areas matched SciPy and met their expected fast-path checks. The
+  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-x86_64/4b/README.md)
+  retains the unchanged summary, all case reports, build resources, and raw
+  before/after float-filter measurements. Earlier float-cast failures are
+  fixed; ordering initialization sums was added afterward in `b4710e6`.
+  The latest `675bd52` source awaits its own project, benchmark, and paired
+  upstream results in [run 39374986938](https://github.com/michael-L-i/fastscipy/actions/runs/39374986938).
 - Windows arm64, revision `236b1bb`: the previous 120 calibration and
   fast-path failures are fixed. Project tests reported 7,102 passed,
   10 failed, and four skipped; the remaining failures concern float32 NaN

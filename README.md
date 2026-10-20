@@ -7,9 +7,11 @@ else stays with SciPy.
 
 ```python
 import fastscipy
+
 fastscipy.patch()
 
 from scipy import ndimage
+
 clean = ndimage.median_filter(image, size=3)
 ```
 

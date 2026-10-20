@@ -1,0 +1,279 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "linux"
+ },
+ "cases": {
+  "hstack pair of CSR arrays 8x8": {
+   "scipy_ms": 0.058892999732051976,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.030609000077674864,
+   "x1t": 1.9240419348100977,
+   "nt_ms": 0.03164899999319459,
+   "xnt": 1.86081707936161,
+   "expected_fast_path": true
+  },
+  "hstack pair of CSR arrays 300x300": {
+   "scipy_ms": 0.08709100029591355,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.04871800001637894,
+   "x1t": 1.7876554921514358,
+   "nt_ms": 0.049777000185713405,
+   "xnt": 1.7496233194243334,
+   "expected_fast_path": true
+  },
+  "vstack pair of CSC arrays 8x8": {
+   "scipy_ms": 0.06005500017636223,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.030759000310354168,
+   "x1t": 1.952436671231684,
+   "nt_ms": 0.032697999813535716,
+   "xnt": 1.836656692116738,
+   "expected_fast_path": true
+  },
+  "vstack pair of CSC arrays 300x300": {
+   "scipy_ms": 0.08909700000003795,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.04803399997399538,
+   "x1t": 1.8548736321828962,
+   "nt_ms": 0.05064900005891104,
+   "xnt": 1.7591067917709557,
+   "expected_fast_path": true
+  },
+  "block_diag mixed CSR/CSC to CSR": {
+   "scipy_ms": 0.36030799992659013,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.20064099999217433,
+   "x1t": 1.795784510347553,
+   "nt_ms": 0.20009600029879948,
+   "xnt": 1.8006756726198883,
+   "expected_fast_path": true
+  },
+  "block_diag mixed CSR/CSC to CSC": {
+   "scipy_ms": 0.36720200023410143,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.18656200018085656,
+   "x1t": 1.9682572007060881,
+   "nt_ms": 0.18430399995850166,
+   "xnt": 1.9923713013107776,
+   "expected_fast_path": true
+  },
+  "block_diag 50 small CSR arrays": {
+   "scipy_ms": 1.2622960002772743,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.3901800000676303,
+   "x1t": 3.235163258133372,
+   "nt_ms": 0.3984569998465304,
+   "xnt": 3.167960409187089,
+   "expected_fast_path": true
+  },
+  "block_diag 5 medium CSR arrays": {
+   "scipy_ms": 0.2154399999199086,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.06475400005001575,
+   "x1t": 3.327053151210791,
+   "nt_ms": 0.06496600008176756,
+   "xnt": 3.316196158740746,
+   "expected_fast_path": true
+  },
+  "block_diag 50 small CSC arrays": {
+   "scipy_ms": 1.3396159997682844,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.3998449997197895,
+   "x1t": 3.350338257842625,
+   "nt_ms": 0.4299050001463911,
+   "xnt": 3.1160744799714326,
+   "expected_fast_path": true
+  },
+  "block_diag 5 medium CSC arrays": {
+   "scipy_ms": 0.24199400013458217,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.07009900036791805,
+   "x1t": 3.4521747651815966,
+   "nt_ms": 0.07086100004016771,
+   "xnt": 3.415052003180979,
+   "expected_fast_path": true
+  },
+  "2000 x csr_array((data, indices, indptr)) 10x10": {
+   "scipy_ms": 23.147603000325034,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 12.779832999967766,
+   "x1t": 1.8112602097682668,
+   "nt_ms": 13.011127000027045,
+   "xnt": 1.7790621058634597,
+   "expected_fast_path": true
+  },
+  "2000 x csr_array((10, 10))": {
+   "scipy_ms": 29.973037999752705,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 20.498465000400756,
+   "x1t": 1.4622089019429854,
+   "nt_ms": 20.602091000000655,
+   "xnt": 1.4548541698875008,
+   "expected_fast_path": true
+  },
+  "2000 x coo->csr_array((v, (i, j)))": {
+   "scipy_ms": 98.72755600008531,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 88.70626399993853,
+   "x1t": 1.1129716386224284,
+   "nt_ms": 89.14988199967411,
+   "xnt": 1.1074333895410677,
+   "expected_fast_path": true
+  },
+  "2000 x small A.T + A": {
+   "scipy_ms": 145.67873300029532,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 86.66992999997092,
+   "x1t": 1.6808451674109373,
+   "nt_ms": 85.7194069999423,
+   "xnt": 1.6994836770206938,
+   "expected_fast_path": true
+  },
+  "find canonical CSR 100k nnz": {
+   "scipy_ms": 12.165214000106062,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.32391099966844195,
+   "x1t": 37.55727348734214,
+   "nt_ms": 0.3438689996073663,
+   "xnt": 35.37746645960074,
+   "expected_fast_path": true
+  },
+  "csr 1e7 nnz argmax(axis=1)": {
+   "scipy_ms": 196.44051500017667,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 20.61092100029782,
+   "x1t": 9.530894567852556,
+   "nt_ms": 7.780140999784635,
+   "xnt": 25.248965925632252,
+   "expected_fast_path": true
+  },
+  "csr 1e7 nnz argmin(axis=1) explicit": {
+   "scipy_ms": 153.57314200036853,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 22.45846599998913,
+   "x1t": 6.838095798726541,
+   "nt_ms": 9.862904999863531,
+   "xnt": 15.570781833799826,
+   "expected_fast_path": true
+  },
+  "csc 1e7 nnz argmax(axis=0)": {
+   "scipy_ms": 620.57862499978,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 248.25177499997153,
+   "x1t": 2.499795318683426,
+   "nt_ms": 237.95421000022543,
+   "xnt": 2.6079749755181556,
+   "expected_fast_path": true
+  },
+  "coo 2e6 entries sum_duplicates": {
+   "scipy_ms": 487.1022299998913,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 82.33619099974021,
+   "x1t": 5.9160160809652735,
+   "nt_ms": 43.52782399973876,
+   "xnt": 11.190594549426931,
+   "expected_fast_path": true
+  },
+  "coo 5e5 entries on 300x300, heavy duplicates": {
+   "scipy_ms": 81.47653599962723,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 16.39359799992235,
+   "x1t": 4.970021590136171,
+   "nt_ms": 10.511990999930276,
+   "xnt": 7.750818660343949,
+   "expected_fast_path": true
+  },
+  "find csr 20000^2, 1.8M nnz": {
+   "scipy_ms": 296.6170550002971,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.464653999955772,
+   "x1t": 45.88289721342031,
+   "nt_ms": 6.270555999890348,
+   "xnt": 47.30315063057949,
+   "expected_fast_path": true
+  },
+  "find coo (shuffled, duplicates) 20000^2, 1.8M nnz": {
+   "scipy_ms": 416.9127749996733,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 79.09491500004151,
+   "x1t": 5.271043972921071,
+   "nt_ms": 79.74522900030934,
+   "xnt": 5.228059160731184,
+   "expected_fast_path": true
+  },
+  "csr_array(dense 4000^2, 16%)": {
+   "scipy_ms": 148.160450999967,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 63.1535040001836,
+   "x1t": 2.346036903978222,
+   "nt_ms": 31.241573999977845,
+   "xnt": 4.7424131383416235,
+   "expected_fast_path": true
+  },
+  "csc_array(dense 4000^2, 16%)": {
+   "scipy_ms": 156.63441500009867,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 58.28516499968828,
+   "x1t": 2.6873804852561776,
+   "nt_ms": 49.30755500026862,
+   "xnt": 3.176681849246943,
+   "expected_fast_path": true
+  },
+  "coo_array(dense 4000^2, 16%)": {
+   "scipy_ms": 140.85881099981634,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 65.93102299984821,
+   "x1t": 2.1364572334959924,
+   "nt_ms": 34.58260299976246,
+   "xnt": 4.07311187653468,
+   "expected_fast_path": true
+  },
+  "csr_matrix(dense 4000^2, 16%)": {
+   "scipy_ms": 147.64559900004315,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 63.3493959999214,
+   "x1t": 2.3306551967792455,
+   "nt_ms": 31.811911000204418,
+   "xnt": 4.641204956190604,
+   "expected_fast_path": true
+  },
+  "csr_array(dense 100x100)": {
+   "scipy_ms": 22.921702999610716,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.9705119997961447,
+   "x1t": 5.77298418964294,
+   "nt_ms": 4.032113999983267,
+   "xnt": 5.684785449941604,
+   "expected_fast_path": true
+  }
+ }
+}

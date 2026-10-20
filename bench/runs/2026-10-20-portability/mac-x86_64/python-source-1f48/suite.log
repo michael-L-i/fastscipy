@@ -1,0 +1,12 @@
+tests: exit=1, 584.2s, peak=379 MiB
+cluster: exit=0, 7.4s, peak=86 MiB
+csgraph: exit=0, 43.5s, peak=216 MiB
+integrate: exit=0, 13.6s, peak=96 MiB
+interpolate: exit=0, 94.1s, peak=277 MiB
+linalg: exit=0, 54.4s, peak=558 MiB
+ndimage: exit=0, 109.5s, peak=727 MiB
+optimize: exit=0, 8.0s, peak=95 MiB
+signal: exit=0, 57.8s, peak=1561 MiB
+sparse: exit=0, 57.6s, peak=712 MiB
+sparse_linalg: exit=0, 9.0s, peak=88 MiB
+spatial: exit=0, 67.4s, peak=514 MiB

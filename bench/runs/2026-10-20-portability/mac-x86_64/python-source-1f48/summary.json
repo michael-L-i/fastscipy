@@ -1,0 +1,308 @@
+{
+  "recorded_utc": "2026-10-20T15:30:22.500322+00:00",
+  "benchmark_commit": "1f48cd63a544379363234081cc8178a574fea73f",
+  "fastscipy": "0.1.0a2",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O",
+  "machine": "x86_64",
+  "processor": "i386",
+  "logical_cpus": 4,
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "17.0.0",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "17.0.0",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "darwin"
+      },
+      "build": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "darwin"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      },
+      "lapack": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      }
+    },
+    "Python Information": {
+      "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/build-env-7r9kf1zx/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "X86_V2"
+      ],
+      "found": [
+        "X86_V3"
+      ],
+      "not found": [
+        "X86_V4",
+        "AVX512_ICL"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.1,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "tests": {
+      "returncode": 1,
+      "seconds": 584.2374245880001,
+      "peak_rss_bytes": 397357056,
+      "stopped": null
+    },
+    "cluster": {
+      "returncode": 0,
+      "seconds": 7.387885452999967,
+      "peak_rss_bytes": 90685440,
+      "stopped": null
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 43.47545311300007,
+      "peak_rss_bytes": 226213888,
+      "stopped": null
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 13.609543837000047,
+      "peak_rss_bytes": 100450304,
+      "stopped": null
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 94.09919732900016,
+      "peak_rss_bytes": 290787328,
+      "stopped": null
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 54.37122267899986,
+      "peak_rss_bytes": 585551872,
+      "stopped": null
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 109.50263600199992,
+      "peak_rss_bytes": 762023936,
+      "stopped": null
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 7.982622054999865,
+      "peak_rss_bytes": 99192832,
+      "stopped": null
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 57.83962854299989,
+      "peak_rss_bytes": 1636397056,
+      "stopped": null
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 57.576602353,
+      "peak_rss_bytes": 746438656,
+      "stopped": null
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 8.963648021999916,
+      "peak_rss_bytes": 92041216,
+      "stopped": null
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 67.38793808100013,
+      "peak_rss_bytes": 539303936,
+      "stopped": null
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6855169435678647,
+      "speedup_nt": 1.6745160770920804,
+      "all_case_speedup_1t": 1.6855169435678647,
+      "all_case_speedup_nt": 1.6745160770920804
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.899804238661822,
+      "speedup_nt": 4.519410644790854,
+      "all_case_speedup_1t": 3.899804238661822,
+      "all_case_speedup_nt": 4.519410644790854
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.7435806296285072,
+      "speedup_nt": 1.7298327551184653,
+      "all_case_speedup_1t": 1.7435806296285072,
+      "all_case_speedup_nt": 1.7298327551184653
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.7727237623912813,
+      "speedup_nt": 4.428031028054949,
+      "all_case_speedup_1t": 3.1656256221640273,
+      "all_case_speedup_nt": 3.6507272438506755
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 5.344231382755038,
+      "speedup_nt": 6.4127896545188845,
+      "all_case_speedup_1t": 5.344231382755038,
+      "all_case_speedup_nt": 6.4127896545188845
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 8.172350208711554,
+      "speedup_nt": 12.268401537120184,
+      "all_case_speedup_1t": 8.172350208711554,
+      "all_case_speedup_nt": 12.268401537120184
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [
+        "minimize BFGS rosen n=10 (numerical gradient)"
+      ],
+      "reference_variance": [
+        "minimize BFGS rosen n=10 (numerical gradient)"
+      ],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6771048993346145,
+      "speedup_nt": 1.6753091098690205,
+      "all_case_speedup_1t": 1.6243051665893895,
+      "all_case_speedup_nt": 1.6335611086662989
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.6900414609918784,
+      "speedup_nt": 4.067811850909665,
+      "all_case_speedup_1t": 3.6900414609918784,
+      "all_case_speedup_nt": 4.067811850909665
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 4.0472165878930015,
+      "speedup_nt": 4.442219605515917,
+      "all_case_speedup_1t": 4.0472165878930015,
+      "all_case_speedup_nt": 4.442219605515917
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.3164383553206374,
+      "speedup_nt": 1.3505146098233165,
+      "all_case_speedup_1t": 1.3164383553206374,
+      "all_case_speedup_nt": 1.3505146098233165
+    }
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "2",
+      "skipped": "0",
+      "tests": "7275",
+      "time": "581.886",
+      "timestamp": "2026-10-20T15:30:23.338703+00:00",
+      "hostname": "iad01-dz252-a07c9a08-89e2-4809-a759-8dfcbed05499-52F2F2EC7F47.local"
+    }
+  ]
+}

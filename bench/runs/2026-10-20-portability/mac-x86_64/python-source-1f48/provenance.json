@@ -1,0 +1,20 @@
+{
+  "purpose": "diagnostics_only",
+  "mode": "diagnostics",
+  "target": "macos-x86_64",
+  "checkout_sha": "1f48cd63a544379363234081cc8178a574fea73f",
+  "run_id": "39448533018",
+  "wheel_reused": true,
+  "wheel_artifact_run_id": "39376214465",
+  "wheel_artifact_run_head_sha": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "wheel_artifact_run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39376214465",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-macosx_10_12_x86_64.whl"
+  ],
+  "wheel_build_profile": "release",
+  "wheel_build_codegen_units": 8,
+  "wheel_build_lto": "thin",
+  "wheel_build_returncode": 0,
+  "wheel_build_stopped": null
+}

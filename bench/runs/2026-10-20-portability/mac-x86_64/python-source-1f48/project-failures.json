@@ -1,0 +1,34 @@
+{
+  "description": "Derived full-project outcomes; original XML is retained outside git in the Actions artifact",
+  "tests": 7275,
+  "passed": 7273,
+  "failed": 2,
+  "skipped": 0,
+  "raw_xml": {
+    "file": "python-source-intel/suite/tests.xml",
+    "bytes": 829960,
+    "sha256": "2d153c786909c06430d54bdf277567387153ff93b0fcabce7d062211719ef43b"
+  },
+  "raw_test_log": {
+    "file": "python-source-intel/suite/tests.log",
+    "bytes": 16575,
+    "sha256": "f51e3bfdc8ff8ba1abc663f7ef483b947c2f3b548b0c5bdac155b7b28c19913c"
+  },
+  "failures": [
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicgstab]",
+      "kind": "failure",
+      "message": "assert 41 == 42\n +  where 41 = len([array([-0.03733049,  0.00923244,  0.02491663,  0.01712338, -0.02985452,\\n        0.03318237,  0.02180165,  0.02168927,...03, -1.13449061e-02,  3.82699946e-04,\\n        3.55091718e-03,  1.30490793e-02,  1.65794092e-03, -6.19181608e-03]), ...])\n +  and   42 = len([array([-0.03733049,  0.00923244,  0.02491663,  0.01712338, -0.02985452,\\n        0.03318237,  0.02180165,  0.02168927,...03, -1.13449061e-02,  3.82699946e-04,\\n        3.55091718e-03,  1.30490793e-02,  1.65794092e-03, -6.19181608e-03]), ...])",
+      "message_sha256": "a8da0a1da89f50f6897c36b4aa8bfef45ceb80a4ec4652f2f00e40443cb5e5fd",
+      "trace_sha256": "5954b00ae4dcf4d8f933d1b8aa6a67e3f6d349302ec7f1ce9f84dea257ba7855"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-bicgstab]",
+      "kind": "failure",
+      "message": "assert 41 == 42\n +  where 41 = len([array([-0.03733049,  0.00923244,  0.02491663,  0.01712338, -0.02985452,\\n        0.03318237,  0.02180165,  0.02168927,...03, -1.13449061e-02,  3.82699946e-04,\\n        3.55091718e-03,  1.30490793e-02,  1.65794092e-03, -6.19181608e-03]), ...])\n +  and   42 = len([array([-0.03733049,  0.00923244,  0.02491663,  0.01712338, -0.02985452,\\n        0.03318237,  0.02180165,  0.02168927,...03, -1.13449061e-02,  3.82699946e-04,\\n        3.55091718e-03,  1.30490793e-02,  1.65794092e-03, -6.19181608e-03]), ...])",
+      "message_sha256": "a8da0a1da89f50f6897c36b4aa8bfef45ceb80a4ec4652f2f00e40443cb5e5fd",
+      "trace_sha256": "5954b00ae4dcf4d8f933d1b8aa6a67e3f6d349302ec7f1ce9f84dea257ba7855"
+    }
+  ],
+  "trace_hash_encoding": "UTF-8 of XML-decoded message/trace"
+}

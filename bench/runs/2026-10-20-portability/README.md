@@ -144,3 +144,12 @@ all 18 previous fast-path misses, with the selector restored afterwards.
 Original focused JUnit, worker, monitor, log, provenance, and verified hashes
 are retained. This does not certify a rebuilt release wheel or resolve the
 independent numerical failures.
+
+The [Intel current-Python overlay diagnostic](mac-x86_64/python-source-1f48/README.md)
+**failed and remained partial**: 7,273 project tests passed, two BiCGSTAB
+callback-history tests failed, and the outer 1,200-second timeout interrupted
+benchmarking. Eleven raw area reports retain 312 completed cases (311
+byte-identical, one explicitly marked reference variation), with no missing
+expected fast paths; the remaining 95 cases did not complete. Current Python
+source `1f48cd6` and unchanged `daf9acd` native provenance are kept distinct.
+This is not a passing full-suite or release-wheel result.

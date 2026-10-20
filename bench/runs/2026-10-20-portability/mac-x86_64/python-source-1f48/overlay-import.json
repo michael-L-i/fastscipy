@@ -1,0 +1,6 @@
+{
+  "purpose": "current_python_reused_native_diagnostic_not_release_certification",
+  "package_path": "/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-ozl1cxby/fastscipy/__init__.py",
+  "native_path": "/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-ozl1cxby/fastscipy/_native.cpython-313-darwin.so",
+  "overlay_import_verified": true
+}

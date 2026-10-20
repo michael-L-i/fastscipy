@@ -1,0 +1,234 @@
+{
+  "purpose": "derived_failed_partial_python_overlay_audit_not_release_certification",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39448533018",
+  "overall": "FAILED: two project test failures and global diagnostic timeout",
+  "source_head": "1f48cd63a544379363234081cc8178a574fea73f",
+  "reused_native_source": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "source_file_hashes_verified_against_git": [
+    "__init__.py",
+    "_cluster.py",
+    "_csgraph.py",
+    "_integrate.py",
+    "_interpolate.py",
+    "_linalg.py",
+    "_ndimage.py",
+    "_ndimage_correlate.py",
+    "_ndimage_generic.py",
+    "_ndimage_interp.py",
+    "_ndimage_label.py",
+    "_ndimage_morph.py",
+    "_ndimage_rank.py",
+    "_ndimage_seam.py",
+    "_optimize.py",
+    "_patch.py",
+    "_signal.py",
+    "_signal_algo.py",
+    "_signal_small.py",
+    "_signal_threads.py",
+    "_sparse.py",
+    "_sparse_linalg.py",
+    "_spatial.py",
+    "_special.py",
+    "_stats.py",
+    "_stats_algos.py",
+    "_stats_dist.py",
+    "_stats_loop.py",
+    "_stats_rank.py",
+    "_threads.py",
+    "pytest_plugin.py",
+    "testing.py"
+  ],
+  "native_source_git_diff_empty_independently_verified": true,
+  "wheel_and_native_hashes_independently_verified_against_original_daf_artifact": true,
+  "overlay_import_verified": true,
+  "environment_evidence": {
+    "probe_source_sha256": "d46f2a21ccbbffca4367557cceb864fb2a49732881a3423d6b0f369df0ae6dd0",
+    "committed_probe_removes": [
+      "FASTSCIPY_ANY_PLATFORM",
+      "FASTSCIPY_ANY_VERSION"
+    ],
+    "runtime_override_environment_separately_recorded": false,
+    "scope": "Absence inferred from the committed executed probe before child creation; no independent runtime environment dump.",
+    "native_threads": 2,
+    "blas_threads": 1
+  },
+  "outer_monitor": {
+    "returncode": -9,
+    "seconds": 1200.287340923,
+    "peak_rss_bytes": 1705295872,
+    "stopped": "timeout"
+  },
+  "inner_monitor_present": false,
+  "summary_state": "Original incremental snapshot, not a final complete or provenance-annotated report; outer kill prevented finalization.",
+  "benchmark_cases_completed": 312,
+  "byte_identical": 311,
+  "reference_variance_nonidentical": [
+    {
+      "case": "minimize BFGS rosen n=10 (numerical gradient)",
+      "validation": "reference_variance"
+    }
+  ],
+  "missing_expected_fast_paths": [],
+  "completed_case_areas": {
+    "cluster": {
+      "cases": 12,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "csgraph": {
+      "cases": 16,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "integrate": {
+      "cases": 35,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "interpolate": {
+      "cases": 31,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "linalg": {
+      "cases": 49,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "ndimage": {
+      "cases": 43,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "optimize": {
+      "cases": 14,
+      "nonidentical": [
+        {
+          "case": "minimize BFGS rosen n=10 (numerical gradient)",
+          "validation": "reference_variance"
+        }
+      ],
+      "missing_fast_path": []
+    },
+    "signal": {
+      "cases": 41,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "sparse": {
+      "cases": 27,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "nonidentical": [],
+      "missing_fast_path": []
+    },
+    "spatial": {
+      "cases": 24,
+      "nonidentical": [],
+      "missing_fast_path": []
+    }
+  },
+  "summary_snapshot_cases": 288,
+  "spatial_cases_missing_from_summary_snapshot": 24,
+  "remaining_cases": 95,
+  "remaining_areas": {
+    "special": "Partial text log only; no complete JSON",
+    "stats": "Not started"
+  },
+  "upstream_requested": false,
+  "original_files": [
+    {
+      "file": "sources.json",
+      "bytes": 6092,
+      "sha256": "20ff6f31de7a199ee1e62d7263a7b3e6cf85d031009721faefc892fdb9f23e0c"
+    },
+    {
+      "file": "overlay-import.json",
+      "bytes": 386,
+      "sha256": "695af0ac5a7dd5f432e5497b2bedcbf6b8a518e669d437f51fec42d42787d397"
+    },
+    {
+      "file": "provenance.json",
+      "bytes": 702,
+      "sha256": "46fe9cf30a4af1c9a43d90dc4b5956627502c1200ccbbefe4461e47803376ee1"
+    },
+    {
+      "file": "diagnostics.json",
+      "bytes": 1166,
+      "sha256": "f978732675b1e5863fbc32549e393641291362798ea2807ece73467c0882bae3"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 8275,
+      "sha256": "1a845bd018a4f78a90927faebbbabdbec4152058004e5cfcc04792f17d3ee76e"
+    },
+    {
+      "file": "suite.log",
+      "bytes": 448,
+      "sha256": "cf3e6fc5922135c553821264a51fef3f1c1f7be54a19416cabfd02fcf7c01a82"
+    },
+    {
+      "file": "reference-variance.jsonl",
+      "bytes": 59800,
+      "sha256": "314931053d655775046911c802e73c1e3ccdac469d072bed9aa9df8e83a35751"
+    },
+    {
+      "file": "cases/cluster.json",
+      "bytes": 3773,
+      "sha256": "0af2488f279496e4b9c3600a87c645d13ca37e465d7c2e025b14ad567d18b505"
+    },
+    {
+      "file": "cases/csgraph.json",
+      "bytes": 5365,
+      "sha256": "1dea76613fd91dd0e2dd11338add8479e48c18ddce48f4d1cb81f843addc6423"
+    },
+    {
+      "file": "cases/integrate.json",
+      "bytes": 11127,
+      "sha256": "1e84be7385ea830002b7499c5102839f6ea0e1f34d597cc084a8d698c5f9aae8"
+    },
+    {
+      "file": "cases/interpolate.json",
+      "bytes": 10012,
+      "sha256": "20e968052fa34ca537d74b2f2c05afbe46075bbd5e03a9d7c46090c128857db4"
+    },
+    {
+      "file": "cases/linalg.json",
+      "bytes": 15705,
+      "sha256": "fd1906a4b04fb0e48c952e6ee08d245a010d8fedb590f51bcfa328f816a81767"
+    },
+    {
+      "file": "cases/ndimage.json",
+      "bytes": 13144,
+      "sha256": "81bc3e8a652f9357ca6c0c0431ca1e34d0a65c374e7231f8ee2d0454f0ffa9b5"
+    },
+    {
+      "file": "cases/optimize.json",
+      "bytes": 5530,
+      "sha256": "83a589695d00ca33df62960c187e5f1f56809a11c88f99dff17915b40960706c"
+    },
+    {
+      "file": "cases/signal.json",
+      "bytes": 12877,
+      "sha256": "27b3e15bd55ce82edb1e9941f87e7b9cd067f1d90d722de0dfc031035e5016e1"
+    },
+    {
+      "file": "cases/sparse.json",
+      "bytes": 8460,
+      "sha256": "e48e149503318ea3b0a26cb119c519bf5d3f3e493cd0ba47a01e71b53d535bc5"
+    },
+    {
+      "file": "cases/sparse_linalg.json",
+      "bytes": 6339,
+      "sha256": "8b73a72d504bb38174ba11465cbe2f3f9982fdb2ed4e19955079d3f474b7c31c"
+    },
+    {
+      "file": "cases/spatial.json",
+      "bytes": 7626,
+      "sha256": "148159111263a4bf7c2f47553a78c518753c08cd0dc4ab8f0a83dc29f9aee362"
+    }
+  ]
+}

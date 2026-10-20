@@ -17,6 +17,35 @@ def threads(request):
     fastscipy.set_num_threads(old)
 
 
+def _iteration_reference_validation(a, b, rtol):
+    """Validate complete histories only after check proves reference variance."""
+
+    def validate(expected, actual):
+        assert type(expected) is type(actual) is tuple and len(expected) == len(actual) == 2
+        expected_result, expected_history = expected
+        actual_result, actual_history = actual
+        assert type(expected_result) is type(actual_result) is tuple
+        assert len(expected_result) == len(actual_result) == 2
+        expected_x, expected_info = expected_result
+        actual_x, actual_info = actual_result
+        assert type(expected_info) is type(actual_info) and expected_info == actual_info
+        assert type(expected_history) is type(actual_history) is list
+        assert len(expected_history) == len(actual_history)
+        for x, y in [(expected_x, actual_x), *zip(expected_history, actual_history)]:
+            assert type(x) is type(y) is np.ndarray
+            assert x.shape == y.shape == b.shape and x.dtype == y.dtype
+            assert np.isfinite(x).all() and np.isfinite(y).all()
+            np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
+        if actual_info == 0:
+            # Recompute the original equation independently of solver-reported
+            # residuals, for both the baseline and accelerated solution.
+            limit = rtol * np.linalg.norm(b)
+            for solution in (expected_x, actual_x):
+                assert np.linalg.norm(b - a @ solution) <= limit
+
+    return validate
+
+
 @pytest.mark.parametrize("dtype", [np.float32, np.float64, np.complex64, np.complex128])
 @pytest.mark.parametrize("layout", ["contiguous", "reversed", "readonly"])
 def test_operator_vector_and_adjoint(dtype, layout):
@@ -52,8 +81,56 @@ def test_solver_results_and_iteration_history(solver, n):
         result = solver(a, b, rtol=1e-9, callback=lambda x: history.append(np.array(x, copy=True)), **kwargs)
         return result, history
 
-    check(run)
+    # These six n=100 references independently varied on Intel Accelerate.
+    # Other cases retain the strict byte-only oracle. check additionally gates
+    # this opt-in on the actual backend and newly observed baseline variance.
+    proven = (sl.cg, sl.bicg, sl.lgmres, sl.qmr, sl.tfqmr, sl.gcrotmk)
+    validation = _iteration_reference_validation(a, b, 1e-9) if n == 100 and solver in proven else None
+    check(run, reference_validation=validation)
     assert a.data.tobytes() == a_before and b.tobytes() == b_before
+
+
+def test_iterative_reference_validator_accepts_roundoff():
+    a = sparse.csr_array(np.eye(2) * 2)
+    b = np.array([2.0, 6.0])
+    expected_x = b / 2
+    actual_x = np.nextafter(expected_x, np.inf)
+    expected = ((expected_x, 0), [np.zeros(2), expected_x.copy()])
+    actual = ((actual_x, 0), [np.zeros(2), actual_x.copy()])
+    _iteration_reference_validation(a, b, 1e-9)(expected, actual)
+
+
+@pytest.mark.parametrize("fault", ["info", "history_count", "dtype", "shape", "nan", "inaccurate"])
+def test_iterative_reference_validator_rejects_wrong_results(fault):
+    a = sparse.csr_array(np.eye(2) * 2)
+    b = np.array([2.0, 6.0])
+    x = b / 2
+    expected = ((x, 0), [np.zeros(2), x.copy()])
+    y, info, history = x.copy(), 0, [np.zeros(2), x.copy()]
+    if fault == "info":
+        info = 1
+    elif fault == "history_count":
+        history.pop()
+    elif fault == "dtype":
+        y = y.astype(np.float32)
+    elif fault == "shape":
+        y = y[:, None]
+    elif fault == "nan":
+        history[0][0] = np.nan
+    elif fault == "inaccurate":
+        y[0] += 1e-6
+    with pytest.raises(AssertionError):
+        _iteration_reference_validation(a, b, 1e-9)(expected, ((y, info), history))
+
+
+def test_iterative_reference_validator_checks_equation_despite_close_values():
+    a = sparse.csr_array(np.diag([1e9, 1.0]))
+    b = np.ones(2)
+    x = np.array([1e-9, 1.0])
+    y = x.copy()
+    y[0] += 1e-14  # Within the agreement bound, but gives a residual of 1e-5.
+    with pytest.raises(AssertionError):
+        _iteration_reference_validation(a, b, 1e-9)(((x, 0), []), ((y, 0), []))
 
 
 @pytest.mark.parametrize("solver", [sl.lsqr, sl.lsmr])

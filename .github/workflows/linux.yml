@@ -189,9 +189,11 @@ jobs:
           from pathlib import Path
           from tools.platform_suite import run
           Path("artifacts").mkdir(exist_ok=True)
-          result = run([sys.executable, "tools/probe_ndimage_platform.py"], Path("artifacts/diagnostics.log"), 1024, 120)
-          Path("artifacts/diagnostics.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
-          sys.exit(result["returncode"])
+          results = {}
+          for probe in sorted(Path("tools").glob("probe_*_platform.py")):
+              results[probe.stem] = run([sys.executable, str(probe)], Path("artifacts") / f"{probe.stem}.log", 1024, 120)
+          Path("artifacts/diagnostics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+          sys.exit(any(result["returncode"] for result in results.values()))
           PY
       - name: Correctness and all-area benchmarks
         if: ${{ inputs.mode != 'diagnostics' }}

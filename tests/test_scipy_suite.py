@@ -35,7 +35,11 @@ def test_incomplete_middle_partition_keeps_remaining_coverage(suite, monkeypatch
     )
     calls = []
 
-    def subprocess_run(cmd, check):
+    def subprocess_run(cmd, check, env):
+        assert "scipy_upstream_quarantine" in cmd
+        assert env["PYTHONPATH"].split(suite.os.pathsep)[0] == str(Path(suite.__file__).parent)
+        quarantine = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-quarantine-report=")))
+        quarantine.write_text(json.dumps({"plugin": "scipy_upstream_quarantine", "selected": [], "active": False}))
         junit = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--junitxml=")))
         index = int(junit.stem.split("-")[0])
         patched = "fastscipy.pytest_plugin" in cmd
@@ -87,7 +91,164 @@ def test_incomplete_middle_partition_keeps_remaining_coverage(suite, monkeypatch
 def test_pytest_test_failure_is_complete(suite, monkeypatch, tmp_path):
     junit = tmp_path / "failure.xml"
     junit.write_text('<testsuite><testcase classname="tests.example" name="test_bad"><failure/></testcase></testsuite>')
-    monkeypatch.setattr(suite.subprocess, "run", lambda *args, **kwargs: SimpleNamespace(returncode=1))
+
+    def subprocess_run(cmd, **kwargs):
+        quarantine = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-quarantine-report=")))
+        quarantine.write_text(json.dumps({"plugin": "scipy_upstream_quarantine", "selected": [], "active": False}))
+        return SimpleNamespace(returncode=1)
+
+    monkeypatch.setattr(suite.subprocess, "run", subprocess_run)
     results, returncode = suite.run(["--pyargs", "scipy.example"], False, str(junit))
     assert returncode == 1
     assert results == {"tests.example::test_bad": "failed"}
+
+
+@pytest.fixture
+def quarantine():
+    spec = importlib.util.spec_from_file_location(
+        "scipy_quarantine_under_test", Path(__file__).parents[1] / "tools/scipy_upstream_quarantine.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def observed_scope(quarantine, source):
+    return {
+        "platform": "win32",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "win-arm64",
+        "python": [3, 13, 16],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": str(source),
+        "test_source_sha256": quarantine.TEST_SOURCE_SHA256,
+    }
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("platform", "linux"),
+        ("machine", "amd64"),
+        ("implementation", "pypy"),
+        ("python_platform", "win-amd64"),
+        ("python", [3, 13, 17]),
+        ("numpy", "2.5.5"),
+        ("scipy", "1.18.2"),
+        ("test_source_sha256", "changed-source"),
+    ],
+)
+def test_quarantine_refuses_unproven_scope(quarantine, tmp_path, field, value):
+    observed = observed_scope(quarantine, tmp_path / "test_basic.py")
+    assert quarantine.applicable(observed)
+    observed[field] = value
+    assert not quarantine.applicable(observed)
+
+
+def test_quarantine_actual_source_hash_refusal(quarantine, monkeypatch, tmp_path):
+    source = tmp_path / "linalg/tests/test_basic.py"
+    source.parent.mkdir(parents=True)
+    source.write_text("original upstream source")
+    monkeypatch.setattr(quarantine.sys, "platform", "win32")
+    monkeypatch.setattr(quarantine.sys, "version_info", (3, 13, 16))
+    monkeypatch.setattr(quarantine.platform, "machine", lambda: "ARM64")
+    monkeypatch.setattr(quarantine.sysconfig, "get_platform", lambda: "win-arm64")
+    monkeypatch.setattr(
+        quarantine.importlib.metadata, "version", lambda name: {"numpy": "2.5.4", "scipy": "1.18.1"}[name]
+    )
+    monkeypatch.setattr(
+        quarantine.importlib.util, "find_spec", lambda name: SimpleNamespace(origin=str(tmp_path / "__init__.py"))
+    )
+    monkeypatch.setattr(quarantine, "TEST_SOURCE_SHA256", quarantine.hashlib.sha256(source.read_bytes()).hexdigest())
+    assert quarantine.applicable(quarantine.scope())
+    source.write_text("changed upstream source")
+    assert not quarantine.applicable(quarantine.scope())
+
+
+def test_quarantine_visibly_skips_exact_eight_of_416(quarantine, monkeypatch, tmp_path):
+    import itertools
+    import numpy as np
+
+    source = tmp_path / "test_basic.py"
+    observed = observed_scope(quarantine, source)
+    monkeypatch.setattr(quarantine, "scope", lambda: observed)
+    report = tmp_path / "quarantine.json"
+    config = SimpleNamespace(getoption=lambda name: str(report))
+    quarantine.pytest_configure(config)
+    items = []
+    structures = [
+        "diagonal",
+        "tridiagonal",
+        "banded",
+        "lower triangular",
+        "upper triangular",
+        "pos",
+        "positive definite",
+        "symmetric",
+        "hermitian",
+        "general",
+        "sym",
+        "her",
+        "gen",
+    ]
+    cls = type("TestSolve", (), {})
+    for fortran, overwrite, transposed, rhs, structure, dtype in itertools.product(
+        (True, False), (True, False), (True, False), ((), (5,)), structures, (np.float64, np.complex128)
+    ):
+        markers = []
+        params = dict(
+            fortran=fortran, overwrite=overwrite, transposed=transposed, nrhs=rhs, assume_a=structure, dtype=dtype
+        )
+        nodeid = (
+            "test_basic.py::TestSolve::test_structure_detection"
+            f"[{fortran}-{overwrite}-{transposed}-nrhs{int(bool(rhs))}-{structure}-{dtype.__name__}]"
+        )
+        items.append(
+            SimpleNamespace(
+                path=source,
+                cls=cls,
+                originalname="test_structure_detection",
+                nodeid=nodeid,
+                callspec=SimpleNamespace(params=params),
+                add_marker=markers.append,
+                markers=markers,
+            )
+        )
+    quarantine.pytest_collection_modifyitems(config, items)
+    assert len(items) == 416
+    marked = [item for item in items if item.markers]
+    assert len(marked) == 8
+    assert all(
+        item.markers[0].name == "skip" and quarantine.REPRODUCTION in item.markers[0].kwargs["reason"]
+        for item in marked
+    )
+    saved = json.loads(report.read_text())
+    assert saved["active"] is True
+    assert {entry["nodeid"] for entry in saved["selected"]} == {item.nodeid for item in marked}
+    # Identical class/params in another source, class, or method remain covered.
+    item = marked[0]
+    item.path = tmp_path / "another_test.py"
+    assert not quarantine.matches(item, observed)
+    item.path = source
+    item.cls = type("OtherClass", (), {})
+    assert not quarantine.matches(item, observed)
+    item.cls = cls
+    item.originalname = "another_method"
+    assert not quarantine.matches(item, observed)
+
+
+def test_missing_quarantine_report_fails_closed(suite, monkeypatch, tmp_path):
+    junit = tmp_path / "result.xml"
+    junit.write_text('<testsuite><testcase classname="example" name="test_ok"/></testsuite>')
+    monkeypatch.setenv("PYTHONPATH", "existing-path")
+
+    def subprocess_run(cmd, check, env):
+        assert env["PYTHONPATH"] == str(Path(suite.__file__).parent) + suite.os.pathsep + "existing-path"
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(suite.subprocess, "run", subprocess_run)
+    with pytest.raises(suite.IncompleteRun, match="Invalid paired-quarantine report"):
+        suite.run(["--pyargs", "scipy.example"], False, str(junit))
+    assert suite.os.environ["PYTHONPATH"] == "existing-path"

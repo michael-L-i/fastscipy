@@ -1,0 +1,106 @@
+[
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+    "parameters": {
+      "fortran": true,
+      "overwrite": true,
+      "transposed": false,
+      "nrhs": [],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+    "parameters": {
+      "fortran": true,
+      "overwrite": true,
+      "transposed": false,
+      "nrhs": [
+        5
+      ],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+    "parameters": {
+      "fortran": true,
+      "overwrite": false,
+      "transposed": false,
+      "nrhs": [],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+    "parameters": {
+      "fortran": true,
+      "overwrite": false,
+      "transposed": false,
+      "nrhs": [
+        5
+      ],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+    "parameters": {
+      "fortran": false,
+      "overwrite": true,
+      "transposed": false,
+      "nrhs": [],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+    "parameters": {
+      "fortran": false,
+      "overwrite": true,
+      "transposed": false,
+      "nrhs": [
+        5
+      ],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+    "parameters": {
+      "fortran": false,
+      "overwrite": false,
+      "transposed": false,
+      "nrhs": [],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  },
+  {
+    "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+    "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+    "parameters": {
+      "fortran": false,
+      "overwrite": false,
+      "transposed": false,
+      "nrhs": [
+        5
+      ],
+      "assume_a": "banded",
+      "dtype": "complex128"
+    }
+  }
+]

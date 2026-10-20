@@ -20,6 +20,7 @@ SciPy's special ufunc tests are allowed: SciPy parametrizes these tests on
 import argparse
 import collections
 from contextlib import nullcontext
+import hashlib
 import importlib.metadata
 import json
 import os
@@ -82,10 +83,27 @@ def outcomes(path):
 
 def run(args, patched, junit):
     plugin = ["-p", "fastscipy.pytest_plugin"] if patched else []
-    cmd = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *plugin, f"--junitxml={junit}", *args]
+    quarantine = Path(junit).with_suffix(".quarantine.json")
+    cmd = [
+        sys.executable,
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "scipy_upstream_quarantine",
+        *plugin,
+        f"--upstream-quarantine-report={quarantine}",
+        f"--junitxml={junit}",
+        *args,
+    ]
+    env = os.environ.copy()
+    tools = str(Path(__file__).resolve().parent)
+    env["PYTHONPATH"] = tools + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     print("$", " ".join(cmd), flush=True)
     try:
-        result = subprocess.run(cmd, check=False)
+        result = subprocess.run(cmd, check=False, env=env)
     except OSError as error:
         raise IncompleteRun(f"Could not launch pytest: {error}") from error
     if result.returncode not in (0, 1):
@@ -96,6 +114,14 @@ def run(args, patched, junit):
         raise IncompleteRun(f"Invalid JUnit results: {error}", result.returncode) from error
     if not results:
         raise IncompleteRun("pytest collected no tests", result.returncode)
+    try:
+        quarantine_report = json.loads(quarantine.read_text(encoding="utf-8"))
+        if quarantine_report["plugin"] != "scipy_upstream_quarantine" or not isinstance(
+            quarantine_report["selected"], list
+        ):
+            raise ValueError("Invalid quarantine report")
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise IncompleteRun(f"Invalid paired-quarantine report: {error}", result.returncode) from error
     return results, result.returncode
 
 
@@ -153,6 +179,14 @@ def main():
                 "versions": {name: importlib.metadata.version(name) for name in ("numpy", "scipy", "fastscipy")},
                 "scipy_available_memory": os.environ["SCIPY_AVAILABLE_MEM"],
                 "batches": batches,
+                "paired_quarantine": {
+                    "plugin": "scipy_upstream_quarantine",
+                    "source_sha256": hashlib.sha256(
+                        Path(__file__).with_name("scipy_upstream_quarantine.py").read_bytes()
+                    ).hexdigest(),
+                    "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+                    "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs",
+                },
             }
             (Path(tmp) / "manifest.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
         plain, fast = {}, {}
@@ -166,6 +200,7 @@ def main():
                     "args": batch,
                     "patched": patched,
                     "junit": junit.name,
+                    "quarantine": junit.with_suffix(".quarantine.json").name,
                     "status": "running",
                     "complete": False,
                 }
@@ -181,6 +216,13 @@ def main():
                 else:
                     record.update(status="completed", complete=True, returncode=returncode, tests=len(result))
                 record["junit_exists"] = junit.exists()
+                quarantine = junit.with_suffix(".quarantine.json")
+                record["quarantine_exists"] = quarantine.exists()
+                if quarantine.exists():
+                    try:
+                        record["quarantine_report"] = json.loads(quarantine.read_text(encoding="utf-8"))
+                    except (OSError, ValueError):
+                        record["quarantine_report_invalid"] = True
                 report.write_text(json.dumps(records, indent=2), encoding="utf-8")
                 pair.append(result)
             if any(result is None for result in pair):

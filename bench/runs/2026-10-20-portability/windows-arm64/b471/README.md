@@ -35,3 +35,27 @@ The upstream process tree peaked at 1,570,549,760 bytes and was not stopped
 by the memory or time watchdog. No test quarantine was applied. This
 checkpoint confirms project and benchmark results; it does not certify a
 complete upstream comparison or the final release matrix.
+
+## Independent upstream crash reproduction
+
+[Diagnostic run 39376117965](https://github.com/michael-L-i/fastscipy/actions/runs/39376117965)
+reused this `b471` wheel with diagnostic source `daf9acd`. It collected the
+actual eight `TestSolve.test_structure_detection` cases with `banded`,
+`complex128`, and `transposed=False`, covering both matrix layouts,
+overwrite settings, and RHS shapes. All eight crashed with `0xC0000005`
+in fresh baseline and patched interpreters. A fresh NumPy-only process also
+crashed on the same deterministic 20-by-20 matrix, with SciPy never imported.
+The probe completed in 23.23 seconds without a watchdog stop.
+
+The [reproduction archive](upstream-crash-reproduction/) retains unchanged
+summary/provenance, actual collected IDs, all small child logs, and the exact
+probe source. Its [source index](upstream-crash-reproduction/sources.json)
+hashes each raw input and records the installed upstream test source hash.
+The historical platform report remains unchanged and incomplete.
+
+The upstream harness now applies visible paired skips only for those eight
+proven cases on native Windows ARM64 CPython 3.13.16, NumPy 2.5.4, SciPy
+1.18.1, and that exact upstream test source hash. The other 408 cases in the
+method remain covered. Both interpreters retain selected IDs and guards in
+JSON reports; JUnit records skipped tests. A new upstream run must establish
+the results with this policy; it does not complete the historical comparison.

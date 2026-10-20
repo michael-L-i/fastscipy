@@ -1,0 +1,706 @@
+{
+  "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:45:15) [MSC v.1944 64 bit (ARM64)]",
+  "executable": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "ARM64",
+  "diagnostics_only": true,
+  "prior_exact_reproduction_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39375594936",
+  "quarantine_applied": false,
+  "runs": {
+    "numpy-only": {
+      "returncode": 3221225477,
+      "seconds": 0.21336970000004385,
+      "peak_rss_bytes": 4530176,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-X",
+        "faulthandler",
+        "-c",
+        "\nimport hashlib\nimport json\nimport sys\nimport numpy as np\n\nrng = np.random.default_rng(982345982439826)\nn = 20\nb = rng.random(size=n)\na = rng.random(size=(n, n))\nb = b + rng.random(size=n) * 1j\na = a + rng.random(size=(n, n)) * 1j\na = np.asfortranarray(np.triu(np.tril(a, 2), -1))\na_copy = a.copy(order=\"A\")\nb_copy = b.copy()\nprint(json.dumps({\"numpy\": np.__version__, \"scipy_imported\": any(\n    name == \"scipy\" or name.startswith(\"scipy.\") for name in sys.modules),\n    \"a_shape\": a_copy.shape, \"a_dtype\": str(a_copy.dtype), \"a_fortran\": bool(a_copy.flags.f_contiguous),\n    \"b_shape\": b_copy.shape, \"a_sha256_C_order\": hashlib.sha256(a_copy.tobytes()).hexdigest(),\n    \"b_sha256\": hashlib.sha256(b_copy.tobytes()).hexdigest(), \"phase\": \"before np.linalg.solve\"}), flush=True)\nresult = np.linalg.solve(a_copy, b_copy)\nprint(json.dumps({\"phase\": \"returned\", \"shape\": result.shape,\n                  \"result_sha256\": hashlib.sha256(result.tobytes()).hexdigest()}), flush=True)\n"
+      ],
+      "patched": false,
+      "target": "numpy.linalg.solve",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": null,
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\numpy-only.log"
+    },
+    "collect": {
+      "returncode": 0,
+      "seconds": 1.4368842999999742,
+      "peak_rss_bytes": 87486464,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-c",
+        "\nimport json\nfrom pathlib import Path\nimport sys\nimport numpy as np\nimport pytest\n\nclass Collect:\n    def pytest_collection_finish(self, session):\n        cases = []\n        for item in session.items:\n            params = getattr(getattr(item, \"callspec\", None), \"params\", {})\n            if (getattr(item, \"originalname\", None) != \"test_structure_detection\"\n                    or getattr(getattr(item, \"cls\", None), \"__name__\", None) != \"TestSolve\"\n                    or params.get(\"assume_a\") != \"banded\"\n                    or params.get(\"transposed\") is not False\n                    or np.dtype(params.get(\"dtype\")) != np.dtype(np.complex128)):\n                continue\n            cases.append({\n                \"nodeid\": item.nodeid,\n                \"absolute_nodeid\": str(item.path) + \"::\" + item.nodeid.split(\"::\", 1)[1],\n                \"parameters\": {\"fortran\": params[\"fortran\"], \"overwrite\": params[\"overwrite\"],\n                               \"transposed\": params[\"transposed\"], \"nrhs\": list(params[\"nrhs\"]),\n                               \"assume_a\": params[\"assume_a\"], \"dtype\": str(np.dtype(params[\"dtype\"]))},\n            })\n        Path(sys.argv[1]).write_text(json.dumps(cases, indent=2), encoding=\"utf-8\")\n\nraise SystemExit(pytest.main([\"--collect-only\", \"-q\", \"-p\", \"no:cacheprovider\", sys.argv[2]], plugins=[Collect()]))\n",
+        "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\collected-nodes.json",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection",
+      "status": "finished",
+      "access_violation": false,
+      "last_parameter": "test_structure_detection[False-False-False-nrhs1-gen-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\collect.log"
+    },
+    "case-0-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8235108999999738,
+      "peak_rss_bytes": 75866112,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-0-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-0-baseline.log"
+    },
+    "case-0-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8409593000000086,
+      "peak_rss_bytes": 119091200,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-0-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-0-patched.log"
+    },
+    "case-1-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8236815999999862,
+      "peak_rss_bytes": 75620352,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-1-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-1-baseline.log"
+    },
+    "case-1-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8439050000000634,
+      "peak_rss_bytes": 121389056,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-1-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-1-patched.log"
+    },
+    "case-2-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8228230000000849,
+      "peak_rss_bytes": 76095488,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-2-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-2-baseline.log"
+    },
+    "case-2-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8428240000000642,
+      "peak_rss_bytes": 122060800,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-2-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-2-patched.log"
+    },
+    "case-3-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8241338999999925,
+      "peak_rss_bytes": 76124160,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-3-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-3-baseline.log"
+    },
+    "case-3-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8419002000000546,
+      "peak_rss_bytes": 120815616,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-3-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-3-patched.log"
+    },
+    "case-4-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8236917000000403,
+      "peak_rss_bytes": 75509760,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-4-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-4-baseline.log"
+    },
+    "case-4-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.847488999999996,
+      "peak_rss_bytes": 121323520,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-4-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-4-patched.log"
+    },
+    "case-5-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8240224999999555,
+      "peak_rss_bytes": 75309056,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-5-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-5-baseline.log"
+    },
+    "case-5-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8428462000000536,
+      "peak_rss_bytes": 121966592,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-5-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-5-patched.log"
+    },
+    "case-6-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8238609999999653,
+      "peak_rss_bytes": 75698176,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-6-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-6-baseline.log"
+    },
+    "case-6-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.8451357000000144,
+      "peak_rss_bytes": 122331136,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-6-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-6-patched.log"
+    },
+    "case-7-baseline": {
+      "returncode": 3221225477,
+      "seconds": 0.8239240999999993,
+      "peak_rss_bytes": 75431936,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-7-baseline.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]"
+      ],
+      "patched": false,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-7-baseline.log"
+    },
+    "case-7-patched": {
+      "returncode": 3221225477,
+      "seconds": 1.84300989999997,
+      "peak_rss_bytes": 121647104,
+      "stopped": null,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+        "-m",
+        "pytest",
+        "-vv",
+        "--tb=short",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "fastscipy.pytest_plugin",
+        "--junitxml=C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-7-patched.xml",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]"
+      ],
+      "patched": true,
+      "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "status": "finished",
+      "access_violation": true,
+      "last_parameter": "test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\case-7-patched.log"
+    }
+  },
+  "pairs": [
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-0-baseline",
+        "patched": "case-0-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-1-baseline",
+        "patched": "case-1-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-2-baseline",
+        "patched": "case-2-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-3-baseline",
+        "patched": "case-3-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-4-baseline",
+        "patched": "case-4-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-5-baseline",
+        "patched": "case-5-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-6-baseline",
+        "patched": "case-6-patched"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      },
+      "runs": {
+        "baseline": "case-7-baseline",
+        "patched": "case-7-patched"
+      }
+    }
+  ],
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "workflow_provenance": {
+    "purpose": "diagnostics_only",
+    "mode": "diagnostics",
+    "target": "windows-arm64",
+    "checkout_sha": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+    "run_id": "39376117965",
+    "wheel_reused": true,
+    "wheel_artifact_run_id": "39372506350",
+    "wheel_artifact_run_head_sha": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+    "wheel_artifact_run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39372506350",
+    "installed_wheel_version": "0.1.0a2",
+    "wheel_files": [
+      "fastscipy-0.1.0a2-cp313-cp313-win_arm64.whl"
+    ],
+    "wheel_build_profile": null,
+    "wheel_build_codegen_units": null,
+    "wheel_build_lto": null,
+    "wheel_build_returncode": 0,
+    "wheel_build_stopped": null
+  },
+  "budgets": {
+    "rss_mb_per_child": 768,
+    "timeout_seconds_per_child": 5,
+    "global_seconds": 90,
+    "max_children_serial": 18
+  },
+  "method_target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection",
+  "source_exists": true,
+  "upstream_test_source_sha256": "d40ba24f428b409d9dc8787b33a14927268ebc6e94209560f0cd696484636eee",
+  "seconds": 23.226276299999995,
+  "collected_cases": [
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": true,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": true,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    },
+    {
+      "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "absolute_nodeid": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+      "parameters": {
+        "fortran": false,
+        "overwrite": false,
+        "transposed": false,
+        "nrhs": [
+          5
+        ],
+        "assume_a": "banded",
+        "dtype": "complex128"
+      }
+    }
+  ],
+  "all_case_pairs_attempted": true,
+  "complete_test_outcomes": false
+}

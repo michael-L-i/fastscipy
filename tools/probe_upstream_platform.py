@@ -13,6 +13,7 @@ import platform
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 
 ACCESS_VIOLATION = {0xC0000005, -1073741819}
@@ -126,9 +127,10 @@ def main():
         os.environ[key] = value
     report["budgets"] = {
         "rss_mb_per_child": 768,
-        "timeout_seconds_per_child": 5,
+        "timeout_seconds_per_reproduction_child": 5,
+        "timeout_seconds_paired_helper": 30,
         "global_seconds": 90,
-        "max_children_serial": 18,
+        "max_children_serial": 19,
     }
     source = Path(scipy.__file__).parent / "linalg/tests/test_basic.py"
     method_target = f"{source}::{METHOD}"
@@ -140,7 +142,7 @@ def main():
     if not source.is_file():
         raise RuntimeError("Installed SciPy does not contain the expected upstream test source")
 
-    def execute(name, command, **details):
+    def execute(name, command, timeout=5, **details):
         log = output / f"{name}.log"
         record = {"command": command, **details, "status": "running"}
         report["runs"][name] = record
@@ -151,7 +153,7 @@ def main():
             return None
         save()
         print("Starting", name, details.get("target", ""), flush=True)
-        result = run(command, log, memory_mb=768, timeout=min(5, remaining))
+        result = run(command, log, memory_mb=768, timeout=min(timeout, remaining))
         text = log.read_text(encoding="utf-8", errors="replace")
         result.update(
             {
@@ -223,6 +225,77 @@ def main():
                 return
         save()
     report["all_case_pairs_attempted"] = len(report["pairs"]) == 8
+    # The vendor reproductions above remain unquarantined. Independently check
+    # the helper's actual paired skip activation without validating a new wheel.
+    helper = Path(__file__).with_name("scipy_suite.py")
+    validation = {"status": "not_started", "vendor_reproductions_quarantined": False}
+    report["paired_quarantine_validation"] = validation
+    if not helper.is_file():
+        validation.update(status="skipped", reason="Paired quarantine helper is absent")
+    else:
+        destination = output / "paired-quarantine-validation"
+        result = execute(
+            "paired-quarantine-validation",
+            [sys.executable, str(helper), "--output-dir", str(destination), method_target],
+            timeout=30,
+            target=method_target,
+            paired=True,
+        )
+        if result is None:
+            validation.update(status="incomplete", reason="Global diagnostic deadline exhausted")
+        else:
+            validation["returncode"] = result["returncode"]
+            validation["stopped"] = result["stopped"]
+            sides = {}
+            outcomes = []
+            try:
+                for patched in (False, True):
+                    quarantine = json.loads((destination / f"0-{patched}.quarantine.json").read_text(encoding="utf-8"))
+                    cases_xml = list(ET.parse(destination / f"0-{patched}.xml").getroot().iter("testcase"))
+                    states = {}
+                    skipped = []
+                    for case in cases_xml:
+                        tags = {child.tag for child in case}
+                        state = (
+                            "failed" if tags & {"failure", "error"} else "skipped" if "skipped" in tags else "passed"
+                        )
+                        states[f"{case.get('classname')}::{case.get('name')}"] = state
+                        if state == "skipped":
+                            skipped.append(case.get("name"))
+                    sides["patched" if patched else "baseline"] = {
+                        "quarantine": quarantine,
+                        "testcases": len(cases_xml),
+                        "unique_testcases": len(states),
+                        "skipped": skipped,
+                        "failed": sum(state == "failed" for state in states.values()),
+                    }
+                    outcomes.append(states)
+                baseline, patched = outcomes
+                validation.update(
+                    sides=sides,
+                    changed_outcomes=sorted(
+                        key for key in baseline.keys() & patched.keys() if baseline[key] != patched[key]
+                    ),
+                    missing_or_extra=sorted(baseline.keys() ^ patched.keys()),
+                )
+                expected_ids = {case["nodeid"] for case in cases}
+                expected_names = {node.rsplit("::", 1)[-1] for node in expected_ids}
+                valid = result["returncode"] == 0 and result["stopped"] is None
+                for side in sides.values():
+                    valid &= (
+                        side["quarantine"]["active"] is True
+                        and len(side["quarantine"]["selected"]) == 8
+                        and {item["nodeid"] for item in side["quarantine"]["selected"]} == expected_ids
+                        and side["testcases"] == side["unique_testcases"] == 416
+                        and len(side["skipped"]) == 8
+                        and set(side["skipped"]) == expected_names
+                        and side["failed"] == 0
+                    )
+                valid &= not validation["changed_outcomes"] and not validation["missing_or_extra"]
+                validation["status"] = "passed" if valid else "failed"
+            except (OSError, ValueError, TypeError, KeyError, ET.ParseError) as error:
+                validation.update(status="incomplete", error=str(error))
+        print("Paired quarantine validation:", validation["status"], flush=True)
     report["complete_test_outcomes"] = all(
         item.get("returncode") in (0, 1) and item.get("stopped") is None for item in report["runs"].values()
     )

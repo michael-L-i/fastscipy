@@ -1,0 +1,161 @@
+{
+  "description": "Unchanged raw source artifacts from bounded diagnostic only; reused b471 wheel, not a fresh wheel validation.",
+  "github_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+  "diagnostic_source_revision": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "probe_source": {
+    "file": "probe-source.py",
+    "sha256": "174dd3ff1d8d4999e2916db17c7b8a25ad634e0e0dbb4cb09e5604d4e9ce0326"
+  },
+  "upstream_test_source_sha256": "d40ba24f428b409d9dc8787b33a14927268ebc6e94209560f0cd696484636eee",
+  "raw_files": [
+    {
+      "source": "upstream-probe/summary.json",
+      "archive": "summary.json",
+      "bytes": 33029,
+      "sha256": "1fa3df80bead2a8585f0ca4996b648876d9a86533a3052a9bafb812939388470"
+    },
+    {
+      "source": "upstream-probe/collected-nodes.json",
+      "archive": "collected-nodes.json",
+      "bytes": 4255,
+      "sha256": "74c4d5098ecb944d9017b93d92c7f1f4c10758fb2cc83c758ba47860faa28488"
+    },
+    {
+      "source": "provenance.json",
+      "archive": "provenance.json",
+      "bytes": 708,
+      "sha256": "c173cb6572e5afa3d84ff6614eba823b2864e0c2cbf524c0acd8e74658d58de0"
+    },
+    {
+      "source": "upstream-probe/case-0-baseline.log",
+      "archive": "case-0-baseline.log",
+      "bytes": 4549,
+      "sha256": "5204cf27a389cd0f053b7856814dad90837abe2f9c4fe56ee0815a16add5e95b"
+    },
+    {
+      "source": "upstream-probe/case-0-patched.log",
+      "archive": "case-0-patched.log",
+      "bytes": 4549,
+      "sha256": "f893b4a5e149dad8c05e03917d0bc2d660f4119c97e1f31817a310d2499b3bd4"
+    },
+    {
+      "source": "upstream-probe/case-1-baseline.log",
+      "archive": "case-1-baseline.log",
+      "bytes": 4549,
+      "sha256": "7e3243c134f2d0a4941931c2846fb475db77da17ae895cd0cb1bcce83a95a269"
+    },
+    {
+      "source": "upstream-probe/case-1-patched.log",
+      "archive": "case-1-patched.log",
+      "bytes": 4549,
+      "sha256": "0e09f816028e0fe9721d221c29fc7ada6acbd067ea9ac7eb1e2abda189d9dcb1"
+    },
+    {
+      "source": "upstream-probe/case-2-baseline.log",
+      "archive": "case-2-baseline.log",
+      "bytes": 4550,
+      "sha256": "bbd2023f7c91320555afd4daca2c87d450eac6e3c6e37082bc713dd8b1cff08a"
+    },
+    {
+      "source": "upstream-probe/case-2-patched.log",
+      "archive": "case-2-patched.log",
+      "bytes": 4550,
+      "sha256": "d6340a7272143f36447922bf313253068fff5f0ceed5237baf351f8817d15968"
+    },
+    {
+      "source": "upstream-probe/case-3-baseline.log",
+      "archive": "case-3-baseline.log",
+      "bytes": 4550,
+      "sha256": "37b78b3820e01881a000581ba9ad5af53d327c62b1ffd2b960182d923ec91c55"
+    },
+    {
+      "source": "upstream-probe/case-3-patched.log",
+      "archive": "case-3-patched.log",
+      "bytes": 4550,
+      "sha256": "192824cced03f8e93eca138abd6374135ac18209010f646cbf76666084e3d72f"
+    },
+    {
+      "source": "upstream-probe/case-4-baseline.log",
+      "archive": "case-4-baseline.log",
+      "bytes": 4550,
+      "sha256": "a4291555d9ffbb36a03994a08bfb695fe761cd6c8f62f73c3a82691ba19499bb"
+    },
+    {
+      "source": "upstream-probe/case-4-patched.log",
+      "archive": "case-4-patched.log",
+      "bytes": 4550,
+      "sha256": "084f57df460863758b92ae025ba5199985329896451d47e935eeb81ee4628d0d"
+    },
+    {
+      "source": "upstream-probe/case-5-baseline.log",
+      "archive": "case-5-baseline.log",
+      "bytes": 4550,
+      "sha256": "dd969552aa02b4fd17d90e970d4d1309433e139f80352bafecef0967a6553685"
+    },
+    {
+      "source": "upstream-probe/case-5-patched.log",
+      "archive": "case-5-patched.log",
+      "bytes": 4550,
+      "sha256": "e5d7e34ef8c7f0d3fb28b1906a447444831156234f3993e270c213c09b09b0bb"
+    },
+    {
+      "source": "upstream-probe/case-6-baseline.log",
+      "archive": "case-6-baseline.log",
+      "bytes": 4551,
+      "sha256": "90146220dd131e6ea79ebe387cd703eafdb9a7522394f622caca25d6d06739a8"
+    },
+    {
+      "source": "upstream-probe/case-6-patched.log",
+      "archive": "case-6-patched.log",
+      "bytes": 4551,
+      "sha256": "7af95489bbaf95ad868eddd92507f5c816a39f28b9d89b310ef801eb25bd363c"
+    },
+    {
+      "source": "upstream-probe/case-7-baseline.log",
+      "archive": "case-7-baseline.log",
+      "bytes": 4551,
+      "sha256": "f00984db7c48bf0580ee6f32fb4b953e0b592dbf44b89bef4be3a1ff70e525a4"
+    },
+    {
+      "source": "upstream-probe/case-7-patched.log",
+      "archive": "case-7-patched.log",
+      "bytes": 4551,
+      "sha256": "2e265df1f709a64e41cd2942732b369e5535fe52fb4dc7aa1e72f62d16b455cf"
+    },
+    {
+      "source": "upstream-probe/collect.log",
+      "archive": "collect.log",
+      "bytes": 39981,
+      "sha256": "a88601c7b56098a969b001e796ebd8953085d6a15b5456e2f3cdc03845505816"
+    },
+    {
+      "source": "upstream-probe/numpy-only.log",
+      "archive": "numpy-only.log",
+      "bytes": 582,
+      "sha256": "5d19d2ed589b6b85d2300881135ffb27b3c6f95f127b7c247bb67609cd110f96"
+    }
+  ],
+  "baseline_and_patched_crashing_pairs": 8,
+  "numpy_only_access_violation": true,
+  "all_returncodes": {
+    "numpy-only": 3221225477,
+    "collect": 0,
+    "case-0-baseline": 3221225477,
+    "case-0-patched": 3221225477,
+    "case-1-baseline": 3221225477,
+    "case-1-patched": 3221225477,
+    "case-2-baseline": 3221225477,
+    "case-2-patched": 3221225477,
+    "case-3-baseline": 3221225477,
+    "case-3-patched": 3221225477,
+    "case-4-baseline": 3221225477,
+    "case-4-patched": 3221225477,
+    "case-5-baseline": 3221225477,
+    "case-5-patched": 3221225477,
+    "case-6-baseline": 3221225477,
+    "case-6-patched": 3221225477,
+    "case-7-baseline": 3221225477,
+    "case-7-patched": 3221225477
+  },
+  "quarantine_applied_in_diagnostic": false
+}

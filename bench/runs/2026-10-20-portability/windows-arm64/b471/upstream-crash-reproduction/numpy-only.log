@@ -1,0 +1,6 @@
+{"numpy": "2.5.4", "scipy_imported": false, "a_shape": [20, 20], "a_dtype": "complex128", "a_fortran": true, "b_shape": [20], "a_sha256_C_order": "b9d9e854a7f1a040355d74b43e0d55ae79b9150559789a4d2d0103ba195f6d0a", "b_sha256": "363724f9e40c0ce47d6f2d1ff223b4f191c5ed3fe82f7653a63733795bf1cf6c", "phase": "before np.linalg.solve"}
+Windows fatal exception: access violation
+
+Current thread 0x00002b4c (most recent call first):
+  File "C:\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\numpy\linalg\_linalg.py", line 463 in solve
+  File "<string>", line 21 in <module>

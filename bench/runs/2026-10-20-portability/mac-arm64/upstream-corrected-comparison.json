@@ -1,0 +1,115 @@
+{
+  "description": "Re-evaluation of all 38 completed raw JUnit records with corrected special-ufunc classifier; no tests reused from another run",
+  "comparator_commit": "4152fa3",
+  "manifest": {
+    "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "executable": "/private/tmp/fastscipy-portability-a2-mac/bin/python",
+    "revision": "b7070b15bbb0740f623b320e943dde9189951c00",
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "fastscipy": "0.1.0a2"
+    },
+    "scipy_available_memory": "2048Mib",
+    "batches": [
+      [
+        "--pyargs",
+        "scipy._lib"
+      ],
+      [
+        "--pyargs",
+        "scipy.cluster"
+      ],
+      [
+        "--pyargs",
+        "scipy.constants"
+      ],
+      [
+        "--pyargs",
+        "scipy.datasets"
+      ],
+      [
+        "--pyargs",
+        "scipy.differentiate"
+      ],
+      [
+        "--pyargs",
+        "scipy.fft"
+      ],
+      [
+        "--pyargs",
+        "scipy.fftpack"
+      ],
+      [
+        "--pyargs",
+        "scipy.integrate"
+      ],
+      [
+        "--pyargs",
+        "scipy.interpolate"
+      ],
+      [
+        "--pyargs",
+        "scipy.io"
+      ],
+      [
+        "--pyargs",
+        "scipy.linalg"
+      ],
+      [
+        "--pyargs",
+        "scipy.ndimage"
+      ],
+      [
+        "--pyargs",
+        "scipy.odr"
+      ],
+      [
+        "--pyargs",
+        "scipy.optimize"
+      ],
+      [
+        "--pyargs",
+        "scipy.signal"
+      ],
+      [
+        "--pyargs",
+        "scipy.sparse"
+      ],
+      [
+        "--pyargs",
+        "scipy.spatial"
+      ],
+      [
+        "--pyargs",
+        "scipy.special"
+      ],
+      [
+        "--pyargs",
+        "scipy.stats"
+      ]
+    ]
+  },
+  "partitions": 19,
+  "common_test_executions": 95772,
+  "changed_outcomes": [],
+  "unexpected_missing": [],
+  "unexpected_extra": [],
+  "expected_baseline_only": 684,
+  "expected_patched_only_skips": 2,
+  "plain_outcomes": {
+    "passed": 88048,
+    "skipped": 8405,
+    "failed": 3
+  },
+  "patched_outcomes": {
+    "passed": 87364,
+    "skipped": 8407,
+    "failed": 3
+  },
+  "unchanged_failures": [
+    "scipy.interpolate / tests.test_rbfinterp.TestRBFInterpolatorNeighborsNone::test_singular",
+    "scipy.linalg / tests.test_decomp.TestEig::test_singular",
+    "scipy.interpolate / tests.test_rbfinterp.TestRBFInterpolatorNeighborsInf::test_singular"
+  ]
+}

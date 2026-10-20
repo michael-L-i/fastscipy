@@ -1,0 +1,499 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "linux"
+ },
+ "cases": {
+  "lu_solve single 8x8 float32, check_finite=True": {
+   "scipy_ms": 0.010175999932471314,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.007737000032648211,
+   "x1t": 1.3152384502431345,
+   "nt_ms": 0.007728000127826817,
+   "xnt": 1.3167701558168705,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 float32, check_finite=False": {
+   "scipy_ms": 0.008719999868844752,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006568000117113115,
+   "x1t": 1.3276491646406245,
+   "nt_ms": 0.00657600003250991,
+   "xnt": 1.3260340367602654,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 float32, check_finite=True": {
+   "scipy_ms": 0.0098479999905976,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006079999820940429,
+   "x1t": 1.6197368882610184,
+   "nt_ms": 0.00607200013291731,
+   "xnt": 1.6218708456888817,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 float32, check_finite=False": {
+   "scipy_ms": 0.007407999873976223,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003727999910552171,
+   "x1t": 1.9871244773927557,
+   "nt_ms": 0.003727999910552171,
+   "xnt": 1.9871244773927557,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 float64, check_finite=True": {
+   "scipy_ms": 0.010095999869008665,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.007673000027352828,
+   "x1t": 1.3157825925998032,
+   "nt_ms": 0.007648000064364169,
+   "xnt": 1.3200836537712575,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 float64, check_finite=False": {
+   "scipy_ms": 0.008680000064487103,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006472999984907801,
+   "x1t": 1.3409547481422925,
+   "nt_ms": 0.006487999826276791,
+   "xnt": 1.3378545463784661,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 float64, check_finite=True": {
+   "scipy_ms": 0.00986399982139119,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006007999900248251,
+   "x1t": 1.641810916305709,
+   "nt_ms": 0.0059839999266841915,
+   "xnt": 1.648395712273505,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 float64, check_finite=False": {
+   "scipy_ms": 0.007296000148926396,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0036720000480272574,
+   "x1t": 1.9869281191447952,
+   "nt_ms": 0.0036639999052567873,
+   "xnt": 1.991266467681599,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 complex64, check_finite=True": {
+   "scipy_ms": 0.010207999821432168,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.007824000022083055,
+   "x1t": 1.304703449977036,
+   "nt_ms": 0.00780799996391579,
+   "xnt": 1.3073770323524379,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 complex64, check_finite=False": {
+   "scipy_ms": 0.00877699994816794,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0066080001488444395,
+   "x1t": 1.3282384610270932,
+   "nt_ms": 0.006607999921470764,
+   "xnt": 1.3282385067302505,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 complex64, check_finite=True": {
+   "scipy_ms": 0.010024000175690162,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006272000064200256,
+   "x1t": 1.5982142973667721,
+   "nt_ms": 0.0062480000906361965,
+   "xnt": 1.6043533979317657,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 complex64, check_finite=False": {
+   "scipy_ms": 0.007423999932143488,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0037999998312443495,
+   "x1t": 1.95368427943125,
+   "nt_ms": 0.003792999905272154,
+   "xnt": 1.957289775257931,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 complex128, check_finite=True": {
+   "scipy_ms": 0.010303999943062081,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.00783199993747985,
+   "x1t": 1.3156281952649838,
+   "nt_ms": 0.007839999852876645,
+   "xnt": 1.314285731686761,
+   "expected_fast_path": true
+  },
+  "lu_solve single 8x8 complex128, check_finite=False": {
+   "scipy_ms": 0.008887999911166844,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006631999895034824,
+   "x1t": 1.3401688859827967,
+   "nt_ms": 0.006600000006073969,
+   "xnt": 1.3466666519677624,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 complex128, check_finite=True": {
+   "scipy_ms": 0.010344999964218005,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006391999932020553,
+   "x1t": 1.618429298222455,
+   "nt_ms": 0.006391999932020553,
+   "xnt": 1.618429298222455,
+   "expected_fast_path": true
+  },
+  "cho_solve single 8x8 complex128, check_finite=False": {
+   "scipy_ms": 0.007552000170107931,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003856999910567538,
+   "x1t": 1.957998533890734,
+   "nt_ms": 0.0038719999793102033,
+   "xnt": 1.950413277495244,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 float32 C, check_finite=True": {
+   "scipy_ms": 0.011815999869213556,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005943999894952867,
+   "x1t": 1.987886957946733,
+   "nt_ms": 0.005912000005992013,
+   "xnt": 1.9986467958791676,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 float32 C, check_finite=False": {
+   "scipy_ms": 0.00910400012799073,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003888000037477468,
+   "x1t": 2.3415637963566995,
+   "nt_ms": 0.003879999894706998,
+   "xnt": 2.3463918492395286,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 float64 F, check_finite=True": {
+   "scipy_ms": 0.01163999991149467,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005672000042977743,
+   "x1t": 2.052186146561414,
+   "nt_ms": 0.005719999990105862,
+   "xnt": 2.0349650230120444,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 float64 F, check_finite=False": {
+   "scipy_ms": 0.008920000027501374,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0037199999951553764,
+   "x1t": 2.3978494728811968,
+   "nt_ms": 0.0037120000797585817,
+   "xnt": 2.4030171971552075,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 complex64 strided, check_finite=True": {
+   "scipy_ms": 0.013439999975162209,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0073999999585794285,
+   "x1t": 1.8162162230258003,
+   "nt_ms": 0.007312000207093661,
+   "xnt": 1.8380743427938546,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 complex64 strided, check_finite=False": {
+   "scipy_ms": 0.009384999884787248,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0042159999793511815,
+   "x1t": 2.226043626838809,
+   "nt_ms": 0.004192000005787122,
+   "xnt": 2.238788137364291,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 complex128 C, check_finite=True": {
+   "scipy_ms": 0.012000999959127512,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006047999931979575,
+   "x1t": 1.9842923436011772,
+   "nt_ms": 0.006024000185789191,
+   "xnt": 1.992197806938694,
+   "expected_fast_path": true
+  },
+  "solve_triangular single 8x8 complex128 C, check_finite=False": {
+   "scipy_ms": 0.00910400012799073,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0039039998682710575,
+   "x1t": 2.3319673245846104,
+   "nt_ms": 0.003928000069208792,
+   "xnt": 2.317718932684369,
+   "expected_fast_path": true
+  },
+  "lu_factor small stack 4x3x3": {
+   "scipy_ms": 0.035145000083502964,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.006856000027255504,
+   "x1t": 5.126166852944385,
+   "nt_ms": 0.006775999963792856,
+   "xnt": 5.186688351726407,
+   "expected_fast_path": true
+  },
+  "lu_solve small stack 4x3x3": {
+   "scipy_ms": 0.045241000179885305,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.010569000096438685,
+   "x1t": 4.2805373987204,
+   "nt_ms": 0.010407999980088789,
+   "xnt": 4.346752523677403,
+   "expected_fast_path": true
+  },
+  "solve_triangular small stack 4x3x3": {
+   "scipy_ms": 0.05137800008014892,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.009177000038107508,
+   "x1t": 5.598561606930554,
+   "nt_ms": 0.008999999863590347,
+   "xnt": 5.708666762096242,
+   "expected_fast_path": true
+  },
+  "lu_factor small stack 32x3x3": {
+   "scipy_ms": 0.16665300017848494,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.009993000048780232,
+   "x1t": 16.67697381817055,
+   "nt_ms": 0.009905000069920789,
+   "xnt": 16.825138718027056,
+   "expected_fast_path": true
+  },
+  "lu_solve small stack 32x3x3": {
+   "scipy_ms": 0.2058630000192352,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.015200999996523024,
+   "x1t": 13.54272745650437,
+   "nt_ms": 0.015393000012409175,
+   "xnt": 13.373806266048028,
+   "expected_fast_path": true
+  },
+  "solve_triangular small stack 32x3x3": {
+   "scipy_ms": 0.28438499998628686,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.012289000096643576,
+   "x1t": 23.141427109595295,
+   "nt_ms": 0.012313000070207636,
+   "xnt": 23.096320828778428,
+   "expected_fast_path": true
+  },
+  "lu_factor 10000x3x3": {
+   "scipy_ms": 51.55650999995487,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.2672000000293338,
+   "x1t": 40.68537720861854,
+   "nt_ms": 4.37563700006649,
+   "xnt": 11.782629591799191,
+   "expected_fast_path": true
+  },
+  "lu_solve 10000x3x3": {
+   "scipy_ms": 59.94807599995511,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.0405539999046596,
+   "x1t": 29.37833353234271,
+   "nt_ms": 3.0509619998611015,
+   "xnt": 19.648909426824822,
+   "expected_fast_path": true
+  },
+  "cho_solve 10000x3x3": {
+   "scipy_ms": 71.57698600008189,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.4691030000667524,
+   "x1t": 28.98906444897066,
+   "nt_ms": 8.501112999965699,
+   "xnt": 8.419719394433493,
+   "expected_fast_path": true
+  },
+  "solve_triangular 10000x3x3": {
+   "scipy_ms": 86.10958300005223,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.3777080000636488,
+   "x1t": 62.50205631097014,
+   "nt_ms": 4.130124999846885,
+   "xnt": 20.84914693943756,
+   "expected_fast_path": true
+  },
+  "eigh 10000x3x3": {
+   "scipy_ms": 154.14932700014106,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 22.33627200007504,
+   "x1t": 6.901300584073438,
+   "nt_ms": 12.900488000013866,
+   "xnt": 11.949108204276875,
+   "expected_fast_path": true
+  },
+  "eigvalsh 10000x3x3": {
+   "scipy_ms": 185.08036399998673,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.478823999941596,
+   "x1t": 28.566968944002053,
+   "nt_ms": 4.605115999993359,
+   "xnt": 40.19016328801568,
+   "expected_fast_path": true
+  },
+  "lu_factor 10000x8x8": {
+   "scipy_ms": 58.85303199988812,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 6.433982999851651,
+   "x1t": 9.147215962685182,
+   "nt_ms": 5.893004999961704,
+   "xnt": 9.986930606756752,
+   "expected_fast_path": true
+  },
+  "lu_solve 10000x8x8": {
+   "scipy_ms": 61.8966829999863,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.3606439999402937,
+   "x1t": 18.418101709400332,
+   "nt_ms": 4.988088999880347,
+   "xnt": 12.408897074906053,
+   "expected_fast_path": true
+  },
+  "cho_solve 10000x8x8": {
+   "scipy_ms": 74.19348300004458,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.9820570000301814,
+   "x1t": 18.63194901516534,
+   "nt_ms": 6.713455999943108,
+   "xnt": 11.051458891020262,
+   "expected_fast_path": true
+  },
+  "solve_triangular 10000x8x8": {
+   "scipy_ms": 88.44226899987007,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.4979199999961565,
+   "x1t": 35.40636569626175,
+   "nt_ms": 4.298594999909255,
+   "xnt": 20.57469219634255,
+   "expected_fast_path": true
+  },
+  "eigh 10000x8x8": {
+   "scipy_ms": 231.79333600000973,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 92.46934299994791,
+   "x1t": 2.5067046923880523,
+   "nt_ms": 53.0596669998431,
+   "xnt": 4.368541099225051,
+   "expected_fast_path": true
+  },
+  "eigvalsh 10000x8x8": {
+   "scipy_ms": 212.00051599998915,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 31.742788999963523,
+   "x1t": 6.678698459679544,
+   "nt_ms": 19.665249000127005,
+   "xnt": 10.780464361199797,
+   "expected_fast_path": true
+  },
+  "lu_factor 5000x32x32": {
+   "scipy_ms": 86.0459919999812,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 57.865108999976655,
+   "x1t": 1.487009935469333,
+   "nt_ms": 33.04322300004969,
+   "xnt": 2.604043558337266,
+   "expected_fast_path": true
+  },
+  "lu_solve 5000x32x32": {
+   "scipy_ms": 41.6727639999408,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 11.25568999987081,
+   "x1t": 3.702373110881617,
+   "nt_ms": 6.827668000141784,
+   "xnt": 6.103513527470201,
+   "expected_fast_path": true
+  },
+  "cho_solve 5000x32x32": {
+   "scipy_ms": 53.27176200012218,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 15.294580000045244,
+   "x1t": 3.4830483739968403,
+   "nt_ms": 9.972360999881857,
+   "xnt": 5.341940790225433,
+   "expected_fast_path": true
+  },
+  "solve_triangular 5000x32x32": {
+   "scipy_ms": 53.878029000088645,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 10.814556000013908,
+   "x1t": 4.981991771092531,
+   "nt_ms": 6.766162000076292,
+   "xnt": 7.96286417609882,
+   "expected_fast_path": true
+  },
+  "eigh 5000x32x32": {
+   "scipy_ms": 598.3953529998871,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 511.5972639998745,
+   "x1t": 1.1696609718382582,
+   "nt_ms": 276.9294530000934,
+   "xnt": 2.160822355719907,
+   "expected_fast_path": true
+  },
+  "eigvalsh 5000x32x32": {
+   "scipy_ms": 276.61565099992913,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 174.60607199996048,
+   "x1t": 1.5842269849584139,
+   "nt_ms": 119.3160129998887,
+   "xnt": 2.318344738859043,
+   "expected_fast_path": true
+  },
+  "null_space 2000x500": {
+   "scipy_ms": 581.2295499999891,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 222.6210030000857,
+   "x1t": 2.6108477734230915,
+   "nt_ms": 222.2731130000284,
+   "xnt": 2.6149341328562525,
+   "expected_fast_path": true
+  }
+ }
+}

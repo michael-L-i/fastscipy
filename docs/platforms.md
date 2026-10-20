@@ -27,17 +27,39 @@ JUnit results, per-case benchmark JSON, and a `summary.json` report under
 `platform-<target>-py313` artifacts. Inspect the job revision and artifacts
 before treating a result as evidence for a release.
 
-Intermediate checks before the latest capsule ABI guards found:
+The following are development checkpoints at different source revisions,
+not final release validation:
 
-- macOS arm64: 7,034 project tests passed; all 407 benchmark cases across
-  13 areas matched SciPy and met their expected fast-path checks.
-- Linux aarch64: 7,015 project tests passed, with one remaining test failure
-  in a stale Windows-platform simulation; all 407 benchmark cases across
-  13 areas matched SciPy and met their expected fast-path checks.
+- macOS arm64: 7,048 project tests passed on each of
+  [Python 3.13](../bench/runs/2026-10-20-portability/mac-arm64/tests-py313.json)
+  and [Python 3.15](../bench/runs/2026-10-20-portability/mac-arm64/tests-py315.json).
+  A separate [paired upstream comparison](../bench/runs/2026-10-20-portability/mac-arm64/upstream-corrected-comparison.json)
+  found no changed outcomes across 95,772 common test executions. Three
+  failures occurred in both the unpatched and patched runs; the report
+  retains those failures, expected collection differences, and the corrected
+  comparison's source revision.
+- Linux aarch64 (glibc), revision `66f20ae`: 7,048 project tests passed;
+  all 407 benchmark cases across 13 areas matched SciPy and met their
+  expected fast-path checks. The archive contains the
+  [summary](../bench/runs/2026-10-20-portability/linux-arm64/summary.json),
+  [13 per-area case reports](../bench/runs/2026-10-20-portability/linux-arm64/cases/),
+  and [build resource report](../bench/runs/2026-10-20-portability/linux-arm64/build.json).
+- Linux x86_64: all 407 benchmark cases matched SciPy and met their
+  expected fast-path checks. Four project tests exposed NaN-bit differences
+  in uniform filtering; the fix awaits fresh native CI. The initial
+  job also contained a stale Windows-platform simulation test, since fixed.
+- Windows arm64: all 407 benchmark outputs matched SciPy, but five missed
+  their expected fast paths. Project tests had 120 failures in arithmetic
+  calibration and fast-path checks. Fixes await the
+  [fresh native run](https://github.com/michael-L-i/fastscipy/actions/runs/39369748578);
+  a [diagnostic run](https://github.com/michael-L-i/fastscipy/actions/runs/39369369748)
+  confirmed the proposed correlation arithmetic against the installed SciPy
+  wheel in 85 of 85 software probe cases.
 
-These results do not certify the final `0.1.0a2` wheel. The latest source
+These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
 must complete its own project, benchmark, and paired upstream checks.
-Other targets remain pending until their reports are complete.
+Reports retain their original revisions and metadata; a passing earlier
+checkpoint does not validate subsequent native changes or other targets.
 
 The repository also retains earlier, hardware-specific Mac measurements:
 [published raw cases](../bench/results/) and

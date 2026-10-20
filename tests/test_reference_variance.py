@@ -13,8 +13,9 @@ def close(expected, actual):
 
 
 @pytest.fixture
-def sensitive(monkeypatch):
+def sensitive(monkeypatch, tmp_path):
     monkeypatch.setattr(testing, "_alignment_sensitive_reference", lambda: True)
+    monkeypatch.setenv("FASTSCIPY_REFERENCE_REPORT", str(tmp_path / "mock-reference.jsonl"))
 
 
 def test_records_observed_reference_variation(sensitive, monkeypatch, tmp_path):
@@ -67,6 +68,14 @@ def test_default_check_remains_exact(sensitive):
     values = iter((1.0, np.nextafter(1.0, 2.0)))
     with pytest.raises(AssertionError, match="results differ"):
         testing.check(lambda: next(values), fast=False)
+
+
+def test_check_reports_and_returns_numerically_validated_result(sensitive):
+    actual = np.nextafter(1.0, 2.0)
+    values = iter((1.0, actual, np.nextafter(actual, 2.0)))
+    with pytest.warns(testing.ReferenceVarianceWarning):
+        result = testing.check(lambda: next(values), fast=False, reference_validation=close)
+    assert result == actual
 
 
 def test_equal_calls_do_not_repeat_or_run_validator(sensitive):

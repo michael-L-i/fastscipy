@@ -481,3 +481,91 @@ def test_piecewise_raising_seterr_handler_once(cls, mode):
     finally:
         np.seterrcall(old)
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize("backend", ["bspline", "splev"])
+@pytest.mark.parametrize("k", range(1, 6))
+def test_spline_binary_arithmetic_calibration(backend, k):
+    from fastscipy import _interpolate
+
+    mode = _interpolate._spline_arithmetic(backend, k)
+    assert mode in range(4), "the installed SciPy should match a supported contraction scheme"
+    r = rng(761 + k)
+    t = knots("clamped", 60, k, r)
+    c = r.standard_normal((len(t) - k - 1, 1))
+    q = np.r_[r.uniform(-0.1, 1.1, 200), t]
+    out = _interpolate._k.bspline_eval(t, c, k, q, mode)
+    if backend == "bspline":
+        expected = _interpolate._orig["numpy_bspline"](t, c, k)(q)
+    else:
+        expected = _interpolate._orig["splev"](q, (t, c[:, 0], k)).reshape(-1, 1)
+    assert_identical(out, expected)
+
+
+def test_spline_fused_and_unfused_value_sums():
+    from fractions import Fraction
+
+    from fastscipy import _interpolate
+
+    # Linear Bernstein weights are exactly 1-x and x here. Exact rational
+    # arithmetic independently determines the once-rounded fused result.
+    x = 0.5 + 2**-27
+    c0, c1 = -1.0, 1.0 + 2**-27
+    first = c0 * (1.0 - x)
+    separate = first + c1 * x
+    fused = float(Fraction(first) + Fraction(c1) * Fraction(x))
+    assert separate != fused
+    t, c, q = np.array([0.0, 0.0, 1.0, 1.0]), np.array([[c0], [c1]]), np.array([x])
+    for mode in range(4):
+        result = _interpolate._k.bspline_eval(t, c, 1, q, mode)
+        assert_identical(result, np.array([[fused if mode & 2 else separate]]))
+
+
+@pytest.mark.parametrize("nd", [2, 3])
+def test_linear_binary_arithmetic_calibration(nd):
+    from fastscipy import _interpolate
+
+    mode = _interpolate._linear_arithmetic(nd)
+    assert mode in range(4), "the installed Cython binary should match a supported contraction scheme"
+    r = rng(780 + nd)
+    pts = r.random((40, nd))
+    tri = sp.Delaunay(pts)
+    values = r.standard_normal((len(pts), 3))
+    query = np.ascontiguousarray(pts[tri.simplices[:30]].mean(axis=1))
+    obj = si.LinearNDInterpolator(tri, values, fill_value=-123.25)
+    expected = np.asarray(_interpolate._orig["linear_double"](obj, query))
+    simplex = _interpolate._orig["find_simplex"](tri, query)
+    out = _interpolate._k.linear_eval(simplex, tri.transform, tri.simplices, values, query, -123.25, mode)
+    assert_identical(out, expected)
+
+
+def test_unrecognized_spline_arithmetic_retains_reordering(monkeypatch):
+    from fastscipy import _interpolate
+
+    r = rng(790)
+    x = np.linspace(0, 1, 1000)
+    spl = si.make_interp_spline(x, r.standard_normal(len(x)))
+    query = r.random(3000)
+    monkeypatch.setattr(_interpolate, "_spline_arithmetic", lambda *args: None)
+
+    def unexpected(*args):
+        raise AssertionError("unrecognized arithmetic must use the SciPy evaluator")
+
+    monkeypatch.setattr(_interpolate._k, "bspline_eval", unexpected)
+    check(lambda: spl(query))
+
+
+def test_unrecognized_linear_arithmetic_retains_reordering(monkeypatch):
+    from fastscipy import _interpolate
+
+    r = rng(791)
+    pts = r.random((500, 2))
+    interpolator = si.LinearNDInterpolator(pts, r.standard_normal(len(pts)))
+    query = r.random((3000, 2))
+    monkeypatch.setattr(_interpolate, "_linear_arithmetic", lambda *args: None)
+
+    def unexpected(*args):
+        raise AssertionError("unrecognized arithmetic must use the SciPy evaluator")
+
+    monkeypatch.setattr(_interpolate._k, "linear_eval", unexpected)
+    check(lambda: interpolator(query))

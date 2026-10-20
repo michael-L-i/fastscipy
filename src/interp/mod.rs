@@ -12,6 +12,16 @@ mod simplex;
 
 const ROWS_PER_TASK: usize = 4096;
 
+/// Match the contraction chosen by the compiler of the installed SciPy binary.
+#[inline(always)]
+fn madd<const FUSED: bool>(a: f64, b: f64, c: f64) -> f64 {
+    if FUSED {
+        a.mul_add(b, c)
+    } else {
+        a * b + c
+    }
+}
+
 /// Fill `out` (rows of `width` values) with `f(first_row, rows)`, on the shared
 /// pool when the thread budget allows and there are at least `parallel_from` rows.
 fn fill<T: Send>(

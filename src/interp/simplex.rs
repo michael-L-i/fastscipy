@@ -144,31 +144,22 @@ pub fn replay_intervals(
     Ok(Some(out))
 }
 
-/// `LinearNDInterpolator` arithmetic (barycentric weights, then the weighted
-/// sum of the vertex values) given the simplex of each query; `fill` where it is -1.
-/// clang fuses the multiply-adds on arm64, hence `mul_add`.
-#[pyfunction]
-pub fn linear_eval<'py>(
-    py: Python<'py>,
-    simplex: PyReadonlyArray1<'py, i32>,
-    transform: PyReadonlyArray3<'py, f64>,
-    simplices: PyReadonlyArray2<'py, i32>,
-    values: PyReadonlyArray2<'py, f64>,
-    q: PyReadonlyArray2<'py, f64>,
+struct Linear<'a> {
+    sx: &'a [i32],
+    tr: &'a [f64],
+    sp: &'a [i32],
+    vals: &'a [f64],
+    q: &'a [f64],
+    nd: usize,
+    nv: usize,
     fill: f64,
-) -> PyResult<Bound<'py, PyArray2<f64>>> {
-    let (nd, nv) = (q.shape()[1], values.shape()[1]);
-    let (sx, tr, sp, vals, q) = (
-        simplex.as_slice()?,
-        transform.as_slice()?,
-        simplices.as_slice()?,
-        values.as_slice()?,
-        q.as_slice()?,
-    );
-    let out = PyArray2::<f64>::zeros(py, (sx.len(), nv), false);
-    // SAFETY: freshly created, contiguous, and only written inside this call.
-    let o = unsafe { out.as_slice_mut()? };
-    py.detach(|| {
+}
+
+impl Linear<'_> {
+    fn evaluate<const BASIS: bool, const SUM: bool>(&self, o: &mut [f64]) {
+        let (sx, tr, sp, vals, q, nd, nv, fill) = (
+            self.sx, self.tr, self.sp, self.vals, self.q, self.nd, self.nv, self.fill,
+        );
         super::fill(o, nv, 1 << 12, |i0, o| {
             let mut c = [0.0f64; 8];
             for (r, row) in o.chunks_mut(nv).enumerate() {
@@ -184,7 +175,7 @@ pub fn linear_eval<'py>(
                 c[nd] = 1.0;
                 for a in 0..nd {
                     c[a] = (0..nd).fold(0.0, |acc, b| {
-                        t[a * nd + b].mul_add(x[b] - t[nd * nd + b], acc)
+                        super::madd::<BASIS>(t[a * nd + b], x[b] - t[nd * nd + b], acc)
                     });
                     c[nd] -= c[a];
                 }
@@ -192,11 +183,61 @@ pub fn linear_eval<'py>(
                 for j in 0..=nd {
                     let m = sp[s as usize * (nd + 1) + j] as usize;
                     for (o, &v) in row.iter_mut().zip(&vals[m * nv..][..nv]) {
-                        *o = c[j].mul_add(v, *o);
+                        *o = super::madd::<SUM>(c[j], v, *o);
                     }
                 }
             }
         })
+    }
+}
+
+/// `LinearNDInterpolator` arithmetic (barycentric weights, then the weighted
+/// sum of the vertex values) given the simplex of each query; `fill` where it is -1.
+/// Barycentric and value-sum contraction are calibrated against SciPy separately.
+#[pyfunction]
+#[pyo3(signature = (simplex, transform, simplices, values, q, fill, arithmetic=3))]
+#[allow(clippy::too_many_arguments)]
+pub fn linear_eval<'py>(
+    py: Python<'py>,
+    simplex: PyReadonlyArray1<'py, i32>,
+    transform: PyReadonlyArray3<'py, f64>,
+    simplices: PyReadonlyArray2<'py, i32>,
+    values: PyReadonlyArray2<'py, f64>,
+    q: PyReadonlyArray2<'py, f64>,
+    fill: f64,
+    arithmetic: u8,
+) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    if arithmetic > 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err(
+            "unknown interpolation arithmetic",
+        ));
+    }
+    let (nd, nv) = (q.shape()[1], values.shape()[1]);
+    let (sx, tr, sp, vals, q) = (
+        simplex.as_slice()?,
+        transform.as_slice()?,
+        simplices.as_slice()?,
+        values.as_slice()?,
+        q.as_slice()?,
+    );
+    let out = PyArray2::<f64>::zeros(py, (sx.len(), nv), false);
+    // SAFETY: freshly created, contiguous, and only written inside this call.
+    let o = unsafe { out.as_slice_mut()? };
+    let evaluator = Linear {
+        sx,
+        tr,
+        sp,
+        vals,
+        q,
+        nd,
+        nv,
+        fill,
+    };
+    py.detach(|| match arithmetic {
+        0 => evaluator.evaluate::<false, false>(o),
+        1 => evaluator.evaluate::<true, false>(o),
+        2 => evaluator.evaluate::<false, true>(o),
+        _ => evaluator.evaluate::<true, true>(o),
     });
     Ok(out)
 }

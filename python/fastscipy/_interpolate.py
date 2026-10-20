@@ -52,7 +52,53 @@ def _on_axis(out, nd, axis):
     return out.transpose(perm[nd : nd + axis] + perm[:nd] + perm[nd + axis :])
 
 
-def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
+@functools.lru_cache(maxsize=12)
+def _spline_arithmetic(backend, k):
+    """Contraction differs between SciPy's C++ BSpline and Fortran FITPACK."""
+    if not 1 <= k <= 5:
+        return None
+    r = np.random.default_rng(720 + k)
+    knots = np.sort(r.random(32))
+    t = np.r_[[knots[0]] * k, knots, [knots[-1]] * k]
+    q = np.r_[r.uniform(-0.2, 1.2, 96), t, np.nextafter(t, -np.inf), np.nextafter(t, np.inf)]
+    modes = [3, 0, 1, 2]
+    for width in (1, 3, 8) if backend == "bspline" else (1,):
+        c = r.standard_normal((len(t) - k - 1, width))
+        if backend == "bspline":
+            ref = _orig["numpy_bspline"](t, c, k)(q)
+        else:
+            ref = _orig["splev"](q, (t, c[:, 0], k)).reshape(-1, 1)
+        modes = [mode for mode in modes if _k.bspline_eval(t, c, k, q, mode).tobytes() == ref.tobytes()]
+        if not modes:
+            return None
+    return modes[0]
+
+
+@functools.lru_cache(maxsize=6)
+def _linear_arithmetic(nd):
+    """Select the installed Cython binary's barycentric and value-sum arithmetic."""
+    if not 2 <= nd <= 7:
+        return None
+    from scipy.interpolate import _interpnd
+    from scipy.spatial import Delaunay
+
+    r = np.random.default_rng(740 + nd)
+    points = r.random((nd + 12, nd))
+    tri = Delaunay(points)
+    values = r.standard_normal((len(points), 3))
+    # Interior centroids make the simplex independent of the walk's start.
+    q = np.ascontiguousarray(points[tri.simplices[:96]].mean(axis=1))
+    obj = _interpnd.LinearNDInterpolator(tri, values, fill_value=-123.25)
+    ref = np.asarray(_orig["linear_double"](obj, q))
+    simplex = _orig["find_simplex"](tri, q)
+    for mode in (3, 0, 1, 2):
+        out = _k.linear_eval(simplex, tri.transform, tri.simplices, values, q, -123.25, mode)
+        if out.tobytes() == ref.tobytes():
+            return mode
+    return None
+
+
+def _spline(flat, shape, t, c, k, kernel_ok, axis, call, backend="bspline"):
     """Evaluate at the flat float64 queries by the Rust kernel, or by ``call`` on sorted queries.
     ``c`` has the coefficient axis first; the kernel gets it as (n, columns) float64."""
     n = len(flat)
@@ -66,7 +112,12 @@ def _spline(flat, shape, t, c, k, kernel_ok, axis, call):
     jump = _jump(flat, t)
     if kernel_ok and (jump >= SPLINE_MIN_JUMP or parallel):
         cc = c.reshape(len(c), -1)
-        out = _k.bspline_eval(t, cc.view(np.float64) if c.dtype.kind == "c" else cc, k, flat)
+        mode = _spline_arithmetic(backend, k)
+        out = (
+            None
+            if mode is None
+            else _k.bspline_eval(t, cc.view(np.float64) if c.dtype.kind == "c" else cc, k, flat, mode)
+        )
         if out is not None:
             out = out.view(complex) if c.dtype.kind == "c" else out
             return _on_axis(out.reshape(shape + c.shape[1:]), len(shape), axis)
@@ -118,7 +169,7 @@ def _splev(x, tck, der=0, ext=0):
         der == 0 and ext == 0 and c.dtype == t.dtype == np.float64 and t.flags.c_contiguous and c.flags.c_contiguous
     )
     flat = np.ascontiguousarray(x.reshape(-1), dtype=np.float64)
-    return _spline(flat, x.shape, t, c, k, kernel_ok, 0, lambda xs: _orig["splev"](xs, tck, der, ext))
+    return _spline(flat, x.shape, t, c, k, kernel_ok, 0, lambda xs: _orig["splev"](xs, tck, der, ext), "splev")
 
 
 def _ppoly_call(self, x, nu=0, extrapolate=None):
@@ -255,10 +306,13 @@ def _make_evaluate(cls, name):
             return NotImplemented
         res, order, ranges = loc
         v = self.values
-        if linear and name == "_evaluate_double" and _is_array(v, "f") and v.dtype == np.float64:
+        mode = _linear_arithmetic(tri.ndim) if linear and name == "_evaluate_double" else None
+        if mode is not None and _is_array(v, "f") and v.dtype == np.float64:
             for a, b in ranges:
                 res[a : b + 1] = _orig["find_simplex"](tri, x[a : b + 1])
-            return _k.linear_eval(res, tri.transform, tri.simplices, np.ascontiguousarray(v), x, float(self.fill_value))
+            return _k.linear_eval(
+                res, tri.transform, tri.simplices, np.ascontiguousarray(v), x, float(self.fill_value), mode
+            )
         xs = x[order]
         slices = _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))]
         parts = _threads.parallel_map(lambda s: original(self, xs[s]), slices)
@@ -317,6 +371,8 @@ def patch():
     for cls in (_interpnd.LinearNDInterpolator, _interpnd.CloughTocher2DInterpolator):
         for name in ("_evaluate_double", "_evaluate_complex"):
             original, fast = _make_evaluate(cls, name)
+            if cls.__name__ == "LinearNDInterpolator" and name == "_evaluate_double":
+                _orig["linear_double"] = original
             _patch.replace(cls, name, _patch.wrap(original, fast, f"{cls.__name__}.{name[1:]}"))
 
 

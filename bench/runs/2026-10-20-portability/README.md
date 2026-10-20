@@ -15,6 +15,14 @@ rewritten to match a newer checkout.
 - `mac-arm64/tests-b471-py313.json` and `tests-b471-py315.json`: newer
   revision `b4710e6` project-test summaries, with 7,116 passing tests on each
   Python version. These summaries contain no benchmark or upstream results.
+- `mac-arm64/b471/`: unchanged platform summary, 13 raw benchmark case
+  reports, and upstream manifest for the `b4710e6` wheel. All 407 benchmark
+  cases pass identity and expected fast-path checks. The compact upstream
+  comparison was derived from all 38 completed JUnit files: 95,772 common
+  executions, no changed outcomes, and the same three baseline failures.
+  It includes raw XML filenames, sizes, and SHA256 hashes without archiving
+  bulk XML. The original manifest records harness checkout `2d55def`, while
+  the platform summary records benchmark revision `b4710e6`; both are retained.
 - `mac-arm64/upstream-corrected-comparison.json`: comparison of 38 completed
   raw JUnit records across 19 upstream module partitions, re-evaluated with
   the corrected special-ufunc classifier. All 95,772 common executions have

@@ -1,0 +1,317 @@
+{
+  "recorded_utc": "2026-10-20T05:05:15.808894+00:00",
+  "benchmark_commit": "b4710e6",
+  "fastscipy": "0.1.0a2",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "logical_cpus": 18,
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      },
+      "build": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      },
+      "lapack": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      }
+    },
+    "Python Information": {
+      "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/build-env-q3ulyt3x/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "NEON",
+        "NEON_FP16",
+        "NEON_VFPV4",
+        "ASIMD"
+      ],
+      "found": [
+        "ASIMDHP",
+        "ASIMDDP"
+      ],
+      "not found": [
+        "ASIMDFHM"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.1,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "cluster": {
+      "returncode": 0,
+      "seconds": 4.12037404201692,
+      "peak_rss_bytes": 107102208,
+      "stopped": null
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 13.016215041017858,
+      "peak_rss_bytes": 258408448,
+      "stopped": null
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 8.44360262498958,
+      "peak_rss_bytes": 120995840,
+      "stopped": null
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 19.94832779202261,
+      "peak_rss_bytes": 446119936,
+      "stopped": null
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 14.104076875024475,
+      "peak_rss_bytes": 693551104,
+      "stopped": null
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 36.25597841697163,
+      "peak_rss_bytes": 1011875840,
+      "stopped": null
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 4.343187999998918,
+      "peak_rss_bytes": 117522432,
+      "stopped": null
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 20.573769334005192,
+      "peak_rss_bytes": 1774551040,
+      "stopped": null
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 16.459277749992907,
+      "peak_rss_bytes": 1062862848,
+      "stopped": null
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 6.72106400001212,
+      "peak_rss_bytes": 108232704,
+      "stopped": null
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 19.301908499997808,
+      "peak_rss_bytes": 591757312,
+      "stopped": null
+    },
+    "special": {
+      "returncode": 0,
+      "seconds": 81.38258908301941,
+      "peak_rss_bytes": 608763904,
+      "stopped": null
+    },
+    "stats": {
+      "returncode": 0,
+      "seconds": 22.700674541993067,
+      "peak_rss_bytes": 493715456,
+      "stopped": null
+    },
+    "upstream": {
+      "returncode": 0,
+      "seconds": 548.012249041989,
+      "peak_rss_bytes": 2706653184,
+      "stopped": null
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.7038474380179685,
+      "speedup_nt": 1.6943262124169467,
+      "all_case_speedup_1t": 1.7038474380179685,
+      "all_case_speedup_nt": 1.6943262124169467
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.699314041440742,
+      "speedup_nt": 4.367253343665429,
+      "all_case_speedup_1t": 3.699314041440742,
+      "all_case_speedup_nt": 4.367253343665429
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.7233668808187288,
+      "speedup_nt": 1.718495147057243,
+      "all_case_speedup_1t": 1.7233668808187288,
+      "all_case_speedup_nt": 1.718495147057243
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.907994434424147,
+      "speedup_nt": 4.719346863674362,
+      "all_case_speedup_1t": 3.2702460456438196,
+      "all_case_speedup_nt": 3.815224837514381
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 4.134590044943507,
+      "speedup_nt": 5.08177562057932,
+      "all_case_speedup_1t": 4.134590044943507,
+      "all_case_speedup_nt": 5.08177562057932
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 12.506654209022262,
+      "speedup_nt": 20.920496117889012,
+      "all_case_speedup_1t": 12.506654209022262,
+      "all_case_speedup_nt": 20.920496117889012
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.634805430298657,
+      "speedup_nt": 1.6361521454031025,
+      "all_case_speedup_1t": 1.634805430298657,
+      "all_case_speedup_nt": 1.6361521454031025
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.295106505687404,
+      "speedup_nt": 3.901567018872637,
+      "all_case_speedup_1t": 3.295106505687404,
+      "all_case_speedup_nt": 3.901567018872637
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.8909670668041008,
+      "speedup_nt": 4.510644809161538,
+      "all_case_speedup_1t": 3.8909670668041008,
+      "all_case_speedup_nt": 4.510644809161538
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.2957601443913007,
+      "speedup_nt": 1.2939039371860874,
+      "all_case_speedup_1t": 1.2957601443913007,
+      "all_case_speedup_nt": 1.2939039371860874
+    },
+    "spatial": {
+      "cases": 24,
+      "controls": 3,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.001338204682059,
+      "speedup_nt": 1.6968519742021246,
+      "all_case_speedup_1t": 1.005728596118772,
+      "all_case_speedup_nt": 1.5863309228849733
+    },
+    "special": {
+      "cases": 37,
+      "controls": 2,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.004131418546115,
+      "speedup_nt": 1.8505962333942565,
+      "all_case_speedup_1t": 1.0036692586177731,
+      "all_case_speedup_nt": 1.789613494129056
+    },
+    "stats": {
+      "cases": 58,
+      "controls": 0,
+      "nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 6.095471024892238,
+      "speedup_nt": 6.2381136369263785,
+      "all_case_speedup_1t": 6.095471024892238,
+      "all_case_speedup_nt": 6.2381136369263785
+    }
+  }
+}

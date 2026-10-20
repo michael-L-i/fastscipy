@@ -41,9 +41,12 @@ not final release validation:
 - macOS arm64, newer revision `b471`: all 7,116 project tests passed on
   each of [Python 3.13](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py313.json)
   and [Python 3.15](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py315.json).
-  Benchmark and paired upstream checks for
-  this revision remain pending; the archived reports above describe earlier
-  checkpoints.
+  All 407 benchmark cases across 13 areas matched SciPy and met their expected
+  fast-path checks in the [benchmark report](../bench/runs/2026-10-20-portability/mac-arm64/b471/summary.json).
+  The [paired upstream comparison](../bench/runs/2026-10-20-portability/mac-arm64/b471/upstream-comparison.json)
+  found no changed outcomes across 95,772 common executions, including the
+  same three baseline failures. Its manifest retains the later harness
+  checkout separately from the `b471` benchmark revision.
 - Linux aarch64 (glibc), revision `66f20ae`: 7,048 project tests passed;
   all 407 benchmark cases across 13 areas matched SciPy and met their
   expected fast-path checks. The archive contains the

@@ -83,7 +83,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 240
     env:
-      BUILD_PROFILE: ${{ matrix.name == 'windows-x86_64' && 'release' || 'dev-release' }}
+      BUILD_PROFILE: ${{ (matrix.name == 'windows-x86_64' || matrix.name == 'macos-x86_64') && 'release' || 'dev-release' }}
     strategy:
       fail-fast: false
       max-parallel: 2

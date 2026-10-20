@@ -132,8 +132,10 @@ The `sparse_linalg` component reduces dispatch around unbatched NumPy
 the same SciPy matrix-vector kernel directly instead of inserting and
 removing a column axis. This speeds small iterative solves, including
 `cg`, `bicgstab`, and `gmres`; exact adjoint matrix operators use the same
-shortcut for transpose products inside `lsqr` and `lsmr`. This preserves their
-numerical algorithms, stopping criteria, callback calls and iteration histories.
+shortcut for transpose products inside `lsqr` and `lsmr`. SciPy continues to
+run the numerical algorithms, stopping criteria, and callbacks. Intel
+Accelerate can vary its reductions even in plain SciPy; see the
+[reference reproducibility details](platforms.md#intel-accelerate-reference-reproducibility).
 
 Custom operator subclasses, non-NumPy backends, batched vectors, and
 deprecated column-vector inputs use SciPy's original dispatch.

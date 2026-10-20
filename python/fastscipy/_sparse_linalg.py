@@ -1,8 +1,8 @@
 """NumPy vector calls through LinearOperator, including sparse iterative solvers.
 
-The unbatched case needs no array conversion or broadcast-shape calculation.
-The operator itself and its output reshape remain SciPy's, so the arithmetic,
-callback arguments, exceptions and iteration histories are unchanged.
+The unbatched case avoids array conversion and broadcast-shape calculation.
+SciPy still runs the operators, solvers, and callbacks. Floating-point
+reproducibility depends on the installed numerical backend.
 """
 
 import functools

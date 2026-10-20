@@ -6,7 +6,9 @@
 
 Partitioned runs use a fresh interpreter per top-level SciPy package. An optional
 empty output directory retains raw JUnit files and a run manifest, including if
-a later partition fails; it never reuses earlier results.
+a later partition fails; it never reuses earlier results. Incomplete pairs are
+recorded and excluded from comparisons; remaining partitions still run, and
+any incomplete pair makes the final exit non-zero.
 
 Exits non-zero if a test that ran in both runs has a different outcome, or a
 test runs only with fastscipy. Only the known collection differences in
@@ -53,6 +55,12 @@ def ufunc_collection_test(key):
     )
 
 
+class IncompleteRun(RuntimeError):
+    def __init__(self, message, returncode=None):
+        super().__init__(message)
+        self.returncode = returncode
+
+
 def outcomes(path):
     result = {}
     for _, case in ET.iterparse(path, events=("end",)):
@@ -66,7 +74,7 @@ def outcomes(path):
                 state = "skipped"
         key = f"{case.get('classname')}::{case.get('name')}"
         if key in result:
-            raise RuntimeError(f"Duplicate JUnit test identifier: {key}")
+            raise IncompleteRun(f"Duplicate JUnit test identifier: {key}")
         result[key] = state
         case.clear()
     return result
@@ -76,13 +84,19 @@ def run(args, patched, junit):
     plugin = ["-p", "fastscipy.pytest_plugin"] if patched else []
     cmd = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *plugin, f"--junitxml={junit}", *args]
     print("$", " ".join(cmd), flush=True)
-    result = subprocess.run(cmd, check=False)
+    try:
+        result = subprocess.run(cmd, check=False)
+    except OSError as error:
+        raise IncompleteRun(f"Could not launch pytest: {error}") from error
     if result.returncode not in (0, 1):
-        raise RuntimeError(f"pytest did not complete: exit {result.returncode}")
-    results = outcomes(junit)
+        raise IncompleteRun(f"pytest did not complete: exit {result.returncode}", result.returncode)
+    try:
+        results = outcomes(junit)
+    except (OSError, ET.ParseError, IncompleteRun) as error:
+        raise IncompleteRun(f"Invalid JUnit results: {error}", result.returncode) from error
     if not results:
-        raise RuntimeError("pytest collected no tests")
-    return results
+        raise IncompleteRun("pytest collected no tests", result.returncode)
+    return results, result.returncode
 
 
 def main():
@@ -142,9 +156,37 @@ def main():
             }
             (Path(tmp) / "manifest.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
         plain, fast = {}, {}
+        records, incomplete = [], []
         for index, batch in enumerate(batches):
-            for target, patched in ((plain, False), (fast, True)):
-                result = run(batch, patched, f"{tmp}/{index}-{patched}.xml")
+            pair = []
+            for patched in (False, True):
+                junit = Path(tmp) / f"{index}-{patched}.xml"
+                record = {
+                    "partition": index,
+                    "args": batch,
+                    "patched": patched,
+                    "junit": junit.name,
+                    "status": "running",
+                    "complete": False,
+                }
+                records.append(record)
+                report = Path(tmp) / "partition-results.json"
+                report.write_text(json.dumps(records, indent=2), encoding="utf-8")
+                try:
+                    result, returncode = run(batch, patched, str(junit))
+                except IncompleteRun as error:
+                    result = None
+                    record.update(status="incomplete", returncode=error.returncode, error=str(error))
+                    print(f"Incomplete partition {index}, patched={patched}: {error}", flush=True)
+                else:
+                    record.update(status="completed", complete=True, returncode=returncode, tests=len(result))
+                record["junit_exists"] = junit.exists()
+                report.write_text(json.dumps(records, indent=2), encoding="utf-8")
+                pair.append(result)
+            if any(result is None for result in pair):
+                incomplete.append(index)
+                continue
+            for target, result in zip((plain, fast), pair):
                 if partitioned:
                     result = {f"{batch[1]} / {key}": state for key, state in result.items()}
                 target.update(result)
@@ -159,6 +201,7 @@ def main():
     unexpected_missing = sorted(k for k in plain.keys() - fast.keys() if not ufunc_collection_test(k))
     missing = collections.Counter(k.split("::")[0].rsplit(".", 1)[-1] for k in plain.keys() - fast.keys())
     print(f"\n{len(both)} tests ran in both; {len(changed)} changed outcome")
+    print(f"{len(incomplete)} incomplete partition pairs excluded from comparison: {incomplete}")
     for k in changed:
         print(f"  {plain[k]} -> {fast[k]}: {k}")
     print(f"{sum(missing.values())} collected only without fastscipy: {dict(missing)}")
@@ -166,7 +209,7 @@ def main():
         print(f"  only with fastscipy ({fast[k]}): {k}")
     for k in unexpected_missing:
         print(f"  unexpectedly missing with fastscipy ({plain[k]}): {k}")
-    sys.exit(1 if changed or extra or unexpected_missing else 0)
+    sys.exit(1 if changed or extra or unexpected_missing or incomplete else 0)
 
 
 if __name__ == "__main__":

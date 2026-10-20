@@ -74,6 +74,17 @@ not final release validation:
   run. The archive records this baseline crash and partial coverage; a full
   upstream comparison is still pending.
 
+The Windows ARM [bounded reproduction](../bench/runs/2026-10-20-portability/windows-arm64/b471/upstream-crash-reproduction/sources.json)
+independently reproduces eight NumPy reference-solve crashes in baseline and
+patched children; NumPy also crashes without importing SciPy. The upstream
+harness visibly skips only those eight `TestSolve.test_structure_detection`
+parameters with banded complex128 matrices and `transposed=False`, on native
+Windows ARM64 CPython 3.13.16 with NumPy 2.5.4, SciPy 1.18.1, and the exact
+recorded upstream test-source SHA256. The other 408 method cases remain
+covered. Both sides record the reason, scope, and selected IDs in per-run
+JSON and retain skips in JUnit. This is an explicit coverage exception, not
+a passing result for those tests; other crashes still fail the comparison.
+
 These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
 must complete its own project, benchmark, and paired upstream checks.
 Reports retain their original revisions and metadata; a passing earlier
@@ -115,6 +126,13 @@ upstream comparisons run unpatched and patched SciPy in module partitions.
 Process-tree RSS and elapsed-time budgets stop runs that exceed their
 configured limits. RSS is sampled and summed across processes, so shared
 pages can be counted more than once.
+
+Linux release builds run inside Docker containers with hard limits of 6 GiB
+and two CPUs. Their outer `build.json` measures the host cibuildwheel process
+tree, which excludes compiler processes owned by the Docker daemon. Its
+`rss_scope` records this boundary; container peak memory remains unknown.
+The hard limit is not a measured peak. Reports collected inside the container
+for wheel tests measure those test process trees separately.
 
 For upstream tests, `SCIPY_AVAILABLE_MEM` defaults to half the RSS budget
 (2 GiB with the default limit). SciPy skips its own tests that require more

@@ -137,6 +137,14 @@ jobs:
           from pathlib import Path
           from tools.platform_suite import run
           result = run([sys.executable, "-m", "cibuildwheel", "--output-dir", "wheelhouse"], Path("artifacts/build.log"), 6144, 21000)
+          result["rss_scope"] = "host_cibuildwheel_process_tree"
+          if sys.platform == "linux":
+              result.update(
+                  rss_scope="host_cibuildwheel_process_tree_excludes_docker_containers",
+                  container_memory_limit_bytes=6 * 1024**3,
+                  container_cpu_limit=2,
+                  container_peak_memory_bytes=None,
+              )
           Path("artifacts/build.json").write_text(json.dumps(result, indent=2))
           sys.exit(result["returncode"])
           PY

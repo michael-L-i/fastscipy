@@ -42,15 +42,16 @@ def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=
         if actual_info == 0:
             # Recompute the original equation independently of solver-reported
             # residuals, for both the baseline and accelerated solution.
-            for solution in (expected_x, actual_x):
-                if minres:
-                    # MINRES stops on ||r|| / (Anorm * ||x||), not ||r|| / ||b||.
-                    # Use the independently computed Frobenius norm of A as a
-                    # conservative bound for its projected Lanczos estimate.
-                    limit = rtol * sparse.linalg.norm(a, ord="fro") * np.linalg.norm(solution)
-                else:
-                    limit = rtol * np.linalg.norm(b)
-                assert np.linalg.norm(b - a @ solution) <= limit, "equation residual is too large"
+            with fastscipy.disabled():
+                for solution in (expected_x, actual_x):
+                    if minres:
+                        # MINRES stops on ||r|| / (Anorm * ||x||), not ||r|| / ||b||.
+                        # Use the independently computed Frobenius norm of A as a
+                        # conservative bound for its projected Lanczos estimate.
+                        limit = rtol * sparse.linalg.norm(a, ord="fro") * np.linalg.norm(solution)
+                    else:
+                        limit = rtol * np.linalg.norm(b)
+                    assert np.linalg.norm(b - a @ solution) <= limit, "equation residual is too large"
 
     return validate
 
@@ -72,25 +73,26 @@ def _least_squares_reference_validation(a, b):
             assert x.shape == ((a.shape[1],) if index in (0, 9) else ())
             assert np.isfinite(x).all() and np.isfinite(y).all()
             np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
-        for result in (expected, actual):
-            solution = result[0]
-            assert type(solution) is type(result[9]) is np.ndarray
-            assert solution.dtype == result[9].dtype == np.float64
-            residual = a @ solution - b
-            normal = np.linalg.norm(a.T @ residual)
-            # Componentwise rounding scale for A.T @ (A @ x - b), avoiding
-            # a loose ||A||**2 * ||x|| bound on differently scaled columns.
-            magnitude = abs(a)
-            scale = np.linalg.norm(magnitude.T @ (magnitude @ abs(solution) + abs(b)))
-            limit = 16 * np.finfo(np.float64).eps * max(a.shape) * scale
-            assert normal <= limit, "least-squares normal residual is too large"
-            residual_norm = np.linalg.norm(residual)
-            for index in (3, 4):  # r1norm == r2norm when damp is zero.
-                np.testing.assert_allclose(result[index], residual_norm, rtol=2e-12, atol=2e-14)
-            np.testing.assert_allclose(result[8], np.linalg.norm(solution), rtol=2e-12, atol=2e-14)
-            assert abs(result[7] - normal) <= limit
-            assert result[5] > 0 and result[6] >= 1
-            assert np.all(result[9] == 0)  # calc_var=False in this exact call.
+        with fastscipy.disabled():
+            for result in (expected, actual):
+                solution = result[0]
+                assert type(solution) is type(result[9]) is np.ndarray
+                assert solution.dtype == result[9].dtype == np.float64
+                residual = a @ solution - b
+                normal = np.linalg.norm(a.T @ residual)
+                # Componentwise rounding scale for A.T @ (A @ x - b), avoiding
+                # a loose ||A||**2 * ||x|| bound on differently scaled columns.
+                magnitude = abs(a)
+                scale = np.linalg.norm(magnitude.T @ (magnitude @ abs(solution) + abs(b)))
+                limit = 16 * np.finfo(np.float64).eps * max(a.shape) * scale
+                assert normal <= limit, "least-squares normal residual is too large"
+                residual_norm = np.linalg.norm(residual)
+                for index in (3, 4):  # r1norm == r2norm when damp is zero.
+                    np.testing.assert_allclose(result[index], residual_norm, rtol=2e-12, atol=2e-14)
+                np.testing.assert_allclose(result[8], np.linalg.norm(solution), rtol=2e-12, atol=2e-14)
+                assert abs(result[7] - normal) <= limit
+                assert result[5] > 0 and result[6] >= 1
+                assert np.all(result[9] == 0)  # calc_var=False in this exact call.
 
     return validate
 
@@ -270,6 +272,38 @@ def test_least_squares_reference_validator_close_but_nonstationary_solution():
     y[0] += 1e-14  # Close in coordinates, but violates A.T @ residual == 0.
     with pytest.raises(AssertionError, match="normal residual"):
         _least_squares_reference_validation(a, b)(expected, (y, *expected[1:]))
+
+
+@pytest.mark.parametrize("least_squares", [False, True])
+def test_reference_validators_reject_correlated_enabled_matvec_error(monkeypatch, least_squares):
+    from fastscipy import _patch
+
+    if least_squares:
+        a, b, correct = _least_squares_validator_example()
+        true_solution = correct[0]
+        wrong = (np.zeros(2), *correct[1:8], 0.0, correct[9])
+        validate = _least_squares_reference_validation(a, b)
+    else:
+        a = sparse.csr_array(np.eye(2) * 2)
+        b = np.array([2.0, 6.0])
+        true_solution = b / 2
+        wrong = ((np.zeros(2), 0), [])
+        validate = _iteration_reference_validation(a, b, 1e-9)
+
+    original = sparse.csr_array._matmul_vector
+    enabled_calls = []
+
+    def correlated_matvec(self, x):
+        enabled_calls.append(_patch.enabled)
+        # A broken enabled kernel could conceal exactly this wrong solution.
+        if _patch.enabled and self.shape == a.shape:
+            return original(self, true_solution)
+        return original(self, x)
+
+    monkeypatch.setattr(sparse.csr_array, "_matmul_vector", correlated_matvec)
+    with pytest.raises(AssertionError, match="residual"):
+        validate(wrong, wrong)
+    assert enabled_calls and not any(enabled_calls)
 
 
 def test_custom_operator_subclass_uses_original_dispatch():

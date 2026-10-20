@@ -21,13 +21,13 @@ clean = ndimage.median_filter(image, size=3)
 
 ## Install
 
-Requires a [Rust toolchain](https://rustup.rs). Not on PyPI yet.
-
 ```sh
-pip install git+https://github.com/michael-L-i/fastscipy
+pip install --pre fastscipy
 ```
 
-**Experimental: macOS Apple Silicon · SciPy 1.18 · Python 3.12–3.14.**
+Prebuilt wheels; no Rust required.
+
+**Experimental: macOS 14+ Apple Silicon · SciPy 1.18 · Python 3.12–3.14.**
 Unsupported platforms and versions stay unpatched.
 
 Call `patch()` before importing libraries that use SciPy.

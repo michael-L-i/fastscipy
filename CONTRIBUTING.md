@@ -93,5 +93,6 @@ Use a separate `testpypi` environment and publisher on TestPyPI for rehearsals.
 No API token is needed. The workflow publishes only after the wheel checks pass.
 A pending publisher does not reserve the package name until the first upload.
 
-Create and push the version tag only when ready to publish. Keep the README's
-installation instructions on the source install until the package is live.
+Update the README's installation instructions in the release commit before
+creating and pushing the version tag: PyPI renders the README from that archive.
+Push the tag only when ready to publish.

@@ -19,11 +19,7 @@ fn interval(t: &[f64], k: usize, n: usize, x: f64) -> usize {
     let (mut lo, mut hi) = (k, n);
     while hi - lo > 1 {
         let mid = (lo + hi) / 2;
-        if x < t[mid] {
-            hi = mid
-        } else {
-            lo = mid
-        }
+        if x < t[mid] { hi = mid } else { lo = mid }
     }
     lo
 }

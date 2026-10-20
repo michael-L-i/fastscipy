@@ -14,8 +14,9 @@ from . import _native, _patch
 from ._threads import get_num_threads
 
 _I32MAX = 2**31 - 1
-_IDX, _VALS = "il", "fdil"  # dtype.char: int32/int64 and float32/float64/int32/int64 (not np.dtype ==, which
-# also equates longdouble with float64 here)
+# Windows uses 'q' for int64, while LP64 platforms commonly use 'l'. Keep
+# character checks: dtype equality can also equate longdouble with float64.
+_IDX, _VALS = "ilq", "fdilq"
 _PAR = {"argminmax": 1_000_000, "sumdup": 100_000, "dense": 1 << 17}  # entries before threads pay off
 _DENSE_MIN = 4096  # smaller dense inputs: SciPy
 

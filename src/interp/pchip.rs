@@ -71,11 +71,7 @@ fn cell(x: &[f64], q: f64) -> usize {
     let (mut lo, mut hi) = (0, n - 1);
     while hi - lo > 1 {
         let mid = (lo + hi) / 2;
-        if q < x[mid] {
-            hi = mid
-        } else {
-            lo = mid
-        }
+        if q < x[mid] { hi = mid } else { lo = mid }
     }
     lo
 }

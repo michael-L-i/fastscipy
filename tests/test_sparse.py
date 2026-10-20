@@ -149,6 +149,31 @@ def test_dense_to_sparse(fmt, dtype, shape, layout):
 
 
 @pytest.mark.parametrize("fmt", FORMATS)
+def test_dense_longlong_values(fmt):
+    """The explicit long-long spelling also represents int64 on Windows."""
+    values = np.zeros((64, 64), dtype="q")
+    values[::3, ::5] = 2**40
+    check(lambda: fmt(values))
+
+
+@pytest.mark.parametrize("fmt", [sp.coo_array, sp.coo_matrix])
+def test_coo_longlong_indices_and_values(fmt):
+    rows = np.array([0, 1, 0, 1], dtype="q")
+    cols = np.array([1, 2, 1, 2], dtype="q")
+    values = np.array([2**40, -(2**40), 7, 11], dtype="q")
+
+    def run():
+        matrix = fmt((values.copy(), (rows, cols)), shape=(4, 4))
+        # Small constructors can normalize coordinates to int32; explicitly
+        # retain the valid long-long index spelling to cover its native path.
+        matrix.coords = (rows.copy(), cols.copy())
+        matrix.sum_duplicates()
+        return matrix
+
+    check(run)
+
+
+@pytest.mark.parametrize("fmt", FORMATS)
 def test_dense_declines(fmt):
     rng = np.random.default_rng(5)
     d = dense(rng, (80, 80), np.float64, 0.2)

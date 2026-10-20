@@ -241,9 +241,10 @@ def test_import_without_fork_hooks():
         [
             sys.executable,
             "-c",
-            "import os; "
-            "getattr(os, 'register_at_fork', None) and delattr(os, 'register_at_fork'); "
-            "import fastscipy; "
+            "import os\n"
+            "for name in ('fork', 'register_at_fork'):\n"
+            "    if hasattr(os, name): delattr(os, name)\n"
+            "import fastscipy\n"
             "assert all(v == 'on' for v in fastscipy.patch(threads=1).values()), fastscipy.status()",
         ],
         check=True,
@@ -285,3 +286,93 @@ def test_unvalidated_platform_is_refused(monkeypatch):
     fastscipy.unpatch(["integrate"])
     monkeypatch.undo()
     assert fastscipy.patch(["integrate"])["integrate"] == "on"
+
+
+@pytest.mark.skipif(not hasattr(os, "fork"), reason="needs fork")
+def test_ndimage_calibration_lock_reset_after_fork():
+    from fastscipy import _ndimage_correlate
+
+    # Deterministically inherit a held calibration lock. The child callback
+    # must replace it before its first calibration attempt.
+    with _ndimage_correlate._cal_lock:
+        pid = os.fork()
+        if pid == 0:
+            os._exit(0 if _ndimage_correlate._cal_lock.acquire(blocking=False) else 1)
+    deadline = time.monotonic() + 5
+    while time.monotonic() < deadline:
+        done, status = os.waitpid(pid, os.WNOHANG)
+        if done:
+            assert os.waitstatus_to_exitcode(status) == 0
+            return
+        time.sleep(0.01)
+    os.kill(pid, 9)
+    os.waitpid(pid, 0)
+    pytest.fail("forked child hung checking calibration lock")
+
+
+@pytest.mark.skipif(not hasattr(os, "fork"), reason="needs fork")
+def test_fork_during_native_pool_initialization():
+    import warnings
+
+    from fastscipy import _native
+
+    # Repeatedly overlap first Rayon pool use with fork without adding a
+    # public testing hook. Only two workers and a 512 KiB input are needed.
+    data = np.arange(65536.0).reshape(64, 1024)[:, ::-1].copy().view(np.uint64)
+    old_threads = fastscipy.get_num_threads()
+    try:
+        for _ in range(8):
+            entered, errors = threading.Event(), []
+
+            def initialize():
+                try:
+                    fastscipy.set_num_threads(1)
+                    fastscipy.set_num_threads(2)
+                    entered.set()
+                    _native.stats.rankdata(data, 0, 0, False, False)
+                except BaseException as error:
+                    errors.append(error)
+                    entered.set()
+
+            worker = threading.Thread(target=initialize)
+            worker.start()
+            assert entered.wait(timeout=5)
+            # The initializer retains the GIL until the native kernel detaches,
+            # so the awakened main thread can fork while Rayon starts workers.
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", message="This process.*", category=DeprecationWarning)
+                pid = os.fork()
+            if pid == 0:
+                code = 1
+                try:
+                    assert fastscipy.get_num_threads() == 2
+                    _native.stats.rankdata(data, 0, 0, False, False)
+                    code = 0
+                finally:
+                    os._exit(code)
+            reaped = False
+            deadline = time.monotonic() + 5
+            try:
+                worker.join(timeout=5)
+                assert not worker.is_alive()
+                assert not errors
+                while time.monotonic() < deadline:
+                    done, status = os.waitpid(pid, os.WNOHANG)
+                    if done:
+                        reaped = True
+                        assert os.waitstatus_to_exitcode(status) == 0
+                        break
+                    time.sleep(0.01)
+                else:
+                    pytest.fail("forked child inherited a locked native pool")
+            finally:
+                if not reaped:
+                    try:
+                        done, _ = os.waitpid(pid, os.WNOHANG)
+                        if not done:
+                            os.kill(pid, 9)
+                            os.waitpid(pid, 0)
+                    except ChildProcessError:
+                        pass
+    finally:
+        fastscipy.set_num_threads(old_threads)

@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "fastscipy"
 version = "0.1.0a2"
-description = "Drop-in acceleration for SciPy: byte-identical results, faster on one core and on many"
+description = "Portable acceleration for SciPy with compatible results and shared thread pools"
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE", "LICENSES/scipy-LICENSE.txt"]

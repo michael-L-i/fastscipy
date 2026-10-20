@@ -21,7 +21,15 @@ rewritten to match a newer checkout.
   tests reported 7,060 passed and four NaN initialization failures; all 407
   benchmark cases passed identity and expected fast-path checks. Its README
   compares float-filter timings with archived raw revision `5914b77` results
-  and links the pending latest-source validation.
+  and retains that intermediate result separately from newer validation.
+- `linux-x86_64/675/`: newer glibc x86_64 revision `675bd52`; all 7,131
+  project tests and 407 benchmark cases passed. All 19 upstream pairs
+  completed with no changed outcomes across 95,772 common executions and no
+  failures. Original reports and provenance are retained, along with a
+  compact comparison containing all 38 raw XML hashes. ndimage speedups
+  were 8.59× / 14.91× on one/two threads. The source includes the candidate
+  platform gate, but the workflow used its override; default activation and
+  final release-wheel validation remain separate.
 - `mac-arm64/tests-py313.json` and `tests-py315.json`: project-test summaries
   for the ABI-guard builds, with 7,048 passing tests on each Python version.
   These summaries contain no benchmark results.

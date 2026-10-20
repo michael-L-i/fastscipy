@@ -58,15 +58,21 @@ not final release validation:
   the later default platform gate or final release wheels. The earlier
   [7,048-test checkpoint](../bench/runs/2026-10-20-portability/linux-arm64/summary.json)
   remains archived separately.
-- Linux x86_64 (glibc), revision `4b1342d`: 7,060 project tests passed;
-  four new NaN initialization tests failed. All 407 benchmark cases across
-  13 areas matched SciPy and met their expected fast-path checks. The
-  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-x86_64/4b/README.md)
-  retains the unchanged summary, all case reports, build resources, and raw
-  before/after float-filter measurements. Earlier float-cast failures are
-  fixed; ordering initialization sums was added afterward in `b4710e6`.
-  The latest `675bd52` source awaits its own project, benchmark, and paired
-  upstream results in [run 39374986938](https://github.com/michael-L-i/fastscipy/actions/runs/39374986938).
+- Linux x86_64 (glibc), revision `675bd52`: all 7,131 project tests and
+  407 benchmark cases across 13 areas passed. All 19 paired upstream
+  partitions completed: 95,772 common executions, no changed outcomes,
+  no unexpected collection differences, and no failures. The
+  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-x86_64/675/README.md)
+  retains unchanged reports and provenance from
+  [run 39374986938](https://github.com/michael-L-i/fastscipy/actions/runs/39374986938),
+  plus a compact comparison with all 38 raw XML hashes. ndimage achieved
+  8.59× / 14.91× geometric-mean speedups on one/two threads; hosted-VM
+  differences prevent a controlled incremental comparison with the older
+  [4b checkpoint](../bench/runs/2026-10-20-portability/linux-x86_64/4b/README.md),
+  whose four initialization failures are now fixed. The tested source includes
+  candidate platform-gate change `277fc71`, but the workflow still set
+  `FASTSCIPY_ANY_PLATFORM=1`; default activation and final release-wheel
+  validation remain separate pending checks.
 - Windows arm64, revision `b4710e6`: 7,112 project tests passed and four
   were skipped; all 407 benchmark cases matched SciPy and met their expected
   fast-path checks. The [checkpoint archive](../bench/runs/2026-10-20-portability/windows-arm64/b471/README.md)

@@ -1,0 +1,308 @@
+{
+  "description": "Derived from all 38 completed raw JUnit records; no tests rerun or results reused from another run",
+  "manifest": {
+    "python": "3.13.16 (main, Oct  1 2026, 02:37:54) [GCC 13.3.0]",
+    "executable": "/opt/hostedtoolcache/Python/3.13.16/x64/bin/python",
+    "revision": "675bd521f890f022768ad1d7beae91d89f3a1b89",
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "fastscipy": "0.1.0a2"
+    },
+    "scipy_available_memory": "2048Mib",
+    "batches": [
+      [
+        "--pyargs",
+        "scipy._lib"
+      ],
+      [
+        "--pyargs",
+        "scipy.cluster"
+      ],
+      [
+        "--pyargs",
+        "scipy.constants"
+      ],
+      [
+        "--pyargs",
+        "scipy.datasets"
+      ],
+      [
+        "--pyargs",
+        "scipy.differentiate"
+      ],
+      [
+        "--pyargs",
+        "scipy.fft"
+      ],
+      [
+        "--pyargs",
+        "scipy.fftpack"
+      ],
+      [
+        "--pyargs",
+        "scipy.integrate"
+      ],
+      [
+        "--pyargs",
+        "scipy.interpolate"
+      ],
+      [
+        "--pyargs",
+        "scipy.io"
+      ],
+      [
+        "--pyargs",
+        "scipy.linalg"
+      ],
+      [
+        "--pyargs",
+        "scipy.ndimage"
+      ],
+      [
+        "--pyargs",
+        "scipy.odr"
+      ],
+      [
+        "--pyargs",
+        "scipy.optimize"
+      ],
+      [
+        "--pyargs",
+        "scipy.signal"
+      ],
+      [
+        "--pyargs",
+        "scipy.sparse"
+      ],
+      [
+        "--pyargs",
+        "scipy.spatial"
+      ],
+      [
+        "--pyargs",
+        "scipy.special"
+      ],
+      [
+        "--pyargs",
+        "scipy.stats"
+      ]
+    ]
+  },
+  "run": {
+    "returncode": 0,
+    "seconds": 954.2114581800001,
+    "peak_rss_bytes": 1222492160,
+    "stopped": null
+  },
+  "comparator_source_sha256": "02ef27f5f48c74271544296d94ed27776eb564e81f70f53dab8e5e5c61e075df",
+  "completed_partition_pairs": 19,
+  "incomplete_partition_pairs": 0,
+  "common_test_executions": 95772,
+  "changed_outcomes": [],
+  "unexpected_missing": [],
+  "unexpected_extra": [],
+  "expected_baseline_only": 684,
+  "expected_patched_only_skips": 2,
+  "plain_outcomes": {
+    "passed": 88080,
+    "skipped": 8376
+  },
+  "patched_outcomes": {
+    "passed": 87396,
+    "skipped": 8378
+  },
+  "unchanged_failures": [],
+  "raw_junit_files": [
+    {
+      "file": "0-False.xml",
+      "bytes": 250998,
+      "sha256": "4c161a6403bfb99373a1d594a782d06d91b37b8334fcc30d6dc863ed330924df"
+    },
+    {
+      "file": "0-True.xml",
+      "bytes": 250998,
+      "sha256": "4add5aacdeaeef2ad1e9d54f6158e0b880bc3dcb4f7f3aaaaf883c0e26ca5412"
+    },
+    {
+      "file": "1-False.xml",
+      "bytes": 28551,
+      "sha256": "422a0c7ae133fae303f2d7ccca0dd7638af5a468692a77bee36a48eb799eef5f"
+    },
+    {
+      "file": "1-True.xml",
+      "bytes": 28551,
+      "sha256": "294d8a77295bc30569df8d530657df692dbb7338f0c5d2862d7fee3274ab773e"
+    },
+    {
+      "file": "2-False.xml",
+      "bytes": 1744,
+      "sha256": "89366813b547565c3a2747168b5f22cf113129832cf12b47d8fcacbe57e229e4"
+    },
+    {
+      "file": "2-True.xml",
+      "bytes": 1744,
+      "sha256": "0878bc03213567edb397bd225c20f972e1f0fce3056d726431814efb188e0228"
+    },
+    {
+      "file": "3-False.xml",
+      "bytes": 682,
+      "sha256": "9e9b29e83c08befecb9840e9b6fe8dcb21286298e0d65f43b837817d59657b23"
+    },
+    {
+      "file": "3-True.xml",
+      "bytes": 682,
+      "sha256": "0aba15f303f801237d179259c1723c8f5dc5ce78c0262298f42867727b5e2b2b"
+    },
+    {
+      "file": "4-False.xml",
+      "bytes": 22604,
+      "sha256": "e7d718bcc8133aa96da5689339fe74d09310daeac751e8e04b4c479700e172ac"
+    },
+    {
+      "file": "4-True.xml",
+      "bytes": 22604,
+      "sha256": "5d8059d3bfedca3ed0fc5715d2ddacf787b763ad481e986ec41d60671dd3f3e3"
+    },
+    {
+      "file": "5-False.xml",
+      "bytes": 734033,
+      "sha256": "a9daaa5544f338a572eab7e79f8a9fe6315824868bef37b81c1317082b2b917f"
+    },
+    {
+      "file": "5-True.xml",
+      "bytes": 734033,
+      "sha256": "ef95b0fc55317cd57b01438c1f0daf4d6facc7e97a69b08e159613cb1e5ef9c0"
+    },
+    {
+      "file": "6-False.xml",
+      "bytes": 64109,
+      "sha256": "52c73ec4af7728a843fd327c290715a6ccb9a4fa9e9df60f744f76dfd929e021"
+    },
+    {
+      "file": "6-True.xml",
+      "bytes": 64109,
+      "sha256": "3e041cb22278beff341183cc9ba3bdd8b232b5c0b60205b7b7df85bbbf1f3065"
+    },
+    {
+      "file": "7-False.xml",
+      "bytes": 159876,
+      "sha256": "bafc3ec0d9974a3a5ae0e3d98e50a0f95acca265fa8d9ddffd600ccb8503b55d"
+    },
+    {
+      "file": "7-True.xml",
+      "bytes": 159876,
+      "sha256": "f9fa94e91d7c90414eba507caaaf99cf54efc589fd0c18dba2da3519348a823e"
+    },
+    {
+      "file": "8-False.xml",
+      "bytes": 185866,
+      "sha256": "95b84c97cd3f8c5e1000ab5db10d1dfe3b6a7d5e03a066159b2e67c1843d3cd0"
+    },
+    {
+      "file": "8-True.xml",
+      "bytes": 185866,
+      "sha256": "5325eedc462056c57fc0791c0879ae0b1ce0817c4ef6c7b218345a38faee0deb"
+    },
+    {
+      "file": "9-False.xml",
+      "bytes": 77507,
+      "sha256": "c91645d1cfeda7ef3913df544321f39e2d907de157de82c252287fb2344c4b1b"
+    },
+    {
+      "file": "9-True.xml",
+      "bytes": 77507,
+      "sha256": "3d1e1f870154bd64a196e0d70eb49f35adc2ee61e580cc7808a55ca6ca6897f7"
+    },
+    {
+      "file": "10-False.xml",
+      "bytes": 1388801,
+      "sha256": "e0faa06c77ffbe6260199acee6552e8c8d5c3c2b893013653419cafc78f993d0"
+    },
+    {
+      "file": "10-True.xml",
+      "bytes": 1388801,
+      "sha256": "3752fa8d814bef8340f48a5d4af501aae4489e1469d27ef171c4660463800dae"
+    },
+    {
+      "file": "11-False.xml",
+      "bytes": 704804,
+      "sha256": "62cdb7f6a0639138466a1f011cbae7425c814ad6c11771557f3324b31262a1a6"
+    },
+    {
+      "file": "11-True.xml",
+      "bytes": 704804,
+      "sha256": "6daa4a7a77e9937a6444f9bb6f46ecf58c2ba11c14e6af6aa9891aa70252420b"
+    },
+    {
+      "file": "12-False.xml",
+      "bytes": 2718,
+      "sha256": "37adc833ca974042cf100c7595cc99567105ca0798f5750e2f91ef079d274c21"
+    },
+    {
+      "file": "12-True.xml",
+      "bytes": 2718,
+      "sha256": "998ccfbcc57a32c0d330d01ecc9e6a11391044a728b2e8f0a1937299a3e9a729"
+    },
+    {
+      "file": "13-False.xml",
+      "bytes": 565126,
+      "sha256": "77706117a722601551a6dcc8f07a8a9ca7ea27ad3e3156156cbc7d9be7e2861d"
+    },
+    {
+      "file": "13-True.xml",
+      "bytes": 565126,
+      "sha256": "107a9625a05c238eb29348c3ef682866aac6fdcfbd52dd57985e26329555e10e"
+    },
+    {
+      "file": "14-False.xml",
+      "bytes": 1865411,
+      "sha256": "1b1e6588f6d3e2020037cc4d9485eee3eb7b38351628d1e9da2bce9e6a410186"
+    },
+    {
+      "file": "14-True.xml",
+      "bytes": 1865411,
+      "sha256": "ac585e353c9c72cc8f598435ff6c76c2bf3cc120a40b5e52e4a331519671622f"
+    },
+    {
+      "file": "15-False.xml",
+      "bytes": 4275368,
+      "sha256": "a1c2dfb398687b5bfede7759a4fbb2f9f80fcfd48bd7f0eed50146a1df844c7b"
+    },
+    {
+      "file": "15-True.xml",
+      "bytes": 4275368,
+      "sha256": "59bf59ae333991b21f11aac1f080bd065b1bfb3fcee54d2a9feaef5f20add084"
+    },
+    {
+      "file": "16-False.xml",
+      "bytes": 197777,
+      "sha256": "b14d429b63b7d59420d02b7740ce9459ae3f946aac027485a2c1e2148a7d70a6"
+    },
+    {
+      "file": "16-True.xml",
+      "bytes": 197777,
+      "sha256": "7887d8afe689150f2de4d347201f0612911807770d8de39e185954a04feb4dbe"
+    },
+    {
+      "file": "17-False.xml",
+      "bytes": 1247061,
+      "sha256": "461c234aa0aba41640ab7d44812dc00b96ec3bc2a3b12d7ccf009ca56b570b56"
+    },
+    {
+      "file": "17-True.xml",
+      "bytes": 1181058,
+      "sha256": "6b2f9bf6c24e4c00ba6bff5a613ff0dda560fe792d4fb0fd7e87b11818ef2507"
+    },
+    {
+      "file": "18-False.xml",
+      "bytes": 2102393,
+      "sha256": "25446dc5722ee5c1fe189ea41946a931055769b2f8c3869b029f96d84f63f34b"
+    },
+    {
+      "file": "18-True.xml",
+      "bytes": 2102405,
+      "sha256": "515b6c8387f4d2759de7097be6e6bcb65cf9f68c9bce184a68c829995e41415b"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "purpose": "validation",
+  "mode": "full",
+  "target": "linux-x86_64",
+  "checkout_sha": "675bd521f890f022768ad1d7beae91d89f3a1b89",
+  "run_id": "39374986938",
+  "wheel_reused": false,
+  "wheel_artifact_run_id": "39374986938",
+  "wheel_artifact_run_head_sha": "675bd521f890f022768ad1d7beae91d89f3a1b89",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-manylinux_2_34_x86_64.whl"
+  ],
+  "wheel_build_profile": "dev-release",
+  "wheel_build_codegen_units": 4,
+  "wheel_build_lto": false,
+  "wheel_build_returncode": 0,
+  "wheel_build_stopped": null
+}

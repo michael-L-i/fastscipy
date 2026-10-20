@@ -1,0 +1,89 @@
+{
+  "python": "3.13.16 (main, Oct  1 2026, 02:37:54) [GCC 13.3.0]",
+  "executable": "/opt/hostedtoolcache/Python/3.13.16/x64/bin/python",
+  "revision": "675bd521f890f022768ad1d7beae91d89f3a1b89",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "scipy_available_memory": "2048Mib",
+  "batches": [
+    [
+      "--pyargs",
+      "scipy._lib"
+    ],
+    [
+      "--pyargs",
+      "scipy.cluster"
+    ],
+    [
+      "--pyargs",
+      "scipy.constants"
+    ],
+    [
+      "--pyargs",
+      "scipy.datasets"
+    ],
+    [
+      "--pyargs",
+      "scipy.differentiate"
+    ],
+    [
+      "--pyargs",
+      "scipy.fft"
+    ],
+    [
+      "--pyargs",
+      "scipy.fftpack"
+    ],
+    [
+      "--pyargs",
+      "scipy.integrate"
+    ],
+    [
+      "--pyargs",
+      "scipy.interpolate"
+    ],
+    [
+      "--pyargs",
+      "scipy.io"
+    ],
+    [
+      "--pyargs",
+      "scipy.linalg"
+    ],
+    [
+      "--pyargs",
+      "scipy.ndimage"
+    ],
+    [
+      "--pyargs",
+      "scipy.odr"
+    ],
+    [
+      "--pyargs",
+      "scipy.optimize"
+    ],
+    [
+      "--pyargs",
+      "scipy.signal"
+    ],
+    [
+      "--pyargs",
+      "scipy.sparse"
+    ],
+    [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    [
+      "--pyargs",
+      "scipy.special"
+    ],
+    [
+      "--pyargs",
+      "scipy.stats"
+    ]
+  ]
+}

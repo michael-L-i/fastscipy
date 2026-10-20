@@ -59,3 +59,18 @@ proven cases on native Windows ARM64 CPython 3.13.16, NumPy 2.5.4, SciPy
 method remain covered. Both interpreters retain selected IDs and guards in
 JSON reports; JUnit records skipped tests. A new upstream run must establish
 the results with this policy; it does not complete the historical comparison.
+
+[Native diagnostic 39377296917](https://github.com/michael-L-i/fastscipy/actions/runs/39377296917)
+verified this policy using diagnostic source `b90b7f4` and the reused `b471`
+wheel. Both baseline and patched interpreters collected all 416 method cases:
+408 passed and exactly the eight proven cases were visibly skipped, with
+zero changed outcomes or incomplete pairs. Guard activation and selected IDs
+agree in both reports. The helper took 4.70 seconds and peaked at 146 MiB;
+the original vendor reproductions remained unskipped.
+
+The [postcheck archive](quarantine-validation-b90/) preserves both raw JUnit
+files, both quarantine reports, manifest, partition records, helper log, and
+wheel/source provenance unchanged. Its [source index](quarantine-validation-b90/sources.json)
+records the file hashes and independently checked counts. This bounded
+mechanism check does not validate a fresh release wheel or complete the
+historical upstream comparison.

@@ -89,6 +89,9 @@ recorded upstream test-source SHA256. The other 408 method cases remain
 covered. Both sides record the reason, scope, and selected IDs in per-run
 JSON and retain skips in JUnit. This is an explicit coverage exception, not
 a passing result for those tests; other crashes still fail the comparison.
+The [native postcheck](../bench/runs/2026-10-20-portability/windows-arm64/b471/quarantine-validation-b90/sources.json)
+confirmed 416 cases on each side: 408 passed, eight visibly skipped, and
+zero changed outcomes, using a reused wheel rather than a new release build.
 
 These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
 must complete its own project, benchmark, and paired upstream checks.

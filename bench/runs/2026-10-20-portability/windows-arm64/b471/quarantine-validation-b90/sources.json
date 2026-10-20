@@ -1,0 +1,134 @@
+{
+  "description": "Bounded diagnostic of paired quarantine activation using an earlier wheel; not release certification or a full upstream comparison.",
+  "purpose": "diagnostics_only",
+  "github_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377296917",
+  "diagnostic_source_revision": "b90b7f46c76add3ba014ebbf3813eef423226b6c",
+  "reused_wheel_source_revision": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "reused_wheel_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39372506350",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:45:15) [MSC v.1944 64 bit (ARM64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "ARM64",
+  "postcheck_status": "passed",
+  "sides": {
+    "baseline": {
+      "guard_active": true,
+      "selected_tests": 8,
+      "testcases": 416,
+      "passed": 408,
+      "skipped": 8,
+      "failed": 0,
+      "selected_nodeids": [
+        "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]"
+      ]
+    },
+    "patched": {
+      "guard_active": true,
+      "selected_tests": 8,
+      "testcases": 416,
+      "passed": 408,
+      "skipped": 8,
+      "failed": 0,
+      "selected_nodeids": [
+        "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+        "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]"
+      ]
+    }
+  },
+  "changed_outcomes": [],
+  "missing_or_extra": [],
+  "vendor_reproductions_quarantined": false,
+  "vendor_access_violations": 17,
+  "postcheck_resource_report": {
+    "returncode": 0,
+    "seconds": 4.704573400000015,
+    "peak_rss_bytes": 153423872,
+    "stopped": null,
+    "command": [
+      "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+      "C:\\a\\fastscipy\\fastscipy\\tools\\scipy_suite.py",
+      "--output-dir",
+      "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\paired-quarantine-validation",
+      "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection"
+    ],
+    "target": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection",
+    "paired": true,
+    "status": "finished",
+    "access_violation": false,
+    "last_parameter": null,
+    "log": "C:\\a\\fastscipy\\fastscipy\\artifacts\\upstream-probe\\paired-quarantine-validation.log"
+  },
+  "raw_source_files": [
+    {
+      "source": "upstream-probe/paired-quarantine-validation/0-False.xml",
+      "file": "0-False.xml",
+      "bytes": 59707,
+      "sha256": "9321a76220200ebbd3afdbf5f71cc44b59810c81cfa288f35b453b9f3e2a008e"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation/0-True.xml",
+      "file": "0-True.xml",
+      "bytes": 59707,
+      "sha256": "e8dec51b2e65354480a21d00a98463139a7e2549924c85650d99f0a675826fb2"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation/0-False.quarantine.json",
+      "file": "0-False.quarantine.json",
+      "bytes": 3571,
+      "sha256": "b2a9e5b7e0946c5df4f3dd9e0a35b32519abd5642b0af766d4fb8bc9b47e5100"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation/0-True.quarantine.json",
+      "file": "0-True.quarantine.json",
+      "bytes": 3571,
+      "sha256": "b2a9e5b7e0946c5df4f3dd9e0a35b32519abd5642b0af766d4fb8bc9b47e5100"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation/manifest.json",
+      "file": "manifest.json",
+      "bytes": 926,
+      "sha256": "278623a8538bbddee3d1a2b6ddb727deda3b2c6b280987aa496e0bdd3faf920e"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation/partition-results.json",
+      "file": "partition-results.json",
+      "bytes": 9060,
+      "sha256": "556621bdcaac1b98cff81349a6dcc3c67d62fa6875dee63052783cf14cf78a5f"
+    },
+    {
+      "source": "upstream-probe/paired-quarantine-validation.log",
+      "file": "paired-quarantine-validation.log",
+      "bytes": 3748,
+      "sha256": "7578346917b8c1925e403b9088b60dd94bf84c1281321143a05b8818367c00a5"
+    },
+    {
+      "source": "provenance.json",
+      "file": "provenance.json",
+      "bytes": 708,
+      "sha256": "dfdae148fefeeffeac081668a18495c97da9bdce244522cd39a748ceb1727a29"
+    }
+  ],
+  "probe_summary_source": {
+    "source": "upstream-probe/summary.json",
+    "bytes": 44995,
+    "sha256": "cc5a9a511f57aa2c05d491881a47d62e7dea126411bef29cf2dba14dc1c29ba4",
+    "archived": false
+  }
+}

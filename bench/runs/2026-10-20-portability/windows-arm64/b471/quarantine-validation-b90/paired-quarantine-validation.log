@@ -1,0 +1,34 @@
+$ C:\hostedtoolcache\windows\Python\3.13.16\arm64\python.exe -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=C:\a\fastscipy\fastscipy\artifacts\upstream-probe\paired-quarantine-validation\0-False.quarantine.json --junitxml=C:\a\fastscipy\fastscipy\artifacts\upstream-probe\paired-quarantine-validation\0-False.xml C:\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\linalg\tests\test_basic.py::TestSolve::test_structure_detection
+.........................................................s.............. [ 17%]
+...........s............................................................ [ 34%]
+.................s.........................s............................ [ 51%]
+.................................................s...................... [ 69%]
+...s.................................................................... [ 86%]
+.........s.........................s....................                 [100%]
+============================== warnings summary ===============================
+..\..\..\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\conftest.py:182
+  C:\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+408 passed, 8 skipped, 1 warning in 1.14s
+$ C:\hostedtoolcache\windows\Python\3.13.16\arm64\python.exe -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=C:\a\fastscipy\fastscipy\artifacts\upstream-probe\paired-quarantine-validation\0-True.quarantine.json --junitxml=C:\a\fastscipy\fastscipy\artifacts\upstream-probe\paired-quarantine-validation\0-True.xml C:\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\linalg\tests\test_basic.py::TestSolve::test_structure_detection
+.........................................................s.............. [ 17%]
+...........s............................................................ [ 34%]
+.................s.........................s............................ [ 51%]
+.................................................s...................... [ 69%]
+...s.................................................................... [ 86%]
+.........s.........................s....................                 [100%]
+============================== warnings summary ===============================
+..\..\..\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\conftest.py:182
+  C:\hostedtoolcache\windows\Python\3.13.16\arm64\Lib\site-packages\scipy\conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on'}
+fastscipy: 0 fast-path calls, 0 fast-path errors
+408 passed, 8 skipped, 1 warning in 0.97s
+
+416 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

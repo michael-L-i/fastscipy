@@ -1,0 +1,270 @@
+[
+  {
+    "partition": 0,
+    "args": [
+      "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection"
+    ],
+    "patched": false,
+    "junit": "0-False.xml",
+    "quarantine": "0-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 416,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "win32",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "win-arm64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py",
+        "test_source_sha256": "d40ba24f428b409d9dc8787b33a14927268ebc6e94209560f0cd696484636eee"
+      },
+      "active": true,
+      "selected": [
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "partition": 0,
+    "args": [
+      "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection"
+    ],
+    "patched": true,
+    "junit": "0-True.xml",
+    "quarantine": "0-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 416,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "win32",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "win-arm64",
+        "python": [
+          3,
+          13,
+          16
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py",
+        "test_source_sha256": "d40ba24f428b409d9dc8787b33a14927268ebc6e94209560f0cd696484636eee"
+      },
+      "active": true,
+      "selected": [
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-True-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[True-False-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": true,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-True-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": true,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs0-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        },
+        {
+          "nodeid": "test_basic.py::TestSolve::test_structure_detection[False-False-False-nrhs1-banded-complex128]",
+          "parameters": {
+            "fortran": false,
+            "overwrite": false,
+            "transposed": false,
+            "nrhs": [
+              5
+            ],
+            "assume_a": "banded",
+            "dtype": "complex128"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:45:15) [MSC v.1944 64 bit (ARM64)]",
+  "executable": "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+  "revision": "b90b7f46c76add3ba014ebbf3813eef423226b6c",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "scipy_available_memory": "512Mib",
+  "batches": [
+    [
+      "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py::TestSolve::test_structure_detection"
+    ]
+  ],
+  "paired_quarantine": {
+    "plugin": "scipy_upstream_quarantine",
+    "source_sha256": "aec02657bf17d698fc1d6adfb25e38856babdf2847e96f4eafc1b6619dad5351",
+    "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+    "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs"
+  }
+}

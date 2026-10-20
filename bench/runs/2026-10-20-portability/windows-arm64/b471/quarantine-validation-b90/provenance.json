@@ -1,0 +1,20 @@
+{
+  "purpose": "diagnostics_only",
+  "mode": "diagnostics",
+  "target": "windows-arm64",
+  "checkout_sha": "b90b7f46c76add3ba014ebbf3813eef423226b6c",
+  "run_id": "39377296917",
+  "wheel_reused": true,
+  "wheel_artifact_run_id": "39372506350",
+  "wheel_artifact_run_head_sha": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "wheel_artifact_run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39372506350",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-win_arm64.whl"
+  ],
+  "wheel_build_profile": null,
+  "wheel_build_codegen_units": null,
+  "wheel_build_lto": null,
+  "wheel_build_returncode": 0,
+  "wheel_build_stopped": null
+}

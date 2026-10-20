@@ -141,5 +141,5 @@ def patch():
 
 
 def smoke():
-    x = np.linspace(0.1, 5, 4096)
+    x = np.linspace(0.1, 5, 65536)
     sc.erf(x), sc.gammaln(x), sc.jv(1.5, x)

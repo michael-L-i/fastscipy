@@ -3,6 +3,7 @@ import warnings
 import numpy as np
 import pytest
 import scipy.stats as st
+from scipy.stats._stats_py import LinregressResult, PearsonRResult
 
 import fastscipy
 from fastscipy.testing import check, fast_calls, identical
@@ -21,14 +22,147 @@ def outcome(call):
     return r, [(x.category, str(x.message)) for x in w]
 
 
-def same(call):
+def same(call, *, reference_validation=None):
     """Assert patched == plain SciPy (result bytes, exceptions, warnings); return whether a fast path ran."""
+    if reference_validation is not None:
+        before = fast_calls()
+        check(lambda: outcome(call), fast=False, reference_validation=reference_validation)
+        return fast_calls() > before
     with fastscipy.disabled():
         expected = outcome(call)
     before = fast_calls()
     got = outcome(call)
     assert identical(expected[0], got[0]) and expected[1] == got[1], f"{expected!r}\n{got!r}"
     return fast_calls() > before
+
+
+def _stats_reference_validation(x, y):
+    """Validate only observed Intel Accelerate reference variability.
+
+    ``check`` owns platform/backend gating, repeated unpatched evidence, and
+    reporting. This validator preserves the result and warning contracts.
+    Unitful regression fields get absolute floors in their input data units.
+    """
+    eps64 = 64 * np.finfo(np.float64).eps
+
+    def close(a, b, atol):
+        if identical(a, b):
+            return True
+        if type(a) is not type(b):
+            return False
+        aa, bb = np.asarray(a), np.asarray(b)
+        if aa.dtype != bb.dtype or aa.shape != bb.shape or aa.ndim != 0 or aa.dtype.kind != "f":
+            return False
+        if not np.isfinite(aa) or not np.isfinite(bb):
+            return False  # NaN payloads and infinity signs stay exact.
+        if aa == 0 and bb == 0:
+            return False  # Preserve signed zero when both values are zero.
+        return bool(np.isclose(aa, bb, rtol=eps64, atol=atol))
+
+    def validate(expected, got):
+        a, aw = expected
+        b, bw = got
+        if not identical(aw, bw) or type(a) is not type(b) or type(a) not in (PearsonRResult, LinregressResult):
+            return False
+        if vars(a).keys() != vars(b).keys():
+            return False
+        for aa, bb in zip(a, b):
+            if type(aa) is not type(bb) or np.asarray(aa).dtype != np.asarray(bb).dtype:
+                return False
+            if np.ndim(aa) != 0 or np.ndim(bb) != 0:
+                return False
+        if not (0 <= b.pvalue <= 1 or identical(a.pvalue, b.pvalue)):
+            return False
+        if type(a) is PearsonRResult:
+            if not identical(b.correlation, b.statistic):
+                return False
+            if not (-1 <= b.statistic <= 1 or identical(a.statistic, b.statistic)):
+                return False
+            if not all(identical(v, vars(b)[k]) for k, v in vars(a).items() if k != "correlation"):
+                return False
+            return close(a.statistic, b.statistic, eps64) and close(a.pvalue, b.pvalue, eps64)
+
+        if not (-1 <= b.rvalue <= 1 or identical(a.rvalue, b.rvalue)):
+            return False
+        if b.stderr < 0 or b.intercept_stderr < 0:
+            return False
+        if not all(identical(v, vars(b)[k]) for k, v in vars(a).items() if k != "intercept_stderr"):
+            return False
+        with np.errstate(all="ignore"):
+            xx, yy = np.asarray(x, dtype=np.float64), np.asarray(y, dtype=np.float64)
+            yscale = np.max(np.abs(yy))
+            xspread = np.max(np.abs(xx - np.mean(xx)))
+            slope_scale = yscale / xspread
+            intercept_scale = yscale + abs(a.slope) * np.max(np.abs(xx))
+        if not np.isfinite(slope_scale) or not np.isfinite(intercept_scale):
+            return False
+        tiny = np.finfo(np.float64).tiny
+        floors = (slope_scale, intercept_scale, 1.0, 1.0, slope_scale)
+        return all(close(aa, bb, eps64 * max(scale, tiny)) for aa, bb, scale in zip(a, b, floors)) and close(
+            a.intercept_stderr, b.intercept_stderr, eps64 * max(intercept_scale, tiny)
+        )
+
+    return validate
+
+
+@pytest.mark.parametrize("kind", ["pearsonr", "linregress"])
+def test_stats_reference_validator_contract(kind):
+    x, y = np.arange(8.0), np.arange(8.0) / 3
+    validate = _stats_reference_validation(x, y)
+
+    def make(**changes):
+        if kind == "pearsonr":
+            values = {"statistic": np.float64(0.25), "pvalue": np.float64(0.4)}
+            values.update(changes)
+            return PearsonRResult(**values, alternative="two-sided", n=np.asarray(8.0), x=x, y=y, axis=-1)
+        values = {
+            name: np.float64(value)
+            for name, value in (
+                ("slope", 0.1),
+                ("intercept", 0.2),
+                ("rvalue", 0.25),
+                ("pvalue", 0.4),
+                ("stderr", 0.03),
+                ("intercept_stderr", 0.04),
+            )
+        }
+        values.update(changes)
+        return LinregressResult(**values)
+
+    expected = make()
+    coefficient = "statistic" if kind == "pearsonr" else "rvalue"
+    assert validate((expected, []), (make(**{coefficient: np.nextafter(np.float64(0.25), 1.0)}), []))
+    assert not validate((expected, []), (make(**{coefficient: np.float64(0.26)}), []))
+    assert not validate((expected, []), (make(pvalue=np.float64(0.41)), []))
+    assert not validate((expected, []), (make(pvalue=np.float64(-1e-16)), []))
+    assert not validate((expected, []), (make(pvalue=np.float32(0.4)), []))
+    assert not validate((expected, []), (make(pvalue=np.array([0.4, 0.4])), []))
+    assert not validate((expected, []), (make(pvalue=np.float64(np.nan)), []))
+    assert not validate((expected, []), (make(pvalue=np.float64(np.inf)), []))
+    assert not validate((expected, []), (expected, [(RuntimeWarning, "different warning")]))
+    if kind == "pearsonr":
+        other = make()
+        other._alternative = "less"
+        assert not validate((expected, []), (other, []))
+    else:
+        assert not validate((expected, []), (make(slope=np.float64(0.11)), []))
+        assert not validate((expected, []), (make(intercept_stderr=np.float64(-0.04)), []))
+
+
+def test_stats_reference_validator_preserves_tiny_regression_units():
+    x, y = np.arange(8.0), np.arange(8.0) * 1e-100
+    validate = _stats_reference_validation(x, y)
+    values = dict(
+        slope=np.float64(1e-100),
+        intercept=np.float64(0),
+        rvalue=np.float64(1),
+        pvalue=np.float64(0),
+        stderr=np.float64(0),
+        intercept_stderr=np.float64(0),
+    )
+    expected = LinregressResult(**values)
+    wrong = LinregressResult(**dict(values, slope=np.float64(1e-15)))
+    assert not validate((expected, []), (wrong, []))
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)
@@ -165,7 +299,8 @@ def test_function_randomized(name, threads):
     for _ in range(150):
         args, kw = CASES[name]()
         before = [a.copy() for a in args if isinstance(a, np.ndarray)]
-        fast += same(lambda: f(*args, **kw))
+        validation = _stats_reference_validation(*args) if name in ("pearsonr", "linregress") else None
+        fast += same(lambda: f(*args, **kw), reference_validation=validation)
         assert all(a.tobytes() == b.tobytes() for a, b in zip((a for a in args if isinstance(a, np.ndarray)), before))
         res = outcome(lambda: f(*args, **kw))[0]
         if hasattr(res, "confidence_interval"):

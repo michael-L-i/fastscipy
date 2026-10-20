@@ -1,0 +1,308 @@
+{
+  "description": "Derived from all 38 completed raw JUnit records; no tests rerun or results reused from another run",
+  "manifest": {
+    "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python",
+    "revision": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+    "versions": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "fastscipy": "0.1.0a2"
+    },
+    "scipy_available_memory": "2048Mib",
+    "batches": [
+      [
+        "--pyargs",
+        "scipy._lib"
+      ],
+      [
+        "--pyargs",
+        "scipy.cluster"
+      ],
+      [
+        "--pyargs",
+        "scipy.constants"
+      ],
+      [
+        "--pyargs",
+        "scipy.datasets"
+      ],
+      [
+        "--pyargs",
+        "scipy.differentiate"
+      ],
+      [
+        "--pyargs",
+        "scipy.fft"
+      ],
+      [
+        "--pyargs",
+        "scipy.fftpack"
+      ],
+      [
+        "--pyargs",
+        "scipy.integrate"
+      ],
+      [
+        "--pyargs",
+        "scipy.interpolate"
+      ],
+      [
+        "--pyargs",
+        "scipy.io"
+      ],
+      [
+        "--pyargs",
+        "scipy.linalg"
+      ],
+      [
+        "--pyargs",
+        "scipy.ndimage"
+      ],
+      [
+        "--pyargs",
+        "scipy.odr"
+      ],
+      [
+        "--pyargs",
+        "scipy.optimize"
+      ],
+      [
+        "--pyargs",
+        "scipy.signal"
+      ],
+      [
+        "--pyargs",
+        "scipy.sparse"
+      ],
+      [
+        "--pyargs",
+        "scipy.spatial"
+      ],
+      [
+        "--pyargs",
+        "scipy.special"
+      ],
+      [
+        "--pyargs",
+        "scipy.stats"
+      ]
+    ]
+  },
+  "run": {
+    "returncode": 0,
+    "seconds": 3111.046501210999,
+    "peak_rss_bytes": 1179099136,
+    "stopped": null
+  },
+  "comparator_source_sha256": "02ef27f5f48c74271544296d94ed27776eb564e81f70f53dab8e5e5c61e075df",
+  "completed_partition_pairs": 19,
+  "incomplete_partition_pairs": 0,
+  "common_test_executions": 95772,
+  "changed_outcomes": [],
+  "unexpected_missing": [],
+  "unexpected_extra": [],
+  "expected_baseline_only": 684,
+  "expected_patched_only_skips": 2,
+  "plain_outcomes": {
+    "passed": 88060,
+    "skipped": 8396
+  },
+  "patched_outcomes": {
+    "passed": 87376,
+    "skipped": 8398
+  },
+  "unchanged_failures": [],
+  "raw_junit_files": [
+    {
+      "file": "0-False.xml",
+      "bytes": 251571,
+      "sha256": "d0bfdb7c81ed7b877c90a0c04d21485cf2439eb83de61591b4d49c1cf658f032"
+    },
+    {
+      "file": "0-True.xml",
+      "bytes": 251571,
+      "sha256": "698bf0f19bc8cba2fee9e4c90bb908ccceaa55dd39d749c28ea7980ca0717695"
+    },
+    {
+      "file": "1-False.xml",
+      "bytes": 28671,
+      "sha256": "7c028ced7bf653d8314ad311b8bd185dd425dd6a7640591478910a4a9d82d775"
+    },
+    {
+      "file": "1-True.xml",
+      "bytes": 28671,
+      "sha256": "5f437bbec159675eaa03765bfe4d5f4d98a22a01f28d3712c99b02d87d392ef9"
+    },
+    {
+      "file": "2-False.xml",
+      "bytes": 1798,
+      "sha256": "e24cbd8f0a48c6f62dae6409516463751a6103595ed0a83aff48725bf22f6b3e"
+    },
+    {
+      "file": "2-True.xml",
+      "bytes": 1798,
+      "sha256": "747615f93a7ca432a7a1b35ab04a3d9c586dec70ec8afe3e8f6e3fc4c30380a5"
+    },
+    {
+      "file": "3-False.xml",
+      "bytes": 736,
+      "sha256": "f4fa1f9ff5921e62dd18a5bc97265af22f77fbc0b1f110a9f2f7d7eb27b3db8e"
+    },
+    {
+      "file": "3-True.xml",
+      "bytes": 736,
+      "sha256": "74b64041555fd173e26c94cf9da8d6f97543c2ec1d234410536b16bd4ca273fe"
+    },
+    {
+      "file": "4-False.xml",
+      "bytes": 22658,
+      "sha256": "cdc0f6f895a4b606713ecb34be12d76fc9cadaf1cbf21617a5f8677d481db686"
+    },
+    {
+      "file": "4-True.xml",
+      "bytes": 22658,
+      "sha256": "002427e804fa39a5e69444780b804091f6e9b1dfa52a94a384b431f94d7ea04c"
+    },
+    {
+      "file": "5-False.xml",
+      "bytes": 734088,
+      "sha256": "7401a41788b45e37feb0bc1c174720367c5e10cbc6823d91255ed822bc0f0090"
+    },
+    {
+      "file": "5-True.xml",
+      "bytes": 734088,
+      "sha256": "b71daf4a7f52ae779bcbd021d622c970f5ef39f5f4ffcccca22ae530b132682a"
+    },
+    {
+      "file": "6-False.xml",
+      "bytes": 64163,
+      "sha256": "63da77f40a8ee0fbdcb22660b69a785a4d3bf98d44cfbebe9970459c3b9c937c"
+    },
+    {
+      "file": "6-True.xml",
+      "bytes": 64163,
+      "sha256": "66a6ae16cff257f84e404651a9c037f0ca687f3a48848a3da84d9af9eab2fcf2"
+    },
+    {
+      "file": "7-False.xml",
+      "bytes": 160727,
+      "sha256": "2b355544003d5443d62f61066b978e0f12ef120c1a5152798e170e89527828f3"
+    },
+    {
+      "file": "7-True.xml",
+      "bytes": 160727,
+      "sha256": "fd9acd22f8aa20c89ba37f416070658da6708ef1f2ec7b61632d30e843357dfc"
+    },
+    {
+      "file": "8-False.xml",
+      "bytes": 186167,
+      "sha256": "2085724e8092c0b588abdcb8432697edfcbcf6698296983c99933a983b348600"
+    },
+    {
+      "file": "8-True.xml",
+      "bytes": 186167,
+      "sha256": "85409b68d9b2ff22606462afcaa6990ac7389c36eed42565ea834fec9eaa9c8e"
+    },
+    {
+      "file": "9-False.xml",
+      "bytes": 77616,
+      "sha256": "6b981fd73f23790c9462f29f104258c28bd197fb31f08506214f9f38dd69dcd6"
+    },
+    {
+      "file": "9-True.xml",
+      "bytes": 77616,
+      "sha256": "5971629cbcde235ad0192eb0288745d5584fc69ab03c9bea1709e65c1dbb7601"
+    },
+    {
+      "file": "10-False.xml",
+      "bytes": 1393580,
+      "sha256": "d9069b148f559268e4d491ce45f380ed2c3e83369de699d8790fc97cd18bd94e"
+    },
+    {
+      "file": "10-True.xml",
+      "bytes": 1393580,
+      "sha256": "d532db513f3cd0a208d1b323faeda2fe402f14fb947da5ed0428a4c158d9d8f7"
+    },
+    {
+      "file": "11-False.xml",
+      "bytes": 704995,
+      "sha256": "be782a3fb7af72bff002b430e1947f4c7ea5b2b1b06a07ea0c6fcc8456998082"
+    },
+    {
+      "file": "11-True.xml",
+      "bytes": 704995,
+      "sha256": "06c1c1207dab331aeab3f8ecd4f9b2192704c70eec12b7282a2282793cbb58c2"
+    },
+    {
+      "file": "12-False.xml",
+      "bytes": 2783,
+      "sha256": "d0a9e8f8b219c45a037f0268f58d20cc1320c4e7e8b59fb5f43f29581e11e07a"
+    },
+    {
+      "file": "12-True.xml",
+      "bytes": 2783,
+      "sha256": "83685965b3d26dec034ed98dbfb01f4569227b0e838acef4cd132e1a9a77ea46"
+    },
+    {
+      "file": "13-False.xml",
+      "bytes": 572656,
+      "sha256": "e0af4d139a9f69375d71ecaf4e0a726276e6e54e8c2e901a31ed6b431477fdb4"
+    },
+    {
+      "file": "13-True.xml",
+      "bytes": 572656,
+      "sha256": "30cefcfb729f08cc17f33a346330d6e4595e7746aadc92f06bffe5bae5002be8"
+    },
+    {
+      "file": "14-False.xml",
+      "bytes": 1865520,
+      "sha256": "30f74f7cf5b3edd04f7e5ea7df0715ad50e822f653b3b2ab86ae6546e86ff811"
+    },
+    {
+      "file": "14-True.xml",
+      "bytes": 1865520,
+      "sha256": "46f48b707c351dedb99bbc18e188e3dffdf17cd744146bcd8867b7f29239c0b8"
+    },
+    {
+      "file": "15-False.xml",
+      "bytes": 4339432,
+      "sha256": "5457757779c6e371d11789d3bda0d47e02e31509e1c61c7dcb41f7a0fce3a3bc"
+    },
+    {
+      "file": "15-True.xml",
+      "bytes": 4339432,
+      "sha256": "fe9a87e83c4962f20c9881d14aa4d71f5b2a885e6053a31c91c45a0104709063"
+    },
+    {
+      "file": "16-False.xml",
+      "bytes": 197958,
+      "sha256": "31ba9e5c6d150ecb7709a71400fd7f6b607041ac8aa9c663eda43063d312fcca"
+    },
+    {
+      "file": "16-True.xml",
+      "bytes": 197958,
+      "sha256": "8d44973a110417e28307937ef15e46ec486b13361b22b353653fe23870acf733"
+    },
+    {
+      "file": "17-False.xml",
+      "bytes": 1253880,
+      "sha256": "a903a4a500b661e9728773c07dd80585509ac8e8871f8a17761b33dc008a8bb9"
+    },
+    {
+      "file": "17-True.xml",
+      "bytes": 1187899,
+      "sha256": "3fd2d3d5260ca66bb1e831ed159c84837e8826effe7ce12e217e3d79717ab1b0"
+    },
+    {
+      "file": "18-False.xml",
+      "bytes": 2114110,
+      "sha256": "f196bc0a1d2527a0f7f863625666cad9600add9907c191365213291c0e6ada9c"
+    },
+    {
+      "file": "18-True.xml",
+      "bytes": 2114250,
+      "sha256": "3cd585fe042d360757aa78b5185d377cbc51fffa9cf91a4ac169b292269e2f37"
+    }
+  ]
+}

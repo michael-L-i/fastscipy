@@ -1,0 +1,152 @@
+{
+  "description": "Derived project failure identifiers; full failure detail remains in the original artifact",
+  "file": "tests.xml",
+  "bytes": 4066859,
+  "sha256": "502658772b83f785aabb5f857a03459975317e7e4705b33c8974a6d38e0eb736",
+  "failures": [
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-4]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-7]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[1t-11]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-4]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-7]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_spline_zoom_shift[4t-11]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-6]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-7]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-8]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-9]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-10]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[1t-11]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-6]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-7]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-8]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-9]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-10]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_ndimage::test_affine_rotate_map_coordinates[4t-11]",
+      "message": "AssertionError: fast path did not run"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicg]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicgstab]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-gmres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-lgmres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-minres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-qmr]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-gcrotmk]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-bicg]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-bicgstab]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-gmres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-lgmres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-minres]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-qmr]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-gcrotmk]",
+      "message": "AssertionError: results differ:"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[1t-pearsonr]",
+      "message": "AssertionError: (PearsonRResult(statistic=np.float64(-0.12923781913240337), pvalue=np.float64(0.1000070167373947)), [(<class 'scipy.stats._warnings_errors.NearConstantInputWarning'>, 'An input array is nearly constant; the computed correlation coefficient may be inaccurate.')])"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[1t-linregress]",
+      "message": "AssertionError: (LinregressResult(slope=np.float64(0.0739300758156335), intercept=np.float64(2.3860816220515626), rvalue=np.float64(0.0627604120354213), pvalue=np.float64(0.7324782648061063), stderr=np.float64(0.11875866967922824), intercept_stderr=np.float64(0.12189156112138264)), [])"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-pearsonr]",
+      "message": "AssertionError: (PearsonRResult(statistic=np.float64(0.20348661890006955), pvalue=np.float64(0.7135745436064352)), [])"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-linregress]",
+      "message": "AssertionError: (LinregressResult(slope=np.float64(2.0495808738421202e-33), intercept=np.float64(0.12534293161205504), rvalue=np.float64(5.726542934570029e-17), pvalue=np.float64(0.9999999999999998), stderr=np.float64(6.763843070092108e-18), intercept_stderr=np.float64(1.6242614878042385e-17)), [])"
+    }
+  ]
+}

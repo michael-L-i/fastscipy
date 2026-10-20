@@ -1,0 +1,9 @@
+{
+  "returncode": 0,
+  "seconds": 5694.785260889,
+  "peak_rss_bytes": 4480892928,
+  "stopped": null,
+  "profile": "release",
+  "codegen_units": 8,
+  "lto": "thin"
+}

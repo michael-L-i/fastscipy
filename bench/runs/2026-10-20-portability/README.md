@@ -67,6 +67,19 @@ explicitly labeled and retain hashes of their raw evidence.
   across ten completed partitions. Unpatched NumPy crashed during the next
   linalg partition; the crash record retains its raw-log hash and resource
   report. This is not a complete upstream comparison.
+- `windows-x86_64/daf9/`: native AMD64 revision `daf9acd`, built with the
+  release profile. Project tests reported 7,198 passed and four fork-dependent
+  skips; all 407 benchmark cases passed. All 19 paired upstream partitions
+  completed with no changed outcomes across 95,772 common executions and no
+  failures. Original reports and a compact comparison containing all 38 raw
+  XML hashes are retained; full release-matrix validation remains separate.
+- `mac-x86_64/daf9/`: native Intel revision `daf9acd`, built with the release
+  profile. Project validation failed: 7,166 passed and 36 failed; benchmark
+  identity passed 406 of 407 cases, with one BFGS result mismatch. All 19
+  upstream pairs nevertheless completed with 95,772 unchanged common outcomes
+  and no failures. Raw reports, compact upstream comparison with 38 XML
+  hashes, and project failure identifiers are retained. Later fixes require
+  their own validation.
 
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.

@@ -47,12 +47,17 @@ not final release validation:
   found no changed outcomes across 95,772 common executions, including the
   same three baseline failures. Its manifest retains the later harness
   checkout separately from the `b471` benchmark revision.
-- Linux aarch64 (glibc), revision `66f20ae`: 7,048 project tests passed;
-  all 407 benchmark cases across 13 areas matched SciPy and met their
-  expected fast-path checks. The archive contains the
-  [summary](../bench/runs/2026-10-20-portability/linux-arm64/summary.json),
-  [13 per-area case reports](../bench/runs/2026-10-20-portability/linux-arm64/cases/),
-  and [build resource report](../bench/runs/2026-10-20-portability/linux-arm64/build.json).
+- Linux aarch64 (glibc), revision `021c329`: 7,116 project tests passed;
+  all 407 benchmark cases across 13 areas matched SciPy and met their expected
+  fast-path checks. All 19 paired upstream partitions completed: 95,772 common
+  executions, no changed outcomes, and no failures. The
+  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-arm64/021/README.md)
+  retains reports and provenance from the
+  [Actions run](https://github.com/michael-L-i/fastscipy/actions/runs/39373079547).
+  This development run used `FASTSCIPY_ANY_PLATFORM=1`; it does not validate
+  the later default platform gate or final release wheels. The earlier
+  [7,048-test checkpoint](../bench/runs/2026-10-20-portability/linux-arm64/summary.json)
+  remains archived separately.
 - Linux x86_64 (glibc), revision `4b1342d`: 7,060 project tests passed;
   four new NaN initialization tests failed. All 407 benchmark cases across
   13 areas matched SciPy and met their expected fast-path checks. The

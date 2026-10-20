@@ -9,6 +9,13 @@ rewritten to match a newer checkout.
   platform summary, and all 13 raw per-area benchmark reports. The summary
   records 7,048 passing project tests and 407 benchmark cases with no
   numerical mismatches or missing expected fast paths.
+- `linux-arm64/021/`: newer glibc aarch64 revision `021c329`; 7,116 passing
+  project tests, all 407 benchmark cases passing, and all 19 upstream pairs
+  complete with no changed outcomes across 95,772 common executions and no
+  failures. It retains original build/source provenance, case reports, and a
+  compact upstream comparison with all 38 raw XML hashes. This development
+  checkpoint used the platform-gate override; later default-gate and release
+  wheel validation remain separate.
 - `linux-x86_64/4b/`: glibc x86_64 revision `4b1342d`; unchanged build and
   provenance reports, platform summary, and 13 raw per-area reports. Project
   tests reported 7,060 passed and four NaN initialization failures; all 407

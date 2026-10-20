@@ -1,0 +1,19 @@
+{
+  "purpose": "validation",
+  "mode": "full",
+  "target": "linux-arm64",
+  "checkout_sha": "021c3293c314c154bf6824c2402eeb0a80b6e5ed",
+  "run_id": "39373079547",
+  "wheel_reused": false,
+  "wheel_artifact_run_id": "39373079547",
+  "wheel_artifact_run_head_sha": "021c3293c314c154bf6824c2402eeb0a80b6e5ed",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-manylinux_2_34_aarch64.whl"
+  ],
+  "wheel_build_profile": "dev-release",
+  "wheel_build_codegen_units": 4,
+  "wheel_build_lto": false,
+  "wheel_build_returncode": 0,
+  "wheel_build_stopped": null
+}

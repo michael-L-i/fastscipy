@@ -59,10 +59,42 @@ def test_lsq_linear_dense_unbounded(shape, threads):
             rhs = b if matrix is A else b[::-1]
             before = matrix.tobytes(), rhs.tobytes()
             for method in ("trf", "bvls"):
-                check(lambda: optimize.lsq_linear(matrix, rhs, method=method))
+                check(
+                    lambda: optimize.lsq_linear(matrix, rhs, method=method),
+                    reference_validation=_validate_lsq_cost,
+                )
             assert (matrix.tobytes(), rhs.tobytes()) == before
     A = np.ones(shape)
     check(lambda: optimize.lsq_linear(A, np.ones(shape[0]), lsq_solver="exact"))
+
+
+def _validate_lsq_cost(expected, actual):
+    # Only the observed alignment-sensitive dot-product cost may vary. The
+    # solution, residual, singular values, status and every other field stay exact.
+    assert type(expected) is type(actual) is optimize.OptimizeResult
+    assert expected.keys() == actual.keys()
+    assert_identical(
+        {k: v for k, v in expected.items() if k != "cost"}, {k: v for k, v in actual.items() if k != "cost"}
+    )
+    for result in (expected, actual):
+        assert type(result.cost) is np.float64
+        oracle = np.sum(result.fun.astype(np.longdouble) ** 2) / 2
+        bound = np.finfo(np.float64).eps * max(1, result.fun.size) * abs(oracle)
+        assert np.isfinite(result.cost) and not np.signbit(result.cost)
+        assert abs(np.longdouble(result.cost) - oracle) <= bound
+
+
+def test_lsq_reference_validator_rejects_other_changes():
+    result = optimize.OptimizeResult(fun=np.array([1.0, 2.0]), cost=np.float64(2.5), x=np.ones(1))
+    near = optimize.OptimizeResult(result, cost=np.nextafter(result.cost, np.inf))
+    _validate_lsq_cost(result, near)
+    for bad in (
+        optimize.OptimizeResult(result, x=np.zeros(1)),
+        optimize.OptimizeResult(result, cost=np.float64(2.51)),
+        optimize.OptimizeResult(result, cost=np.float64(np.nan)),
+    ):
+        with pytest.raises(AssertionError):
+            _validate_lsq_cost(result, bad)
 
 
 @pytest.mark.parametrize(

@@ -111,6 +111,8 @@ def main():
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
     os.environ.setdefault("SCIPY_AVAILABLE_MEM", f"{max(1, args.max_rss_mb // 2)}Mib")
+    reference_report = output.resolve() / "reference-variance.jsonl"
+    os.environ["FASTSCIPY_REFERENCE_REPORT"] = str(reference_report)
     report = {
         "recorded_utc": datetime.now(timezone.utc).isoformat(),
         "benchmark_commit": revision(),
@@ -159,11 +161,19 @@ def main():
             if not data.exists():
                 continue
             rows = json.loads(data.read_text())["cases"]
-            accelerated = [row for row in rows.values() if row["expected_fast_path"] is not False]
+            accelerated = [row for row in rows.values() if row["expected_fast_path"] is not False and row["identical"]]
             report["areas"][area] = {
                 "cases": len(rows),
-                "controls": len(rows) - len(accelerated),
+                "controls": sum(row["expected_fast_path"] is False for row in rows.values()),
                 "nonidentical": [name for name, row in rows.items() if not row["identical"]],
+                "reference_variance": [
+                    name for name, row in rows.items() if row.get("validation") == "reference_variance"
+                ],
+                "unexplained_nonidentical": [
+                    name
+                    for name, row in rows.items()
+                    if not row["identical"] and row.get("validation") != "reference_variance"
+                ],
                 "missing_fast_path": [name for name, row in rows.items() if not row["fast_path"]],
                 "speedup_1t": mean([row["x1t"] for row in accelerated]),
                 "speedup_nt": mean([row["xnt"] for row in accelerated]),
@@ -183,11 +193,16 @@ def main():
             ],
             args.upstream_timeout,
         )
+    report["reference_variance"] = (
+        [json.loads(line) for line in reference_report.read_text(encoding="utf-8").splitlines()]
+        if reference_report.exists()
+        else []
+    )
     (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     bad = any(run["returncode"] != 0 for run in report["runs"].values())
     if not args.tests_only:
         bad |= report["areas"].keys() != AREAS
-    bad |= any(area["nonidentical"] or area["missing_fast_path"] for area in report["areas"].values())
+    bad |= any(area["unexplained_nonidentical"] or area["missing_fast_path"] for area in report["areas"].values())
     sys.exit(bool(bad))
 
 

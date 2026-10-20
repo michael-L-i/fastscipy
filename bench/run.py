@@ -8,10 +8,12 @@ applies) and returns its result. A third item says where the fast path must
 run: ``True`` (default: on 1 and all threads), ``"threads"`` (only with
 threads; a module sets ``THREADED_ONLY = True`` to make that its default) or
 ``False`` (a control it should decline, which must just not be slower).
-Every case checks that the patched result is byte-identical to SciPy's.
+Every case checks byte identity. An optional fourth item supplies independent
+numerical validation for proven Intel Accelerate reference variation; such
+cases remain marked nonidentical and are excluded from headline averages.
 Writes ``bench/results/<area>.json`` and prints a markdown table; ``--check``
-exits non-zero if a case differs, never took the fast path, or is slower than
-SciPy on one thread.
+exits non-zero for unexplained differences, missing fast paths, or a one-thread
+regression. Numerical validation never excuses a deterministic mismatch.
 """
 
 import argparse
@@ -24,7 +26,7 @@ import sys
 import time
 
 import fastscipy
-from fastscipy.testing import fast_calls, identical
+from fastscipy.testing import fast_calls, identical, reference_variance
 
 HERE = pathlib.Path(__file__).parent
 
@@ -40,20 +42,32 @@ def timeit(call, budget):
     return best
 
 
-def run_case(call, budget, threads, expect=True):
+def run_case(call, budget, threads, expect=True, reference_validation=None):
     with fastscipy.disabled():
         ref = call()
         t_scipy = timeit(call, budget)
     row = {"scipy_ms": t_scipy * 1e3, "identical": True, "fast_path": True}
+    exceptions = {}
+    unexplained = False
     for label, n in (("1t", 1), ("nt", threads)):
         fastscipy.set_num_threads(n)
         before = fast_calls()
         out = call()
         if expect is True or (expect == "threads" and n > 1):
             row["fast_path"] &= fast_calls() > before
-        row["identical"] &= identical(ref, out)
+        same = identical(ref, out)
+        row["identical"] &= same
+        if not same:
+            exception = reference_variance(call, ref, out, reference_validation)
+            if exception is None:
+                unexplained = True
+            else:
+                exceptions[label] = exception
         row[f"{label}_ms"] = timeit(call, budget) * 1e3
         row[f"x{label}"] = t_scipy / (row[f"{label}_ms"] / 1e3)
+    if exceptions:
+        row["reference_variance"] = exceptions
+    row["validation"] = "byte_identical" if row["identical"] else "mismatch" if unexplained else "reference_variance"
     return row
 
 
@@ -86,9 +100,12 @@ def main():
             if args.only not in name:
                 continue
             expected = expect[0] if expect else default
-            r = rows[name] = run_case(call, args.budget, threads, expected)
+            validation = expect[1] if len(expect) > 1 else None
+            r = rows[name] = run_case(call, args.budget, threads, expected, validation)
             r["expected_fast_path"] = expected
             flag = "yes" if r["identical"] else "**NO**"
+            if r["validation"] == "reference_variance":
+                flag = "reference varies; numerical checks passed"
             if not r["fast_path"]:
                 flag += " (no fast path)"
             print(
@@ -96,13 +113,14 @@ def main():
                 f"| {r['x1t']:.1f} | {r['xnt']:.1f} | {flag} |",
                 flush=True,
             )
-            if not (r["identical"] and r["fast_path"] and r["x1t"] >= 0.9):
+            if not (r["validation"] != "mismatch" and r["fast_path"] and r["x1t"] >= 0.9):
                 bad.append(f"{area}: {name}")
         fastscipy.set_num_threads(threads)
         if rows:
+            stable = [r for r in rows.values() if r["identical"]]
             print(
-                f"| **{area} geomean** | | | | **{geomean([r['x1t'] for r in rows.values()]):.1f}** "
-                f"| **{geomean([r['xnt'] for r in rows.values()]):.1f}** | |"
+                f"| **{area} geomean (byte-identical cases)** | | | | **{geomean([r['x1t'] for r in stable]):.1f}** "
+                f"| **{geomean([r['xnt'] for r in stable]):.1f}** | |"
             )
             meta = {"threads": threads, "cpu": os.cpu_count(), "platform": sys.platform}
             (args.output_dir / f"{area}.json").write_text(json.dumps({"meta": meta, "cases": rows}, indent=1))

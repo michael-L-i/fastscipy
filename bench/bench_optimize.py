@@ -4,6 +4,16 @@ from scipy import optimize
 _x = np.random.default_rng(0).random(1000)
 
 
+def _bfgs_reference_validation(expected, actual):
+    # Accelerate's alignment-sensitive dot products can change even plain
+    # BFGS's path. Check this known minimizer independently, never its timing.
+    for point in (expected, actual):
+        assert type(point) is np.ndarray and point.dtype == np.float64 and point.shape == (10,)
+        assert np.isfinite(point).all()
+        assert np.max(np.abs(point - 1)) < 2e-4
+        assert optimize.rosen(point) < 1e-8
+
+
 def cases():
     derivative_rng = np.random.default_rng(984)
     for n in (10, 1000):
@@ -27,4 +37,9 @@ def cases():
     yield "approx_fprime rosen n=1000", lambda: optimize.approx_fprime(_x, optimize.rosen, 1e-8)
     yield "approx_fprime cheap sum-of-squares n=1000", lambda: optimize.approx_fprime(_x, lambda z: z @ z, 1e-8)
     x = _x[:10]
-    yield "minimize BFGS rosen n=10 (numerical gradient)", lambda: optimize.minimize(optimize.rosen, x, method="BFGS").x
+    yield (
+        "minimize BFGS rosen n=10 (numerical gradient)",
+        lambda: optimize.minimize(optimize.rosen, x, method="BFGS").x,
+        True,
+        _bfgs_reference_validation,
+    )

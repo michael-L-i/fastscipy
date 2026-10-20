@@ -1,0 +1,67 @@
+{
+  "purpose": "derived_selector_experiment_evidence_not_release_certification",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39446755156",
+  "probe_checkout": "62147ded75a5c930aaa945b876cddd5fa8771a62",
+  "reused_wheel_source": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "wheel_file": "fastscipy-0.1.0a2-cp313-cp313-macosx_10_12_x86_64.whl",
+  "wheel_sha256": "1fdf1de788fcac733fecb318e6178623dfa211640d83ffa52743bfee35e36657",
+  "wheel_native_and_python_hashes_verified": true,
+  "existing_test_source_hash_verified": true,
+  "only_dispatch_change": "_SCIPY_INT_CAST: False -> True -> restored False",
+  "tests": {
+    "passed": 64,
+    "failed": 0,
+    "skipped": 0,
+    "previous_fast_path_misses_verified": [
+      "test_spline_zoom_shift[1t-4]",
+      "test_spline_zoom_shift[1t-7]",
+      "test_spline_zoom_shift[1t-11]",
+      "test_spline_zoom_shift[4t-4]",
+      "test_spline_zoom_shift[4t-7]",
+      "test_spline_zoom_shift[4t-11]",
+      "test_affine_rotate_map_coordinates[1t-6]",
+      "test_affine_rotate_map_coordinates[1t-7]",
+      "test_affine_rotate_map_coordinates[1t-8]",
+      "test_affine_rotate_map_coordinates[1t-9]",
+      "test_affine_rotate_map_coordinates[1t-10]",
+      "test_affine_rotate_map_coordinates[1t-11]",
+      "test_affine_rotate_map_coordinates[4t-6]",
+      "test_affine_rotate_map_coordinates[4t-7]",
+      "test_affine_rotate_map_coordinates[4t-8]",
+      "test_affine_rotate_map_coordinates[4t-9]",
+      "test_affine_rotate_map_coordinates[4t-10]",
+      "test_affine_rotate_map_coordinates[4t-11]"
+    ]
+  },
+  "original_files": [
+    {
+      "file": "junit.xml",
+      "bytes": 6600,
+      "sha256": "467216f06f13dd367d760c8628cebf3a914bd4ecb7042e142fe3267af9d223f8"
+    },
+    {
+      "file": "worker.json",
+      "bytes": 1561,
+      "sha256": "0595906ee9e725dec01fe144cbdd59d55b0c0b67456d09775cd75eb24bb7b62f"
+    },
+    {
+      "file": "monitor.json",
+      "bytes": 224,
+      "sha256": "2bac3b6881c20f3c698935def1f335f348b3879d0ba0e71d949a44378b7eca4a"
+    },
+    {
+      "file": "worker.log",
+      "bytes": 3149,
+      "sha256": "73281336a70c1fb062815efe30ddd4bd6656df0ebf6ef35662d45e5f0966ab29"
+    },
+    {
+      "file": "provenance.json",
+      "bytes": 702,
+      "sha256": "0c64074e355420be0c48e97114673bba0b48317ada793ac406593c3986aa00b9"
+    }
+  ],
+  "limitations": [
+    "Focused existing tests only; not full project or release-wheel certification.",
+    "Does not validate fixes for independent numerical project failures or BFGS benchmark differences."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "purpose": "selector_experiment_not_release_wheel_certification",
+  "platform": "darwin",
+  "machine": "x86_64",
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "strict_environment": "1",
+  "versions": {
+    "fastscipy": "0.1.0a2",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1"
+  },
+  "installed_interp": {
+    "path": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy/_ndimage_interp.py",
+    "bytes": 7376,
+    "sha256": "9c6b522d68b09e3654f3185c8182f00d1b533f5673bf7ba767b1aa7ff4b68eee"
+  },
+  "installed_native": {
+    "path": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy/_native.cpython-313-darwin.so",
+    "bytes": 31112720,
+    "sha256": "50856abb747699965f631b1384a16a9f59d258a005255c68e6fe21de5986a8b7"
+  },
+  "scipy_ndimage_native": {
+    "path": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/scipy/ndimage/_nd_image.cpython-313-darwin.so",
+    "bytes": 154784,
+    "sha256": "79a9e774af3b46da917daff54eb2f8a8e0963c22e6834d6e76a45041f8c575f8"
+  },
+  "existing_tests": {
+    "path": "/Users/runner/work/fastscipy/fastscipy/tests/test_ndimage.py",
+    "bytes": 29279,
+    "sha256": "45b68080eeb90b7b894baafe27378b296ce6df97e932f9d28e162a69a2f994fa"
+  },
+  "initial_SCIPY_INT_CAST": false,
+  "experimental_SCIPY_INT_CAST": true,
+  "selector_changed": true,
+  "junit": "junit.xml",
+  "pytest_exit_code": 0,
+  "restored_SCIPY_INT_CAST": false,
+  "selector_restored": true
+}

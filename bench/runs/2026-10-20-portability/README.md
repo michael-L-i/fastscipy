@@ -122,3 +122,11 @@ LSQR discrepancies.
 
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.
+
+The [Intel Mac cast-selector experiment](mac-x86_64/daf9/cast-selector-621/README.md)
+reuses the unchanged `daf9acd` native wheel with probe checkout `62147de`.
+Enabling only `_SCIPY_INT_CAST` passed all 64 existing selected tests, including
+all 18 previous fast-path misses, with the selector restored afterwards.
+Original focused JUnit, worker, monitor, log, provenance, and verified hashes
+are retained. This does not certify a rebuilt release wheel or resolve the
+independent numerical failures.

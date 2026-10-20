@@ -48,8 +48,13 @@ All expected benchmark fast paths ran. Mac Intel's project failures comprised
 failures, eight sparse iterative-solver identity failures, and four
 `pearsonr`/`linregress` identity failures. Its BFGS numerical-gradient benchmark
 also differed from SciPy. The [failure record](../bench/runs/2026-10-20-portability/mac-x86_64/release80/project-failures.json)
-retains identifiers, excerpts, and full-trace hashes. Later candidate fixes,
-including the Mac selector change, require their own validation.
+retains identifiers, excerpts, and full-trace hashes. A separate
+[selector experiment](../bench/runs/2026-10-20-portability/mac-x86_64/daf9/cast-selector-621/README.md)
+then passed all 64 existing spline/affine interpolation tests, including the
+18 prior fast-path misses, by enabling only `_SCIPY_INT_CAST` with the unchanged
+`daf9acd` native wheel. This verifies the selected native tests, not a rebuilt
+release wheel; the independent numerical failures and BFGS result still
+require their own resolution and full validation.
 
 All eight upstream comparisons completed 19 partition pairs with 95,772
 common executions, no changed outcomes, no incomplete pairs, and no failures.

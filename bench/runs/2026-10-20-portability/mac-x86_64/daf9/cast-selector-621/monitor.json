@@ -1,0 +1,9 @@
+{
+  "returncode": 0,
+  "seconds": 4.677274280000006,
+  "peak_rss_bytes": 122064896,
+  "stopped": null,
+  "purpose": "selector_experiment_not_release_wheel_certification",
+  "memory_limit_mib": 224,
+  "timeout_seconds": 110
+}

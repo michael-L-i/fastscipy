@@ -20,6 +20,7 @@ import collections
 from contextlib import nullcontext
 import importlib.metadata
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -75,6 +76,9 @@ def run(args, patched, junit):
 
 
 def main():
+    # Leave headroom for collection and temporary arrays inside the outer RSS
+    # watchdog. SciPy's large-array tests use this to skip oversized cases.
+    os.environ.setdefault("SCIPY_AVAILABLE_MEM", "2048Mib")
     parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
     parser.add_argument("--partitioned", action="store_true")
     parser.add_argument("--output-dir", type=Path)
@@ -123,6 +127,7 @@ def main():
                 "executable": sys.executable,
                 "revision": revision,
                 "versions": {name: importlib.metadata.version(name) for name in ("numpy", "scipy", "fastscipy")},
+                "scipy_available_memory": os.environ["SCIPY_AVAILABLE_MEM"],
                 "batches": batches,
             }
             (Path(tmp) / "manifest.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")

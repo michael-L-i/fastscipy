@@ -76,6 +76,10 @@ Process-tree RSS and elapsed-time budgets stop runs that exceed their
 configured limits. RSS is sampled and summed across processes, so shared
 pages can be counted more than once.
 
+For upstream tests, `SCIPY_AVAILABLE_MEM` defaults to half the RSS budget
+(2 GiB with the default limit). SciPy skips its own tests that require more
+memory; both runs use the same budget, and the raw JUnit files retain skips.
+
 `summary.json` records the package version, benchmark revision, dependencies,
 NumPy configuration, thread budgets, child return codes, and sampled peak
 RSS. Each area's report lists numerical mismatches and missing expected fast

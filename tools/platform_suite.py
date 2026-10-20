@@ -110,6 +110,7 @@ def main():
         parser.error("Run from a complete source checkout containing benchmarks for all 13 areas")
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
+    os.environ.setdefault("SCIPY_AVAILABLE_MEM", f"{max(1, args.max_rss_mb // 2)}Mib")
     report = {
         "recorded_utc": datetime.now(timezone.utc).isoformat(),
         "benchmark_commit": revision(),
@@ -128,6 +129,7 @@ def main():
         },
         "timing_budget_seconds": args.budget,
         "memory_limit_mb": args.max_rss_mb,
+        "scipy_available_memory": os.environ["SCIPY_AVAILABLE_MEM"],
         "upstream_timeout_seconds": args.upstream_timeout,
         "runs": {},
         "areas": {},

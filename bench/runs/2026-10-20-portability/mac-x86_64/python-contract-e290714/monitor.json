@@ -1,0 +1,9 @@
+{
+  "returncode": 0,
+  "seconds": 97.49479522500008,
+  "peak_rss_bytes": 180944896,
+  "stopped": null,
+  "purpose": "partial_selected_tests_reused_native_not_release_certification",
+  "memory_limit_mib": 4096,
+  "timeout_seconds": 600
+}

@@ -1,0 +1,38 @@
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................................ [ 26%]
+........................................................................ [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 52%]
+........................................................................ [ 60%]
+........................................................................ [ 69%]
+........................................................................ [ 78%]
+........................................................................ [ 86%]
+........................................................................ [ 95%]
+......................................                                   [100%]
+=============================== warnings summary ===============================
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-cg]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicg]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-minres]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-qmr]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-tfqmr]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-gcrotmk]
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-cg]
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-solsmje1/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_sparse_linalg._iteration_reference_validation.<locals>.validate passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-bicgstab]
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-solsmje1/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_sparse_linalg._bicgstab_reference_validation.<locals>.validate passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_stats.py: 81 warnings
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-solsmje1/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_stats.same.<locals>.validated passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4]
+tests/test_optimize.py::test_lsq_linear_dense_unbounded[2-shape4]
+  /var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-solsmje1/fastscipy/testing.py:149: ReferenceVarianceWarning: Intel Accelerate reference changed on repeated unpatched calls; test_optimize._validate_lsq_cost passed. Byte identity is not established for this comparison.
+    if reference_variance(call, expected, got, reference_validation) is None:
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+830 passed, 91 warnings in 95.09s (0:01:35)

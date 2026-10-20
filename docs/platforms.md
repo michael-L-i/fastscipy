@@ -165,6 +165,20 @@ byte-identity pass. Production numerical kernels are not changed by this
 test policy. The earlier failed preflight remains archived unchanged; the
 new policy and selector fix still require full candidate validation.
 
+The later Intel Python-overlay checks provide separate, source-specific
+checkpoints: the [first diagnostic](../bench/runs/2026-10-20-portability/mac-x86_64/python-source-1f48/README.md)
+completed 312 benchmark cases across 11 areas (311 byte-identical and one
+BFGS reference-variation exception) before a timeout; its project run failed
+two tests. The [remaining-area diagnostic](../bench/runs/2026-10-20-portability/mac-x86_64/python-remaining-3df/README.md)
+completed all 95 special/stats cases byte-identically, while four selected
+test-validator checks failed. After the validator revisions, the
+[selected-test successor](../bench/runs/2026-10-20-portability/mac-x86_64/python-contract-e290714/README.md)
+passed all 830 tests in the five selected files, retaining explicit numerical
+reference-variation records. These runs reused an unchanged native wheel
+and used different Python revisions; they are not one passing full-project
+or final-wheel run. Fresh final-source validation of all 32 release wheels
+remains required.
+
 ## Why each build is checked
 
 SciPy wheels can differ in compiler contraction, floating-point libraries,

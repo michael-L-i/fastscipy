@@ -1,0 +1,225 @@
+{
+  "purpose": "partial_selected_tests_reused_native_not_release_certification",
+  "source_head": "e2907142aafc2350acc4f89d731c97de10c0932a",
+  "python_source_dirty": false,
+  "python_package_files": {
+    "__init__.py": {
+      "bytes": 3093,
+      "sha256": "e283d56b3dc275c620f09eb06b6e69f0100067c219b0140a8454d95c358f0751"
+    },
+    "_cluster.py": {
+      "bytes": 3833,
+      "sha256": "9240fd8ac636138b340b78aebc040883ba4b6822e8865ed2939b707287d6c2b8"
+    },
+    "_csgraph.py": {
+      "bytes": 9566,
+      "sha256": "0bb657603ac535deac2ddb5f5d508eecf180b5d99e9fecb023b8df9745811800"
+    },
+    "_integrate.py": {
+      "bytes": 14699,
+      "sha256": "204290e12ed8373b361c750b1ec997bb02e8999abaa2a3e460b8a07fcc217188"
+    },
+    "_interpolate.py": {
+      "bytes": 16211,
+      "sha256": "793cea352a4c4cfe8fb8090236df35e9613c618a1fea35e413e12b92c4a2926a"
+    },
+    "_linalg.py": {
+      "bytes": 16726,
+      "sha256": "542bfdfaa5750b2772899c9d5ab8b6c507e692d34b4ff48a4b511996470c42c8"
+    },
+    "_ndimage.py": {
+      "bytes": 1758,
+      "sha256": "058133151f0c9eca5dcaaea3549954f6ad8bcada23017f974893f85ffb1da27a"
+    },
+    "_ndimage_correlate.py": {
+      "bytes": 11152,
+      "sha256": "ec4aaaca4d42d8744bb190ad37ee0434393af743784aabbf419e318e4a9c6fb9"
+    },
+    "_ndimage_generic.py": {
+      "bytes": 3303,
+      "sha256": "57edac18ca15773e5846791a49cb387177e9dbed95dd14ad84bc00c44a2a3a6d"
+    },
+    "_ndimage_interp.py": {
+      "bytes": 7602,
+      "sha256": "b7d2e9d9e37c23fc66a8fcde98e8c03353173be7ad038a101c4df96013cefd44"
+    },
+    "_ndimage_label.py": {
+      "bytes": 7046,
+      "sha256": "ae30f1bd350efc497ac9d3439e067a027beb20756a8d859bec6c86f11ba457e0"
+    },
+    "_ndimage_morph.py": {
+      "bytes": 8897,
+      "sha256": "20510ca77e428e456731a9dd67c097c04382eb5ebfb50731b93128f0e24966d8"
+    },
+    "_ndimage_rank.py": {
+      "bytes": 5872,
+      "sha256": "c4ab18545429c0ab3f67947f69f1c10acb28cdf82a50891b788e61a8a0b52f74"
+    },
+    "_ndimage_seam.py": {
+      "bytes": 1905,
+      "sha256": "c107de2c1ad26d8a9e734e8fe0b890fe19e77a0e472b5600b9f7644be7ad1a2f"
+    },
+    "_optimize.py": {
+      "bytes": 6435,
+      "sha256": "09a142127b33d9b3acb147225c6a52b0942a45d6495fe4dc4edc220b3ab1a5f2"
+    },
+    "_patch.py": {
+      "bytes": 4689,
+      "sha256": "860ef64b5cd2f97d6349ed83feb3346b471f59f27f8400f1bce6c90fec0d767d"
+    },
+    "_signal.py": {
+      "bytes": 3728,
+      "sha256": "c859f5da3eab2a259703c3b3bb2a153c48d05e96b6f88732e1e8f94d39d118b4"
+    },
+    "_signal_algo.py": {
+      "bytes": 8721,
+      "sha256": "3e43ae340775b1cae8cb7536183979cf298f8f6a3c53d25c4142b08ed78dad9e"
+    },
+    "_signal_small.py": {
+      "bytes": 19723,
+      "sha256": "01aa8db93f99d9dd84c3c634cc5bc24e423556f2af70d7439ef812191626f5dc"
+    },
+    "_signal_threads.py": {
+      "bytes": 6347,
+      "sha256": "1eb6fb4f4f02c1488bbd81d1f21142a46881899804472ae356bf551458837ee5"
+    },
+    "_sparse.py": {
+      "bytes": 15529,
+      "sha256": "2a44cfcd14a905bd9c425c299cee3ff6ff2e78bb950a2921330df3303b9fc869"
+    },
+    "_sparse_linalg.py": {
+      "bytes": 3009,
+      "sha256": "7460839e7c9b60c882467308cda0625104eed78a5ecadc7b6f44cb0c1e7e461c"
+    },
+    "_spatial.py": {
+      "bytes": 7887,
+      "sha256": "3c5182651fcf4e9b1cef97048079783151a3d1875b17239cd810606ea0e02723"
+    },
+    "_special.py": {
+      "bytes": 4786,
+      "sha256": "dc2bffab4cbe1a5bffa00591c4b0a8b6087803607f41a6b67f970d2983f63478"
+    },
+    "_stats.py": {
+      "bytes": 1482,
+      "sha256": "d54ab8260bad63d878aaab43f6891efb0a2beba328674e96612af014ddaf54a5"
+    },
+    "_stats_algos.py": {
+      "bytes": 5960,
+      "sha256": "972184661b7f3973aa7099c2a1b362179fd57bb1c4a43ee0e0ae2490d400c322"
+    },
+    "_stats_dist.py": {
+      "bytes": 16935,
+      "sha256": "230ee977eb95ff54389ea8440bc37093389a54fabab40f8752cc63073e1a8d71"
+    },
+    "_stats_loop.py": {
+      "bytes": 20164,
+      "sha256": "9908aaa28d1f03f2806e0fdb23c0d425dd5cefde8455a491b5eccdb3d607f1db"
+    },
+    "_stats_rank.py": {
+      "bytes": 1727,
+      "sha256": "c1d876c67ba97485c6a6a4fcf133e78698eac4a4d537d75178871cc0dc018452"
+    },
+    "_threads.py": {
+      "bytes": 2412,
+      "sha256": "0cac6e494e6c746946bd459778c186fc7727d3472623333d767852ca7a725f6d"
+    },
+    "pytest_plugin.py": {
+      "bytes": 1228,
+      "sha256": "164d379d0fbe70145d082f7d9c2662d88217838d438b8976305d406fc1211e0e"
+    },
+    "testing.py": {
+      "bytes": 5679,
+      "sha256": "0e0aff90f042f9bfa0cb95569cdf09c4f45dcb637971f414d113012be086d67b"
+    }
+  },
+  "native_source_matches_wheel_revision": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "native_git_diff_empty": true,
+  "installed_native_path": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy/_native.cpython-313-darwin.so",
+  "native": {
+    "bytes": 31112720,
+    "sha256": "50856abb747699965f631b1384a16a9f59d258a005255c68e6fe21de5986a8b7"
+  },
+  "wheel": {
+    "file": "fastscipy-0.1.0a2-cp313-cp313-macosx_10_12_x86_64.whl",
+    "bytes": 9270789,
+    "sha256": "1fdf1de788fcac733fecb318e6178623dfa211640d83ffa52743bfee35e36657"
+  },
+  "wheel_provenance": {
+    "purpose": "diagnostics_only",
+    "mode": "diagnostics",
+    "target": "macos-x86_64",
+    "checkout_sha": "e2907142aafc2350acc4f89d731c97de10c0932a",
+    "run_id": "39463453784",
+    "wheel_reused": true,
+    "wheel_artifact_run_id": "39376214465",
+    "wheel_artifact_run_head_sha": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+    "wheel_artifact_run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39376214465",
+    "installed_wheel_version": "0.1.0a2",
+    "wheel_files": [
+      "fastscipy-0.1.0a2-cp313-cp313-macosx_10_12_x86_64.whl"
+    ],
+    "wheel_build_profile": "release",
+    "wheel_build_codegen_units": 8,
+    "wheel_build_lto": "thin",
+    "wheel_build_returncode": 0,
+    "wheel_build_stopped": null
+  },
+  "wheel_provenance_file": {
+    "bytes": 702,
+    "sha256": "0a6d18a703033d2de42a106ba9d9dd59e873042ae440a4bd2b573b4438a53965"
+  },
+  "memory_limit_mib": 4096,
+  "timeout_seconds": 600,
+  "upstream_requested": false,
+  "partial_coverage": true,
+  "diagnostic_code_files": {
+    "tools/probe_python_source_platform.py": {
+      "bytes": 16085,
+      "sha256": "cf8fb85c8fba70446849330aa3c2fd80902d2b72bc73ce18fae24ad129c7ac34"
+    },
+    "tools/probe_python_remaining_platform.py": {
+      "bytes": 355,
+      "sha256": "6953cab532e9eabfe1cdd6bfdcae7ec7fca256091209976e76e929870e974b49"
+    },
+    "tools/probe_python_contract_platform.py": {
+      "bytes": 352,
+      "sha256": "5f05249787017e163f872acf9492e9cd2139813abfba90db8351bb4ab75e0c1f"
+    },
+    "tools/platform_suite.py": {
+      "bytes": 8717,
+      "sha256": "0b7f0580f98354a2224d346f5ef645118a79c2702c3802bed4f42ac460121932"
+    },
+    "bench/run.py": {
+      "bytes": 5615,
+      "sha256": "a7c21b9e10ceaa8b9717409c5229a1d29c793af66bca68c12df4eb62f9dac3c8"
+    },
+    "bench/bench_special.py": {
+      "bytes": 1130,
+      "sha256": "2e72aa47525d223da955ab3b88c700178055591843009a7c9e04865e2f3c393e"
+    },
+    "bench/bench_stats.py": {
+      "bytes": 3761,
+      "sha256": "bd46b56dbdd7eab9c53806777226528c3c949f3808d3030447aedf47176fb2fb"
+    },
+    "tests/test_sparse_linalg.py": {
+      "bytes": 25682,
+      "sha256": "db4edfcd790d6a6025ff772bc7ad7d168a9c2640777f9e7ab4676892161ddfeb"
+    },
+    "tests/test_stats.py": {
+      "bytes": 30637,
+      "sha256": "38bd4802300d4edc5dddd356fc52271b094d287f935eef4a384338242f3ac88b"
+    },
+    "tests/test_reference_variance.py": {
+      "bytes": 3480,
+      "sha256": "3ee2556540f7fd584fe6aa160bf2d4f20bc157beb89dd197f416f832400c104c"
+    },
+    "tests/test_bench_reference.py": {
+      "bytes": 2269,
+      "sha256": "382792071c74d8992fb44863a6ce5141ef2e28411bc536a2681605fc4e2c84a0"
+    },
+    "tests/test_optimize.py": {
+      "bytes": 11014,
+      "sha256": "152a4fd3b05de4d08d73fc7cb27d49d57528e37c9ac0aec4fe10216b6ce5b914"
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "purpose": "derived_successful_selected_test_contract_audit_not_release_certification",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39463453784",
+  "overall": "PASS for the five selected test files only",
+  "source_head": "e2907142aafc2350acc4f89d731c97de10c0932a",
+  "reused_native_source": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "source_files_verified_against_git": [
+    "python/fastscipy/__init__.py",
+    "python/fastscipy/_cluster.py",
+    "python/fastscipy/_csgraph.py",
+    "python/fastscipy/_integrate.py",
+    "python/fastscipy/_interpolate.py",
+    "python/fastscipy/_linalg.py",
+    "python/fastscipy/_ndimage.py",
+    "python/fastscipy/_ndimage_correlate.py",
+    "python/fastscipy/_ndimage_generic.py",
+    "python/fastscipy/_ndimage_interp.py",
+    "python/fastscipy/_ndimage_label.py",
+    "python/fastscipy/_ndimage_morph.py",
+    "python/fastscipy/_ndimage_rank.py",
+    "python/fastscipy/_ndimage_seam.py",
+    "python/fastscipy/_optimize.py",
+    "python/fastscipy/_patch.py",
+    "python/fastscipy/_signal.py",
+    "python/fastscipy/_signal_algo.py",
+    "python/fastscipy/_signal_small.py",
+    "python/fastscipy/_signal_threads.py",
+    "python/fastscipy/_sparse.py",
+    "python/fastscipy/_sparse_linalg.py",
+    "python/fastscipy/_spatial.py",
+    "python/fastscipy/_special.py",
+    "python/fastscipy/_stats.py",
+    "python/fastscipy/_stats_algos.py",
+    "python/fastscipy/_stats_dist.py",
+    "python/fastscipy/_stats_loop.py",
+    "python/fastscipy/_stats_rank.py",
+    "python/fastscipy/_threads.py",
+    "python/fastscipy/pytest_plugin.py",
+    "python/fastscipy/testing.py",
+    "tools/probe_python_source_platform.py",
+    "tools/probe_python_remaining_platform.py",
+    "tools/probe_python_contract_platform.py",
+    "tools/platform_suite.py",
+    "bench/run.py",
+    "bench/bench_special.py",
+    "bench/bench_stats.py",
+    "tests/test_sparse_linalg.py",
+    "tests/test_stats.py",
+    "tests/test_reference_variance.py",
+    "tests/test_bench_reference.py",
+    "tests/test_optimize.py"
+  ],
+  "native_source_git_diff_empty_independently_verified": true,
+  "native_sha256": "50856abb747699965f631b1384a16a9f59d258a005255c68e6fe21de5986a8b7",
+  "override_absence_recorded_at_runtime": true,
+  "overlay_import_verified": true,
+  "selected_tests": {
+    "tests": 830,
+    "passed": 830,
+    "failed": 0,
+    "skipped": 0
+  },
+  "raw_xml": {
+    "file": "python-source-intel-contract/suite/tests.xml",
+    "bytes": 89035,
+    "sha256": "c99957ee8f8e9c7f2d953b6980895ccdaf22f3a99ca887aa23426def4330e737"
+  },
+  "reference_variation_proof_records": 108,
+  "reference_variation_not_byte_identity": true,
+  "benchmarks_requested": false,
+  "benchmark_cases_executed": 0,
+  "full_project_rerun": false,
+  "full_407_case_validation": false,
+  "upstream_requested": false,
+  "outer_monitor": {
+    "returncode": 0,
+    "seconds": 101.00466040800006,
+    "peak_rss_bytes": 218689536,
+    "stopped": null
+  },
+  "inner_monitor": {
+    "returncode": 0,
+    "seconds": 97.49479522500008,
+    "peak_rss_bytes": 180944896,
+    "stopped": null,
+    "purpose": "partial_selected_tests_reused_native_not_release_certification",
+    "memory_limit_mib": 4096,
+    "timeout_seconds": 600
+  },
+  "original_files": [
+    {
+      "file": "provenance.json",
+      "bytes": 702,
+      "sha256": "0a6d18a703033d2de42a106ba9d9dd59e873042ae440a4bd2b573b4438a53965"
+    },
+    {
+      "file": "diagnostics.json",
+      "bytes": 154,
+      "sha256": "98c0659e6accf3c00333e68bca106ab8675ad511b60820d5908a9feac3c153ae"
+    },
+    {
+      "file": "sources.json",
+      "bytes": 7925,
+      "sha256": "3d45202451ed6ab74a08250a96acb1c5eb6afe135f6168e5a6ed81b8d6006f58"
+    },
+    {
+      "file": "monitor.json",
+      "bytes": 236,
+      "sha256": "fdaf191d76375639a8c8f050da6091ba0960b893df2370a74e8a3253711e9714"
+    },
+    {
+      "file": "overlay-import.json",
+      "bytes": 801,
+      "sha256": "0109de7516c9842e47ed3fda05fdc2e9de2678b0dcd95dd12a339b6d4ff26b64"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 67866,
+      "sha256": "d4cf636035649af6dd0a979a08b24ff1a998b4d6102ba68a112b694f24a9bbfe"
+    },
+    {
+      "file": "summary.runner.json",
+      "bytes": 67424,
+      "sha256": "a1f728792939b44e7e9f99b0cb1deadd994200f7df8a0e9b1aa923a4c2111022"
+    },
+    {
+      "file": "reference-variance.jsonl",
+      "bytes": 59209,
+      "sha256": "c288058428a3d4cc72971bae9be913cd12c04c20fa986e50117a0009b4540c77"
+    },
+    {
+      "file": "selected_tests.log",
+      "bytes": 3560,
+      "sha256": "4cb0c42eb38132156b8a671ee6a60974fa1b142f2840579873914e1398f47b5e"
+    },
+    {
+      "file": "suite.log",
+      "bytes": 44,
+      "sha256": "a0744b94a2f53f1b71ea4993c814f84bfcf42b40cfa2bc0e923bf04f68ccd6d8"
+    }
+  ]
+}

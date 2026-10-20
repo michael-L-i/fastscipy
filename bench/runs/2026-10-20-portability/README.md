@@ -182,3 +182,10 @@ seed 12345, iteration 69, constant x with a float64 centering residue and
 SciPy's catastrophic-cancellation warning. This was a bounded local ARM replay;
 reported resource observations and the later `e290714` test-validator candidate
 are explicitly separated from raw output and pending native Intel validation.
+
+The successor [Intel selected-test contract diagnostic](mac-x86_64/python-contract-e290714/README.md)
+**passed all 830 selected tests**, with no failures/skips, at Python source
+`e290714` using the unchanged `daf9acd` native wheel. It retains 108 explicit
+reference-variation records and verified source/import/environment provenance.
+It ran no benchmarks or upstream comparisons and does not certify a complete
+project rerun or the final 32 release wheels. Earlier failed runs stay unchanged.

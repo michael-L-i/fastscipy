@@ -89,6 +89,30 @@ def public_case(name, fn):
     print(name, "same", same, "calls", delta, flush=True)
 
 
+def uniform_nan():
+    """Separate running-sum NaN propagation from output conversion."""
+    probes = [(f"fullprobe-{n}", np.resize(corr._probe_values(), (n, 9))) for n in (7, 8, 9)]
+    probes.append(("nonfinite", np.array([[np.inf, -np.inf, np.nan, 0.0, -0.0, 0.4, -0.4, 0.9999, -0.9999]])))
+    bits = np.array([0x7FF8000000001234, 0xFFF8000000005678, 0x3FF0000000000000, 0, 0, 0, 0, 0, 0], np.uint64)
+    probes.append(("payloads", bits.view(np.float64)[None, :]))
+    for name, x in probes:
+        for axis in (0, 1):
+            for dtype in (np.float64, np.float32):
+                ref, direct, converted = (np.empty(x.shape, dtype) for _ in range(3))
+                raw = np.empty(x.shape, np.float64)
+                orig.uniform_filter1d(x, 3, axis, ref, 2, 0.0, 0)
+                accepted = core.corr_uniform_filter1d(x, 3, axis, direct, 2, 0.0, 0)
+                core.corr_uniform_filter1d(x, 3, axis, raw, 2, 0.0, 0)
+                orig.correlate1d(raw, np.ones(1), axis, converted, 2, 0.0, 0)
+                label = f"uniform-nan {name} axis={axis} dtype={np.dtype(dtype)} shape={x.shape} accepted={accepted}"
+                direct_same = compare(label + " direct-native", ref, direct)
+                cast_same = compare(label + " native-then-C-cast", ref, converted)
+                copy = np.empty_like(ref)
+                orig.correlate1d(ref.astype(np.float64), np.ones(1), axis, copy, 2, 0.0, 0)
+                copy_same = compare(label + " C-copy-reference", ref, copy)
+                print(label, "direct/cast/copy matches", direct_same, cast_same, copy_same, flush=True)
+
+
 def main():
     print(
         sys.version,
@@ -106,6 +130,7 @@ def main():
     except Exception:
         traceback.print_exc()
     filters()
+    uniform_nan()
     rng = np.random.default_rng(901)
     x = rng.standard_normal((7, 11, 13)) > 0
     for sampling in [None, [0.7, 1.3, 2.1], [1.0, 1.0, 1.0]]:

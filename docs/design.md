@@ -37,20 +37,29 @@ to SciPy.
 
 Byte-identical output takes more than the same algorithm:
 
-- SciPy's macOS arm64 wheels are compiled by clang with floating-point
-  contraction on, so some `a * b + c` are fused multiply-adds. The Rust
-  kernels use `mul_add` at exactly those places.
+- Interpolation, signal widths, and correlation kernels probe the installed
+  SciPy binary to select matching fused or separate multiply-add arithmetic.
+  C++ BSpline, Fortran FITPACK, and Cython interpolation are checked separately;
+  an unmatched kernel leaves the call to SciPy.
+- ndimage spline transforms and EDT follow the compiler expression trees
+  verified in official SciPy binaries, including operations that must remain
+  separate. Matching one kernel does not establish another kernel's arithmetic.
 - Summation order matches SciPy's loops (and NumPy's pairwise summation, or
-  the BLAS's dot order, where SciPy relies on them).
-- Float-to-integer casts wrap through `i32` as SciPy's C does, rather than
-  saturating as Rust's `as` does.
-- On macOS, a NumPy *scalar* `x ** 2` calls libm `pow`, while an array `**2`
-  squares. Python fast paths keep the same mix of scalars and 0-d arrays as
-  SciPy.
+  the installed BLAS's dot order, where SciPy relies on them). The `dlsim`
+  matrix-vector paths are checked against NumPy for each matrix shape.
+- Correlation output conversions are calibrated separately from arithmetic.
+  Hybrid correlation and spline paths can compute in Rust and let SciPy apply
+  the final compiler-specific integer cast. There is no universal rule for
+  out-of-range C casts.
+- Scalar powers, array squares, signed zeros, and NaN propagation can differ
+  across builds. Fast paths preserve SciPy's operations and dtypes.
+- Native BLAS and LAPACK loaders check complete C API capsule signatures
+  before loading function pointers. Incompatible integer ABIs leave those
+  native paths off.
 
-These details depend on how SciPy was built, which is why `patch()` refuses
-platforms and SciPy versions that have not been validated (currently macOS
-arm64 with SciPy 1.18).
+These details depend on how SciPy was built. [Platform status](platforms.md)
+distinguishes published support from candidate validation. Identity results
+apply to the tested binaries and dependencies.
 
 For porting tests, `FASTSCIPY_ANY_PLATFORM=1` bypasses the platform guard and
 `FASTSCIPY_ANY_VERSION=1` bypasses the version guard. Neither override makes
@@ -64,6 +73,8 @@ default all cores) and two pools that share it:
 
 - A Rust (rayon) pool for the kernels. It is created lazily and rebuilt in
   a forked child, whose copy of the parent's worker threads does not exist.
+  The child replaces the pool's mutex slot before locking it, so it cannot
+  wait on a lock held by a vanished parent thread.
 - A Python thread pool for running SciPy's own GIL-releasing code on chunks
   (special functions, `cdist`, multichannel filters). Only one call uses it
   at a time. A second caller, such as another user thread or a nested call,

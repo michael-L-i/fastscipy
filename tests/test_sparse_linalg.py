@@ -17,7 +17,7 @@ def threads(request):
     fastscipy.set_num_threads(old)
 
 
-def _iteration_reference_validation(a, b, rtol):
+def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=False):
     """Validate complete histories only after check proves reference variance."""
 
     def validate(expected, actual):
@@ -31,17 +31,66 @@ def _iteration_reference_validation(a, b, rtol):
         assert type(expected_info) is type(actual_info) and expected_info == actual_info
         assert type(expected_history) is type(actual_history) is list
         assert len(expected_history) == len(actual_history)
-        for x, y in [(expected_x, actual_x), *zip(expected_history, actual_history)]:
+        pairs = [(expected_x, actual_x, b.shape)]
+        history_shape = () if scalar_history else b.shape
+        pairs.extend((x, y, history_shape) for x, y in zip(expected_history, actual_history))
+        for x, y, shape in pairs:
             assert type(x) is type(y) is np.ndarray
-            assert x.shape == y.shape == b.shape and x.dtype == y.dtype
+            assert x.shape == y.shape == shape and x.dtype == y.dtype == b.dtype
             assert np.isfinite(x).all() and np.isfinite(y).all()
             np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
         if actual_info == 0:
             # Recompute the original equation independently of solver-reported
             # residuals, for both the baseline and accelerated solution.
-            limit = rtol * np.linalg.norm(b)
             for solution in (expected_x, actual_x):
-                assert np.linalg.norm(b - a @ solution) <= limit
+                if minres:
+                    # MINRES stops on ||r|| / (Anorm * ||x||), not ||r|| / ||b||.
+                    # Use the independently computed Frobenius norm of A as a
+                    # conservative bound for its projected Lanczos estimate.
+                    limit = rtol * sparse.linalg.norm(a, ord="fro") * np.linalg.norm(solution)
+                else:
+                    limit = rtol * np.linalg.norm(b)
+                assert np.linalg.norm(b - a @ solution) <= limit, "equation residual is too large"
+
+    return validate
+
+
+def _least_squares_reference_validation(a, b):
+    """Check the default undamped LSQR result after proven oracle variance."""
+
+    def validate(expected, actual):
+        assert type(expected) is type(actual) is tuple and len(expected) == len(actual) == 10
+        for index in (1, 2):
+            assert type(expected[index]) is type(actual[index]) and expected[index] == actual[index]
+        assert actual[1] in (1, 2, 4, 5) and 0 <= actual[2] <= 2 * a.shape[1]
+        for index, (x, y) in enumerate(zip(expected, actual)):
+            if index in (1, 2):
+                continue
+            assert type(x) is type(y)
+            x, y = np.asarray(x), np.asarray(y)
+            assert x.shape == y.shape and x.dtype == y.dtype
+            assert x.shape == ((a.shape[1],) if index in (0, 9) else ())
+            assert np.isfinite(x).all() and np.isfinite(y).all()
+            np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
+        for result in (expected, actual):
+            solution = result[0]
+            assert type(solution) is type(result[9]) is np.ndarray
+            assert solution.dtype == result[9].dtype == np.float64
+            residual = a @ solution - b
+            normal = np.linalg.norm(a.T @ residual)
+            # Componentwise rounding scale for A.T @ (A @ x - b), avoiding
+            # a loose ||A||**2 * ||x|| bound on differently scaled columns.
+            magnitude = abs(a)
+            scale = np.linalg.norm(magnitude.T @ (magnitude @ abs(solution) + abs(b)))
+            limit = 16 * np.finfo(np.float64).eps * max(a.shape) * scale
+            assert normal <= limit, "least-squares normal residual is too large"
+            residual_norm = np.linalg.norm(residual)
+            for index in (3, 4):  # r1norm == r2norm when damp is zero.
+                np.testing.assert_allclose(result[index], residual_norm, rtol=2e-12, atol=2e-14)
+            np.testing.assert_allclose(result[8], np.linalg.norm(solution), rtol=2e-12, atol=2e-14)
+            assert abs(result[7] - normal) <= limit
+            assert result[5] > 0 and result[6] >= 1
+            assert np.all(result[9] == 0)  # calc_var=False in this exact call.
 
     return validate
 
@@ -81,11 +130,14 @@ def test_solver_results_and_iteration_history(solver, n):
         result = solver(a, b, rtol=1e-9, callback=lambda x: history.append(np.array(x, copy=True)), **kwargs)
         return result, history
 
-    # These six n=100 references independently varied on Intel Accelerate.
-    # Other cases retain the strict byte-only oracle. check additionally gates
-    # this opt-in on the actual backend and newly observed baseline variance.
-    proven = (sl.cg, sl.bicg, sl.lgmres, sl.qmr, sl.tfqmr, sl.gcrotmk)
-    validation = _iteration_reference_validation(a, b, 1e-9) if n == 100 and solver in proven else None
+    # Larger solver histories can vary with Intel Accelerate buffer alignment.
+    # check gates this opt-in on that backend AND newly observed plain-reference
+    # variation for this exact call. The small n=8 cases retain byte-only checks.
+    validation = (
+        _iteration_reference_validation(a, b, 1e-9, minres=solver is sl.minres, scalar_history=solver is sl.gmres)
+        if n == 100
+        else None
+    )
     check(run, reference_validation=validation)
     assert a.data.tobytes() == a_before and b.tobytes() == b_before
 
@@ -133,6 +185,34 @@ def test_iterative_reference_validator_checks_equation_despite_close_values():
         _iteration_reference_validation(a, b, 1e-9)(((x, 0), []), ((y, 0), []))
 
 
+def test_iterative_reference_validator_accepts_scalar_gmres_history():
+    a = sparse.csr_array(np.eye(2) * 2)
+    b = np.array([2.0, 6.0])
+    x = b / 2
+    expected = ((x, 0), [np.array(0.5), np.array(1e-16)])
+    actual = ((np.nextafter(x, np.inf), 0), [np.array(np.nextafter(0.5, np.inf)), np.array(1e-16)])
+    validate = _iteration_reference_validation(a, b, 1e-9, scalar_history=True)
+    validate(expected, actual)
+    wrong_shape = ((x, 0), [np.array([0.5]), np.array([1e-16])])
+    with pytest.raises(AssertionError):
+        validate(expected, wrong_shape)
+
+
+def test_minres_reference_validator_uses_backward_error():
+    a = sparse.csr_array(np.diag([1e6, 1.0]))
+    b = np.ones(2)
+    x = np.array([1e-6, 1.0 + 1e-5])
+    result = ((x, 0), [x.copy()])
+    # This is a valid normwise backward error, but fails a norm(b) criterion.
+    _iteration_reference_validation(a, b, 1e-9, minres=True)(result, result)
+    with pytest.raises(AssertionError, match="equation residual"):
+        _iteration_reference_validation(a, b, 1e-9)(result, result)
+    wrong = np.array([1e-6, 1.1])
+    wrong_result = ((wrong, 0), [wrong.copy()])
+    with pytest.raises(AssertionError, match="equation residual"):
+        _iteration_reference_validation(a, b, 1e-9, minres=True)(wrong_result, wrong_result)
+
+
 @pytest.mark.parametrize("solver", [sl.lsqr, sl.lsmr])
 @pytest.mark.parametrize("dtype", [np.float64, np.complex128])
 def test_iterative_rectangular_least_squares(solver, dtype):
@@ -143,7 +223,53 @@ def test_iterative_rectangular_least_squares(solver, dtype):
     b = r.standard_normal(13).astype(dtype)
     for cls in (sparse.csr_array, sparse.csc_matrix):
         matrix = cls(a)
-        check(lambda: solver(matrix, b))
+        # Only real LSQR independently varied in the full-component native
+        # probe. Complex LSQR and every LSMR case retain strict byte checks.
+        validation = (
+            _least_squares_reference_validation(matrix, b) if solver is sl.lsqr and dtype is np.float64 else None
+        )
+        check(lambda: solver(matrix, b), reference_validation=validation)
+
+
+def _least_squares_validator_example():
+    a = sparse.csr_array([[1.0, 0.0], [0.0, 2.0], [0.0, 0.0]])
+    b = np.array([1.0, 2.0, 3.0])
+    x = np.ones(2)
+    result = (x, 2, 2, 3.0, 3.0, np.sqrt(5.0), 3.0, 0.0, np.sqrt(2.0), np.zeros(2))
+    return a, b, result
+
+
+def test_least_squares_reference_validator_accepts_roundoff():
+    a, b, expected = _least_squares_validator_example()
+    actual = (np.nextafter(expected[0], np.inf), *expected[1:])
+    _least_squares_reference_validation(a, b)(expected, actual)
+
+
+@pytest.mark.parametrize("index,value", [(1, 1), (2, 3), (3, 4.0), (5, np.inf)])
+def test_least_squares_reference_validator_rejects_wrong_report(index, value):
+    a, b, expected = _least_squares_validator_example()
+    actual = list(expected)
+    actual[index] = value
+    with pytest.raises(AssertionError):
+        _least_squares_reference_validation(a, b)(expected, tuple(actual))
+
+
+def test_least_squares_reference_validator_independently_checks_reported_norm():
+    a, b, result = _least_squares_validator_example()
+    wrong = (*result[:3], 4.0, *result[4:])
+    with pytest.raises(AssertionError):
+        _least_squares_reference_validation(a, b)(wrong, wrong)
+
+
+def test_least_squares_reference_validator_close_but_nonstationary_solution():
+    a = sparse.csr_array([[1e9, 0.0], [0.0, 1.0], [0.0, 0.0]])
+    b = np.ones(3)
+    x = np.array([1e-9, 1.0])
+    expected = (x, 2, 2, 1.0, 1.0, 1e9, 1e9, 0.0, np.linalg.norm(x), np.zeros(2))
+    y = x.copy()
+    y[0] += 1e-14  # Close in coordinates, but violates A.T @ residual == 0.
+    with pytest.raises(AssertionError, match="normal residual"):
+        _least_squares_reference_validation(a, b)(expected, (y, *expected[1:]))
 
 
 def test_custom_operator_subclass_uses_original_dispatch():

@@ -30,8 +30,18 @@ import xml.etree.ElementTree as ET
 
 def ufunc_collection_test(key):
     # Partition labels distinguish executions that JUnit gives the same name.
-    key = key.split(" / ", 1)[-1]
+    partition, separator, original = key.partition(" / ")
+    if separator:
+        key = original
     module, _, name = key.partition("::")
+    # A package-local pytest root shortens JUnit module names. Only the special
+    # partition supplies the provenance needed to recognize these short names.
+    if (
+        separator
+        and partition == "scipy.special"
+        and module in ("tests.test_nan_inputs", "tests.test_ufunc_signatures")
+    ):
+        module = "scipy.special." + module
     function, bracket, _ = name.partition("[")
     allowed = {
         "scipy.special.tests.test_nan_inputs": ("test_nan_inputs",),

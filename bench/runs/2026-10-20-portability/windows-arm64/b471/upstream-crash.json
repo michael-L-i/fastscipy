@@ -1,0 +1,37 @@
+{
+  "description": "Unpatched upstream SciPy process terminated in NumPy reference solve; no complete linalg comparison exists.",
+  "github_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39372506350",
+  "source_revision": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "partition_index": 10,
+  "package": "scipy.linalg",
+  "patched": false,
+  "child_returncode": 3221225477,
+  "child_returncode_hex": "0xC0000005",
+  "test_method": "scipy.linalg.tests.test_basic.TestSolve.test_structure_detection",
+  "exact_parameter_id": null,
+  "reported_frames": [
+    "Windows fatal exception: access violation",
+    "",
+    "Current thread 0x00001eac (most recent call first):",
+    "  File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\numpy\\linalg\\_linalg.py\", line 463 in solve",
+    "  File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\scipy\\linalg\\tests\\test_basic.py\", line 989 in test_structure_detection",
+    "  File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\_pytest\\python.py\", line 167 in pytest_pyfunc_call",
+    "  File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\pluggy\\_execution.py\", line 147 in _multicall",
+    "  File \"C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\Lib\\site-packages\\pluggy\\_manager.py\", line 183 in _hookexec"
+  ],
+  "raw_log_source": {
+    "file": "platform/upstream.log",
+    "bytes": 54795,
+    "sha256": "740dd12b2577b4e2e8cae008ae8d5820c0dcdb9e8e92f4d97d6fdf6fcd4b109d"
+  },
+  "installed_test_source_sha256": null,
+  "installed_test_source_note": "The Windows wheel test_basic.py was not uploaded; no hash is inferred from another platform.",
+  "resource_report": {
+    "returncode": 1,
+    "seconds": 229.5484055999998,
+    "peak_rss_bytes": 1570549760,
+    "stopped": null
+  },
+  "quarantine_applied": false,
+  "diagnostic_status": "Focused baseline/patched diagnostic pending."
+}

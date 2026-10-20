@@ -62,12 +62,17 @@ not final release validation:
   fixed; ordering initialization sums was added afterward in `b4710e6`.
   The latest `675bd52` source awaits its own project, benchmark, and paired
   upstream results in [run 39374986938](https://github.com/michael-L-i/fastscipy/actions/runs/39374986938).
-- Windows arm64, revision `236b1bb`: the previous 120 calibration and
-  fast-path failures are fixed. Project tests reported 7,102 passed,
-  10 failed, and four skipped; the remaining failures concern float32 NaN
-  payloads in uniform filtering. All 407 benchmark cases matched SciPy and
-  met their expected fast-path checks. The NaN fix in revision `b471` awaits
-  the [fresh native run](https://github.com/michael-L-i/fastscipy/actions/runs/39372506350).
+- Windows arm64, revision `b4710e6`: 7,112 project tests passed and four
+  were skipped; all 407 benchmark cases matched SciPy and met their expected
+  fast-path checks. The [checkpoint archive](../bench/runs/2026-10-20-portability/windows-arm64/b471/README.md)
+  retains unchanged reports and provenance from
+  [run 39372506350](https://github.com/michael-L-i/fastscipy/actions/runs/39372506350).
+  Upstream comparison completed 12,324 common executions across ten package
+  partitions without changed outcomes, then unpatched NumPy crashed inside
+  `linalg.solve` during SciPy's `TestSolve.test_structure_detection` reference
+  calculation. Patched linalg and the remaining eight partitions were not
+  run. The archive records this baseline crash and partial coverage; a full
+  upstream comparison is still pending.
 
 These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
 must complete its own project, benchmark, and paired upstream checks.

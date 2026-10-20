@@ -1,0 +1,14 @@
+{
+  "purpose": "validation",
+  "mode": "full",
+  "target": "windows-arm64",
+  "checkout_sha": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "run_id": "39372506350",
+  "wheel_reused": false,
+  "wheel_artifact_run_id": "39372506350",
+  "wheel_artifact_run_head_sha": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "installed_wheel_version": "0.1.0a2",
+  "wheel_files": [
+    "fastscipy-0.1.0a2-cp313-cp313-win_arm64.whl"
+  ]
+}

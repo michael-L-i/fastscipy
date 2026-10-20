@@ -35,6 +35,13 @@ rewritten to match a newer checkout.
   unchanged outcomes, including three baseline failures. The report retains
   both the tested revision and comparator revision, plus expected collection
   differences. Bulk JUnit XML and logs are not included here.
+- `windows-arm64/b471/`: unchanged build/provenance reports, platform summary,
+  upstream manifest, and 13 raw per-area case reports. Project tests reported
+  7,112 passed and four skipped; all 407 benchmark cases passed. The compact
+  partial upstream comparison records 12,324 unchanged common executions
+  across ten completed partitions. Unpatched NumPy crashed during the next
+  linalg partition; the crash record retains its raw-log hash and resource
+  report. This is not a complete upstream comparison.
 
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.

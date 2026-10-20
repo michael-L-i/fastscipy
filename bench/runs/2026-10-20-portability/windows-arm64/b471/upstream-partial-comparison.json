@@ -1,0 +1,270 @@
+{
+  "description": "Partial comparison derived only from the20 completed raw JUnit files in this single run; no tests rerun/reused.",
+  "github_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39372506350",
+  "source_revision": "b4710e6cadd9fa6b4701ec3b8363c521f30f61aa",
+  "full_upstream_comparison_complete": false,
+  "planned_partitions": 19,
+  "completed_partitions": 10,
+  "common_test_executions": 12324,
+  "changed_outcomes": [],
+  "unexpected_missing": [],
+  "unexpected_extra": [],
+  "plain_outcomes": {
+    "passed": 12171,
+    "skipped": 153
+  },
+  "patched_outcomes": {
+    "passed": 12171,
+    "skipped": 153
+  },
+  "partitions": [
+    {
+      "index": 0,
+      "package": "scipy._lib",
+      "common_test_executions": 2061,
+      "plain_outcomes": {
+        "passed": 2014,
+        "skipped": 47
+      },
+      "patched_outcomes": {
+        "passed": 2014,
+        "skipped": 47
+      }
+    },
+    {
+      "index": 1,
+      "package": "scipy.cluster",
+      "common_test_executions": 225,
+      "plain_outcomes": {
+        "passed": 218,
+        "skipped": 7
+      },
+      "patched_outcomes": {
+        "passed": 218,
+        "skipped": 7
+      }
+    },
+    {
+      "index": 2,
+      "package": "scipy.constants",
+      "common_test_executions": 16,
+      "plain_outcomes": {
+        "passed": 16
+      },
+      "patched_outcomes": {
+        "passed": 16
+      }
+    },
+    {
+      "index": 3,
+      "package": "scipy.datasets",
+      "common_test_executions": 5,
+      "plain_outcomes": {
+        "passed": 5
+      },
+      "patched_outcomes": {
+        "passed": 5
+      }
+    },
+    {
+      "index": 4,
+      "package": "scipy.differentiate",
+      "common_test_executions": 202,
+      "plain_outcomes": {
+        "passed": 202
+      },
+      "patched_outcomes": {
+        "passed": 202
+      }
+    },
+    {
+      "index": 5,
+      "package": "scipy.fft",
+      "common_test_executions": 5811,
+      "plain_outcomes": {
+        "passed": 5811
+      },
+      "patched_outcomes": {
+        "passed": 5811
+      }
+    },
+    {
+      "index": 6,
+      "package": "scipy.fftpack",
+      "common_test_executions": 554,
+      "plain_outcomes": {
+        "passed": 554
+      },
+      "patched_outcomes": {
+        "passed": 554
+      }
+    },
+    {
+      "index": 7,
+      "package": "scipy.integrate",
+      "common_test_executions": 1159,
+      "plain_outcomes": {
+        "passed": 1087,
+        "skipped": 72
+      },
+      "patched_outcomes": {
+        "passed": 1087,
+        "skipped": 72
+      }
+    },
+    {
+      "index": 8,
+      "package": "scipy.interpolate",
+      "common_test_executions": 1580,
+      "plain_outcomes": {
+        "passed": 1558,
+        "skipped": 22
+      },
+      "patched_outcomes": {
+        "passed": 1558,
+        "skipped": 22
+      }
+    },
+    {
+      "index": 9,
+      "package": "scipy.io",
+      "common_test_executions": 711,
+      "plain_outcomes": {
+        "passed": 706,
+        "skipped": 5
+      },
+      "patched_outcomes": {
+        "passed": 706,
+        "skipped": 5
+      }
+    }
+  ],
+  "incomplete_partition": {
+    "index": 10,
+    "package": "scipy.linalg",
+    "reason": "Unpatched native access violation; patched partition not started."
+  },
+  "unattempted_partitions": [
+    "scipy.ndimage",
+    "scipy.odr",
+    "scipy.optimize",
+    "scipy.signal",
+    "scipy.sparse",
+    "scipy.spatial",
+    "scipy.special",
+    "scipy.stats"
+  ],
+  "raw_source_files": [
+    {
+      "file": "platform/upstream-junit/0-False.xml",
+      "bytes": 250857,
+      "sha256": "e8202d88cca589bfb37ba52e78e210f8ff46bc5f8e6398705e7f0cab97318eb9"
+    },
+    {
+      "file": "platform/upstream-junit/0-True.xml",
+      "bytes": 250857,
+      "sha256": "26410f4f8688ff378521e6b2bfbef5298c4833f0effe2f5f6bc7d3eb5231edb9"
+    },
+    {
+      "file": "platform/upstream-junit/1-False.xml",
+      "bytes": 28758,
+      "sha256": "619ba16842ed6a8c1a14811605a60c47d6b2ff28fb548d365058457e42641a7c"
+    },
+    {
+      "file": "platform/upstream-junit/1-True.xml",
+      "bytes": 28758,
+      "sha256": "be9c9f6d21b1c8c9d7dbfdff436b08e99a6edfdeec16404ace4654a9575b9214"
+    },
+    {
+      "file": "platform/upstream-junit/2-False.xml",
+      "bytes": 1744,
+      "sha256": "84d2652e366633f6910cc46aa2a1115a751f5e1fb85017fa5b47f0c3652756ab"
+    },
+    {
+      "file": "platform/upstream-junit/2-True.xml",
+      "bytes": 1744,
+      "sha256": "3a68e59d502a723fa4c38e0d35a5d68eb948cddd3a9ec6bac580d7bc627c36db"
+    },
+    {
+      "file": "platform/upstream-junit/3-False.xml",
+      "bytes": 682,
+      "sha256": "bee32ee224cfd87c4cc0d0d4416e28b3636f8f910a9dbdb40b45bc341e952026"
+    },
+    {
+      "file": "platform/upstream-junit/3-True.xml",
+      "bytes": 682,
+      "sha256": "4b536fbf00931d48458dcfb1eb582da4134c3960d684aaece98bbaacaf2f90a5"
+    },
+    {
+      "file": "platform/upstream-junit/4-False.xml",
+      "bytes": 22604,
+      "sha256": "730f147b3294108614dab05c3e8e0ed4f7fe35d729893d94131b23e5c3570b6f"
+    },
+    {
+      "file": "platform/upstream-junit/4-True.xml",
+      "bytes": 22604,
+      "sha256": "6e1fac5a17092abff5a3a2a0e041f45519feb063d528bf7fad554428b028a79d"
+    },
+    {
+      "file": "platform/upstream-junit/5-False.xml",
+      "bytes": 734034,
+      "sha256": "2177be0132d60c9bf092703325dc46ca229845714d5d511eb2a670e23f85231b"
+    },
+    {
+      "file": "platform/upstream-junit/5-True.xml",
+      "bytes": 734034,
+      "sha256": "8703c1c39a3f67361c09b655d8dad7d60d7f6151386f6bf887f00295e0f83415"
+    },
+    {
+      "file": "platform/upstream-junit/6-False.xml",
+      "bytes": 64109,
+      "sha256": "b3e1abbe0b2742dff886bcc0bf3e4fb08f20e8195a08fff128a0806750b7daa1"
+    },
+    {
+      "file": "platform/upstream-junit/6-True.xml",
+      "bytes": 64109,
+      "sha256": "d9e3f6c735c2c5904f3a70d90fc48378fd66f43a9323c4c53b5c68881d03465f"
+    },
+    {
+      "file": "platform/upstream-junit/7-False.xml",
+      "bytes": 159661,
+      "sha256": "f1b91b8b017118af594d9b0dbf5e8b92ae5b85c5534e47bd2cb24d3fa42c489e"
+    },
+    {
+      "file": "platform/upstream-junit/7-True.xml",
+      "bytes": 159661,
+      "sha256": "40506ce594dca9d8632f97c31e795e56760b2ad7020a9bed584fdb4d2ca0bf91"
+    },
+    {
+      "file": "platform/upstream-junit/8-False.xml",
+      "bytes": 185800,
+      "sha256": "d262d88c9569f33ca34e1cd21d3aee48419d1f6f23ca80e6a5d949871edb57fa"
+    },
+    {
+      "file": "platform/upstream-junit/8-True.xml",
+      "bytes": 185800,
+      "sha256": "dd6ac8e45570bc9c36d162057e711a71c8767aab8d16dbfb1cf5d09bca3a36f4"
+    },
+    {
+      "file": "platform/upstream-junit/9-False.xml",
+      "bytes": 77492,
+      "sha256": "256efd540833afe761bcf807c5d7baded1405c2dd587a3450daa16c3a3b84afc"
+    },
+    {
+      "file": "platform/upstream-junit/9-True.xml",
+      "bytes": 77492,
+      "sha256": "d5700c312cd3ac20b9c4369d3e5bb89465da8f8baf57503e3171dac8fe5a027f"
+    },
+    {
+      "file": "platform/upstream-junit/manifest.json",
+      "bytes": 1483,
+      "sha256": "c97b5fe35604be398fb711d9938044613588478ffd1a735e0b9d677ca90c6f90"
+    },
+    {
+      "file": "platform/upstream.log",
+      "bytes": 54795,
+      "sha256": "740dd12b2577b4e2e8cae008ae8d5820c0dcdb9e8e92f4d97d6fdf6fcd4b109d"
+    }
+  ],
+  "crash_record": "upstream-crash.json"
+}

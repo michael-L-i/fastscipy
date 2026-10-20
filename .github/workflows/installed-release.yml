@@ -1,0 +1,71 @@
+name: Installed release pilots
+
+on:
+  push:
+    branches: [release-ops]
+    paths: [".github/workflows/installed-release.yml", "tools/*pilot*.py"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published fastscipy version matching this checkout
+        required: true
+        default: "0.1.0a2"
+
+permissions:
+  contents: read
+
+jobs:
+  installed:
+    name: PyPI / ${{ matrix.target.name }}
+    runs-on: ${{ matrix.target.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        target:
+          - {name: manylinux-x86_64, runner: ubuntu-24.04, image: "python:3.13-slim"}
+          - {name: manylinux-aarch64, runner: ubuntu-24.04-arm, image: "python:3.13-slim"}
+          - {name: musllinux-x86_64, runner: ubuntu-24.04, image: "python:3.13-alpine"}
+          - {name: musllinux-aarch64, runner: ubuntu-24.04-arm, image: "python:3.13-alpine"}
+          - {name: macos-arm64, runner: macos-15, image: ""}
+          - {name: macos-x86_64, runner: macos-15-intel, image: ""}
+          - {name: windows-amd64, runner: windows-2025, image: ""}
+          - {name: windows-arm64, runner: windows-11-arm, image: ""}
+    env:
+      FASTSCIPY_EXPECTED_VERSION: ${{ inputs.version || '0.1.0a2' }}
+      FASTSCIPY_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        if: runner.os != 'Linux'
+        with:
+          python-version: "3.13"
+      - name: Install and exercise published wheels on Linux
+        if: runner.os == 'Linux'
+        env:
+          PILOT_IMAGE: ${{ matrix.target.image }}
+        run: |
+          docker run --rm --memory=1g --cpus=2 \
+            -v "$PWD:/work" -w /work \
+            -e FASTSCIPY_EXPECTED_VERSION -e GITHUB_SHA \
+            "$PILOT_IMAGE" sh -ec 'if command -v apk >/dev/null; then apk add --no-cache libstdc++; fi; python -m pip install --only-binary=:all: psutil && python -I tools/installed_release_pilot.py'
+      - name: Install pilot monitor
+        if: runner.os != 'Linux'
+        run: |
+          python -m pip install --only-binary=:all: psutil
+      - name: Install and exercise published wheels on macOS and Windows
+        if: runner.os != 'Linux'
+        run: python -I tools/installed_release_pilot.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installed-release-${{ matrix.target.name }}
+          path: artifacts/installed-release/
+          if-no-files-found: warn
+          retention-days: 30

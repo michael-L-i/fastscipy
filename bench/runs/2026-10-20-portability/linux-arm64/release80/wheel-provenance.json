@@ -1,0 +1,25 @@
+{
+  "description": "Derived checkpoint provenance from original cibuildwheel build log and Actions job metadata; raw logs retained outside git",
+  "actions_run": "https://github.com/michael-L-i/fastscipy/actions/runs/39377562130",
+  "actions_job_id": 118479156993,
+  "source_revision": "80dec520bdc38f0601a746b676e5bdab907eb78a",
+  "wheel": "fastscipy-0.1.0a2-cp313-cp313-manylinux_2_28_aarch64.whl",
+  "wheel_sha256": "ef31ed0f603c2eb9277cee68c269ac7e1dce584506ab64bd77e190a60934204e",
+  "profile": "release",
+  "maturin": "1.15.0",
+  "rustc": "1.97.1",
+  "default_platform_activation": true,
+  "installed_check": "tools/check_release.py --installed completed successfully; it rejects platform/version overrides and requires all13 component smoke checks",
+  "raw_log_files": [
+    {
+      "file": "build.log",
+      "bytes": 26027,
+      "sha256": "fcd55220b6f47c27bc6207d0f97500c2217769a40a9a0b94d6944f54d26803ed"
+    },
+    {
+      "file": "fastscipy-release-preflight-80-manylinux-aarch64-job.log",
+      "bytes": 44762,
+      "sha256": "2f405384195778a96774c0be059b7bcf51e99c74e7421e4bf6a1907d8d2f0ee7"
+    }
+  ]
+}

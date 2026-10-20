@@ -1,9 +1,10 @@
 # Portability development checkpoints
 
 These reports describe intermediate `0.1.0a2` builds, not a validated final
-release. Each JSON file was copied byte for byte from its original report;
-revisions, dependency versions, resource measurements, and results were not
-rewritten to match a newer checkout.
+release. Original JSON reports were copied byte for byte; revisions,
+dependency versions, resource measurements, and results were not rewritten
+to match a newer checkout. Derived comparisons and provenance records are
+explicitly labeled and retain hashes of their raw evidence.
 
 - `linux-arm64/`: glibc aarch64 revision `66f20ae`; build resource report,
   platform summary, and all 13 raw per-area benchmark reports. The summary
@@ -16,6 +17,15 @@ rewritten to match a newer checkout.
   compact upstream comparison with all 38 raw XML hashes. This development
   checkpoint used the platform-gate override; later default-gate and release
   wheel validation remain separate.
+- `linux-arm64/release80/`: official repaired `manylinux_2_28` CP313 wheel
+  from source `80dec52`, checked with default activation and no overrides.
+  All 7,221 project tests, 407 benchmark cases, and 19 upstream partition
+  pairs pass; 95,772 common upstream executions have no changed outcomes or
+  failures. It retains original case, project, resource, manifest, and
+  completion reports plus derived wheel provenance and raw XML hashes.
+  Container peak build memory is unknown; the outer RSS metric excludes
+  Docker compiler processes. This checkpoint does not complete the full
+  32-wheel release gate.
 - `linux-x86_64/4b/`: glibc x86_64 revision `4b1342d`; unchanged build and
   provenance reports, platform summary, and 13 raw per-area reports. Project
   tests reported 7,060 passed and four NaN initialization failures; all 407

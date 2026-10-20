@@ -47,17 +47,18 @@ not final release validation:
   found no changed outcomes across 95,772 common executions, including the
   same three baseline failures. Its manifest retains the later harness
   checkout separately from the `b471` benchmark revision.
-- Linux aarch64 (glibc), revision `021c329`: 7,116 project tests passed;
-  all 407 benchmark cases across 13 areas matched SciPy and met their expected
-  fast-path checks. All 19 paired upstream partitions completed: 95,772 common
+- Linux aarch64 (glibc), revision `80dec52`: the official repaired
+  `manylinux_2_28` CP313 wheel passed installed-wheel checks with default
+  activation, all 7,221 project tests, and all 407 benchmark cases across
+  13 areas. All 19 paired upstream partitions completed: 95,772 common
   executions, no changed outcomes, and no failures. The
-  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-arm64/021/README.md)
-  retains reports and provenance from the
-  [Actions run](https://github.com/michael-L-i/fastscipy/actions/runs/39373079547).
-  This development run used `FASTSCIPY_ANY_PLATFORM=1`; it does not validate
-  the later default platform gate or final release wheels. The earlier
-  [7,048-test checkpoint](../bench/runs/2026-10-20-portability/linux-arm64/summary.json)
-  remains archived separately.
+  [checkpoint archive](../bench/runs/2026-10-20-portability/linux-arm64/release80/README.md)
+  retains raw reports, resource scope, and wheel provenance from the
+  [eight-wheel preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130).
+  This validates that wheel checkpoint, not later source changes or the full
+  32-wheel release. Earlier development reports, including the
+  [override-enabled `021c329` run](../bench/runs/2026-10-20-portability/linux-arm64/021/README.md),
+  remain archived separately.
 - Linux x86_64 (glibc), revision `675bd52`: all 7,131 project tests and
   407 benchmark cases across 13 areas passed. All 19 paired upstream
   partitions completed: 95,772 common executions, no changed outcomes,

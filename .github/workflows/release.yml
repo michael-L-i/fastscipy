@@ -75,9 +75,10 @@ jobs:
         shell: bash
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: ${{ inputs.validation_only && 2 || 4 }}
       # A single wheel per job keeps slow native builds plus upstream checks
-      # inside the six-hour job limit. At most two wheel jobs run together.
+      # inside the six-hour job limit. Preflight uses two separate runner VMs;
+      # the full release uses four, with the same per-machine resource limits.
       matrix:
         python: ${{ fromJSON(inputs.validation_only && '["cp313"]' || '["cp312", "cp313", "cp314", "cp315"]') }}
         target:

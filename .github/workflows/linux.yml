@@ -216,7 +216,11 @@ jobs:
           for name in selected:
               probe = available[name]
               # Leave overhead headroom beyond each overlay's inner watchdog.
-              budgets = {"probe_python_source_platform": (4096, 2460), "probe_python_remaining_platform": (4096, 1260)}
+              budgets = {
+                  "probe_python_source_platform": (4096, 2460),
+                  "probe_python_remaining_platform": (4096, 1260),
+                  "probe_python_contract_platform": (4096, 660),
+              }
               memory, timeout = budgets.get(name, (1024, 120))
               results[probe.stem] = run([sys.executable, str(probe)], Path("artifacts") / f"{probe.stem}.log", memory, timeout)
               Path("artifacts/diagnostics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")

@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "artifacts" / "python-source-intel"
 PURPOSE = "current_python_reused_native_diagnostic_not_release_certification"
 REMAINING_PURPOSE = "partial_current_python_remaining_tests_and_95_cases_reused_native_not_release_certification"
+CONTRACT_PURPOSE = "partial_selected_tests_reused_native_not_release_certification"
 REMAINING_TESTS = (
     "tests/test_sparse_linalg.py",
     "tests/test_stats.py",
@@ -31,7 +32,7 @@ REMAINING_TESTS = (
 )
 
 
-def remaining_suite(root, output):
+def remaining_suite(root, output, tests_only=False):
     """Complete a named subset without relaxing the full platform runner."""
     from platform_suite import run
 
@@ -42,11 +43,12 @@ def remaining_suite(root, output):
     reference_report = output / "reference-variance.jsonl"
     os.environ["FASTSCIPY_REFERENCE_REPORT"] = str(reference_report)
     report = {
-        "purpose": REMAINING_PURPOSE,
+        "purpose": CONTRACT_PURPOSE if tests_only else REMAINING_PURPOSE,
         "source_head": os.environ["FASTSCIPY_BUILD_REVISION"],
         "partial_coverage": True,
         "selected_test_files": list(REMAINING_TESTS),
-        "expected_benchmark_cases": {"special": 37, "stats": 58},
+        "expected_benchmark_cases": {} if tests_only else {"special": 37, "stats": 58},
+        "benchmarks_requested": not tests_only,
         "full_407_case_validation": False,
         "upstream_requested": False,
         "runs": {},
@@ -58,7 +60,9 @@ def remaining_suite(root, output):
         (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
 
     def execute(name, arguments):
-        report["runs"][name] = run([sys.executable, *arguments], output / f"{name}.log", 4096, 1200)
+        report["runs"][name] = run(
+            [sys.executable, *arguments], output / f"{name}.log", 4096, 600 if tests_only else 1200
+        )
         save()
 
     xml = output / "tests.xml"
@@ -73,7 +77,7 @@ def remaining_suite(root, output):
             report["validation_errors"].append("Selected test XML records failures/errors")
     else:
         report["validation_errors"].append("Missing selected test XML")
-    for area in ("special", "stats"):
+    for area in report["expected_benchmark_cases"]:
         execute(area, [str(root / "bench/run.py"), area, "--budget", "0.1", "--output-dir", str(output / "cases")])
 
     proofs = (
@@ -102,7 +106,7 @@ def remaining_suite(root, output):
         )
 
     actual_files = {p.stem for p in (output / "cases").glob("*.json")}
-    if actual_files != {"special", "stats"}:
+    if not tests_only and actual_files != {"special", "stats"}:
         report["validation_errors"].append(f"Unexpected/missing benchmark areas: {sorted(actual_files)}")
     for area, count in report["expected_benchmark_cases"].items():
         path = output / "cases" / f"{area}.json"
@@ -155,10 +159,15 @@ def git(*arguments):
     return subprocess.check_output(["git", *arguments], cwd=ROOT)
 
 
-def main(targeted=False):
-    output = ROOT / "artifacts" / "python-source-intel-remaining" if targeted else OUTPUT
-    purpose = REMAINING_PURPOSE if targeted else PURPOSE
-    timeout = 1200 if targeted else 2400
+def main(targeted=False, tests_only=False):
+    targeted = targeted or tests_only
+    if tests_only:
+        output = ROOT / "artifacts" / "python-source-intel-contract"
+        purpose, timeout = CONTRACT_PURPOSE, 600
+    else:
+        output = ROOT / "artifacts" / "python-source-intel-remaining" if targeted else OUTPUT
+        purpose = REMAINING_PURPOSE if targeted else PURPOSE
+        timeout = 1200 if targeted else 2400
     if sys.platform != "darwin" or platform.machine().lower() != "x86_64":
         print(json.dumps({"purpose": purpose, "skipped": "Intel Mac only"}), flush=True)
         return 0
@@ -248,6 +257,7 @@ def main(targeted=False):
             for name in (
                 "tools/probe_python_source_platform.py",
                 "tools/probe_python_remaining_platform.py",
+                "tools/probe_python_contract_platform.py",
                 "tools/platform_suite.py",
                 "bench/run.py",
                 "bench/bench_special.py",
@@ -292,10 +302,12 @@ pathlib.Path(sys.argv[3]).write_text(json.dumps({
     )},
 }, indent=2), encoding="utf-8")
 runner = sys.argv[5]
-if sys.argv[7] == "remaining":
+if sys.argv[7] in ("remaining", "contract"):
     sys.path.insert(0, str(pathlib.Path(runner).parent))
     helpers = runpy.run_path(str(pathlib.Path(runner).with_name("probe_python_source_platform.py")))
-    raise SystemExit(helpers["remaining_suite"](pathlib.Path(runner).parent.parent, pathlib.Path(sys.argv[6])))
+    raise SystemExit(helpers["remaining_suite"](
+        pathlib.Path(runner).parent.parent, pathlib.Path(sys.argv[6]), tests_only=sys.argv[7] == "contract"
+    ))
 sys.argv = [runner, "--output", sys.argv[6], "--max-rss-mb", "4096", "--timeout", sys.argv[8]]
 runpy.run_path(runner, run_name="__main__")
 """
@@ -309,7 +321,7 @@ runpy.run_path(runner, run_name="__main__")
             purpose,
             str(ROOT / "tools" / "platform_suite.py"),
             str(output / "suite"),
-            "remaining" if targeted else "full",
+            "contract" if tests_only else ("remaining" if targeted else "full"),
             str(timeout),
         ]
         result = run(command, output / "suite.log", 4096, timeout)

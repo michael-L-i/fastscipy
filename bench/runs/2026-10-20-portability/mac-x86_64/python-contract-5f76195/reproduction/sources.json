@@ -2,9 +2,10 @@
   "purpose": "derived_local_exact_input_replay_evidence_not_native_Intel_fix_validation",
   "original_files": [
     {
-      "file": "fastscipy-linregress-replay.py",
+      "file": "fastscipy-linregress-replay.py.txt",
       "bytes": 1223,
-      "sha256": "08b08455fb1fd2cb37f9aae1ff4f4461a537a93da89bac4656432f2e5af51079"
+      "sha256": "08b08455fb1fd2cb37f9aae1ff4f4461a537a93da89bac4656432f2e5af51079",
+      "original_file": "fastscipy-linregress-replay.py"
     },
     {
       "file": "fastscipy-linregress-replay.json",

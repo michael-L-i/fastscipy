@@ -21,11 +21,12 @@ Python 3.13 development checks below.
 
 ## Evidence
 
-The [six-platform Actions run](https://github.com/michael-L-i/fastscipy/actions/runs/39362357649)
-records the ongoing development checks. Its completed jobs upload raw logs,
-JUnit results, per-case benchmark JSON, and a `summary.json` report under
-`platform-<target>-py313` artifacts. Inspect the job revision and artifacts
-before treating a result as evidence for a release.
+The [wheel preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
+checks repaired, installed Python 3.13 wheels on all eight target variants.
+The [Intel Mac and Windows x86 development run](https://github.com/michael-L-i/fastscipy/actions/runs/39376214465)
+checks the latest native arithmetic fixes. Completed jobs retain raw logs,
+JUnit results, per-case timings, and resource reports. Inspect each source
+revision and artifact; a workflow still running is not a passing result.
 
 The following are development checkpoints at different source revisions,
 not final release validation:
@@ -110,6 +111,35 @@ The repository also retains earlier, hardware-specific Mac measurements:
 [additional workload reports](../bench/runs/2026-10-19-sweep/summary.json).
 Those archives are separate from the platform run and do not establish
 Linux or Windows performance.
+
+## Measured Linux ARM performance
+
+Geometric-mean speedups from the repaired `manylinux_2_28` CP313 wheel
+checkpoint above, on a GitHub-hosted ARM runner with NumPy 2.5.4 and
+SciPy 1.18.1. Each comparison uses the same machine and inputs; BLAS is
+limited to one thread. Counts exclude nine declined controls from the
+407-case suite. These measurements do not describe other platforms or
+all calls in each area.
+
+| Area | Accelerated cases | 1 thread | 2 threads |
+|---|---:|---:|---:|
+| linalg | 49 | 3.94× | 4.03× |
+| ndimage | 43 | 7.72× | 13.15× |
+| interpolate | 27 | 3.86× | 4.64× |
+| csgraph | 16 | 3.75× | 4.42× |
+| signal | 41 | 3.61× | 4.24× |
+| sparse | 27 | 3.76× | 4.43× |
+| sparse linalg | 20 | 1.31× | 1.31× |
+| stats | 58 | 6.14× | 6.50× |
+| special | 35 | 1.00× | 1.85× |
+| spatial | 21 | 1.00× | 1.67× |
+| integrate | 35 | 1.75× | 1.76× |
+| optimize | 14 | 1.81× | 1.81× |
+| cluster | 12 | 1.73× | 1.74× |
+
+Special and spatial gain through threading; one-thread results are about
+1×. [Raw cases and machine metadata](../bench/runs/2026-10-20-portability/linux-arm64/release80/summary.json)
+retain individual timings, controls, identity checks, and expected paths.
 
 ## Why each build is checked
 

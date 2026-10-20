@@ -67,6 +67,7 @@ def _patch_algo():
 
     from . import _signal_algo as algo
 
+    algo.configure(_peak_finding_utils._peak_widths, _sigtools._correlateND, _sigtools._convolve2d)
     for owner, name in (
         (_peak_finding_utils, "_peak_prominences"),
         (_peak_finding_utils, "_peak_widths"),

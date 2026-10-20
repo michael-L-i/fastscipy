@@ -8,8 +8,63 @@
 //! (`gemv_matches`), and any other BLAS fails that check.
 
 use numpy::{PyReadonlyArray2, PyReadonlyArray3, PyReadwriteArray2, PyUntypedArrayMethods};
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
+use pyo3::types::PyDict;
+use std::ffi::{c_char, c_int, c_void};
+use std::sync::OnceLock;
+
+type Gemv = unsafe extern "C" fn(
+    *const c_char,
+    *const c_int,
+    *const c_int,
+    *const f64,
+    *const f64,
+    *const c_int,
+    *const f64,
+    *const c_int,
+    *const f64,
+    *mut f64,
+    *const c_int,
+);
+type Dot =
+    unsafe extern "C" fn(*const c_int, *const f64, *const c_int, *const f64, *const c_int) -> f64;
+static BLAS: OnceLock<(Gemv, Dot)> = OnceLock::new();
+
+#[pyfunction]
+pub fn init_blas(py: Python<'_>) -> PyResult<()> {
+    if BLAS.get().is_some() {
+        return Ok(());
+    }
+    let capi = py
+        .import("scipy.linalg.cython_blas")?
+        .getattr("__pyx_capi__")?;
+    let capi = capi.cast::<PyDict>()?;
+    let get = |name: &str| -> PyResult<*mut c_void> {
+        let cap = capi
+            .get_item(name)?
+            .ok_or_else(|| PyRuntimeError::new_err(format!("no {name}")))?;
+        let ptr = unsafe {
+            pyo3::ffi::PyCapsule_GetPointer(
+                cap.as_ptr(),
+                pyo3::ffi::PyCapsule_GetName(cap.as_ptr()),
+            )
+        };
+        if ptr.is_null() {
+            Err(PyErr::fetch(py))
+        } else {
+            Ok(ptr)
+        }
+    };
+    let funcs = unsafe {
+        (
+            std::mem::transmute::<*mut c_void, Gemv>(get("dgemv")?),
+            std::mem::transmute::<*mut c_void, Dot>(get("ddot")?),
+        )
+    };
+    let _ = BLAS.set(funcs);
+    Ok(())
+}
 
 fn dot(row: &[f64], x: &[f64]) -> f64 {
     let c = row.len();
@@ -35,7 +90,31 @@ fn dot(row: &[f64], x: &[f64]) -> f64 {
     total
 }
 
-fn gemv(m: &[f64], cols: usize, v: &[f64], out: &mut [f64]) {
+fn gemv(m: &[f64], cols: usize, v: &[f64], out: &mut [f64], mode: u8) {
+    if mode != 0 {
+        let (gemv, dot) = BLAS.get().expect("signal.init_blas() not called");
+        let (rows, cols, inc) = (out.len() as c_int, cols as c_int, 1);
+        unsafe {
+            if mode == 1 && rows == 1 {
+                out[0] = dot(&cols, m.as_ptr(), &inc, v.as_ptr(), &inc);
+            } else {
+                gemv(
+                    c"T".as_ptr(),
+                    &cols,
+                    &rows,
+                    &1.0,
+                    m.as_ptr(),
+                    &cols,
+                    v.as_ptr(),
+                    &inc,
+                    &0.0,
+                    out.as_mut_ptr(),
+                    &inc,
+                );
+            }
+        }
+        return;
+    }
     for (row, o) in m.chunks_exact(cols).zip(out) {
         *o = dot(row, v);
     }
@@ -47,7 +126,22 @@ pub fn gemv_matches(
     ms: PyReadonlyArray3<f64>,
     vs: PyReadonlyArray2<f64>,
     refs: PyReadonlyArray2<f64>,
+    mode: u8,
 ) -> PyResult<bool> {
+    let shape = ms.shape();
+    if shape[1] == 0
+        || shape[2] == 0
+        || shape[1] > c_int::MAX as usize
+        || shape[2] > c_int::MAX as usize
+        || vs.shape() != [shape[0], shape[2]]
+        || refs.shape() != [shape[0], shape[1]]
+        || mode > 2
+        || (mode != 0 && BLAS.get().is_none())
+    {
+        return Err(PyValueError::new_err(
+            "invalid GEMV trial arrays or uninitialized BLAS",
+        ));
+    }
     let (shape, ms, vs, refs) = (
         ms.shape().to_vec(),
         ms.as_slice()?,
@@ -62,6 +156,7 @@ pub fn gemv_matches(
             cols,
             &vs[t * cols..][..cols],
             &mut out,
+            mode,
         );
         if out
             .iter()
@@ -86,6 +181,7 @@ pub fn dlsim_loop(
     u: PyReadonlyArray2<f64>,
     mut xout: PyReadwriteArray2<f64>,
     mut yout: PyReadwriteArray2<f64>,
+    modes: [u8; 4],
 ) -> PyResult<()> {
     let (n, ns, ni, no) = (xout.shape()[0], a.shape()[0], b.shape()[1], c.shape()[0]);
     let fits = a.shape() == [ns, ns]
@@ -95,7 +191,13 @@ pub fn dlsim_loop(
         && u.shape() == [n, ni]
         && xout.shape() == [n, ns]
         && yout.shape() == [n, no]
-        && n > 0;
+        && n > 0
+        && ns > 0
+        && ni > 0
+        && no > 0
+        && [ns, ni, no].iter().all(|&s| s <= c_int::MAX as usize)
+        && modes.iter().all(|&m| m <= 2)
+        && (modes.iter().all(|&m| m == 0) || BLAS.get().is_some());
     if !fits {
         return Err(PyValueError::new_err("inconsistent state-space shapes"));
     }
@@ -114,14 +216,14 @@ pub fn dlsim_loop(
             let ui = &u[i * ni..][..ni];
             if i + 1 < n {
                 let (head, tail) = x.split_at_mut((i + 1) * ns);
-                gemv(a, ns, &head[i * ns..], &mut ax);
-                gemv(b, ni, ui, &mut bu);
+                gemv(a, ns, &head[i * ns..], &mut ax, modes[0]);
+                gemv(b, ni, ui, &mut bu, modes[1]);
                 for (o, (p, q)) in tail[..ns].iter_mut().zip(ax.iter().zip(&bu)) {
                     *o = p + q;
                 }
             }
-            gemv(c, ns, &x[i * ns..][..ns], &mut cx);
-            gemv(d, ni, ui, &mut du);
+            gemv(c, ns, &x[i * ns..][..ns], &mut cx, modes[2]);
+            gemv(d, ni, ui, &mut du, modes[3]);
             for (o, (p, q)) in y[i * no..][..no].iter_mut().zip(cx.iter().zip(&du)) {
                 *o = p + q;
             }

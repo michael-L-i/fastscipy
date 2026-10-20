@@ -15,6 +15,24 @@ F8 = np.dtype(np.float64)
 # smallest calls worth a Rust call; tests lower them to reach tiny shapes
 MIN_PEAKS, MIN_SAMPLES, MIN_WIDTHS, MIN_STEPS, MIN_CORR = 16, 4096, 1 << 15, 2000, 1 << 14
 _sig = _native.signal
+_fused_width = _fused_corr = _fused_conv = None
+
+
+def configure(widths, correlate, convolve):
+    """Read contraction rules from the installed SciPy kernels, not the host CPU."""
+    global _fused_width, _fused_corr, _fused_conv
+    e = 2.0**-27
+    pk, lo, hi = np.array([1], np.intp), np.array([0], np.intp), np.array([2], np.intp)
+    height = widths(np.array([0.0, 1.0, 0.0]), pk, 1 - e, np.array([1 + e]), lo, hi)[1][0]
+    _fused_width = {0.0: False, 2.0**-54: True}.get(height)
+    a, k = np.array([[-1.0, 1 + e]]), np.array([[1.0, 1 - e]])
+    out = np.empty((1, 1))
+    correlate(a, k, out, 0)
+    _fused_corr = {0.0: False, -(2.0**-54): True}.get(out[0, 0])
+    tail = convolve(a, k, 0, 0, 0, 0.0)[0, 0]
+    group = convolve(np.array([[1 + e, -1.0, 0.0, 0.0]]), np.array([[1 - e, 1.0, 0.0, 0.0]]), 0, 0, 0, 0.0)[0, 0]
+    _fused_conv = {0.0: False, -(2.0**-54): True}.get(tail) if tail == group else None
+    _sig.init_blas()
 
 
 def _arr(a, dtype, ndim=1):
@@ -56,9 +74,10 @@ def peak_widths(x, peaks, rel_height, prominences, left_bases, right_bases):
         and rel_height.__class__ in (float, int)
         and peaks.size >= MIN_WIDTHS
         and _threads.get_num_threads() > 1
+        and _fused_width is not None
     ):
         return NI  # serial, it is SciPy's own scan
-    res = _sig.peak_widths(x, peaks, rel_height, prominences, left_bases, right_bases)
+    res = _sig.peak_widths(x, peaks, rel_height, prominences, left_bases, right_bases, _fused_width)
     if res is None or rel_height < 0:
         return NI
     if (res[0] == 0).any():
@@ -75,6 +94,7 @@ def correlateND(in1, in2, out, val):
         and in2.ndim == 2
         and val in (0, 1, 2)
         and in1.size * in2.size >= MIN_CORR
+        and _fused_corr is not None
     ):
         return NI
     (h, w), (kh, kw) = in1.shape, in2.shape
@@ -84,7 +104,7 @@ def correlateND(in1, in2, out, val):
         return NI  # zeros outside the input times inf or NaN would not be skipped
     # first input row/column read by output (0, 0), relative to the kernel's last tap
     off = (0, 0) if val == 0 else (kh // 2, kw // 2) if val == 1 else (kh - 1, kw - 1)
-    _sig.correlate2d(in1, np.ascontiguousarray(in2), out, *off)
+    _sig.correlate2d(in1, np.ascontiguousarray(in2), out, *off, _fused_corr)
     return out
 
 
@@ -99,6 +119,7 @@ def convolve2d(in1, in2, flip=1, mode=2, boundary=0, fillvalue=None):
         and mode in (0, 1, 2)
         and boundary in (0, 4, 8)
         and in1.size * in2.size >= MIN_CORR
+        and _fused_conv is not None
     ):
         return NI
     if fillvalue is not None and boundary == 0 and fillvalue.__class__ not in (int, float, np.float64):
@@ -108,19 +129,46 @@ def convolve2d(in1, in2, flip=1, mode=2, boundary=0, fillvalue=None):
         return NI
     out = np.empty(shape)
     fill = float(fillvalue) if fillvalue is not None and boundary == 0 else 0.0
-    _sig.convolve2d(np.ascontiguousarray(in1), np.ascontiguousarray(in2), out, flip != 0, mode, boundary, fill)
+    _sig.convolve2d(
+        np.ascontiguousarray(in1), np.ascontiguousarray(in2), out, flip != 0, mode, boundary, fill, _fused_conv
+    )
     return out
 
 
 _gemv = {}
+_GEMV_CALIBRATION_BYTES = 8 << 20
+_GEMV_TRIALS = 600
 
 
-def _gemv_matches(shape):
-    """Whether the Rust ``dgemv`` model equals ``np.dot`` for matrices of this shape (random trials)."""
+def _gemv_matches(shape, matrix=None):
+    """Select a matching Accelerate model or installed BLAS kernel for this shape."""
+    if min(shape) < 1 or max(shape) > np.iinfo(np.int32).max:
+        return None
     if shape not in _gemv:
+        rows, cols = shape
+        # References temporarily coexist as a list of rows and a stacked array.
+        vector_bytes = 8 * (cols + 2 * rows)
+        if vector_bytes > _GEMV_CALIBRATION_BYTES:
+            return None
+        trial_bytes = 8 * rows * cols + vector_bytes
+        use_caller = trial_bytes > _GEMV_CALIBRATION_BYTES
+        if use_caller and matrix is None:
+            return None
+        batch = 1 if use_caller else max(1, _GEMV_CALIBRATION_BYTES // trial_bytes)
+        candidates = [0, 1, 2]
         rng = np.random.default_rng(12345)
-        ms, vs = rng.standard_normal((600, *shape)), rng.standard_normal((600, shape[1]))
-        _gemv[shape] = _sig.gemv_matches(ms, vs, np.stack([np.dot(m, v) for m, v in zip(ms, vs)]))
+        for start in range(0, _GEMV_TRIALS, batch):
+            count = min(batch, _GEMV_TRIALS - start)
+            ms = matrix[None] if use_caller else rng.standard_normal((count, *shape))
+            vs = rng.standard_normal((count, cols))
+            with np.errstate(all="raise"):
+                refs = np.stack([np.dot(m, v) for m, v in zip(ms, vs)])
+            candidates = [mode for mode in candidates if _sig.gemv_matches(ms, vs, refs, mode)]
+            if not candidates:
+                break
+            # Free each batch before allocating the next one.
+            del ms, vs, refs
+        _gemv[shape] = candidates[0] if candidates else None
     return _gemv[shape]
 
 
@@ -158,12 +206,12 @@ def dlsim(system, u, t=None, x0=None):
             if not (
                 _arr(u_dt, F8, 2)
                 and u_dt.shape == (steps, ss.B.shape[1])
-                and all(_gemv_matches(m.shape) for m in (ss.A, ss.B, ss.C, ss.D))
+                and all(_gemv_matches(m.shape, m) is not None for m in (ss.A, ss.B, ss.C, ss.D))
             ):
                 return NI
             if caught:
                 return NI
     except Exception:
         return NI  # SciPy raises its own error
-    _sig.dlsim_loop(ss.A, ss.B, ss.C, ss.D, u_dt, xout, yout)
+    _sig.dlsim_loop(ss.A, ss.B, ss.C, ss.D, u_dt, xout, yout, [_gemv[m.shape] for m in (ss.A, ss.B, ss.C, ss.D)])
     return (tout, yout, xout) if is_ss else (tout, yout)

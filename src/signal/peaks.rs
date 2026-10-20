@@ -201,8 +201,20 @@ pub fn peak_prominences<'py>(
     Ok(Some((prom, left, right)))
 }
 
-fn width(x: &[f64], peak: usize, rel: f64, prom: f64, lo: usize, hi: usize) -> [f64; 4] {
-    let height = (-prom).mul_add(rel, x[peak]); // clang fuses x - prom * rel
+fn width(
+    x: &[f64],
+    peak: usize,
+    rel: f64,
+    prom: f64,
+    lo: usize,
+    hi: usize,
+    fused: bool,
+) -> [f64; 4] {
+    let height = if fused {
+        (-prom).mul_add(rel, x[peak])
+    } else {
+        x[peak] - prom * rel
+    };
     let mut i = peak;
     while lo < i && height < x[i] {
         i -= 1;
@@ -224,6 +236,7 @@ fn width(x: &[f64], peak: usize, rel: f64, prom: f64, lo: usize, hi: usize) -> [
 
 #[pyfunction]
 #[allow(clippy::type_complexity)]
+#[allow(clippy::too_many_arguments)]
 pub fn peak_widths<'py>(
     py: Python<'py>,
     x: PyReadonlyArray1<'py, f64>,
@@ -232,6 +245,7 @@ pub fn peak_widths<'py>(
     prominences: PyReadonlyArray1<'py, f64>,
     left: PyReadonlyArray1<'py, isize>,
     right: PyReadonlyArray1<'py, isize>,
+    fused: bool,
 ) -> PyResult<Option<[Bound<'py, PyArray1<f64>>; 4]>> {
     let (x, peaks, prom) = (x.as_slice()?, peaks.as_slice()?, prominences.as_slice()?);
     let (left, right) = (left.as_slice()?, right.as_slice()?);
@@ -254,6 +268,7 @@ pub fn peak_widths<'py>(
             prom[p],
             left[p] as usize,
             right[p] as usize,
+            fused,
         )
     };
     let rows: Vec<[f64; 4]> = py.detach(|| {

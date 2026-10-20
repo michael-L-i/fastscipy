@@ -13,7 +13,12 @@ use rayon::prelude::*;
 
 use crate::pool;
 
-fn row(
+#[inline]
+fn madd<const FUSED: bool>(a: f64, b: f64, c: f64) -> f64 {
+    if FUSED { a.mul_add(b, c) } else { a * b + c }
+}
+
+fn row<const FUSED: bool>(
     a: &[f64],
     w: usize,
     k: &[f64],
@@ -39,7 +44,7 @@ fn row(
                 continue;
             }
             for (o, &s) in out[j0..j1].iter_mut().zip(&src[j0 + q - off_j..]) {
-                *o = s.mul_add(kv, *o);
+                *o = madd::<FUSED>(s, kv, *o);
             }
         }
     }
@@ -53,13 +58,20 @@ pub fn correlate2d(
     mut out: PyReadwriteArray2<f64>,
     off_i: usize,
     off_j: usize,
+    fused: bool,
 ) -> PyResult<()> {
     let (w, kw, ow) = (a.shape()[1], k.shape()[1], out.shape()[1]);
     if w == 0 || kw == 0 || ow == 0 {
         return Err(PyValueError::new_err("empty array"));
     }
     let (a, k, o) = (a.as_slice()?, k.as_slice()?, out.as_slice_mut()?);
-    let one = |i: usize, o: &mut [f64]| row(a, w, k, kw, (off_i, off_j), i, o);
+    let one = |i: usize, o: &mut [f64]| {
+        if fused {
+            row::<true>(a, w, k, kw, (off_i, off_j), i, o)
+        } else {
+            row::<false>(a, w, k, kw, (off_i, off_j), i, o)
+        }
+    };
     let parallel = pool::num_threads() > 1 && o.len() * k.len() >= 1 << 18;
     py.detach(|| {
         if parallel {
@@ -126,7 +138,7 @@ fn origin(mode: u8, flip: bool, k: i64) -> i64 {
 }
 
 impl Conv<'_> {
-    fn row(&self, m: usize, out: &mut [f64], ext: &mut Vec<f64>) {
+    fn row<const FUSED: bool>(&self, m: usize, out: &mut [f64], ext: &mut Vec<f64>) {
         let ((h, w), (kh, kw)) = (self.shape, self.kshape);
         let (m0, n0) = (
             origin(self.mode, self.flip, kh) + m as i64,
@@ -153,16 +165,21 @@ impl Conv<'_> {
             while q + 4 <= kwu {
                 let (p0, p1, p2, p3) = (tap(q), tap(q + 1), tap(q + 2), tap(q + 3));
                 for n in 0..ow {
-                    out[n] += t[q + 3].mul_add(
+                    out[n] += madd::<FUSED>(
+                        t[q + 3],
                         p3[n],
-                        t[q + 2].mul_add(p2[n], t[q].mul_add(p0[n], t[q + 1] * p1[n])),
+                        madd::<FUSED>(
+                            t[q + 2],
+                            p2[n],
+                            madd::<FUSED>(t[q], p0[n], t[q + 1] * p1[n]),
+                        ),
                     );
                 }
                 q += 4;
             }
             for q in q..kwu {
                 for (o, &p) in out.iter_mut().zip(tap(q)) {
-                    *o = t[q].mul_add(p, *o);
+                    *o = madd::<FUSED>(t[q], p, *o);
                 }
             }
         }
@@ -180,6 +197,7 @@ pub fn convolve2d(
     mode: u8,
     boundary: u8,
     fill: f64,
+    fused: bool,
 ) -> PyResult<()> {
     let (shape, kshape, oshape) = (a.shape().to_vec(), k.shape().to_vec(), out.shape().to_vec());
     let want = |n: usize, kn: usize| match mode {
@@ -207,19 +225,26 @@ pub fn convolve2d(
         fill,
     };
     let o = out.as_slice_mut()?;
+    let one = |ext: &mut Vec<f64>, m: usize, o: &mut [f64]| {
+        if fused {
+            c.row::<true>(m, o, ext)
+        } else {
+            c.row::<false>(m, o, ext)
+        }
+    };
     let parallel = pool::num_threads() > 1 && o.len() * c.k.len() >= 1 << 18;
     py.detach(|| {
         if parallel {
             pool::pool().install(|| {
                 o.par_chunks_mut(oshape[1])
                     .enumerate()
-                    .for_each_init(Vec::new, |ext, (m, o)| c.row(m, o, ext))
+                    .for_each_init(Vec::new, |ext, (m, o)| one(ext, m, o))
             });
         } else {
             let mut ext = Vec::new();
             o.chunks_mut(oshape[1])
                 .enumerate()
-                .for_each(|(m, o)| c.row(m, o, &mut ext));
+                .for_each(|(m, o)| one(&mut ext, m, o));
         }
     });
     Ok(())

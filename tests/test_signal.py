@@ -837,6 +837,72 @@ def test_dlsim_used_and_declined(threads):
     cmp("dlsim", (np.asfortranarray(A), B, C, D, 1.0), u, fast=False)
 
 
+def test_native_signal_contraction_modes():
+    from fastscipy import _signal_algo as algo
+
+    sig, e = algo._sig, 2.0**-27
+    for fused in (False, True):
+        out = np.empty((1, 1))
+        a, k = np.array([[-1.0, 1 + e]]), np.array([[1.0, 1 - e]])
+        expected = -(2.0**-54) if fused else 0.0
+        sig.correlate2d(a, k, out, 0, 0, fused)
+        assert out[0, 0] == expected
+        sig.convolve2d(a, k, out, False, 0, 0, 0.0, fused)
+        assert out[0, 0] == expected
+        a, k = np.array([[1 + e, -1.0, 0.0, 0.0]]), np.array([[1 - e, 1.0, 0.0, 0.0]])
+        sig.convolve2d(a, k, out, False, 0, 0, 0.0, fused)
+        assert out[0, 0] == expected
+        peak, lo, hi = np.array([1], np.intp), np.array([0], np.intp), np.array([2], np.intp)
+        result = sig.peak_widths(np.array([0.0, 1.0, 0.0]), peak, 1 - e, np.array([1 + e]), lo, hi, fused)
+        assert result[1][0] == (2.0**-54 if fused else 0.0)
+    assert all(flag is not None for flag in (algo._fused_width, algo._fused_corr, algo._fused_conv))
+
+
+def test_dlsim_blas_capsule_matches_installed_blas():
+    from scipy.linalg import blas
+
+    from fastscipy import _signal_algo as algo
+
+    sig, rng = algo._sig, np.random.default_rng(349)
+    for shape in ((1, 1), (1, 7), (3, 2), (5, 9)):
+        matrices, vectors = rng.standard_normal((6, *shape)), rng.standard_normal((6, shape[1]))
+        for mode in (1, 2):
+            refs = np.stack(
+                [
+                    np.atleast_1d(blas.ddot(m[0], v))
+                    if mode == 1 and shape[0] == 1
+                    else blas.dgemv(1.0, m.T, v, trans=1)
+                    for m, v in zip(matrices, vectors)
+                ]
+            )
+            assert sig.gemv_matches(matrices, vectors, refs, mode)
+    with pytest.raises(ValueError):
+        sig.gemv_matches(np.ones((1, 2, 3)), np.ones((1, 2)), np.ones((1, 2)), 1)
+
+
+def test_dlsim_calibration_memory_bound(monkeypatch):
+    from fastscipy import _signal_algo as algo
+
+    monkeypatch.setattr(algo, "_gemv", {})
+    monkeypatch.setattr(algo, "_GEMV_CALIBRATION_BYTES", 4096)
+    monkeypatch.setattr(algo, "_GEMV_TRIALS", 11)
+    calls = []
+    caller = np.ones((24, 24))
+
+    def matches(ms, vs, refs, mode):
+        owned_matrix_bytes = 0 if np.shares_memory(ms, caller) else ms.nbytes
+        assert owned_matrix_bytes + vs.nbytes + 2 * refs.nbytes <= 4096
+        calls.append((ms.shape[0], np.shares_memory(ms, caller)))
+        return True
+
+    monkeypatch.setattr(algo._sig, "gemv_matches", matches)
+    assert algo._gemv_matches((8, 8)) == 0
+    assert len(calls) > 3 and max(count for count, _ in calls) < 11
+    calls.clear()
+    assert algo._gemv_matches(caller.shape, caller) == 0
+    assert len(calls) == 33 and all(shared for _, shared in calls)
+
+
 @pytest.mark.parametrize("mode", ["full", "same", "valid"])
 @pytest.mark.parametrize(
     "shapes",

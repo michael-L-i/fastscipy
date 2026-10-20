@@ -4,6 +4,8 @@ Requires psutil. Example: python tools/platform_suite.py --output artifacts/plat
 """
 
 import argparse
+from datetime import datetime, timezone
+import importlib.metadata
 import json
 import math
 import os
@@ -57,6 +59,17 @@ def mean(values):
     return math.exp(sum(math.log(x) for x in values) / len(values)) if values else None
 
 
+def revision():
+    if value := os.environ.get("FASTSCIPY_BUILD_REVISION"):
+        return value
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -68,6 +81,8 @@ def main():
     mode.add_argument("--tests-only", action="store_true")
     parser.add_argument("--upstream", action="store_true")
     args = parser.parse_args()
+    if args.budget <= 0 or args.max_rss_mb <= 0 or args.timeout <= 0:
+        parser.error("Timing, memory, and timeout budgets must be positive")
     output = args.output.resolve()
     if output.exists() and any(output.iterdir()):
         parser.error("Choose an empty output directory so stale results cannot enter this report")
@@ -75,6 +90,9 @@ def main():
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
     report = {
+        "recorded_utc": datetime.now(timezone.utc).isoformat(),
+        "benchmark_commit": revision(),
+        "fastscipy": importlib.metadata.version("fastscipy"),
         "platform": platform.platform(),
         "machine": platform.machine(),
         "processor": platform.processor(),
@@ -84,6 +102,10 @@ def main():
         "scipy": scipy.__version__,
         "numpy_config": np.__config__.show(mode="dicts"),
         "thread_budget": int(os.environ["FASTSCIPY_NUM_THREADS"]),
+        "blas_thread_budget": {
+            key: os.environ[key] for key in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS")
+        },
+        "timing_budget_seconds": args.budget,
         "memory_limit_mb": args.max_rss_mb,
         "runs": {},
         "areas": {},

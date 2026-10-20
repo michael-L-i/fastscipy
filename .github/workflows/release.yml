@@ -19,68 +19,193 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  CARGO_BUILD_JOBS: "2"
+  CARGO_BUILD_JOBS: "1"
   MACOSX_DEPLOYMENT_TARGET: "14.0"
   FASTSCIPY_NUM_THREADS: "2"
   OPENBLAS_NUM_THREADS: "1"
   OMP_NUM_THREADS: "1"
   VECLIB_MAXIMUM_THREADS: "1"
   RUSTFLAGS: ""
+  FASTSCIPY_BUILD_REVISION: ${{ github.sha }}
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: utf-8
   RELEASE_TARGET: ${{ inputs.publish || 'pypi' }}
 
 jobs:
-  wheels:
-    name: Wheel / Python ${{ matrix.python }}
-    runs-on: macos-15
-    timeout-minutes: 35
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        python: ["3.12", "3.13", "3.14"]
+  source:
+    name: Source distribution and version guards
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python }}
+          python-version: "3.13"
       - uses: dtolnay/rust-toolchain@1.97.1
-      - uses: Swatinem/rust-cache@v2
-      - name: Install build tools
-        run: python -m pip install "maturin>=1.9,<2" twine pytest hypothesis
-      - name: Check versions and architecture
+      - name: Install source packaging tools
+        run: python -m pip install "maturin>=1.9,<2" packaging twine
+      - name: Check source versions and publication tag
+        run: python tools/check_release.py
+      - name: Build and validate the single source distribution
         run: |
-          python tools/check_release.py
-          python -c "import platform; assert platform.machine() == 'arm64'"
-      - name: Build release wheel from source distribution
-        run: maturin build --release --locked --sdist --out dist --interpreter python
-      - name: Check package contents and PyPI metadata
-        run: |
+          maturin sdist --out dist
           python tools/check_release.py --dist dist
           python -m twine check --strict dist/*
-      - name: Install the wheel
-        run: |
-          python -m pip install --only-binary=:all: dist/*.whl
-      - name: Verify installed wheel
-        run: python -I tools/check_release.py --installed
-      - name: Identity suite against installed wheel
-        run: python -m pytest tests -q --tb=short
-      - name: Upstream comparison
-        if: matrix.python == '3.13'
-        run: |
-          python -m pip install pytest-xdist pooch
-          python tools/scipy_suite.py --pyargs scipy -n 2
-      - name: Keep one source distribution
-        if: matrix.python != '3.13'
-        run: rm dist/*.tar.gz
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ matrix.python }}
-          path: dist/*
+          name: release-dist-sdist
+          path: dist/*.tar.gz
           if-no-files-found: error
           retention-days: 14
 
+  wheels:
+    name: Wheels / ${{ matrix.target }} / Python 3.12–3.14
+    needs: source
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      # One native job per platform, three interpreters serially: bounded RAM,
+      # one Rust/container setup per platform, and no emulated wheel tests.
+      matrix:
+        include:
+          - target: manylinux-x86_64
+            runner: ubuntu-24.04
+            arch: x86_64
+            platform: manylinux
+          - target: manylinux-aarch64
+            runner: ubuntu-24.04-arm
+            arch: aarch64
+            platform: manylinux
+          - target: musllinux-x86_64
+            runner: ubuntu-24.04
+            arch: x86_64
+            platform: musllinux
+          - target: musllinux-aarch64
+            runner: ubuntu-24.04-arm
+            arch: aarch64
+            platform: musllinux
+          - target: macos-arm64
+            runner: macos-15
+            arch: arm64
+            platform: macosx
+          - target: macos-x86_64
+            runner: macos-15-intel
+            arch: x86_64
+            platform: macosx
+          - target: windows-amd64
+            runner: windows-2025
+            arch: AMD64
+            platform: win
+          - target: windows-arm64
+            runner: windows-11-arm
+            arch: ARM64
+            platform: win
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@1.97.1
+        if: runner.os != 'Linux'
+      - name: Install wheel tooling
+        run: |
+          python -m pip install "cibuildwheel==4.2.1" packaging twine psutil
+          python -m pip install --only-binary=:all: "numpy==2.5.4" "scipy==1.18.1"
+      - name: Validate source versions
+        run: python tools/check_release.py
+      - name: Prepare wheel test reports
+        run: python -c "from pathlib import Path; Path('artifacts').mkdir(exist_ok=True)"
+      - name: Build, repair, and test installed wheels
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          from tools.platform_suite import run
+          result = run([sys.executable, "-m", "cibuildwheel", "--output-dir", "wheelhouse"], Path("artifacts/build.log"), 6144, 21000)
+          Path("artifacts/build.json").write_text(json.dumps(result, indent=2))
+          sys.exit(result["returncode"])
+          PY
+        env:
+          CIBW_BUILD: cp3{12,13,14}-${{ matrix.platform }}_*
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+          CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
+          CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
+          CIBW_MUSLLINUX_AARCH64_IMAGE: musllinux_1_2
+          # before-all executes inside each Linux build container. Its shell
+          # PATH change would not persist, so set the build/test PATH too.
+          CIBW_BEFORE_ALL_LINUX: >-
+            curl --retry 3 -fsSL https://sh.rustup.rs -o /tmp/fastscipy-rustup.sh &&
+            sh /tmp/fastscipy-rustup.sh -y --profile minimal --default-toolchain 1.97.1
+          CIBW_CONTAINER_ENGINE_LINUX: "docker; create_args: --memory=6g --cpus=2 --volume=${{ github.workspace }}/artifacts:/artifacts"
+          CIBW_ENVIRONMENT_LINUX: >-
+            PATH="$HOME/.cargo/bin:$PATH" FASTSCIPY_RELEASE_REPORT_DIR="/artifacts"
+          CIBW_ENVIRONMENT_PASS_LINUX: >-
+            CARGO_BUILD_JOBS RUSTFLAGS FASTSCIPY_NUM_THREADS OPENBLAS_NUM_THREADS
+            OMP_NUM_THREADS VECLIB_MAXIMUM_THREADS RELEASE_TARGET GITHUB_REF FASTSCIPY_BUILD_REVISION
+          CIBW_CONFIG_SETTINGS: maturin.build-args=--locked
+          CIBW_TEST_REQUIRES: >-
+            numpy==2.5.4 scipy==1.18.1 pytest pytest-xdist hypothesis packaging psutil pooch
+          # Python 3.13 runs project identity tests, every benchmark area and
+          # paired upstream SciPy tests; 3.12/3.14 run project tests only.
+          # Each interpreter has its own report directory. Linux project files
+          # are copied into a container, so persist reports on an explicit volume.
+          CIBW_TEST_COMMAND: >-
+            python -I "{project}/tools/check_release.py" --installed &&
+            python -I -c "import os,subprocess,sys; subprocess.run([sys.executable,'-I',r'{project}/tools/platform_suite.py','--output',os.environ.get('FASTSCIPY_RELEASE_REPORT_DIR',r'{project}/artifacts')+'/'+sys.implementation.cache_tag,'--max-rss-mb','4096']+(['--upstream'] if sys.version_info[:2]==(3,13) else ['--tests-only']),check=True)"
+      - name: Validate repaired wheel archives
+        run: |
+          python tools/check_release.py --dist wheelhouse
+          python -m twine check --strict wheelhouse/*
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-report-${{ matrix.target }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dist-${{ matrix.target }}
+          path: wheelhouse/*.whl
+          if-no-files-found: error
+          retention-days: 14
+
+  verify:
+    name: Verify complete release artifact set
+    needs: [source, wheels]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-dist-*
+          merge-multiple: true
+          path: dist
+      - run: python -m pip install packaging twine
+      - name: Require all 24 wheels and one source distribution
+        run: |
+          python -c "from pathlib import Path; p=Path('dist'); assert len(list(p.glob('*.whl'))) == 24, 'Expected eight platforms times three interpreters'; assert len(list(p.glob('*.tar.gz'))) == 1, 'Expected one source distribution'"
+          python tools/check_release.py --dist dist --complete
+          python -m twine check --strict dist/*
+
   testpypi:
-    needs: wheels
+    needs: verify
     if: github.event_name == 'workflow_dispatch' && inputs.publish == 'testpypi'
     runs-on: ubuntu-24.04
     environment: testpypi
@@ -89,7 +214,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: release-*
+          pattern: release-dist-*
           merge-multiple: true
           path: dist
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -97,7 +222,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
 
   pypi:
-    needs: wheels
+    needs: verify
     if: startsWith(github.ref, 'refs/tags/v') && (github.event_name == 'push' || inputs.publish == 'pypi')
     runs-on: ubuntu-24.04
     environment: pypi
@@ -106,7 +231,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: release-*
+          pattern: release-dist-*
           merge-multiple: true
           path: dist
       - uses: pypa/gh-action-pypi-publish@release/v1

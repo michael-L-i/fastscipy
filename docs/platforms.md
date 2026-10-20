@@ -144,6 +144,19 @@ references and the accelerated result; types, shapes, warnings, solver
 convergence, and independent residual or minimizer checks remain enforced.
 Missing acceleration and deterministic mismatches still fail.
 
+The newer [BiCGSTAB diagnostic](../bench/runs/2026-10-20-portability/mac-x86_64/reference-stability-b785/README.md)
+found 40–42 callbacks from repeated unpatched runs in both patch scopes, with
+varying trajectories; patched runs produced 40–43 callbacks overall. All 65
+saved final solutions satisfied the requested residual bound, but common
+callback prefixes were not byte-identical. For this specific 100-equation
+fixture, the candidate validator permits different counts and trajectories
+only after reference variation is demonstrated. It checks finite, correctly
+shaped histories, successful termination, final residuals, and a solution
+error bound. A separate deterministic single-callback fixture requires exact
+solution and callback bytes without a reference-variation exception. This
+retains exact callback coverage without claiming identical trajectories for
+the unstable fixture; the revised checks still need candidate validation.
+
 These exceptions emit warnings and retain reference/result fingerprints in
 `reference-variance.jsonl` and the platform summary. Benchmark rows keep
 `identical: false`, report numerical validation separately, and are excluded

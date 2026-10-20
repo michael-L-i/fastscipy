@@ -1,0 +1,88 @@
+{
+  "purpose": "derived_local_exact_input_replay_evidence_not_native_Intel_fix_validation",
+  "original_files": [
+    {
+      "file": "fastscipy-linregress-replay.py",
+      "bytes": 1223,
+      "sha256": "08b08455fb1fd2cb37f9aae1ff4f4461a537a93da89bac4656432f2e5af51079"
+    },
+    {
+      "file": "fastscipy-linregress-replay.json",
+      "bytes": 2230,
+      "sha256": "2ef5c2da9f794958e56bd59bd597b88a3511a917027163a743229ce4f961e91f"
+    }
+  ],
+  "fixture": {
+    "seed": 12345,
+    "test_parameter": "4t-linregress",
+    "iteration": 69,
+    "input_count": 30,
+    "all_x_identical": true,
+    "x_value": 0.05016188054896638,
+    "recorded_xmean": 0.05016188054896637,
+    "recorded_xspread": 6.938893903907228e-18,
+    "observed_result_decimal": {
+      "slope": -17.066666666666666,
+      "intercept": 1.7099943279661463,
+      "rvalue": -1.756898098576487e-16,
+      "pvalue": 0.9999999999999992,
+      "stderr": 1.8357904985830864e+16,
+      "intercept_stderr": 920867037028522.0
+    },
+    "warning": [
+      [
+        "RuntimeWarning",
+        "Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable."
+      ]
+    ]
+  },
+  "runtime": {
+    "evidence": "Parent-provided runtime identification; replay stdout does not independently record runtime metadata.",
+    "python": "/private/tmp/fastscipy-portability-a2-mac/bin/python",
+    "platform": "macOS arm64",
+    "hardware": "M5 Pro",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "installed_runtime_source_checkpoint": "1f48cd6",
+    "loaded_repository_test_source_revision": "Not separately captured at execution; exact replay script and generated input/output retained."
+  },
+  "resource_provenance": {
+    "evidence": "Transcribed original tools.platform_suite.run tool output reported by speed_stats; no standalone raw monitor JSON was saved. No replay was executed for this archive.",
+    "monitor_call": {
+      "command": [
+        "/tmp/fastscipy-portability-a2-mac/bin/python",
+        "/tmp/fastscipy-linregress-replay.py"
+      ],
+      "stdout_log": "/tmp/fastscipy-linregress-replay.json",
+      "cwd": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy",
+      "memory_limit_mib": 128,
+      "timeout_seconds": 30,
+      "environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "FASTSCIPY_NUM_THREADS": "2"
+      }
+    },
+    "reported_result": {
+      "returncode": 0,
+      "seconds": 0.6516600000031758,
+      "peak_rss_bytes": 108576768,
+      "stopped": null
+    }
+  },
+  "candidate_validator_change": {
+    "source": "e2907142aafc2350acc4f89d731c97de10c0932a",
+    "source_url": "https://github.com/michael-L-i/fastscipy/commit/e2907142aafc2350acc4f89d731c97de10c0932a",
+    "file": "tests/test_stats.py",
+    "bytes": 30637,
+    "sha256": "38bd4802300d4edc5dddd356fc52271b094d287f935eef4a384338242f3ac88b",
+    "scope": "Test-validator change only: nearly constant-x intercepts checked against independent mean identity with a rounding allowance; no production-kernel change.",
+    "native_validation": "Pending; this local replay predates and does not validate that candidate on Intel."
+  },
+  "limitations": [
+    "One local ARM replay, not repeated Intel execution or a passing native test run.",
+    "The threads=4 JSON field identifies the randomized test loop; actual native thread environment was FASTSCIPY_NUM_THREADS=2.",
+    "Earlier Intel result pairs and failure remain archived unchanged in ../project-failures.json."
+  ]
+}

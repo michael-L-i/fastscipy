@@ -176,3 +176,9 @@ one rejected linregress comparison. Both earlier BiCGSTAB and Pearson
 parameters passed; exact failure diagnostics remain archived. This reused
 the unchanged `daf9acd` native wheel and ran no benchmarks or upstream
 comparisons. It is not a complete-project or release-wheel pass.
+
+The failed contract archive also retains an [exact linregress input replay](mac-x86_64/python-contract-5f76195/reproduction/README.md):
+seed 12345, iteration 69, constant x with a float64 centering residue and
+SciPy's catastrophic-cancellation warning. This was a bounded local ARM replay;
+reported resource observations and the later `e290714` test-validator candidate
+are explicitly separated from raw output and pending native Intel validation.

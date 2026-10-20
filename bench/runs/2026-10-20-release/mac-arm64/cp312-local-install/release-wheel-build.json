@@ -1,0 +1,7 @@
+{
+  "returncode": 0,
+  "seconds": 959.591533708,
+  "peak_rss_bytes": 2955165696,
+  "stopped": null,
+  "rss_scope": "host_cibuildwheel_process_tree"
+}

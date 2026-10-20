@@ -1,0 +1,108 @@
+{
+  "purpose": "derived_direct_final_release_artifact_clean_install_and_application_pilots_not_PyPI_verification",
+  "release_run": "39464216282",
+  "release_run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39464216282",
+  "release_tag": "v0.1.0a2",
+  "wheel_source": "1cf67791b17ab2bb3c72d6af62bd2292e8034583",
+  "wheel": {
+    "file": "fastscipy-0.1.0a2-cp312-cp312-macosx_14_0_arm64.whl",
+    "bytes": 4077135,
+    "sha256": "97e6e89b8a0a5f465d9525e76369b16df44cb5acdb973cfa8c73061b95f45278"
+  },
+  "install_source": "Direct locally downloaded final-release workflow wheel artifact; not installed from PyPI.",
+  "pypi_manifest_or_download_verified": false,
+  "all_32_wheel_gates_verified": false,
+  "publisher_success_verified": false,
+  "local_runtime": {
+    "python": "3.12.12 (main, Oct  9 2025, 11:07:00) [Clang 17.0.0 (clang-1700.6.3.2)]",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "hardware": "M5 Pro (parent-reported; raw logs record arm64 platform)",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_threads": 2,
+    "blas_threads": 1
+  },
+  "wheel_build_runtime": {
+    "python": "3.12.10 (v3.12.10:0cc81280367, Apr  8 2025, 08:46:59) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "macOS-15.7.9-arm64-arm-64bit"
+  },
+  "component_activation": {
+    "ndimage": "on",
+    "special": "on",
+    "stats": "on",
+    "signal": "on",
+    "sparse": "on",
+    "sparse_linalg": "on",
+    "linalg": "on",
+    "interpolate": "on",
+    "spatial": "on",
+    "csgraph": "on",
+    "cluster": "on",
+    "integrate": "on",
+    "optimize": "on"
+  },
+  "application_assertions": {
+    "image_and_sensor_pipelines_byte_identical": true,
+    "independent_image_and_signal_properties_passed": true,
+    "independent_OLS_and_signal_properties_passed": true,
+    "fallback_custom_metric_zero_fast_calls": true,
+    "nan_omit_fallback_verified": true,
+    "inputs_unchanged": true
+  },
+  "configured_resource_limit_mib": {
+    "value": 512,
+    "evidence": "Parent-reported command-monitor cap; original result JSON retains actual peaks and stop status."
+  },
+  "original_files": [
+    {
+      "file": "final-wheel-checks.json",
+      "bytes": 1192,
+      "sha256": "482e546a6082b33f8fbba42fa63c47d7766eba1b617dc9e38bd192e24eff34fc"
+    },
+    {
+      "file": "cp312-pip-install.json",
+      "bytes": 74697,
+      "sha256": "133809968660e0ebb45d88a7f8c948a1cdf80db144c7d0a2232996fc96f417d3"
+    },
+    {
+      "file": "release-wheel-build.json",
+      "bytes": 149,
+      "sha256": "ccd9b9ace0d4e9c3d23a74a7092206cca49f20309195429a761e7f87ef3c6544"
+    },
+    {
+      "file": "release-wheel-summary.json",
+      "bytes": 3005,
+      "sha256": "0f970bdeb45d9f0a9e2206b94585012bc13912239747f78d665bef14e2efb51b"
+    },
+    {
+      "file": "final-cp312-components.log",
+      "bytes": 133,
+      "sha256": "a0369e118bc910dc27351a686b54678b5525ee3439271a98a844c004ca88fe29"
+    },
+    {
+      "file": "final-cp312-dependencies.log",
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "file": "final-cp312-image_signal.log",
+      "bytes": 1276,
+      "sha256": "9fa207bb20e2dc68de715bb9f84fe6535923244bdd91407bf1f7fe7691e59fb9"
+    },
+    {
+      "file": "final-cp312-install.log",
+      "bytes": 1117,
+      "sha256": "e1f9ab0ad7103d98d92181afd491ba6eb2c8f3716661f626b3cf0feb74ea3929"
+    },
+    {
+      "file": "final-cp312-sensor_statistics.log",
+      "bytes": 1342,
+      "sha256": "52fe779509909c386aad407069a83fd07ceb2c493ad2b41532dab29a958c2771"
+    }
+  ],
+  "limits": [
+    "This supports the one exact CP312 Mac ARM artifact on the recorded local Mac runtime only.",
+    "The repaired wheel was built on macOS15 and exercised here on macOS26; these runtimes are separately retained.",
+    "PyPI availability/download identity and complete32wheel publication remain pending."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "purpose": "installed-wheel sensor-analysis pilot, not all-platform release certification",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "fastscipy": "0.1.0a2",
+  "package_path": "/private/tmp/fastscipy-a2-release-cp312/lib/python3.12/site-packages/fastscipy/__init__.py",
+  "activation": {
+    "ndimage": "on",
+    "special": "on",
+    "stats": "on",
+    "signal": "on",
+    "sparse": "on",
+    "sparse_linalg": "on",
+    "linalg": "on",
+    "interpolate": "on",
+    "spatial": "on",
+    "csgraph": "on",
+    "cluster": "on",
+    "integrate": "on",
+    "optimize": "on"
+  },
+  "input_bytes": 851968,
+  "channels": 12,
+  "samples_per_channel": 8192,
+  "default_gate_without_overrides": true,
+  "thread_budget": 2,
+  "blas_threads": 1,
+  "fast_calls": 1440,
+  "nan_omit_fallback_verified": true,
+  "input_unchanged": true,
+  "independent_ols_and_signal_properties_verified": true,
+  "sustained_repetitions": 16,
+  "traced_python_bytes": 397,
+  "traced_python_peak_bytes": 462920,
+  "timing": {
+    "scipy_seconds": [
+      0.007871333975344896,
+      0.008077250007772818,
+      0.007931083004223183
+    ],
+    "patched_seconds": [
+      0.002717333991313353,
+      0.0026487909781280905,
+      0.002690125023946166
+    ]
+  },
+  "median_workflow_speedup": 2.9482209687745344,
+  "warnings": []
+}

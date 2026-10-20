@@ -9,6 +9,7 @@ def _bfgs_reference_validation(expected, actual):
     # BFGS's path. Check this known minimizer independently, never its timing.
     for point in (expected, actual):
         assert type(point) is np.ndarray and point.dtype == np.float64 and point.shape == (10,)
+        assert point.strides == (np.dtype(np.float64).itemsize,)
         assert np.isfinite(point).all()
         assert np.max(np.abs(point - 1)) < 2e-4
         assert optimize.rosen(point) < 1e-8

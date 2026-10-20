@@ -37,6 +37,7 @@ def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=
         for x, y, shape in pairs:
             assert type(x) is type(y) is np.ndarray
             assert x.shape == y.shape == shape and x.dtype == y.dtype == b.dtype
+            assert x.strides == y.strides
             assert np.isfinite(x).all() and np.isfinite(y).all()
             np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
         if actual_info == 0:
@@ -70,6 +71,7 @@ def _least_squares_reference_validation(a, b):
             assert type(x) is type(y)
             x, y = np.asarray(x), np.asarray(y)
             assert x.shape == y.shape and x.dtype == y.dtype
+            assert x.strides == y.strides
             assert x.shape == ((a.shape[1],) if index in (0, 9) else ())
             assert np.isfinite(x).all() and np.isfinite(y).all()
             np.testing.assert_allclose(y, x, rtol=2e-12, atol=2e-14, equal_nan=False)
@@ -154,7 +156,7 @@ def test_iterative_reference_validator_accepts_roundoff():
     _iteration_reference_validation(a, b, 1e-9)(expected, actual)
 
 
-@pytest.mark.parametrize("fault", ["info", "history_count", "dtype", "shape", "nan", "inaccurate"])
+@pytest.mark.parametrize("fault", ["info", "history_count", "dtype", "shape", "strides", "nan", "inaccurate"])
 def test_iterative_reference_validator_rejects_wrong_results(fault):
     a = sparse.csr_array(np.eye(2) * 2)
     b = np.array([2.0, 6.0])
@@ -169,6 +171,8 @@ def test_iterative_reference_validator_rejects_wrong_results(fault):
         y = y.astype(np.float32)
     elif fault == "shape":
         y = y[:, None]
+    elif fault == "strides":
+        y = np.repeat(y, 2)[::2]
     elif fault == "nan":
         history[0][0] = np.nan
     elif fault == "inaccurate":

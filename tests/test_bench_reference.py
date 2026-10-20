@@ -53,6 +53,12 @@ def test_variance_cannot_hide_missing_fast_path(runner, monkeypatch):
 def test_bfgs_uses_known_minimum_instead_of_only_comparing_two_answers():
     validate = load("optimize_benchmark_under_test", "bench/bench_optimize.py")._bfgs_reference_validation
     validate(np.ones(10), np.ones(10))
-    for point in (np.ones(9), np.ones(10, dtype=np.float32), np.full(10, 1.00005), np.full(10, np.nan)):
+    for point in (
+        np.ones(9),
+        np.ones(10, dtype=np.float32),
+        np.ones(20)[::2],
+        np.full(10, 1.00005),
+        np.full(10, np.nan),
+    ):
         with pytest.raises(AssertionError):
             validate(point, point)

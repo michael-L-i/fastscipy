@@ -1,16 +1,17 @@
 [build-system]
-requires = ["maturin>=1.5,<2"]
+requires = ["maturin>=1.9,<2"]
 build-backend = "maturin"
 
 [project]
 name = "fastscipy"
-version = "0.1.0"
+version = "0.1.0a1"
 description = "Drop-in acceleration for SciPy: byte-identical results, faster on one core and on many"
 readme = "README.md"
-license = { text = "BSD-3-Clause" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE", "LICENSES/scipy-LICENSE.txt"]
 authors = [{ name = "Michael Li" }]
-requires-python = ">=3.12"
-dependencies = ["numpy>=2.0", "scipy>=1.18"]
+requires-python = ">=3.12,<3.15"
+dependencies = ["numpy>=2.5,<2.6", "scipy>=1.18,<1.19"]
 keywords = ["scipy", "performance", "rust", "multithreading", "drop-in", "ndimage"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -39,6 +40,8 @@ gallery = ["pillow>=10.1", "matplotlib>=3.8"]
 [tool.maturin]
 python-source = "python"
 module-name = "fastscipy._native"
+include = [{ path = "LICENSES/scipy-LICENSE.txt", format = ["wheel", "sdist"] }]
+exclude = [{ path = "bench/**", format = "sdist" }, { path = "examples/**", format = "sdist" }, { path = "docs/**", format = "sdist" }]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

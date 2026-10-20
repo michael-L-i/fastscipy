@@ -67,3 +67,31 @@ Before opening a pull request, run SciPy's suite for the area with
 
 By contributing you agree that your contributions are licensed under the
 BSD-3-Clause license of this project.
+
+## Releases
+
+The `Release` workflow builds macOS 14+ arm64 wheels for Python 3.12–3.14,
+installs the wheels, and runs the project checks plus a paired upstream SciPy
+comparison. Builds use two Cargo jobs and bounded numerical thread budgets.
+
+To rehearse, run the workflow manually with `publish: none`. Download the three
+wheel artifacts and source archive from that run. `publish: testpypi` exercises
+an upload to TestPyPI. Publishing to PyPI requires a matching `v<version>` tag;
+version declarations in Python, Cargo and the lockfile must agree.
+
+Before the first upload, sign into PyPI and configure a pending Trusted Publisher:
+
+| Field | Value |
+|---|---|
+| Project | `fastscipy` |
+| Owner | `michael-L-i` |
+| Repository | `fastscipy` |
+| Workflow | `release.yml` |
+| Environment | `pypi` |
+
+Use a separate `testpypi` environment and publisher on TestPyPI for rehearsals.
+No API token is needed. The workflow publishes only after the wheel checks pass.
+A pending publisher does not reserve the package name until the first upload.
+
+Create and push the version tag only when ready to publish. Keep the README's
+installation instructions on the source install until the package is live.

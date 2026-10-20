@@ -13,11 +13,11 @@ from scipy import ndimage
 clean = ndimage.median_filter(image, size=3)
 ```
 
-![Image cleanup with SciPy and fastscipy](docs/median-filter-demo.gif)
+![Image cleanup with SciPy and fastscipy](https://raw.githubusercontent.com/michael-L-i/fastscipy/main/docs/median-filter-demo.gif)
 
 *Run on a MacBook Pro with M5 Pro.*
 
-[Explore eight more examples →](examples/README.md)
+[Explore eight more examples →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md)
 
 ## Install
 
@@ -54,12 +54,12 @@ Geometric-mean speedups over unpatched SciPy, measured on an Apple M5 Pro.
 
 Published run: 2026-10-18, SciPy 1.18.1, Python 3.13, release build; controls
 excluded. Results vary by workload and hardware.
-[Full results](bench/RESULTS.md) · [Latest expansion results](bench/README.md)
+[Full results](https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.md) · [Latest expansion results](https://github.com/michael-L-i/fastscipy/blob/main/bench/README.md)
 
 ## More
 
-[Coverage](docs/coverage.md) · [How it works](docs/design.md) ·
-[Demo source](examples/median_filter.py) · [Contributing](CONTRIBUTING.md)
+[Coverage](https://github.com/michael-L-i/fastscipy/blob/main/docs/coverage.md) · [How it works](https://github.com/michael-L-i/fastscipy/blob/main/docs/design.md) ·
+[Demo source](https://github.com/michael-L-i/fastscipy/blob/main/examples/median_filter.py) · [Contributing](https://github.com/michael-L-i/fastscipy/blob/main/CONTRIBUTING.md)
 
-BSD-3-Clause. SciPy ports retain [SciPy's license](LICENSES/scipy-LICENSE.txt).
+BSD-3-Clause. SciPy ports retain [SciPy's license](https://github.com/michael-L-i/fastscipy/blob/main/LICENSES/scipy-LICENSE.txt).
 Independent of the SciPy project.

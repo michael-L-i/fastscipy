@@ -142,12 +142,19 @@ def probe(backend, k, seed):
         ell = max(k, min(n - 1, int(np.searchsorted(t, x, side="right")) - 1))
         target_rows.append((ell - k, [float(v) for v in ref_basis[i, ell - k : ell + 1]]))
     fits.append((-1, target_rows))
-    for width in (1, 3, 8) if backend == "bspline" else (1,):
+    widths = (1, 2, 3, 4, 5, 6, 7, 8) if k == 5 else (1, 3, 8)
+    for width in widths if backend == "bspline" else (1,):
         c = rng.standard_normal((n, width))
         ref = reference(backend, t, c, k, q)
         saved[f"c{width}"] = c
         saved[f"ref{width}"] = ref
         np.savez(artifacts / f"{backend}-k{k}-seed{seed}.npz", **saved)
+        mixed = np.empty_like(ref)
+        mask = ((1 << (k + 1)) - 1) & (~15 if width == 1 else -1)
+        for i, (start, h) in enumerate(basis(t, q_list, k, (1 << k) - 1)):
+            for col in range(width):
+                mixed[i, col] = serial([float(v) for v in c[start : start + k + 1, col]], h, mask)
+        print("proposed mixed mode4", backend, k, seed, width, "mismatches", mismatch(ref, mixed), flush=True)
         native = [(mode, mismatch(ref, interp._k.bspline_eval(t, c, k, q, mode))) for mode in range(4)]
         winners = []
         best = []

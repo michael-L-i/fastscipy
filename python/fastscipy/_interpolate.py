@@ -61,8 +61,8 @@ def _spline_arithmetic(backend, k):
     knots = np.sort(r.random(32))
     t = np.r_[[knots[0]] * k, knots, [knots[-1]] * k]
     q = np.r_[r.uniform(-0.2, 1.2, 96), t, np.nextafter(t, -np.inf), np.nextafter(t, np.inf)]
-    modes = [3, 0, 1, 2]
-    for width in (1, 3, 8) if backend == "bspline" else (1,):
+    modes = [3, 0, 1, 2, 4]
+    for width in (1, 2, 3, 8) if backend == "bspline" else (1,):
         c = r.standard_normal((len(t) - k - 1, width))
         if backend == "bspline":
             ref = _orig["numpy_bspline"](t, c, k)(q)

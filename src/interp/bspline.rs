@@ -25,7 +25,7 @@ fn interval(t: &[f64], k: usize, n: usize, x: f64) -> usize {
 }
 
 /// Write the spline value of every column of `c` (n, m) at `x` into `out`.
-fn eval<const BASIS: bool, const SUM: bool>(
+fn eval<const BASIS: bool, const SUM: u8>(
     t: &[f64],
     c: &[f64],
     m: usize,
@@ -54,12 +54,20 @@ fn eval<const BASIS: bool, const SUM: bool>(
     out.fill(0.0);
     for a in 0..=k {
         for (o, &c) in out.iter_mut().zip(&c[(l + a - k) * m..][..m]) {
-            *o = super::madd::<SUM>(c, h[a], *o);
+            // Windows ARM's scalar specialization rounds the first four
+            // products separately, then contracts the remaining accumulation.
+            // Its multi-column loop contracts every term. Keep this distinct
+            // from the uniform contraction schemes used by other binaries.
+            *o = if SUM == 0 || (SUM == 2 && m == 1 && a < 4) {
+                super::madd::<false>(c, h[a], *o)
+            } else {
+                super::madd::<true>(c, h[a], *o)
+            };
         }
     }
 }
 
-fn evaluate<const BASIS: bool, const SUM: bool>(
+fn evaluate<const BASIS: bool, const SUM: u8>(
     t: &[f64],
     c: &[f64],
     m: usize,
@@ -89,7 +97,7 @@ pub fn bspline_eval<'py>(
 ) -> PyResult<Option<Bound<'py, PyArray2<f64>>>> {
     let m = c.shape()[1];
     let (t, c, x) = (t.as_slice()?, c.as_slice()?, x.as_slice()?);
-    if !(1..=5).contains(&k) || t.len() < 2 * k + 2 || m == 0 || arithmetic > 3 {
+    if !(1..=5).contains(&k) || t.len() < 2 * k + 2 || m == 0 || arithmetic > 4 {
         return Ok(None);
     }
     let n = t.len() - k - 1;
@@ -107,10 +115,11 @@ pub fn bspline_eval<'py>(
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
     py.detach(|| match arithmetic {
-        0 => evaluate::<false, false>(t, c, m, k, n, x, o),
-        1 => evaluate::<true, false>(t, c, m, k, n, x, o),
-        2 => evaluate::<false, true>(t, c, m, k, n, x, o),
-        _ => evaluate::<true, true>(t, c, m, k, n, x, o),
+        0 => evaluate::<false, 0>(t, c, m, k, n, x, o),
+        1 => evaluate::<true, 0>(t, c, m, k, n, x, o),
+        2 => evaluate::<false, 1>(t, c, m, k, n, x, o),
+        3 => evaluate::<true, 1>(t, c, m, k, n, x, o),
+        _ => evaluate::<true, 2>(t, c, m, k, n, x, o),
     });
     Ok(Some(out))
 }

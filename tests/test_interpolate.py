@@ -483,16 +483,16 @@ def test_piecewise_raising_seterr_handler_once(cls, mode):
     assert len(calls) == 1
 
 
-@pytest.mark.parametrize("backend", ["bspline", "splev"])
+@pytest.mark.parametrize("backend,width", [("bspline", width) for width in (1, 2, 3, 8)] + [("splev", 1)])
 @pytest.mark.parametrize("k", range(1, 6))
-def test_spline_binary_arithmetic_calibration(backend, k):
+def test_spline_binary_arithmetic_calibration(backend, width, k):
     from fastscipy import _interpolate
 
     mode = _interpolate._spline_arithmetic(backend, k)
-    assert mode in range(4), "the installed SciPy should match a supported contraction scheme"
+    assert mode in range(5), "the installed SciPy should match a supported contraction scheme"
     r = rng(761 + k)
     t = knots("clamped", 60, k, r)
-    c = r.standard_normal((len(t) - k - 1, 1))
+    c = r.standard_normal((len(t) - k - 1, width))
     q = np.r_[r.uniform(-0.1, 1.1, 200), t]
     out = _interpolate._k.bspline_eval(t, c, k, q, mode)
     if backend == "bspline":
@@ -519,6 +519,40 @@ def test_spline_fused_and_unfused_value_sums():
     for mode in range(4):
         result = _interpolate._k.bspline_eval(t, c, 1, q, mode)
         assert_identical(result, np.array([[fused if mode & 2 else separate]]))
+
+
+@pytest.mark.parametrize("k", [4, 5])
+@pytest.mark.parametrize("width", [1, 2, 3, 8])
+def test_spline_scalar_unfused_prefix_fused_tail(k, width):
+    from fractions import Fraction
+
+    from fastscipy import _interpolate
+
+    r = rng(915 + k + width)
+    t = knots("clamped", 20, k, r)
+    n = len(t) - k - 1
+    c = r.standard_normal((n, width))
+    q = r.uniform(-0.1, 1.1, 19)
+    # Identity coefficients isolate the existing fused basis recurrence. Exact
+    # rational products independently check the new contraction boundary.
+    basis = _interpolate._k.bspline_eval(t, np.eye(n), k, q, 1)
+    expected = np.zeros((len(q), width))
+    for i, x in enumerate(q):
+        ell = max(k, min(n - 1, int(np.searchsorted(t, x, side="right")) - 1))
+        for a in range(k + 1):
+            for col in range(width):
+                coefficient, weight = float(c[ell - k + a, col]), float(basis[i, ell - k + a])
+                if width == 1 and a < 4:
+                    expected[i, col] += coefficient * weight
+                else:
+                    expected[i, col] = float(
+                        Fraction(float(expected[i, col])) + Fraction(coefficient) * Fraction(weight)
+                    )
+    out = _interpolate._k.bspline_eval(t, c, k, q, 4)
+    assert_identical(out, expected)
+    if width == 1:
+        assert out.tobytes() != _interpolate._k.bspline_eval(t, c, k, q, 1).tobytes()
+        assert out.tobytes() != _interpolate._k.bspline_eval(t, c, k, q, 3).tobytes()
 
 
 @pytest.mark.parametrize("nd", [2, 3])

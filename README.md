@@ -27,10 +27,9 @@ clean = ndimage.median_filter(image, size=3)
 
 ## Install and use
 
-The `0.1.0a2` candidate targets **Python 3.12–3.15 · SciPy 1.18**,
-with prebuilt wheels for **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
-and Windows. Validation is in progress; PyPI currently serves the Apple Silicon
-`0.1.0a1` release. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
+Prebuilt wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust required.
+Supports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
+and Windows. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 
 Call `patch()` before importing libraries that use SciPy.
 Use `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,

@@ -17,12 +17,25 @@ use crate::ndimage::common::Mode;
 // fadd. The randomized tests confirm that fusing exactly those expressions
 // reproduces SciPy bit for bit; computing them unfused does not. x86-64
 // baseline wheels have no FMA instructions, so there the product is rounded
-// before the addition. Official Linux aarch64 wheels also use separate multiply/add instructions
-// (verified in the 1.18.1 wheel's spline weights and filter recursions).
+// before the addition. Official Linux aarch64 wheels also use separate
+// multiply/add instructions (verified in the 1.18.1 wheel). Windows arm64
+// uses the same contractions as macOS: weights at RVA 0x15d70/0x15da4,
+// affine coordinates at 0xd1d0/0xd220/0xd228, and filter recursion and
+// mirror initialisation at 0x16078/0x16144/0x1616c/0x16170. Reference:
+// scipy-1.18.1-cp313-cp313-win_arm64.whl, SHA256
+// cd479fc04dd9401e3b4f49e76518768ef99c4f517a98c284eb091fd725719adf.
+// These instruction comparisons establish the contraction topology; native
+// Windows identity tests must still validate complete results.
 
-#[cfg(all(target_arch = "aarch64", target_os = "macos"))]
+#[cfg(all(
+    target_arch = "aarch64",
+    any(target_os = "macos", target_os = "windows")
+))]
 pub const FUSED: bool = true;
-#[cfg(not(all(target_arch = "aarch64", target_os = "macos")))]
+#[cfg(not(all(
+    target_arch = "aarch64",
+    any(target_os = "macos", target_os = "windows")
+)))]
 pub const FUSED: bool = false;
 
 /// `a * b + c` as SciPy computes a contracted C expression.

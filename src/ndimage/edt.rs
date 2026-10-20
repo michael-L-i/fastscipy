@@ -3,7 +3,7 @@
 //! The recursive C driver is equivalent to: initialise, then for d = 0..rank run
 //! `_VoronoiFT` along every line of axis d. Lines of one pass are independent,
 //! so they run in parallel. Arithmetic follows the C code, including the FMA
-//! contraction clang applies on macOS arm64. Official Linux wheels use
+//! contraction used on macOS and Windows arm64. Official Linux wheels use
 //! separate multiply/add instructions on both x86-64 and aarch64.
 
 use numpy::{PyArrayDyn, PyArrayMethods, PyUntypedArrayMethods};
@@ -12,9 +12,17 @@ use rayon::prelude::*;
 
 use crate::ndimage::common::pool;
 
+// Windows arm64 reference: the wheel SHA256 in interp/support.rs. Voronoi
+// squared-distance sums use fmadd at RVAs 0x158b8/0x15a60, and the predicate
+// uses fnmul/fmadd/fmsub/fnmul/fmadd at 0x1591c..0x1592c, matching the macOS
+// expression tree below. Full Windows byte identity still requires CI.
+
 #[inline(always)]
 fn madd(a: f64, b: f64, c: f64) -> f64 {
-    if cfg!(all(target_arch = "aarch64", target_os = "macos")) {
+    if cfg!(all(
+        target_arch = "aarch64",
+        any(target_os = "macos", target_os = "windows")
+    )) {
         a.mul_add(b, c)
     } else {
         a * b + c
@@ -90,7 +98,10 @@ unsafe fn voronoi_line<const R: usize, const S: bool>(
                     }
                 }
                 // c*vR - b*uR - a*wR - a*b*c <= 0, as contracted by clang
-                let t3 = if cfg!(all(target_arch = "aarch64", target_os = "macos")) {
+                let t3 = if cfg!(all(
+                    target_arch = "aarch64",
+                    any(target_os = "macos", target_os = "windows")
+                )) {
                     let t1 = madd(c, vr, -(b * ur));
                     let t2 = madd(-a, wr, t1);
                     madd(-(a * b), c, t2)

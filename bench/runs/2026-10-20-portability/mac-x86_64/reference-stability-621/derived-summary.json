@@ -1,0 +1,142 @@
+{
+  "description": "Derived counts from unchanged native diagnostic summary; no numeric tests rerun.",
+  "all_components_patch_status": {
+    "sparse_linalg": "on",
+    "ndimage": "on",
+    "special": "on",
+    "stats": "on",
+    "signal": "on",
+    "sparse": "on",
+    "linalg": "on",
+    "interpolate": "on",
+    "spatial": "on",
+    "csgraph": "on",
+    "cluster": "on",
+    "integrate": "on",
+    "optimize": "on"
+  },
+  "matrix_count": 4,
+  "direct_byte_checks": 96,
+  "direct_byte_check_failures": 0,
+  "matrix_buffers_identical": true,
+  "all_solver_inputs_unchanged": true,
+  "solver_cases": {
+    "all-lsqr-float64-csr_array": {
+      "baseline_variants": 2,
+      "patched_variants": 2,
+      "baseline_result_sha256": [
+        "2f365ba023c86ee44d453d1736cc8be118a9f29aad8fd600c104ad0238cf8ae6",
+        "42d8f658d5e2e28ad59c3294b13afcf263a9517e382b1a25d2da233f1d033319"
+      ],
+      "patched_result_sha256": [
+        "2f365ba023c86ee44d453d1736cc8be118a9f29aad8fd600c104ad0238cf8ae6",
+        "42d8f658d5e2e28ad59c3294b13afcf263a9517e382b1a25d2da233f1d033319"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsmr-float64-csr_array": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "c5d740e3e1517fec6ecc00f6f5392fc19846321b4810921b25fc6a42fcde7ff7"
+      ],
+      "patched_result_sha256": [
+        "c5d740e3e1517fec6ecc00f6f5392fc19846321b4810921b25fc6a42fcde7ff7"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsqr-float64-csc_matrix": {
+      "baseline_variants": 2,
+      "patched_variants": 2,
+      "baseline_result_sha256": [
+        "2f365ba023c86ee44d453d1736cc8be118a9f29aad8fd600c104ad0238cf8ae6",
+        "42d8f658d5e2e28ad59c3294b13afcf263a9517e382b1a25d2da233f1d033319"
+      ],
+      "patched_result_sha256": [
+        "2f365ba023c86ee44d453d1736cc8be118a9f29aad8fd600c104ad0238cf8ae6",
+        "42d8f658d5e2e28ad59c3294b13afcf263a9517e382b1a25d2da233f1d033319"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsmr-float64-csc_matrix": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "c5d740e3e1517fec6ecc00f6f5392fc19846321b4810921b25fc6a42fcde7ff7"
+      ],
+      "patched_result_sha256": [
+        "c5d740e3e1517fec6ecc00f6f5392fc19846321b4810921b25fc6a42fcde7ff7"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsqr-complex128-csr_array": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "2a2d3298e6bae385ecd7b3de176d279cb64e6c57c44d4eafffa277dfb3790922"
+      ],
+      "patched_result_sha256": [
+        "2a2d3298e6bae385ecd7b3de176d279cb64e6c57c44d4eafffa277dfb3790922"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsmr-complex128-csr_array": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "bf81cf0bbba10773b3381688f280f986c305704a1f7b135b88d2ff426d038d86"
+      ],
+      "patched_result_sha256": [
+        "bf81cf0bbba10773b3381688f280f986c305704a1f7b135b88d2ff426d038d86"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsqr-complex128-csc_matrix": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "2a2d3298e6bae385ecd7b3de176d279cb64e6c57c44d4eafffa277dfb3790922"
+      ],
+      "patched_result_sha256": [
+        "2a2d3298e6bae385ecd7b3de176d279cb64e6c57c44d4eafffa277dfb3790922"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    },
+    "all-lsmr-complex128-csc_matrix": {
+      "baseline_variants": 1,
+      "patched_variants": 1,
+      "baseline_result_sha256": [
+        "bf81cf0bbba10773b3381688f280f986c305704a1f7b135b88d2ff426d038d86"
+      ],
+      "patched_result_sha256": [
+        "bf81cf0bbba10773b3381688f280f986c305704a1f7b135b88d2ff426d038d86"
+      ],
+      "observed_result_sets_equal": true,
+      "interleaved_pairs": 4,
+      "interleaved_identical_pairs": 4,
+      "input_unchanged": true
+    }
+  },
+  "scope": "Float64 LSQR baseline and patched each exhibit two exact variants with all components patched; this does not certify a newer wheel or excuse arbitrary mismatches."
+}

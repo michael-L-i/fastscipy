@@ -1,0 +1,44 @@
+{
+  "probe_interpolate_platform": {
+    "returncode": 0,
+    "seconds": 49.337879644,
+    "peak_rss_bytes": 91873280,
+    "stopped": null
+  },
+  "probe_ndimage_cast_platform": {
+    "returncode": 0,
+    "seconds": 4.930142298999954,
+    "peak_rss_bytes": 151715840,
+    "stopped": null
+  },
+  "probe_ndimage_platform": {
+    "returncode": 0,
+    "seconds": 2.285974213999964,
+    "peak_rss_bytes": 92471296,
+    "stopped": null
+  },
+  "probe_optimize_platform": {
+    "returncode": 0,
+    "seconds": 3.209091120000039,
+    "peak_rss_bytes": 90877952,
+    "stopped": null
+  },
+  "probe_sparse_linalg_platform": {
+    "returncode": 0,
+    "seconds": 3.794387051000001,
+    "peak_rss_bytes": 96595968,
+    "stopped": null
+  },
+  "probe_stats_platform": {
+    "returncode": 0,
+    "seconds": 3.776122078999947,
+    "peak_rss_bytes": 99749888,
+    "stopped": null
+  },
+  "probe_upstream_platform": {
+    "returncode": 0,
+    "seconds": 0.25134882399999015,
+    "peak_rss_bytes": 2883584,
+    "stopped": null
+  }
+}

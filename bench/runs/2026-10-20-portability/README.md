@@ -120,6 +120,13 @@ reports, provenance, source/wheel hashes, and hashes for external sparse
 arrays. It does not establish a numerical exception or resolve independent
 LSQR discrepancies.
 
+The [second Intel Mac sparse-reference diagnostics](mac-x86_64/reference-stability-621/README.md)
+reuse the same native `daf9acd` wheel with diagnostic checkout `62147de` and
+all 13 components enabled. All 96 direct sparse byte checks passed; float64
+LSQR produced two exact variants on both reference and patched sides, with
+unchanged input buffers. Unchanged reports and an external-array hash manifest
+retain this narrower evidence separately from the earlier diagnostics.
+
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.
 

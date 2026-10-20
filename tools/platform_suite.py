@@ -169,7 +169,18 @@ def main():
                 "all_case_speedup_nt": mean([row["xnt"] for row in rows.values()]),
             }
     if args.upstream:
-        execute("upstream", ["tools/scipy_suite.py", "--partitioned", "--pyargs", "scipy"], args.upstream_timeout)
+        execute(
+            "upstream",
+            [
+                "tools/scipy_suite.py",
+                "--partitioned",
+                "--output-dir",
+                str(output / "upstream-junit"),
+                "--pyargs",
+                "scipy",
+            ],
+            args.upstream_timeout,
+        )
     (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     bad = any(run["returncode"] != 0 for run in report["runs"].values())
     if not args.tests_only:

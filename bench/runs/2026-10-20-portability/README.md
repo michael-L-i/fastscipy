@@ -161,3 +161,11 @@ solutions satisfy the requested residual bound, while the other nine solver
 counts remain stable. Original reports, exact probe source, external NPZ
 hashes, and derived per-scope analysis are retained. This is reference
 stability evidence, not a production fix or release certification.
+
+The [remaining Intel overlay checks](mac-x86_64/python-remaining-3df/README.md)
+**failed** at source `3df5f54`: 817 selected tests passed and four test-validator
+checks failed (DIA stored-zero symmetry counting and Pearson validator return
+type). The targeted special/stats benchmarks completed all 95 cases with
+byte identity and expected acceleration. Original reports and distinct
+Python-source/reused-native provenance are retained; this is not a complete
+project, 407-case, or newly built release-wheel pass.

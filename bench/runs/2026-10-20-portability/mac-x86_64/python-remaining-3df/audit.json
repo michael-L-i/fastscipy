@@ -1,0 +1,147 @@
+{
+  "purpose": "derived_failed_targeted_python_overlay_audit_not_release_certification",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39454435225",
+  "overall": "FAILED: four targeted test-validator failures; benchmark-only subset completed",
+  "source_head": "3df5f549c891063cf192d96063df1167dd216d35",
+  "reused_native_source": "daf9acd697e89612d1bede34d569522ea35fd7d7",
+  "partial_coverage": true,
+  "full_project_rerun": false,
+  "full_407_case_validation": false,
+  "upstream_requested": false,
+  "source_files_verified_against_git": [
+    "python/fastscipy/__init__.py",
+    "python/fastscipy/_cluster.py",
+    "python/fastscipy/_csgraph.py",
+    "python/fastscipy/_integrate.py",
+    "python/fastscipy/_interpolate.py",
+    "python/fastscipy/_linalg.py",
+    "python/fastscipy/_ndimage.py",
+    "python/fastscipy/_ndimage_correlate.py",
+    "python/fastscipy/_ndimage_generic.py",
+    "python/fastscipy/_ndimage_interp.py",
+    "python/fastscipy/_ndimage_label.py",
+    "python/fastscipy/_ndimage_morph.py",
+    "python/fastscipy/_ndimage_rank.py",
+    "python/fastscipy/_ndimage_seam.py",
+    "python/fastscipy/_optimize.py",
+    "python/fastscipy/_patch.py",
+    "python/fastscipy/_signal.py",
+    "python/fastscipy/_signal_algo.py",
+    "python/fastscipy/_signal_small.py",
+    "python/fastscipy/_signal_threads.py",
+    "python/fastscipy/_sparse.py",
+    "python/fastscipy/_sparse_linalg.py",
+    "python/fastscipy/_spatial.py",
+    "python/fastscipy/_special.py",
+    "python/fastscipy/_stats.py",
+    "python/fastscipy/_stats_algos.py",
+    "python/fastscipy/_stats_dist.py",
+    "python/fastscipy/_stats_loop.py",
+    "python/fastscipy/_stats_rank.py",
+    "python/fastscipy/_threads.py",
+    "python/fastscipy/pytest_plugin.py",
+    "python/fastscipy/testing.py",
+    "tools/probe_python_source_platform.py",
+    "tools/probe_python_remaining_platform.py",
+    "tools/platform_suite.py",
+    "bench/run.py",
+    "bench/bench_special.py",
+    "bench/bench_stats.py",
+    "tests/test_sparse_linalg.py",
+    "tests/test_stats.py",
+    "tests/test_reference_variance.py",
+    "tests/test_bench_reference.py",
+    "tests/test_optimize.py"
+  ],
+  "native_source_git_diff_empty_independently_verified": true,
+  "override_absence_recorded_at_runtime": true,
+  "overlay_import_verified": true,
+  "outer_monitor": {
+    "returncode": 1,
+    "seconds": 583.4523783999999,
+    "peak_rss_bytes": 813088768,
+    "stopped": null
+  },
+  "inner_monitor": {
+    "returncode": 1,
+    "seconds": 580.42874982,
+    "peak_rss_bytes": 776032256,
+    "stopped": null,
+    "purpose": "partial_current_python_remaining_tests_and_95_cases_reused_native_not_release_certification",
+    "memory_limit_mib": 4096,
+    "timeout_seconds": 1200
+  },
+  "tests": {
+    "selected": 821,
+    "passed": 817,
+    "failed": 4,
+    "skipped": 0
+  },
+  "benchmarks": {
+    "completed": 95,
+    "byte_identical": 95,
+    "missing_expected_fast_paths": 0,
+    "areas": {
+      "special": 37,
+      "stats": 58
+    }
+  },
+  "failure_interpretation": "Failures occurred in test-validator code: DIA .nnz includes stored zeros, and numpy.bool_ is rejected by the strict callback return contract. Later fixes require their own validation; this result is not a pass.",
+  "original_files": [
+    {
+      "file": "provenance.json",
+      "bytes": 702,
+      "sha256": "d7e3ac1a3264142005b565e15436d00030f768a19d2c7e3965a10fb194d91ce8"
+    },
+    {
+      "file": "diagnostics.json",
+      "bytes": 154,
+      "sha256": "c8cf2ea1166e7b3b02e326d8c9d9c3fd58aa744ff3eae11eb16012014b9c9214"
+    },
+    {
+      "file": "sources.json",
+      "bytes": 7796,
+      "sha256": "c4b411a3166a63a2214cf76ad6b959cce560c7297e78dccad03aab1e9e00210c"
+    },
+    {
+      "file": "monitor.json",
+      "bytes": 261,
+      "sha256": "e0060ab2c57cd01a0cb1f84dc8ac993a003af4eeab41908a35cf8b6bfee07cb7"
+    },
+    {
+      "file": "overlay-import.json",
+      "bytes": 830,
+      "sha256": "29f57e380fa033ea51a7a405ecde056d1446f958ed8e948b9ef1ec7208400ee0"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 57640,
+      "sha256": "d5a1bf613cceaba7f202a0f37739f93cd694668cdadb4bbbc86e5de68b2d128d"
+    },
+    {
+      "file": "summary.runner.json",
+      "bytes": 57169,
+      "sha256": "0b8ecf384a5bae5bc6c47d84dada3b2af25043664b530b418505b707186c7e35"
+    },
+    {
+      "file": "reference-variance.jsonl",
+      "bytes": 49321,
+      "sha256": "16477ca3fe435149f3e2bbb738ff148e6e11ef48438a7be03b31a7ba2bec7c62"
+    },
+    {
+      "file": "cases/special.json",
+      "bytes": 11297,
+      "sha256": "7c639615dae2e0da4afd468256078c6579785d57b6838eb48695071a961de35c"
+    },
+    {
+      "file": "cases/stats.json",
+      "bytes": 17287,
+      "sha256": "43f97bce83b67405a19311ed1d65c59357621449504637f81c9824a3fe24c203"
+    },
+    {
+      "file": "suite.log",
+      "bytes": 118,
+      "sha256": "0d31dde709382c37253a6219a7068bc49a9d99ef7fca970bde1d2aa860e20f06"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "purpose": "partial_current_python_remaining_tests_and_95_cases_reused_native_not_release_certification",
+  "package_path": "/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-uw4vak71/fastscipy/__init__.py",
+  "native_path": "/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/fastscipy-python-source-uw4vak71/fastscipy/_native.cpython-313-darwin.so",
+  "overlay_import_verified": true,
+  "environment": {
+    "FASTSCIPY_ANY_PLATFORM": null,
+    "FASTSCIPY_ANY_VERSION": null,
+    "FASTSCIPY_STRICT": "1",
+    "FASTSCIPY_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "BLIS_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "FASTSCIPY_BUILD_REVISION": "3df5f549c891063cf192d96063df1167dd216d35"
+  }
+}

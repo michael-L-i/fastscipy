@@ -1,0 +1,48 @@
+{
+  "description": "Derived targeted-test failures; original XML and test log remain in the external Actions artifact",
+  "tests": 821,
+  "passed": 817,
+  "failed": 4,
+  "skipped": 0,
+  "raw_xml": {
+    "file": "python-source-intel-remaining/suite/tests.xml",
+    "bytes": 93911,
+    "sha256": "bc108126fb484675cf08aabd74081f24ab8f79fbc8203a0286a9b69d0e59b8b7"
+  },
+  "raw_test_log": {
+    "file": "python-source-intel-remaining/suite/selected_tests.log",
+    "bytes": 9166,
+    "sha256": "6d71b57a87a7f2e6ca4075b17f639e5091d5c404319ce43e63f9e86bbe1994e0"
+  },
+  "trace_hash_encoding": "UTF-8 of XML-decoded message/trace",
+  "failures": [
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[1-100-bicgstab]",
+      "group": "BiCGSTAB validator counts DIA stored zeros as nonzero symmetry entries",
+      "message": "AssertionError: assert 298 == 0\n +  where 298 = (<DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)> - <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)>).nnz\n +    where <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)> = <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)>.T",
+      "message_sha256": "49d12ac673284fc9abeb76662818d7746b907e8d6b85b8257a84a024bbe1b6e7",
+      "trace_sha256": "de9c094069eb7781e4f979ee3273e52d952784b2a05799a97b4a4c62515d78e4"
+    },
+    {
+      "test": "tests.test_sparse_linalg::test_solver_results_and_iteration_history[2-100-bicgstab]",
+      "group": "BiCGSTAB validator counts DIA stored zeros as nonzero symmetry entries",
+      "message": "AssertionError: assert 298 == 0\n +  where 298 = (<DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)> - <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)>).nnz\n +    where <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)> = <DIAgonal sparse array of dtype 'float64'\\n\twith 298 stored elements (3 diagonals) and shape (100, 100)>.T",
+      "message_sha256": "49d12ac673284fc9abeb76662818d7746b907e8d6b85b8257a84a024bbe1b6e7",
+      "trace_sha256": "de9c094069eb7781e4f979ee3273e52d952784b2a05799a97b4a4c62515d78e4"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[1t-pearsonr]",
+      "group": "Pearson validator returns numpy.bool_, strict helper requires None or Python True",
+      "message": "AssertionError: reference validator rejected result",
+      "message_sha256": "6b5ede4d365f2c7245073294854e0c2a7af713f9c0b9db4013a703ddc3940577",
+      "trace_sha256": "30263cb1de896117b619d5907294d559e785c64ccbfd194d0c0bb284fbbe5910"
+    },
+    {
+      "test": "tests.test_stats::test_function_randomized[4t-pearsonr]",
+      "group": "Pearson validator returns numpy.bool_, strict helper requires None or Python True",
+      "message": "AssertionError: reference validator rejected result",
+      "message_sha256": "6b5ede4d365f2c7245073294854e0c2a7af713f9c0b9db4013a703ddc3940577",
+      "trace_sha256": "30263cb1de896117b619d5907294d559e785c64ccbfd194d0c0bb284fbbe5910"
+    }
+  ]
+}

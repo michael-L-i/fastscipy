@@ -1,0 +1,9 @@
+{
+  "returncode": 1,
+  "seconds": 580.42874982,
+  "peak_rss_bytes": 776032256,
+  "stopped": null,
+  "purpose": "partial_current_python_remaining_tests_and_95_cases_reused_native_not_release_certification",
+  "memory_limit_mib": 4096,
+  "timeout_seconds": 1200
+}

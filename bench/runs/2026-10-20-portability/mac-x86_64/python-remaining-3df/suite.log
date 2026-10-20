@@ -1,0 +1,3 @@
+selected_tests: exit=1, 108.2s, peak=154 MiB
+special: exit=0, 408.9s, peak=710 MiB
+stats: exit=0, 62.6s, peak=348 MiB

@@ -1,0 +1,8 @@
+{
+  "probe_python_remaining_platform": {
+    "returncode": 1,
+    "seconds": 583.4523783999999,
+    "peak_rss_bytes": 813088768,
+    "stopped": null
+  }
+}

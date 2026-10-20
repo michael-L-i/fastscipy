@@ -88,9 +88,9 @@ Builds use one Cargo job and bounded numerical thread and memory budgets.
 Publish a target only after its wheel validation finishes successfully.
 
 To rehearse, run the workflow manually with `publish: none`. After all jobs
-succeed, download the eight `release-dist-<target>` artifacts, each containing
-four wheels, and the `release-dist-sdist` source archive. Review the
-`release-report-<target>` validation logs alongside them. `publish: testpypi`
+succeed, download the 32 `release-dist-<target>-<interpreter>` wheel artifacts
+and the `release-dist-sdist` source archive. Review the corresponding
+`release-report-<target>-<interpreter>` validation logs. `publish: testpypi`
 exercises an upload to TestPyPI. Publishing to PyPI requires a matching `v<version>` tag;
 version declarations in Python, Cargo and the lockfile must agree.
 

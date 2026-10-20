@@ -1,6 +1,7 @@
 """Byte-identity of fastscipy's scipy.ndimage fast paths against plain SciPy."""
 
 import os
+import math
 
 import numpy as np
 import pytest
@@ -93,6 +94,32 @@ def test_correlate1d(seed):
             output=None if rng.random() < 0.6 else pick(rng, DTYPES),
         )
         check(lambda: getattr(ndi, fn.__name__)(x, w, **kw))
+
+
+@pytest.mark.parametrize("kind", ["sym", "anti", "general"])
+def test_correlate_four_tap_prefix(kind):
+    from fastscipy._ndimage_seam import core
+    from tools.probe_ndimage_platform import windows_arm64_reference
+
+    rng = np.random.default_rng(913)
+    x = rng.standard_normal(67) * 100
+    channels = np.vstack([x, x[::-1], x * 0.5])
+    # Around the six-iteration vectorization threshold and four/eight-tap
+    # boundaries, including filters that use the generic kernel family.
+    for iterations in (4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 16, 17, 31, 32):
+        if kind == "general":
+            w = rng.standard_normal(iterations + 1)
+        else:
+            half = rng.standard_normal(iterations)
+            w = np.r_[half, rng.standard_normal(1), half[::-1] if kind == "sym" else -half[::-1]]
+        check(lambda: ndi.correlate1d(x, w))
+        check(lambda: ndi.correlate1d(channels, w, axis=1))
+        check(lambda: ndi.correlate1d(channels.T, w, axis=0))
+        if hasattr(math, "fma"):
+            expected = windows_arm64_reference(x, w, kind)
+            got = np.empty_like(x)
+            assert core.corr_correlate1d(x, w, 0, got, 2, 0.0, 0, 3)
+            assert expected.tobytes() == got.tobytes()
 
 
 @pytest.mark.parametrize("seed", SEEDS)

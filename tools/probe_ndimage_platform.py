@@ -1,5 +1,6 @@
 """Small, deterministic diagnostics for ndimage compiler/platform differences."""
 
+import math
 import platform
 import sys
 import traceback
@@ -40,7 +41,7 @@ def filters():
             probes.append(("anti", np.r_[half, rng.standard_normal(1), -half[::-1]]))
     for size in list(range(2, 26)) + [40, 41]:
         probes.append(("general", rng.standard_normal(size)))
-    for scheme in range(3):
+    for scheme in range(4):
         matches = 0
         first = set()
         for kind, weights in probes:
@@ -53,6 +54,14 @@ def filters():
                 compare(f"correlate1d scheme={scheme} {kind} size={weights.size} accepted={accepted}", ref, got)
                 first.add(kind)
         print("correlate1d scheme", scheme, "matches", matches, "/", len(probes), flush=True)
+    if hasattr(math, "fma"):
+        matches = 0
+        for kind, weights in probes:
+            ref = np.zeros_like(x)
+            orig.correlate1d(x, weights, 0, ref, 2, 0.0, 0)
+            got = windows_arm64_reference(x, weights, kind)
+            matches += compare(f"correlate1d Windows arm64 software {kind} size={weights.size}", ref, got)
+        print("correlate1d Windows arm64 software matches", matches, "/", len(probes), flush=True)
     for size in [1, 2, 3, 11, 31, 80]:
         ref, got = np.zeros_like(x), np.zeros_like(x)
         orig.uniform_filter1d(x, size, 0, ref, 2, 0.0, 0)
@@ -73,6 +82,27 @@ def filters():
         orig.uniform_filter1d(x, 1, 0, ref, 2, 0.0, 0)
         accepted = core.corr_uniform_filter1d(x, 1, 0, got, 2, 0.0, 0)
         print("cast", char, "accepted", accepted, "same", compare("line cast " + char, ref, got), flush=True)
+
+
+def windows_arm64_reference(x, weights, kind):
+    """Mirror the observed four-tap unfused prefix and fused scalar tail."""
+    size, half = len(weights), len(weights) // 2
+    padded = np.pad(x, (half, size - half - 1), mode="symmetric")
+    iterations = size - 1 if kind == "general" else half
+    unfused = iterations & ~3 if iterations >= 6 else 0
+    out = np.empty_like(x)
+    for j in range(len(x)):
+        line = padded[j : j + size]
+        center = size - 1 if kind == "general" else half
+        acc = float(line[center]) * float(weights[center])
+        for i in range(iterations):
+            value = float(line[i])
+            if kind != "general":
+                value = value + float(line[size - 1 - i]) if kind == "sym" else value - float(line[size - 1 - i])
+            weight = float(weights[i])
+            acc = acc + value * weight if i < unfused else math.fma(value, weight, acc)
+        out[j] = acc
+    return out
 
 
 def public_case(name, fn):

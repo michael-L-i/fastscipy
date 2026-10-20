@@ -32,7 +32,7 @@ def _dtype_ok(dt):
 # Calibration against the installed SciPy
 
 # Correlate1D FMA schemes (see src/correlate/kern.rs).
-_UNFUSED, _FUSED, _CLANG_ARM64 = 0, 1, 2
+_UNFUSED, _FUSED, _CLANG_ARM64, _CLANG_WIN_ARM64 = 0, 1, 2, 3
 
 _cal = None
 _cal_lock = threading.Lock()
@@ -129,9 +129,14 @@ def _calibrate():
 
     machine = platform.machine().lower()
     if machine in ("arm64", "aarch64"):
-        order = [_CLANG_ARM64, _FUSED, _UNFUSED] if sys.platform == "darwin" else [_FUSED, _CLANG_ARM64, _UNFUSED]
+        if sys.platform == "darwin":
+            order = [_CLANG_ARM64, _FUSED, _UNFUSED, _CLANG_WIN_ARM64]
+        elif sys.platform == "win32":
+            order = [_CLANG_WIN_ARM64, _FUSED, _CLANG_ARM64, _UNFUSED]
+        else:
+            order = [_FUSED, _CLANG_ARM64, _UNFUSED, _CLANG_WIN_ARM64]
     else:
-        order = [_UNFUSED, _FUSED, _CLANG_ARM64]
+        order = [_UNFUSED, _FUSED, _CLANG_ARM64, _CLANG_WIN_ARM64]
     scheme = next((s for s in order if all(c1d_ok(s, w) for w in probes)), None)
 
     def uniform_ok(size, data=x, out_dtype=np.float64):

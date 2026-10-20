@@ -31,6 +31,11 @@ pub enum Kind {
 pub const SCHEME_UNFUSED: u32 = 0;
 pub const SCHEME_FUSED: u32 = 1;
 pub const SCHEME_CLANG_ARM64: u32 = 2;
+/// Windows arm64 clang vectorizes all three filter kinds in groups of four
+/// once the inner loop has at least six taps; only the scalar tail is fused.
+/// SciPy 1.18.1 win_arm64: size checks at RVAs 0x6248/0x660c/0x6978;
+/// ordered unfused reductions at 0x6294..0x62c0 and 0x69b8..0x69d4.
+pub const SCHEME_CLANG_WIN_ARM64: u32 = 3;
 
 /// A 1-D correlation as `NI_Correlate1D` evaluates it.
 pub struct Prog {
@@ -67,6 +72,13 @@ impl Prog {
             SCHEME_CLANG_ARM64 => {
                 if kind != Kind::Gen && size1 >= 10 {
                     size1 & !7
+                } else {
+                    0
+                }
+            }
+            SCHEME_CLANG_WIN_ARM64 => {
+                if iters >= 6 {
+                    iters & !3
                 } else {
                     0
                 }

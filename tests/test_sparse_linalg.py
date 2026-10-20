@@ -78,7 +78,7 @@ def _bicgstab_reference_validation(a, b, rtol):
         with fastscipy.disabled():
             # This exact fixture is symmetric and strictly diagonally dominant.
             # Gershgorin bounds its smallest eigenvalue, hence ||A^-1||_2.
-            assert (a - a.T).nnz == 0
+            assert (a - a.T).count_nonzero() == 0, "fixture must be symmetric"
             magnitude = abs(a)
             lower = np.min(2 * a.diagonal() - np.asarray(magnitude.sum(axis=1)).ravel())
             assert lower >= 1.5
@@ -217,6 +217,31 @@ def test_bicgstab_reference_validator_accepts_distinct_valid_histories():
     expected = ((x, 0), [np.zeros(2)])
     actual = ((np.nextafter(x, np.inf), 0), [np.ones(2), x.copy()])
     _bicgstab_reference_validation(a, b, 1e-9)(expected, actual)
+
+
+def test_bicgstab_reference_validator_handles_actual_dia_fixture():
+    n = 100
+    a = sparse.diags_array([np.full(n - 1, -0.5), np.arange(n) + 2.0, np.full(n - 1, -0.5)], offsets=[-1, 0, 1])
+    b = np.random.default_rng(n).standard_normal(n)
+    with fastscipy.disabled():
+        # DIA retains stored zero entries in A - A.T. Storage nnz is therefore
+        # not a symmetry predicate, even though the matrix is exactly symmetric.
+        difference = a - a.T
+        assert difference.nnz > 0 and difference.count_nonzero() == 0
+        history = []
+        result = sl.bicgstab(a, b, rtol=1e-9, callback=lambda x: history.append(x.copy()))
+    output = (result, history)
+    _bicgstab_reference_validation(a, b, 1e-9)(output, output)
+
+
+def test_bicgstab_reference_validator_rejects_nonsymmetric_fixture():
+    a = sparse.diags_array([[0.5], [2.0, 3.0]], offsets=[1, 0], shape=(2, 2))
+    x = np.ones(2)
+    with fastscipy.disabled():
+        b = a @ x
+    output = ((x, 0), [x.copy()])
+    with pytest.raises(AssertionError, match="symmetric"):
+        _bicgstab_reference_validation(a, b, 1e-9)(output, output)
 
 
 @pytest.mark.parametrize("fault", ["solution", "nonfinite", "empty", "too_many", "shape", "dtype", "info"])

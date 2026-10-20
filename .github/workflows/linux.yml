@@ -19,6 +19,10 @@ on:
         description: "Diagnostics only: reuse this run's platform wheel artifact instead of building"
         default: ""
         type: string
+      probes:
+        description: "Diagnostics only: all, or comma-separated probe script names without .py"
+        default: all
+        type: string
       upstream:
         description: "Also compare the full upstream SciPy suite"
         type: boolean
@@ -56,12 +60,14 @@ jobs:
           MODE: ${{ inputs.mode || 'full' }}
           WHEEL_RUN: ${{ inputs.wheel_run }}
           UPSTREAM: ${{ inputs.upstream }}
+          PROBES: ${{ inputs.probes || 'all' }}
         run: |
           python - <<'PY'
           import json, os
           wheel_run = os.environ["WHEEL_RUN"]
           assert not wheel_run or (os.environ["MODE"] == "diagnostics" and wheel_run.isdecimal()), "wheel_run requires mode=diagnostics and a numeric run ID"
           assert os.environ["MODE"] != "diagnostics" or os.environ["UPSTREAM"] != "true", "diagnostics cannot request upstream validation"
+          assert os.environ["PROBES"] == "all" or os.environ["MODE"] == "diagnostics", "probe selection requires diagnostics mode"
           targets = [
               {"name": "linux-arm64", "os": "ubuntu-24.04-arm"},
               {"name": "linux-x86_64", "os": "ubuntu-24.04"},
@@ -194,18 +200,26 @@ jobs:
         run: python tools/probe_ndimage_platform.py
       - name: Bounded diagnostics only
         if: ${{ inputs.mode == 'diagnostics' }}
+        env:
+          PROBES: ${{ inputs.probes || 'all' }}
         run: |
           python - <<'PY'
-          import json, sys
+          import json, os, sys
           from pathlib import Path
           from tools.platform_suite import run
           Path("artifacts").mkdir(exist_ok=True)
           results = {}
-          for probe in sorted(Path("tools").glob("probe_*_platform.py")):
-              # Only the full Python-overlay diagnostic needs the full-suite budget.
-              memory, timeout = (4096, 1200) if probe.name == "probe_python_source_platform.py" else (1024, 120)
+          available = {p.stem: p for p in Path("tools").glob("probe_*_platform.py")}
+          requested = {p.strip() for p in os.environ["PROBES"].split(",")}
+          assert requested == {"all"} or requested and requested <= available.keys(), "Unknown or empty diagnostic selection"
+          selected = sorted(available) if requested == {"all"} else sorted(requested)
+          for name in selected:
+              probe = available[name]
+              # Leave overhead headroom beyond each overlay's inner watchdog.
+              budgets = {"probe_python_source_platform": (4096, 2460), "probe_python_remaining_platform": (4096, 1260)}
+              memory, timeout = budgets.get(name, (1024, 120))
               results[probe.stem] = run([sys.executable, str(probe)], Path("artifacts") / f"{probe.stem}.log", memory, timeout)
-          Path("artifacts/diagnostics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+              Path("artifacts/diagnostics.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
           sys.exit(any(result["returncode"] for result in results.values()))
           PY
       - name: Correctness and all-area benchmarks

@@ -21,6 +21,21 @@ import psutil
 import scipy
 
 ROOT = Path(__file__).resolve().parent.parent
+AREAS = {
+    "cluster",
+    "csgraph",
+    "integrate",
+    "interpolate",
+    "linalg",
+    "ndimage",
+    "optimize",
+    "signal",
+    "sparse",
+    "sparse_linalg",
+    "spatial",
+    "special",
+    "stats",
+}
 
 
 def run(command, log, memory_mb, timeout):
@@ -87,6 +102,9 @@ def main():
     if output.exists() and any(output.iterdir()):
         parser.error("Choose an empty output directory so stale results cannot enter this report")
     output.mkdir(parents=True, exist_ok=True)
+    benchmark_files = sorted((ROOT / "bench").glob("bench_*.py"))
+    if not args.tests_only and {path.stem.removeprefix("bench_") for path in benchmark_files} != AREAS:
+        parser.error("Run from a complete source checkout containing benchmarks for all 13 areas")
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
     report = {
@@ -123,7 +141,7 @@ def main():
         if xml.exists():
             report["tests"] = [dict(suite.attrib) for suite in ET.parse(xml).getroot().iter("testsuite")]
     if not args.tests_only:
-        for path in sorted((ROOT / "bench").glob("bench_*.py")):
+        for path in benchmark_files:
             area = path.stem.removeprefix("bench_")
             execute(area, ["bench/run.py", area, "--budget", str(args.budget), "--output-dir", str(output / "cases")])
             data = output / "cases" / f"{area}.json"
@@ -145,6 +163,8 @@ def main():
         execute("upstream", ["tools/scipy_suite.py", "--pyargs", "scipy", "-n", "2"])
     (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     bad = any(run["returncode"] != 0 for run in report["runs"].values())
+    if not args.tests_only:
+        bad |= report["areas"].keys() != AREAS
     bad |= any(area["nonidentical"] or area["missing_fast_path"] for area in report["areas"].values())
     sys.exit(bool(bad))
 

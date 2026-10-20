@@ -25,19 +25,26 @@ def stats():
 
 
 def require_validated(*prefixes):
-    """Refuse to patch outside what a component was validated on: SciPy versions
-    starting with ``prefixes``, on macOS arm64. Byte-identical results depend on
-    how SciPy's wheels were compiled (FMA contraction, BLAS), which differs by
-    platform. ``FASTSCIPY_ANY_VERSION=1`` and ``FASTSCIPY_ANY_PLATFORM=1`` override."""
+    """Gate component versions and candidate 64-bit platform families.
+
+    Per-kernel arithmetic calibration and release validation remain necessary:
+    accepting a platform family does not certify a particular SciPy wheel.
+    ``FASTSCIPY_ANY_VERSION=1`` and ``FASTSCIPY_ANY_PLATFORM=1`` override.
+    """
     import platform
 
     import scipy
 
     if not scipy.__version__.startswith(prefixes) and not os.environ.get("FASTSCIPY_ANY_VERSION"):
         raise RuntimeError(f"validated on SciPy {', '.join(prefixes)}, found {scipy.__version__}")
-    here = f"{sys.platform}-{platform.machine()}"
-    if here != "darwin-arm64" and not os.environ.get("FASTSCIPY_ANY_PLATFORM"):
-        raise RuntimeError(f"validated on macOS arm64 only, found {here}")
+    system, machine = sys.platform.lower(), platform.machine().lower()
+    candidates = {
+        "darwin": {"arm64", "x86_64"},
+        "linux": {"aarch64", "arm64", "x86_64", "amd64"},
+        "win32": {"arm64", "amd64", "x86_64"},
+    }
+    if machine not in candidates.get(system, ()) and not os.environ.get("FASTSCIPY_ANY_PLATFORM"):
+        raise RuntimeError(f"outside candidate 64-bit platforms, found {system}-{machine}")
 
 
 def replace(owner, attr, new):

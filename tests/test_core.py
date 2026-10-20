@@ -280,12 +280,75 @@ def test_forked_child_does_not_hang():
 
 def test_unvalidated_platform_is_refused(monkeypatch):
     fastscipy.unpatch(["integrate"])
-    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(sys, "platform", "unknown-os")
     monkeypatch.delenv("FASTSCIPY_ANY_PLATFORM", raising=False)
-    assert fastscipy.patch(["integrate"])["integrate"].startswith("off: RuntimeError: validated on macOS arm64")
+    assert fastscipy.patch(["integrate"])["integrate"].startswith(
+        "off: RuntimeError: outside candidate 64-bit platforms"
+    )
     fastscipy.unpatch(["integrate"])
     monkeypatch.undo()
     assert fastscipy.patch(["integrate"])["integrate"] == "on"
+
+
+@pytest.mark.parametrize(
+    "system,machine",
+    [
+        ("darwin", "arm64"),
+        ("Darwin", "X86_64"),
+        ("linux", "aarch64"),
+        ("Linux", "ARM64"),
+        ("linux", "x86_64"),
+        ("linux", "AMD64"),
+        ("win32", "ARM64"),
+        ("WIN32", "AMD64"),
+        ("win32", "x86_64"),
+    ],
+)
+def test_candidate_platform_guard_accepts_aliases(monkeypatch, system, machine):
+    import platform
+
+    monkeypatch.setattr(sys, "platform", system)
+    monkeypatch.setattr(platform, "machine", lambda: machine)
+    monkeypatch.setattr(scipy, "__version__", "1.18.1")
+    monkeypatch.delenv("FASTSCIPY_ANY_PLATFORM", raising=False)
+    monkeypatch.delenv("FASTSCIPY_ANY_VERSION", raising=False)
+    # Exercise only the Python gate, never native initialization on a fake OS.
+    _patch.require_validated("1.18.")
+
+
+@pytest.mark.parametrize(
+    "system,machine",
+    [("freebsd", "x86_64"), ("linux", "i686"), ("linux", "ppc64le"), ("win32", "x86"), ("darwin", "aarch64")],
+)
+def test_candidate_platform_guard_refuses_unknown_pairs(monkeypatch, system, machine):
+    import platform
+
+    monkeypatch.setattr(sys, "platform", system)
+    monkeypatch.setattr(platform, "machine", lambda: machine)
+    monkeypatch.setattr(scipy, "__version__", "1.18.1")
+    monkeypatch.delenv("FASTSCIPY_ANY_PLATFORM", raising=False)
+    with pytest.raises(RuntimeError, match="outside candidate 64-bit platforms"):
+        _patch.require_validated("1.18.")
+    monkeypatch.setenv("FASTSCIPY_ANY_PLATFORM", "1")
+    _patch.require_validated("1.18.")
+
+
+def test_candidate_platform_guard_preserves_version_gate(monkeypatch):
+    import platform
+
+    monkeypatch.setattr(sys, "platform", "win32")
+    monkeypatch.setattr(platform, "machine", lambda: "AMD64")
+    monkeypatch.setattr(scipy, "__version__", "9.0.0")
+    monkeypatch.delenv("FASTSCIPY_ANY_VERSION", raising=False)
+    monkeypatch.setenv("FASTSCIPY_ANY_PLATFORM", "1")
+    with pytest.raises(RuntimeError, match="validated on SciPy 1.18., found 9.0.0"):
+        _patch.require_validated("1.18.")
+    monkeypatch.setenv("FASTSCIPY_ANY_VERSION", "1")
+    _patch.require_validated("1.18.")
+    monkeypatch.setattr(sys, "platform", "unknown-os")
+    monkeypatch.delenv("FASTSCIPY_ANY_PLATFORM")
+    with pytest.raises(RuntimeError, match="outside candidate 64-bit platforms"):
+        _patch.require_validated("1.18.")
 
 
 @pytest.mark.skipif(not hasattr(os, "fork"), reason="needs fork")

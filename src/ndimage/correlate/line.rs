@@ -650,7 +650,7 @@ fn last_axis_uniform(job: &Job, fs: usize) {
 fn uniform_line(ext: &[f64], out: &mut [f64], fs: usize, size: f64) {
     let mut tmp = 0.0f64;
     for &v in &ext[..fs] {
-        tmp += v;
+        tmp = tmp.add_ordered(v);
     }
     out[0] = tmp / size;
     let n = out.len();
@@ -678,17 +678,21 @@ unsafe fn uniform_lines(
     use super::simd::{Lane, V, zip};
     const P: usize = R / 2;
     unsafe {
-        let mut t = [0.0f64; R];
+        let mut tmp = [V::splat(0.0); P];
         for q in 0..fs {
-            for r in 0..R {
-                t[r] += *ext[r].add(q);
+            for p in 0..P {
+                let values = [*ext[2 * p].add(q), *ext[2 * p + 1].add(q)];
+                tmp[p] = tmp[p].add_ordered(V::load(values.as_ptr()));
             }
+        }
+        let mut t = [0.0f64; R];
+        for p in 0..P {
+            tmp[p].store(t.as_mut_ptr().add(2 * p));
         }
         for r in 0..R {
             *out[r] = t[r] / size;
         }
         let vsize = V::splat(size);
-        let mut tmp: [V; P] = std::array::from_fn(|p| V::load([t[2 * p], t[2 * p + 1]].as_ptr()));
         let mut i = 1;
         while i + 2 <= len {
             for p in 0..P {

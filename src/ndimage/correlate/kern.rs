@@ -510,16 +510,28 @@ pub unsafe fn correlate2<R: Rows>(p: &Prog, rows: R, lanes: usize, out0: *mut f6
 // ---------------------------------------------------------------------------
 // Uniform filter: running sum, as NI_UniformFilter1D.
 
-/// `tmp[j] = 0.0 + row0[j] + ... + row(n-1)[j]` (in order).
-pub unsafe fn uniform_init<R: Rows>(rows: R, n: usize, lanes: usize, tmp: &mut [f64]) {
-    let tmp = &mut tmp[..lanes];
-    tmp.fill(0.0);
+#[inline(always)]
+unsafe fn uni_init_block<R: Rows, L: Lane, const K: usize>(
+    rows: R,
+    n: usize,
+    tmp: *mut f64,
+    j: usize,
+) {
+    let mut acc = [L::splat(0.0); K];
     for t in 0..n {
-        let r = unsafe { std::slice::from_raw_parts(rows.row(t), lanes) };
-        for (x, &v) in tmp.iter_mut().zip(r) {
-            *x += v;
+        let values: [L; K] = unsafe { load_k(rows.row(t).add(j)) };
+        for k in 0..K {
+            acc[k] = acc[k].add_ordered(values[k]);
         }
     }
+    unsafe { store_k(tmp.add(j), acc) };
+}
+
+/// `tmp[j] = 0.0 + row0[j] + ... + row(n-1)[j]` (in order).
+pub unsafe fn uniform_init<R: Rows>(rows: R, n: usize, lanes: usize, tmp: &mut [f64]) {
+    assert!(tmp.len() >= lanes);
+    let tmp = tmp.as_mut_ptr();
+    unsafe { lanes!(lanes, |j, L, K| uni_init_block::<R, L, K>(rows, n, tmp, j)) }
 }
 
 /// `out[j] = tmp[j] / size` for `j < tmp.len()`.

@@ -60,7 +60,25 @@ impl Lane for f64 {
             }
             sum
         }
-        #[cfg(not(all(target_arch = "x86_64", target_os = "linux")))]
+        #[cfg(target_arch = "aarch64")]
+        {
+            let mut sum = self;
+            // Keep the accumulator as the first source operand, as in
+            // SciPy's scalar loop. fadd can otherwise be commuted by LLVM.
+            unsafe {
+                std::arch::asm!(
+                    "fadd {sum:d}, {sum:d}, {value:d}",
+                    sum = inout(vreg) sum,
+                    value = in(vreg) o,
+                    options(nomem, nostack),
+                );
+            }
+            sum
+        }
+        #[cfg(not(any(
+            target_arch = "aarch64",
+            all(target_arch = "x86_64", target_os = "linux")
+        )))]
         {
             self + o
         }
@@ -113,6 +131,19 @@ mod imp {
         #[inline(always)]
         fn add(self, o: V) -> V {
             unsafe { V(vaddq_f64(self.0, o.0)) }
+        }
+        #[inline(always)]
+        fn add_ordered(self, o: V) -> V {
+            let mut sum = self.0;
+            unsafe {
+                std::arch::asm!(
+                    "fadd {sum:v}.2d, {sum:v}.2d, {value:v}.2d",
+                    sum = inout(vreg) sum,
+                    value = in(vreg) o.0,
+                    options(nomem, nostack),
+                );
+            }
+            V(sum)
         }
         #[inline(always)]
         fn sub(self, o: V) -> V {

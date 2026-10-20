@@ -27,8 +27,11 @@ pip install --pre fastscipy
 
 Prebuilt wheels; no Rust required.
 
-**Experimental: macOS 14+ Apple Silicon · SciPy 1.18 · Python 3.12–3.14.**
+**Published alpha (`0.1.0a1`): macOS 14+ Apple Silicon · SciPy 1.18 · Python 3.12–3.14.**
 Unsupported platforms and versions stay unpatched.
+
+Broader platform support is being validated for `0.1.0a2`.
+[Platform status →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 
 Call `patch()` before importing libraries that use SciPy.
 Use `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,

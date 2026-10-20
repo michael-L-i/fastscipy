@@ -5,26 +5,35 @@ reports with a reproducer, and benchmark results from other machines.
 
 ## Setup
 
-You need Rust (stable) and Python 3.12 to 3.14.
+For candidate development, use Rust (stable) and Python 3.12–3.15.
 
 ```sh
 python -m venv .venv && source .venv/bin/activate
-pip install maturin "scipy==1.18.1" pytest pytest-xdist hypothesis ruff
-maturin develop --profile dev-release     # rebuild after every Rust change
+pip install maturin "scipy==1.18.1" pytest hypothesis ruff psutil pooch
+CARGO_BUILD_JOBS=1 maturin develop --profile dev-release  # rebuild after Rust changes
 ```
 
 ## Checks
 
 ```sh
-pytest tests -n auto                                   # identity tests
-python tools/scipy_suite.py --pyargs scipy.ndimage -n auto   # SciPy's suite, with vs without
+export FASTSCIPY_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
+pytest tests                                          # identity tests, serial
+python tools/scipy_suite.py --pyargs scipy.ndimage      # SciPy's suite, with vs without
 python bench/run.py ndimage --check                    # benchmarks
 ruff check python tests bench tools examples && ruff format --check python tests bench tools examples
 cargo fmt --check && cargo clippy --profile dev-release --all-targets -- -D warnings
 ```
 
-CI runs all of these on macOS arm64. A separate workflow runs the identity
-tests on Linux to track that port.
+The published `0.1.0a1` support baseline is macOS arm64. The
+[Platforms workflow](.github/workflows/linux.yml) is collecting correctness,
+all-area timings, and memory reports for the `0.1.0a2` candidates on Linux,
+Windows, and both Mac architectures. Candidate support remains pending;
+see [platform status and methodology](docs/platforms.md).
+
+Use `python tools/platform_suite.py --output artifacts/platform-local` for a
+serial project-suite and all-area benchmark report. The output directory must
+be empty. `--upstream` also runs paired upstream SciPy comparisons, partitioned
+by module. Choose explicit thread and memory budgets before larger runs.
 
 ## Adding a fast path
 
@@ -70,13 +79,19 @@ BSD-3-Clause license of this project.
 
 ## Releases
 
-The `Release` workflow builds macOS 14+ arm64 wheels for Python 3.12–3.14,
-installs the wheels, and runs the project checks plus a paired upstream SciPy
-comparison. Builds use two Cargo jobs and bounded numerical thread budgets.
+The published `0.1.0a1` wheels target macOS 14+ arm64 and Python 3.12–3.14.
+The `0.1.0a2` candidate `Release` workflow targets eight platforms and
+Python 3.12–3.15: 32 wheels in total. Its configured targets are not a
+completed support claim. It installs built wheels and runs project checks
+plus paired upstream SciPy comparisons.
+Builds use one Cargo job and bounded numerical thread and memory budgets.
+Publish a target only after its wheel validation finishes successfully.
 
-To rehearse, run the workflow manually with `publish: none`. Download the three
-wheel artifacts and source archive from that run. `publish: testpypi` exercises
-an upload to TestPyPI. Publishing to PyPI requires a matching `v<version>` tag;
+To rehearse, run the workflow manually with `publish: none`. After all jobs
+succeed, download the eight `release-dist-<target>` artifacts, each containing
+four wheels, and the `release-dist-sdist` source archive. Review the
+`release-report-<target>` validation logs alongside them. `publish: testpypi`
+exercises an upload to TestPyPI. Publishing to PyPI requires a matching `v<version>` tag;
 version declarations in Python, Cargo and the lockfile must agree.
 
 Before the first upload, sign into PyPI and configure a pending Trusted Publisher:

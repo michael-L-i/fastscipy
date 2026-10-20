@@ -11,6 +11,11 @@ pub trait Lane: Copy {
     unsafe fn store(self, p: *mut f64);
     fn splat(x: f64) -> Self;
     fn add(self, o: Self) -> Self;
+    /// Accumulator-first addition, including the choice of NaN payload.
+    #[inline(always)]
+    fn add_ordered(self, o: Self) -> Self {
+        self.add(o)
+    }
     fn sub(self, o: Self) -> Self;
     fn mul(self, o: Self) -> Self;
     fn div(self, o: Self) -> Self;
@@ -35,6 +40,30 @@ impl Lane for f64 {
     #[inline(always)]
     fn add(self, o: f64) -> f64 {
         self + o
+    }
+    #[inline(always)]
+    fn add_ordered(self, o: f64) -> f64 {
+        #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+        {
+            let mut sum = self;
+            // SciPy's GCC uniform-filter loop keeps the old accumulator in
+            // the destination operand. LLVM may commute an ordinary fadd,
+            // changing which payload survives when both operands are NaN.
+            // Do not promise preserves_flags: addsd can set MXCSR flags.
+            unsafe {
+                std::arch::asm!(
+                    "addsd {sum}, {value}",
+                    sum = inout(xmm_reg) sum,
+                    value = in(xmm_reg) o,
+                    options(nomem, nostack),
+                );
+            }
+            sum
+        }
+        #[cfg(not(all(target_arch = "x86_64", target_os = "linux")))]
+        {
+            self + o
+        }
     }
     #[inline(always)]
     fn sub(self, o: f64) -> f64 {
@@ -134,6 +163,21 @@ mod imp {
         #[inline(always)]
         fn add(self, o: V) -> V {
             unsafe { V(_mm_add_pd(self.0, o.0)) }
+        }
+        #[cfg(target_os = "linux")]
+        #[inline(always)]
+        fn add_ordered(self, o: V) -> V {
+            let mut sum = self.0;
+            // SSE2 only; retain the accumulator-first NaN choice per lane.
+            unsafe {
+                std::arch::asm!(
+                    "addpd {sum}, {value}",
+                    sum = inout(xmm_reg) sum,
+                    value = in(xmm_reg) o.0,
+                    options(nomem, nostack),
+                );
+            }
+            V(sum)
         }
         #[inline(always)]
         fn sub(self, o: V) -> V {

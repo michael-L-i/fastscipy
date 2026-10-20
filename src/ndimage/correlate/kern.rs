@@ -532,7 +532,7 @@ unsafe fn uni_block<L: Lane, const K: usize>(
         let mut t: [L; K] = load_k(tmp.add(j));
         let mut o = t;
         for k in 0..K {
-            t[k] = t[k].add(e[k].sub(l[k]));
+            t[k] = t[k].add_ordered(e[k].sub(l[k]));
             o[k] = t[k].div(size);
         }
         store_k(tmp.add(j), t);

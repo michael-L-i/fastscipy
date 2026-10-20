@@ -26,6 +26,7 @@ use pyo3::prelude::*;
 use super::cast::{self, LoadFn, Ptr, Raw, StoreFn, for_each_task};
 use super::ext::{self, CONST};
 use super::kern::{self, Prog};
+use super::simd::Lane;
 use crate::ndimage::common::Mode;
 
 /// The filter applied along the axis.
@@ -656,7 +657,7 @@ fn uniform_line(ext: &[f64], out: &mut [f64], fs: usize, size: f64) {
     // Step i adds ext[i - 1 + fs] and drops ext[i - 1].
     let (enter, leave) = (&ext[fs..fs + n - 1], &ext[..n - 1]);
     for ((o, &e), &l) in out[1..].iter_mut().zip(enter).zip(leave) {
-        tmp += e - l;
+        tmp = tmp.add_ordered(e - l);
         *o = tmp / size;
     }
 }
@@ -698,9 +699,9 @@ unsafe fn uniform_lines(
                     V::load(ext[r1].add(i - 1 + fs)),
                 );
                 let (l0, l1) = zip(V::load(ext[r0].add(i - 1)), V::load(ext[r1].add(i - 1)));
-                tmp[p] = tmp[p].add(e0.sub(l0));
+                tmp[p] = tmp[p].add_ordered(e0.sub(l0));
                 let o0 = tmp[p].div(vsize);
-                tmp[p] = tmp[p].add(e1.sub(l1));
+                tmp[p] = tmp[p].add_ordered(e1.sub(l1));
                 let o1 = tmp[p].div(vsize);
                 let (a, b) = zip(o0, o1);
                 a.store(out[r0].add(i));
@@ -714,7 +715,7 @@ unsafe fn uniform_lines(
                 tmp[p].store(s.as_mut_ptr().add(2 * p));
             }
             for r in 0..R {
-                s[r] += *ext[r].add(i - 1 + fs) - *ext[r].add(i - 1);
+                s[r] = s[r].add_ordered(*ext[r].add(i - 1 + fs) - *ext[r].add(i - 1));
                 *out[r].add(i) = s[r] / size;
             }
         }

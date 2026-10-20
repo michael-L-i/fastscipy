@@ -161,6 +161,25 @@ def test_filter_compiler_cast_fallback(monkeypatch, dtype):
     check(lambda: ndi.correlate(x, [[0.3, -0.2], [1.1, 0.7]], output=dtype))
 
 
+@pytest.mark.parametrize("rows", [1, 7, 8, 9])
+@pytest.mark.parametrize("axis", [0, 1])
+def test_uniform_filter_nan_payloads(rows, axis):
+    # Last-axis groups below/at/above eight lines take scalar, SIMD, and
+    # remainder paths. Transposing exercises non-last-axis SIMD and tails.
+    bits = np.array([0x7FF8002460000000, 0xFFF800ACE0000000, 0, 0, 0, 0, 0, 0, 0], np.uint64)
+    for values in (
+        [np.inf, -np.inf, np.nan, 0.0, -0.0, 0.4, -0.4, 0.9999, -0.9999],
+        bits.view(np.float64),
+    ):
+        x = np.tile(values, (rows, 1))
+        if axis == 0:
+            x = x.T.copy()
+        x.flags.writeable = False
+        for size in (3, 4):
+            for dtype in (np.float32, np.float64):
+                check(lambda: ndi.uniform_filter1d(x, size, axis=axis, output=dtype, mode="reflect"))
+
+
 def test_edt_sampled_ties():
     rng = np.random.default_rng(901)
     x = rng.random((7, 11, 13)) > 0.8

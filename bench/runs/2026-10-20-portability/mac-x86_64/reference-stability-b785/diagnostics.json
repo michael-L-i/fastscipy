@@ -1,0 +1,8 @@
+{
+  "probe_sparse_linalg_platform": {
+    "returncode": 0,
+    "seconds": 14.536344113999974,
+    "peak_rss_bytes": 121376768,
+    "stopped": null
+  }
+}

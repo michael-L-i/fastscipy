@@ -153,3 +153,11 @@ byte-identical, one explicitly marked reference variation), with no missing
 expected fast paths; the remaining 95 cases did not complete. Current Python
 source `1f48cd6` and unchanged `daf9acd` native provenance are kept distinct.
 This is not a passing full-suite or release-wheel result.
+
+The [Intel BiCGSTAB repeatability diagnostic](mac-x86_64/reference-stability-b785/README.md)
+records unpatched callback counts 40/41/42 in both patch scopes and patched
+counts spanning 40–43. Common prefixes differ; all 65 saved final BiCGSTAB
+solutions satisfy the requested residual bound, while the other nine solver
+counts remain stable. Original reports, exact probe source, external NPZ
+hashes, and derived per-scope analysis are retained. This is reference
+stability evidence, not a production fix or release certification.

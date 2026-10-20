@@ -81,7 +81,9 @@ jobs:
     needs: matrix
     name: ${{ matrix.name }} / Python 3.13${{ inputs.mode == 'diagnostics' && ' / diagnostics' || '' }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
+    timeout-minutes: 240
+    env:
+      BUILD_PROFILE: ${{ matrix.name == 'windows-x86_64' && 'release' || 'dev-release' }}
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -108,11 +110,13 @@ jobs:
         if: ${{ !inputs.wheel_run }}
         run: |
           python - <<'PY'
-          import json, sys
+          import json, os, sys
           from pathlib import Path
           from tools.platform_suite import run
           Path("artifacts").mkdir(exist_ok=True)
-          result = run(["maturin", "build", "--profile", "dev-release", "--locked", "--out", "dist/platform", "--interpreter", sys.executable], Path("artifacts/build.log"), 6144, 5400)
+          profile = os.environ["BUILD_PROFILE"]
+          result = run(["maturin", "build", "--profile", profile, "--locked", "--out", "dist/platform", "--interpreter", sys.executable], Path("artifacts/build.log"), 6144, 10800)
+          result.update(profile=profile, codegen_units=8 if profile == "release" else 4, lto="thin" if profile == "release" else False)
           Path("artifacts/build.json").write_text(json.dumps(result, indent=2))
           sys.exit(result["returncode"])
           PY
@@ -168,6 +172,13 @@ jobs:
               data["installed_wheel_version"] = None
           directory = Path("prior-wheel/dist/platform" if wheel_run else "dist/platform")
           data["wheel_files"] = [p.name for p in sorted(directory.glob("*.whl"))]
+          build_report = Path("prior-wheel/artifacts/build.json" if wheel_run else "artifacts/build.json")
+          build = json.loads(build_report.read_text(encoding="utf-8")) if build_report.exists() else {}
+          data["wheel_build_profile"] = build.get("profile")
+          data["wheel_build_codegen_units"] = build.get("codegen_units")
+          data["wheel_build_lto"] = build.get("lto")
+          data["wheel_build_returncode"] = build.get("returncode")
+          data["wheel_build_stopped"] = build.get("stopped")
           Path("artifacts").mkdir(exist_ok=True)
           Path("artifacts/provenance.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
           print(json.dumps(data, indent=2))

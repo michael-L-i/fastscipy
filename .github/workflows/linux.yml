@@ -1,30 +1,81 @@
-# Linux is not supported yet: SciPy's Linux wheels are built with a different
-# compiler and BLAS, so some fast paths may not reproduce their last bit.
-# This workflow runs the identity tests there anyway to find out which.
-name: Linux (experimental)
+name: Platforms
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: "all, or comma-separated linux-arm64,linux-x86_64,windows-x86_64,windows-arm64,macos-x86_64,macos-arm64"
+        default: all
+        type: string
+      mode:
+        description: "Validation to run"
+        type: choice
+        default: full
+        options: [full, tests, bench]
+      upstream:
+        description: "Also compare the full upstream SciPy suite"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
+concurrency:
+  group: platforms-${{ github.ref }}-${{ inputs.platforms }}
+  cancel-in-progress: false
+
 env:
-  CARGO_TERM_COLOR: always
+  CARGO_BUILD_JOBS: "1"
+  CARGO_PROFILE_DEV_RELEASE_CODEGEN_UNITS: "4"
+  FASTSCIPY_NUM_THREADS: "2"
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
   FASTSCIPY_ANY_PLATFORM: "1"
+  RUSTFLAGS: ""
 
 jobs:
+  matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      targets: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - id: targets
+        env:
+          REQUESTED: ${{ inputs.platforms || 'all' }}
+        run: |
+          python - <<'PY'
+          import json, os
+          targets = [
+              {"name": "linux-arm64", "os": "ubuntu-24.04-arm"},
+              {"name": "linux-x86_64", "os": "ubuntu-24.04"},
+              {"name": "windows-x86_64", "os": "windows-2025"},
+              {"name": "windows-arm64", "os": "windows-11-arm"},
+              {"name": "macos-x86_64", "os": "macos-15-intel"},
+              {"name": "macos-arm64", "os": "macos-15"},
+          ]
+          requested = {x.strip() for x in os.environ["REQUESTED"].split(",")}
+          assert requested == {"all"} or requested <= {t["name"] for t in targets}, requested
+          selected = [t for t in targets if requested == {"all"} or t["name"] in requested]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("matrix=" + json.dumps({"include": selected}) + "\n")
+          PY
+
   test:
-    name: Identity tests (${{ matrix.os }})
+    needs: matrix
+    name: ${{ matrix.name }} / Python 3.13
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
-    timeout-minutes: 60   # the x86-64 build alone takes over 30 minutes on hosted runners
+    timeout-minutes: 120
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm]
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.matrix.outputs.targets) }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -32,11 +83,40 @@ jobs:
           python-version: "3.13"
       - uses: dtolnay/rust-toolchain@1.97.1
       - uses: Swatinem/rust-cache@v2
-      - name: Build
+      - name: Install tools
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install maturin "scipy==1.18.1" pytest pytest-xdist hypothesis
-          maturin develop --profile dev-release
-      - name: Identity tests
-        run: .venv/bin/python -m pytest tests -n auto -q -rf --tb=no
+          python -m pip install "maturin>=1.9,<2" pytest pytest-xdist hypothesis packaging psutil pooch
+          python -m pip install --only-binary=:all: "numpy==2.5.4" "scipy==1.18.1"
+      - name: Build and install
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          from tools.platform_suite import run
+          Path("artifacts").mkdir(exist_ok=True)
+          result = run(["maturin", "build", "--profile", "dev-release", "--locked", "--out", "dist/platform", "--interpreter", sys.executable], Path("artifacts/build.log"), 6144, 5400)
+          Path("artifacts/build.json").write_text(json.dumps(result, indent=2))
+          sys.exit(result["returncode"])
+          PY
+          python -m pip install --only-binary=:all: dist/platform/*.whl
+      - name: Platform diagnostics
+        run: python tools/probe_ndimage_platform.py
+      - name: Correctness and all-area benchmarks
+        env:
+          MODE: ${{ inputs.mode || 'full' }}
+          UPSTREAM: ${{ inputs.upstream }}
+        run: |
+          args=()
+          if [ "$MODE" = "tests" ]; then args+=(--tests-only); fi
+          if [ "$MODE" = "bench" ]; then args+=(--bench-only); fi
+          if [ "$UPSTREAM" = "true" ]; then args+=(--upstream); fi
+          python tools/platform_suite.py --output artifacts/platform --max-rss-mb 4096 "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: platform-${{ matrix.name }}-py313
+          path: |
+            artifacts/
+            dist/platform/*.whl
+          if-no-files-found: warn
+          retention-days: 14

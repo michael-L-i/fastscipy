@@ -7,6 +7,7 @@ import importlib.metadata
 import os
 from pathlib import Path
 import platform
+import re
 import sysconfig
 import tarfile
 import tomllib
@@ -14,6 +15,7 @@ import zipfile
 
 from packaging.version import Version
 from packaging.specifiers import SpecifierSet
+from packaging.utils import parse_wheel_filename
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -44,7 +46,14 @@ def archives(directory, project):
     assert found, f"No distributions in {directory}"
     for path in found:
         if path.suffix == ".whl":
-            assert path.name.endswith("_arm64.whl") and "-macosx_14_0_" in path.name, path.name
+            name, version, _, tags = parse_wheel_filename(path.name)
+            assert name == project["name"] and version == Version(project["version"]), path.name
+            allowed = re.compile(
+                r"(?:macosx_\d+_\d+_(?:arm64|x86_64)|"
+                r"(?:manylinux_2_\d+|musllinux_1_2)_(?:aarch64|x86_64)|win_(?:amd64|arm64))"
+            )
+            assert all(allowed.fullmatch(tag.platform) for tag in tags), path.name
+            assert all(tag.interpreter in {"cp312", "cp313", "cp314"} for tag in tags), path.name
             with zipfile.ZipFile(path) as archive:
                 names = archive.namelist()
                 meta = BytesParser().parsebytes(
@@ -55,7 +64,7 @@ def archives(directory, project):
                 assert SpecifierSet(meta["Requires-Python"]) == SpecifierSet(project["requires-python"])
                 for license in ("LICENSE", "scipy-LICENSE.txt"):
                     assert any(n.endswith("/" + license) for n in names), f"Missing {license}"
-                assert any(n.startswith("fastscipy/_native.") and n.endswith(".so") for n in names)
+                assert any(n.startswith("fastscipy/_native.") and n.endswith((".so", ".pyd")) for n in names)
                 assert not any(n.startswith(("bench/", "examples/", "tests/")) for n in names)
                 body = meta.get_payload()
                 assert "](docs/" not in body and "](examples/" not in body, "Relative PyPI README links"
@@ -80,7 +89,8 @@ def installed(project):
     import fastscipy
     from fastscipy import _native
 
-    assert platform.system() == "Darwin" and platform.machine() == "arm64"
+    assert platform.system() in {"Darwin", "Linux", "Windows"}, platform.platform()
+    assert platform.machine().lower() in {"arm64", "aarch64", "amd64", "x86_64"}, platform.machine()
     site = Path(sysconfig.get_paths()["platlib"]).resolve()
     assert Path(fastscipy.__file__).resolve().is_relative_to(site), "Imported checkout instead of wheel"
     assert Path(_native.__file__).resolve().is_relative_to(site), "Native extension outside installed wheel"

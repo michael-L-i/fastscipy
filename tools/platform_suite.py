@@ -25,9 +25,9 @@ def run(command, log, memory_mb, timeout):
     started, peak, stopped = time.monotonic(), 0, None
     with log.open("w", encoding="utf-8") as stream:
         process = subprocess.Popen(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
-        monitored = psutil.Process(process.pid)
         while process.poll() is None:
             try:
+                monitored = psutil.Process(process.pid)
                 tree = [monitored, *monitored.children(recursive=True)]
                 rss = 0
                 for child in tree:

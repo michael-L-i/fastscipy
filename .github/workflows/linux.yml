@@ -127,7 +127,8 @@ jobs:
           path: prior-wheel
       - name: Install prior wheel for diagnostics only
         if: ${{ inputs.wheel_run }}
-        run: python -m pip install --only-binary=:all: prior-wheel/dist/platform/*.whl
+        run: |
+          python -m pip install --only-binary=:all: prior-wheel/dist/platform/*.whl
       - name: Record wheel and source provenance
         if: always()
         env:

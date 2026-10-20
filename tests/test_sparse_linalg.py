@@ -57,6 +57,45 @@ def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=
     return validate
 
 
+def _bicgstab_reference_validation(a, b, rtol):
+    """Validate convergence, not matching trajectories, after proven variance."""
+
+    def validate(expected, actual):
+        solutions = []
+        assert type(expected) is type(actual) is tuple
+        assert len(expected) == len(actual) == 2
+        for output in (expected, actual):
+            result, history = output
+            assert type(result) is tuple and len(result) == 2
+            solution, info = result
+            assert type(info) is int and info == 0
+            assert type(history) is list and 0 < len(history) <= 10 * len(b)
+            for vector in (solution, *history):
+                assert type(vector) is np.ndarray
+                assert vector.shape == b.shape and vector.dtype == b.dtype
+                assert vector.strides == b.strides and np.isfinite(vector).all()
+            solutions.append(solution)
+        with fastscipy.disabled():
+            # This exact fixture is symmetric and strictly diagonally dominant.
+            # Gershgorin bounds its smallest eigenvalue, hence ||A^-1||_2.
+            assert (a - a.T).nnz == 0
+            magnitude = abs(a)
+            lower = np.min(2 * a.diagonal() - np.asarray(magnitude.sum(axis=1)).ravel())
+            assert lower >= 1.5
+            residuals = [np.linalg.norm(b - a @ x) for x in solutions]
+            assert max(residuals) <= rtol * np.linalg.norm(b), "equation residual is too large"
+            # Include a standard gamma_n rounding bound for independent residual
+            # evaluation, subtraction and norms, rather than an empirical atol.
+            epsn = (len(b) + 2) * np.finfo(b.dtype).eps
+            gamma = epsn / (1 - epsn)
+            rounding = sum(gamma * np.linalg.norm(magnitude @ abs(x) + abs(b)) for x in solutions)
+            limit = (sum(residuals) + rounding) / lower
+            limit += gamma * sum(np.linalg.norm(x) for x in solutions)
+            assert np.linalg.norm(solutions[0] - solutions[1]) <= limit
+
+    return validate
+
+
 def _least_squares_reference_validation(a, b):
     """Check the default undamped LSQR result after proven oracle variance."""
 
@@ -142,8 +181,67 @@ def test_solver_results_and_iteration_history(solver, n):
         if n == 100
         else None
     )
+    if n == 100 and solver is sl.bicgstab:
+        # Native Intel plain references independently produce 40--42 callbacks,
+        # with amplified trajectory drift. Do not claim byte/roundoff-identical
+        # histories here; retain that coverage with the exact fixture below.
+        validation = _bicgstab_reference_validation(a, b, 1e-9)
     check(run, reference_validation=validation)
     assert a.data.tobytes() == a_before and b.tobytes() == b_before
+
+
+def test_bicgstab_exact_complete_single_callback():
+    dense = 2 * np.eye(100)
+    dense[0, 1] = 1.0
+    a = sparse.csr_array(dense)
+    b = np.full(100, 2.0)
+    b[0] = 0.0
+    known = b / 2
+    known[0] = -0.5
+
+    def run():
+        history = []
+        result = sl.bicgstab(a, b, rtol=1e-9, callback=lambda x: history.append(x.copy()))
+        assert result[1] == 0 and len(history) == 1
+        assert_identical(known, result[0])
+        assert_identical(known, history[0])
+        return result, history
+
+    check(run)
+
+
+def test_bicgstab_reference_validator_accepts_distinct_valid_histories():
+    a = sparse.csr_array(np.eye(2) * 2)
+    b = np.array([2.0, 6.0])
+    x = b / 2
+    expected = ((x, 0), [np.zeros(2)])
+    actual = ((np.nextafter(x, np.inf), 0), [np.ones(2), x.copy()])
+    _bicgstab_reference_validation(a, b, 1e-9)(expected, actual)
+
+
+@pytest.mark.parametrize("fault", ["solution", "nonfinite", "empty", "too_many", "shape", "dtype", "info"])
+def test_bicgstab_reference_validator_rejects_invalid_outputs(fault):
+    a = sparse.csr_array(np.eye(2) * 2)
+    b = np.array([2.0, 6.0])
+    x = b / 2
+    expected = ((x, 0), [x.copy()])
+    y, info, history = x.copy(), 0, [x.copy()]
+    if fault == "solution":
+        y[0] += 1e-5
+    elif fault == "nonfinite":
+        history[0][0] = np.nan
+    elif fault == "empty":
+        history = []
+    elif fault == "too_many":
+        history *= 21
+    elif fault == "shape":
+        history[0] = history[0][:, None]
+    elif fault == "dtype":
+        history[0] = history[0].astype(np.float32)
+    elif fault == "info":
+        info = 1
+    with pytest.raises(AssertionError):
+        _bicgstab_reference_validation(a, b, 1e-9)(expected, ((y, info), history))
 
 
 def test_iterative_reference_validator_accepts_roundoff():
@@ -278,11 +376,11 @@ def test_least_squares_reference_validator_close_but_nonstationary_solution():
         _least_squares_reference_validation(a, b)(expected, (y, *expected[1:]))
 
 
-@pytest.mark.parametrize("least_squares", [False, True])
-def test_reference_validators_reject_correlated_enabled_matvec_error(monkeypatch, least_squares):
+@pytest.mark.parametrize("method", ["iterative", "lsqr", "bicgstab"])
+def test_reference_validators_reject_correlated_enabled_matvec_error(monkeypatch, method):
     from fastscipy import _patch
 
-    if least_squares:
+    if method == "lsqr":
         a, b, correct = _least_squares_validator_example()
         true_solution = correct[0]
         wrong = (np.zeros(2), *correct[1:8], 0.0, correct[9])
@@ -291,8 +389,9 @@ def test_reference_validators_reject_correlated_enabled_matvec_error(monkeypatch
         a = sparse.csr_array(np.eye(2) * 2)
         b = np.array([2.0, 6.0])
         true_solution = b / 2
-        wrong = ((np.zeros(2), 0), [])
-        validate = _iteration_reference_validation(a, b, 1e-9)
+        wrong = ((np.zeros(2), 0), [np.zeros(2)])
+        factory = _bicgstab_reference_validation if method == "bicgstab" else _iteration_reference_validation
+        validate = factory(a, b, 1e-9)
 
     original = sparse.csr_array._matmul_vector
     enabled_calls = []

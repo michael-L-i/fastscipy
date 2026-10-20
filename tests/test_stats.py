@@ -28,7 +28,9 @@ def same(call, *, reference_validation=None):
 
         def validated(expected, got):
             accepted = reference_validation(expected, got)
-            assert accepted is True or accepted is None, _stats_validation_rejection(expected, got)
+            assert accepted is True or accepted is None, _stats_validation_rejection(
+                expected, got, reference_validation.input_summary()
+            )
             return accepted
 
         before = fast_calls()
@@ -42,7 +44,7 @@ def same(call, *, reference_validation=None):
     return fast_calls() > before
 
 
-def _stats_validation_rejection(expected, got):
+def _stats_validation_rejection(expected, got, inputs=None):
     a, aw = expected
     b, bw = got
     metadata = (
@@ -67,7 +69,7 @@ def _stats_validation_rejection(expected, got):
     )
     return (
         f"stats reference validator rejected: warnings_equal={identical(aw, bw)}; "
-        f"result_types={type(a)!r}/{type(b)!r}; metadata_equal={metadata!r}; fields={fields!r}"
+        f"result_types={type(a)!r}/{type(b)!r}; metadata_equal={metadata!r}; fields={fields!r}; inputs={inputs!r}"
     )
 
 
@@ -130,15 +132,57 @@ def _stats_reference_validation(x, y):
             yscale = np.max(np.abs(yy))
             xspread = np.max(np.abs(xx - np.mean(xx)))
             slope_scale = yscale / xspread
-            intercept_scale = yscale + abs(a.slope) * np.max(np.abs(xx))
+            xscale = np.max(np.abs(xx))
+            intercept_scale = yscale + abs(a.slope) * xscale
         if not np.isfinite(slope_scale) or not np.isfinite(intercept_scale):
             return False
         tiny = np.finfo(np.float64).tiny
         floors = (slope_scale, intercept_scale, 1.0, 1.0, slope_scale)
-        return all(close(aa, bb, eps64 * max(scale, tiny)) for aa, bb, scale in zip(a, b, floors)) and close(
-            a.intercept_stderr, b.intercept_stderr, eps64 * max(intercept_scale, tiny)
+        intercept_ok = close(a.intercept, b.intercept, eps64 * max(intercept_scale, tiny))
+        if xspread <= eps64 * xscale:
+            # Nearly constant x can make the slope nonunique at floating-
+            # point precision. Check each intercept's defining identity,
+            # rather than pretending that the two slopes must be identical.
+            # Longdouble means are independent of Accelerate dot reductions;
+            # the allowance covers mean, multiply, and subtraction rounding
+            # in the original float64 calculation, in the input's own units.
+            with fastscipy.disabled(), np.errstate(all="ignore"):
+                xl, yl = xx.astype(np.longdouble), yy.astype(np.longdouble)
+                xm, ym = np.mean(xl), np.mean(yl)
+                mx, my = np.mean(np.abs(xl)), np.mean(np.abs(yl))
+                intercept_ok = True
+                for result in (a, b):
+                    slope, intercept = np.longdouble(result.slope), np.longdouble(result.intercept)
+                    predicted = ym - slope * xm
+                    allowance = eps64 * (my + abs(slope) * mx + abs(predicted) + abs(intercept))
+                    if not np.isfinite(allowance) or abs(intercept - predicted) > allowance:
+                        intercept_ok = False
+        return (
+            intercept_ok
+            and all(
+                close(aa, bb, eps64 * max(scale, tiny))
+                for index, (aa, bb, scale) in enumerate(zip(a, b, floors))
+                if index != 1
+            )
+            and close(a.intercept_stderr, b.intercept_stderr, eps64 * max(intercept_scale, tiny))
         )
 
+    def input_summary():
+        with fastscipy.disabled(), np.errstate(all="ignore"):
+            return {
+                name: {
+                    "n": int(np.size(values)),
+                    "dtype": str(values.dtype),
+                    "min": repr(np.min(values)),
+                    "max": repr(np.max(values)),
+                    "mean": repr(np.mean(values)),
+                    "std": repr(np.std(values)),
+                    "centered_max": repr(np.max(np.abs(values - np.mean(values)))),
+                }
+                for name, values in (("x", np.asarray(x)), ("y", np.asarray(y)))
+            }
+
+    validate.input_summary = input_summary
     return validate
 
 
@@ -231,6 +275,76 @@ def test_stats_reference_validator_real_pearson_returns_literal_true(dtype, n):
     changed_metadata = other()
     changed_metadata._alternative = "less"
     assert validate((expected, []), (changed_metadata, [])) is False
+
+
+def test_stats_reference_validator_ill_conditioned_intercept_identity():
+    # Exact seed12345/4t/linregress iteration69 from the Intel rejection.
+    # x is truly constant, but np.mean leaves a one-ULP centered residual.
+    # SciPy warns: no uniquely accurate slope is asserted for this input.
+    value = 0.05016188054896638
+    x = np.full(30, value)
+    y = np.array(
+        [
+            0.4708395161929273,
+            1.5922804525973209,
+            3.2527440791749798,
+            0.6741764876659379,
+            0.8306254005235675,
+            1.9816696902556956,
+            0.5878055799310182,
+            1.25537498638792,
+            0.3490925474552964,
+            1.1692190818499577,
+            0.41807620936171314,
+            0.9532265933038834,
+            0.4151773016093703,
+            0.6272154891298194,
+            0.44691347284617833,
+            0.7397013404947995,
+            1.040745627028402,
+            0.38564974778307687,
+            0.39310202220407364,
+            0.139466468535131,
+            0.948403778094678,
+            0.8570980571890897,
+            1.3529817447713361,
+            1.1351274804849003,
+            0.11939894820968862,
+            0.046006762023237786,
+            2.0166775645072645,
+            0.91256621988236,
+            0.4604600672527679,
+            0.045124281167207264,
+        ]
+    )
+    with fastscipy.disabled():
+        expected, observed_warnings = outcome(lambda: st.linregress(x, y))
+    assert any("catastrophic cancellation" in message for _, message in observed_warnings)
+    assert np.isfinite(expected.slope)
+    for shift in (0.0, value):
+        shifted_x = x + shift
+        validate = _stats_reference_validation(shifted_x, y)
+        fields = dict(zip(expected._fields, expected))
+        fields["intercept"] = expected.intercept - expected.slope * shift
+        fields["intercept_stderr"] = expected.intercept_stderr * (1 + shift / value)
+        reference = LinregressResult(**fields)
+
+        def other(slope=expected.slope + 0.5, **changes):
+            mean_x = np.mean(shifted_x.astype(np.longdouble))
+            mean_y = np.mean(y.astype(np.longdouble))
+            values = dict(fields, slope=np.float64(slope), intercept=np.float64(mean_y - slope * mean_x))
+            values.update(changes)
+            return LinregressResult(**values)
+
+        def accepted(candidate, warns=observed_warnings):
+            return validate((reference, observed_warnings), (candidate, warns))
+
+        assert accepted(other()) is True
+        assert accepted(other(intercept=other().intercept + 0.01)) is False
+        assert accepted(other(slope=1e9)) is False
+        assert accepted(other(rvalue=np.float64(0.25))) is False
+        assert accepted(other(pvalue=np.float64(0.5))) is False
+        assert accepted(other(), []) is False
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

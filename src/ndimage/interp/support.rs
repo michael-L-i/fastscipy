@@ -17,12 +17,12 @@ use crate::ndimage::common::Mode;
 // fadd. The randomized tests confirm that fusing exactly those expressions
 // reproduces SciPy bit for bit; computing them unfused does not. x86-64
 // baseline wheels have no FMA instructions, so there the product is rounded
-// before the addition. (Linux aarch64 wheels are built with GCC, whose
-// contraction may differ; only macOS arm64 was verified.)
+// before the addition. Official Linux aarch64 wheels also use separate multiply/add instructions
+// (verified in the 1.18.1 wheel's spline weights and filter recursions).
 
-#[cfg(target_arch = "aarch64")]
+#[cfg(all(target_arch = "aarch64", target_os = "macos"))]
 pub const FUSED: bool = true;
-#[cfg(not(target_arch = "aarch64"))]
+#[cfg(not(all(target_arch = "aarch64", target_os = "macos")))]
 pub const FUSED: bool = false;
 
 /// `a * b + c` as SciPy computes a contracted C expression.

@@ -3,13 +3,23 @@
 //! The recursive C driver is equivalent to: initialise, then for d = 0..rank run
 //! `_VoronoiFT` along every line of axis d. Lines of one pass are independent,
 //! so they run in parallel. Arithmetic follows the C code, including the FMA
-//! contraction clang applies on arm64 (`mul_add` in the same places).
+//! contraction clang applies on macOS arm64. Official Linux wheels use
+//! separate multiply/add instructions on both x86-64 and aarch64.
 
 use numpy::{PyArrayDyn, PyArrayMethods, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
 use crate::ndimage::common::pool;
+
+#[inline(always)]
+fn madd(a: f64, b: f64, c: f64) -> f64 {
+    if cfg!(all(target_arch = "aarch64", target_os = "macos")) {
+        a.mul_add(b, c)
+    } else {
+        a * b + c
+    }
+}
 
 #[derive(Clone, Copy)]
 struct Ptr<T>(*mut T);
@@ -51,7 +61,7 @@ unsafe fn voronoi_line<const R: usize, const S: bool>(
                     if let Some(s) = sampling {
                         tw *= s[jj];
                     }
-                    wr = tw.mul_add(tw, wr);
+                    wr = madd(tw, tw, wr);
                 }
             }
             while l >= 1 {
@@ -75,14 +85,18 @@ unsafe fn voronoi_line<const R: usize, const S: bool>(
                             tu *= s[jj];
                             tv *= s[jj];
                         }
-                        ur = tu.mul_add(tu, ur);
-                        vr = tv.mul_add(tv, vr);
+                        ur = madd(tu, tu, ur);
+                        vr = madd(tv, tv, vr);
                     }
                 }
                 // c*vR - b*uR - a*wR - a*b*c <= 0, as contracted by clang
-                let t1 = c.mul_add(vr, -(b * ur));
-                let t2 = (-a).mul_add(wr, t1);
-                let t3 = (-(a * b)).mul_add(c, t2);
+                let t3 = if cfg!(all(target_arch = "aarch64", target_os = "macos")) {
+                    let t1 = madd(c, vr, -(b * ur));
+                    let t2 = madd(-a, wr, t1);
+                    madd(-(a * b), c, t2)
+                } else {
+                    c * vr - b * ur - a * wr - a * b * c
+                };
                 if t3 <= 0.0 {
                     break;
                 }
@@ -108,7 +122,7 @@ unsafe fn voronoi_line<const R: usize, const S: bool>(
                     if let Some(s) = sampling {
                         t *= s[jj];
                     }
-                    delta = t.mul_add(t, delta);
+                    delta = madd(t, t, delta);
                 }
                 delta
             };

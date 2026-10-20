@@ -144,6 +144,44 @@ def test_correlate_inplace_and_out():
     check(lambda: ndi.convolve(x, np.ones((3, 3)), output=out))
 
 
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_filter_compiler_cast_fallback(monkeypatch, dtype):
+    from fastscipy import _ndimage_correlate as corr
+
+    # Exercise the conversion-only fallback even on compilers whose direct
+    # native cast already matches. Include vector prefixes and scalar tails.
+    cal = dict(corr.calibration(), line_types=frozenset(), safe_types=frozenset())
+    monkeypatch.setattr(corr, "_cal", cal)
+    x = np.resize(corr._probe_values(), (7, 9))
+    for axis in (0, 1):
+        for fn in (ndi.correlate1d, ndi.uniform_filter1d):
+            w = [0.3, -0.2, 1.1] if fn is ndi.correlate1d else 3
+            check(lambda: fn(x, w, axis=axis, output=dtype))
+            check(lambda: fn(x, w, axis=axis, output=np.empty((14, 18), dtype)[::2, ::2]))
+    check(lambda: ndi.correlate(x, [[0.3, -0.2], [1.1, 0.7]], output=dtype))
+
+
+def test_edt_sampled_ties():
+    rng = np.random.default_rng(901)
+    x = rng.random((7, 11, 13)) > 0.8
+    for sampling in ([0.7, 1.3, 2.1], [1.0, 1.3, 1.3], [0.1, 0.3, 0.9]):
+        check(lambda: ndi.distance_transform_edt(x, sampling=sampling, return_indices=True))
+
+
+@pytest.mark.parametrize("dtype", DTYPES[:8])
+def test_interpolation_compiler_cast_fallback(monkeypatch, dtype):
+    from fastscipy import _ndimage_interp as interp
+
+    monkeypatch.setattr(interp, "_SCIPY_INT_CAST", True)
+    x = np.resize(np.array([0.0, -0.0, 1.5, -1.5, 1e30, -1e30, np.nan, np.inf]), (7, 9))
+    for order in (0, 1, 3):
+        check(lambda: ndi.shift(x, [0.3, -1.2], order=order, output=dtype))
+        check(lambda: ndi.affine_transform(x, [[0.9, 0.1], [-0.1, 1.1]], order=order, output=dtype))
+        check(lambda: ndi.map_coordinates(x, np.mgrid[:3, :4] + 0.3, order=order, output=dtype))
+    check(lambda: ndi.spline_filter1d(x, 3, axis=0, output=dtype))
+    check(lambda: ndi.spline_filter1d(x, 3, axis=1, output=np.empty((14, 18), dtype)[::2, ::2]))
+
+
 # --- interpolation ----------------------------------------------------------------------------
 
 

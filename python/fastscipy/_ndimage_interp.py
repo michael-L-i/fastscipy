@@ -9,10 +9,11 @@ so SciPy's C code runs instead.
 """
 
 import operator
+import sys
 
 import numpy as np
 
-from ._ndimage_seam import accelerated, core
+from ._ndimage_seam import accelerated, core, orig
 
 # Native-byte-order real types the kernels read and write.
 _TYPES = frozenset(
@@ -23,6 +24,7 @@ _TYPES = frozenset(
 # Coordinate dtypes SciPy's C code accepts (converted to float64 here, which
 # is the same conversion the C code performs per element).
 _COORD_TYPES = _TYPES | {np.dtype(np.bool_)}
+_SCIPY_INT_CAST = sys.platform != "darwin"
 
 
 def _int(v):
@@ -72,6 +74,21 @@ def _finish(ok, dst, output):
     return ok
 
 
+def _interp_target(output):
+    if _SCIPY_INT_CAST and output.dtype.kind in "iu":
+        return np.empty(output.shape, np.float64)
+    return _target(output)
+
+
+def _finish_interp(ok, dst, output):
+    if ok and dst.dtype != output.dtype:
+        # Order zero at the identity coordinates retains each coefficient
+        # and applies only SciPy's round/clamp/compiler-specific integer cast.
+        orig.zoom_shift(dst, None, None, output, 0, 2, 0.0, 0, False)
+        return True
+    return _finish(ok, dst, output)
+
+
 def _f64_vector(a, n):
     return isinstance(a, np.ndarray) and a.dtype == np.float64 and a.ndim == 1 and a.shape[0] == n
 
@@ -85,6 +102,7 @@ def spline_filter1d(input, order, axis, output, mode):
         return False
     if input.shape != output.shape or not 0 <= axis < input.ndim:
         return False
+    scipy_cast = _SCIPY_INT_CAST and output.dtype.kind in "iu"
     if np.may_share_memory(input, output):
         # In place (spline_filter does this for every axis after the first):
         # each line is read completely before it is written, so this equals
@@ -96,9 +114,18 @@ def spline_filter1d(input, order, axis, output, mode):
         )
         if not same:
             return False
-        if output.flags.c_contiguous and output.flags.aligned:
+        if not scipy_cast and output.flags.c_contiguous and output.flags.aligned:
             return core.interp_spline_filter1d(output, order, axis, output, mode)
         input = np.array(input, order="C", copy=True)
+    if scipy_cast:
+        # Keep the fast recursive filter, then reproduce the installed C
+        # compiler's per-line integer casts (including vector/scalar tails).
+        src = _contig(input)
+        dst = np.empty(output.shape, np.float64)
+        if not core.interp_spline_filter1d(src, order, axis, dst, mode):
+            return False
+        orig.correlate1d(dst, np.ones(1), axis, output, 2, 0.0, 0)
+        return True
     src = _contig(input)
     dst = _target(output)
     return _finish(core.interp_spline_filter1d(src, order, axis, dst, mode), dst, output)
@@ -122,9 +149,9 @@ def zoom_shift(input, zoom, shift, output, order, mode, cval, npad, grid_mode):
     zoom = None if zoom is None else _contig(zoom)
     shift = None if shift is None else _contig(shift)
     src = _contig(input)
-    dst = _target(output)
+    dst = _interp_target(output)
     ok = core.interp_zoom_shift(src, zoom, shift, dst, order, mode, cval, npad, bool(grid_mode))
-    return _finish(ok, dst, output)
+    return _finish_interp(ok, dst, output)
 
 
 @accelerated("geometric_transform")
@@ -152,9 +179,9 @@ def geometric_transform(
         ):
             return False
         src = _contig(input)
-        dst = _target(output)
+        dst = _interp_target(output)
         ok = core.interp_affine(src, _contig(matrix), _contig(offset), dst, order, mode, cval, npad)
-        return _finish(ok, dst, output)
+        return _finish_interp(ok, dst, output)
     if coordinates is not None:
         if not (
             isinstance(coordinates, np.ndarray)
@@ -166,7 +193,7 @@ def geometric_transform(
             return False
         coords = np.ascontiguousarray(coordinates, dtype=np.float64)
         src = _contig(input)
-        dst = _target(output)
+        dst = _interp_target(output)
         ok = core.interp_map_coordinates(src, coords, dst, order, mode, cval, npad)
-        return _finish(ok, dst, output)
+        return _finish_interp(ok, dst, output)
     return False

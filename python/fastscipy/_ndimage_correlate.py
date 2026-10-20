@@ -4,8 +4,9 @@ The Rust kernels reproduce SciPy's arithmetic exactly, but two details depend
 on how the installed SciPy binary was compiled: whether its multiply-adds are
 fused (and where), and what its out-of-range double -> integer casts return.
 On first use, the kernels are checked against SciPy's own C functions on
-small probes; the matching variant is used, and anything that cannot be
-matched (an FMA scheme or an integer output type) is left to SciPy.
+small probes; the matching variant is used. Unmatched output conversions
+use SciPy's C casts after the accelerated arithmetic; unmatched arithmetic
+schemes leave the full call to SciPy.
 """
 
 import platform
@@ -19,6 +20,7 @@ from ._ndimage_seam import accelerated, core, orig
 # Native-endian real types the kernels handle (bool, float16, longdouble and
 # complex are left to SciPy; complex inputs never reach _nd_image).
 _CHARS = frozenset("bBhHiIlLqQfd")
+_ONE = np.ones(1)
 
 
 def _dtype_ok(dt):
@@ -238,42 +240,58 @@ def _finish(ok, output, target):
     return ok
 
 
+def _finish_line(ok, output, target, axis, native_cast):
+    if ok and not native_cast:
+        # GCC can convert vector prefixes through int64 but scalar tails
+        # through int32. Let its original line loop perform only the cast;
+        # the expensive filter arithmetic still runs in the native kernel.
+        orig.correlate1d(target, _ONE, axis, output, 2, 0.0, 0)
+        return True
+    return _finish(ok, output, target)
+
+
 @accelerated("correlate1d")
 def correlate1d(input, weights, axis, output, mode, cval, origin):
     cal = calibration()
-    if cal["scheme"] is None or not _out_ok(output, cal["line_types"]):
+    if cal["scheme"] is None:
         return False
     prep = _prepare(input, output, True)
     if prep is None:
         return False
     src, target = prep
+    native_cast = _out_ok(output, cal["line_types"])
+    if not native_cast:
+        target = np.empty(output.shape, np.float64)
     try:
         ok = core.corr_correlate1d(src, weights, int(axis), target, int(mode), float(cval), int(origin), cal["scheme"])
     except (TypeError, ValueError, OverflowError):
         return False
-    return _finish(ok, output, target)
+    return _finish_line(ok, output, target, axis, native_cast)
 
 
 @accelerated("uniform_filter1d")
 def uniform_filter1d(input, size, axis, output, mode, cval, origin):
     cal = calibration()
-    if not cal["uniform"] or not _out_ok(output, cal["line_types"]):
+    if not cal["uniform"]:
         return False
     prep = _prepare(input, output, True)
     if prep is None:
         return False
     src, target = prep
+    native_cast = _out_ok(output, cal["line_types"])
+    if not native_cast:
+        target = np.empty(output.shape, np.float64)
     try:
         ok = core.corr_uniform_filter1d(src, int(size), int(axis), target, int(mode), float(cval), int(origin))
     except (TypeError, ValueError, OverflowError):
         return False
-    return _finish(ok, output, target)
+    return _finish_line(ok, output, target, axis, native_cast)
 
 
 @accelerated("correlate")
 def correlate(input, weights, output, mode, cval, origins):
     cal = calibration()
-    if cal["nd_fused"] is None or not _out_ok(output, cal["safe_types"]):
+    if cal["nd_fused"] is None:
         return False
     if not isinstance(input, np.ndarray):
         return False
@@ -285,9 +303,17 @@ def correlate(input, weights, output, mode, cval, origins):
     if prep is None:
         return False
     src, target = prep
+    native_cast = _out_ok(output, cal["safe_types"])
+    if not native_cast:
+        target = np.empty(output.shape, np.float64)
     try:
         origins = [int(o) for o in origins]
         ok = core.corr_correlate(src, weights, target, int(mode), float(cval), origins, cal["nd_fused"])
     except (TypeError, ValueError, OverflowError):
         return False
+    if ok and not native_cast:
+        # NI_Correlate's unsigned conversion differs from its line-buffer
+        # conversion. A singleton footprint keeps that exact cast policy.
+        orig.correlate(target, np.ones((1,) * input.ndim), output, 2, 0.0, [0] * input.ndim)
+        return True
     return _finish(ok, output, target)

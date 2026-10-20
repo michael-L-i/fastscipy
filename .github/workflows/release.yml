@@ -61,7 +61,7 @@ jobs:
           retention-days: 14
 
   wheels:
-    name: Wheels / ${{ matrix.target }} / Python 3.12–3.14
+    name: Wheels / ${{ matrix.target }} / Python 3.12–3.15
     needs: source
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
@@ -71,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 2
-      # One native job per platform, three interpreters serially: bounded RAM,
+      # One native job per platform, four interpreters serially: bounded RAM,
       # one Rust/container setup per platform, and no emulated wheel tests.
       matrix:
         include:
@@ -118,7 +118,7 @@ jobs:
         if: runner.os != 'Linux'
       - name: Install wheel tooling
         run: |
-          python -m pip install "cibuildwheel==4.2.1" packaging twine psutil
+          python -m pip install "cibuildwheel==4.3.1" packaging twine psutil
           python -m pip install --only-binary=:all: "numpy==2.5.4" "scipy==1.18.1"
       - name: Validate source versions
         run: python tools/check_release.py
@@ -135,7 +135,7 @@ jobs:
           sys.exit(result["returncode"])
           PY
         env:
-          CIBW_BUILD: cp3{12,13,14}-${{ matrix.platform }}_*
+          CIBW_BUILD: cp3{12,13,14,15}-${{ matrix.platform }}_*
           CIBW_ARCHS: ${{ matrix.arch }}
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
@@ -156,7 +156,7 @@ jobs:
           CIBW_TEST_REQUIRES: >-
             numpy==2.5.4 scipy==1.18.1 pytest pytest-xdist hypothesis packaging psutil pooch
           # Python 3.13 runs project identity tests, every benchmark area and
-          # paired upstream SciPy tests; 3.12/3.14 run project tests only.
+          # paired upstream SciPy tests; 3.12/3.14/3.15 run project tests only.
           # Each interpreter has its own report directory. Linux project files
           # are copied into a container, so persist reports on an explicit volume.
           CIBW_TEST_COMMAND: >-
@@ -198,9 +198,9 @@ jobs:
           merge-multiple: true
           path: dist
       - run: python -m pip install packaging twine
-      - name: Require all 24 wheels and one source distribution
+      - name: Require all 32 wheels and one source distribution
         run: |
-          python -c "from pathlib import Path; p=Path('dist'); assert len(list(p.glob('*.whl'))) == 24, 'Expected eight platforms times three interpreters'; assert len(list(p.glob('*.tar.gz'))) == 1, 'Expected one source distribution'"
+          python -c "from pathlib import Path; p=Path('dist'); assert len(list(p.glob('*.whl'))) == 32, 'Expected eight platforms times four interpreters'; assert len(list(p.glob('*.tar.gz'))) == 1, 'Expected one source distribution'"
           python tools/check_release.py --dist dist --complete
           python -m twine check --strict dist/*
 

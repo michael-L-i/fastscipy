@@ -54,7 +54,7 @@ def archives(directory, project, complete=False):
                 r"(?:manylinux_2_\d+|manylinux2014|musllinux_1_2)_(?:aarch64|x86_64)|win_(?:amd64|arm64))"
             )
             assert all(allowed.fullmatch(tag.platform) for tag in tags), path.name
-            assert all(tag.interpreter in {"cp312", "cp313", "cp314"} for tag in tags), path.name
+            assert all(tag.interpreter in {"cp312", "cp313", "cp314", "cp315"} for tag in tags), path.name
             assert all(tag.abi == tag.interpreter for tag in tags), path.name
             for tag in tags:
                 if tag.platform.startswith("macosx_"):
@@ -105,9 +105,9 @@ def archives(directory, project, complete=False):
             "musllinux-aarch64",
             "musllinux-x86_64",
         }
-        expected = {(python, target) for python in ("cp312", "cp313", "cp314") for target in platforms}
+        expected = {(python, target) for python in ("cp312", "cp313", "cp314", "cp315") for target in platforms}
         assert targets == expected, f"Missing {expected - targets}; unexpected {targets - expected}"
-        assert len(list(directory.glob("*.whl"))) == 24, "Expected exactly 24 wheels"
+        assert len(list(directory.glob("*.whl"))) == 32, "Expected exactly 32 wheels"
         assert len(list(directory.glob("*.tar.gz"))) == 1, "Expected exactly one source distribution"
 
 
@@ -141,7 +141,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dist", type=Path)
     parser.add_argument("--installed", action="store_true")
-    parser.add_argument("--complete", action="store_true", help="Require all eight platforms and three Python versions")
+    parser.add_argument("--complete", action="store_true", help="Require all eight platforms and four Python versions")
     args = parser.parse_args()
     project = versions()
     if args.dist:

@@ -514,7 +514,7 @@ unsafe fn strip(job: &Job, blk: &Block, scr: &mut Scratch, c0: usize, cw: usize)
                         &mut scr.tmp,
                         size,
                         out0,
-                        i + 1 == r1 && r1 % 2 == 0,
+                        i + 1 == r1 && r1.is_multiple_of(2),
                     )
                 };
                 store(i, out0);
@@ -658,7 +658,7 @@ fn uniform_line(ext: &[f64], out: &mut [f64], fs: usize, size: f64) {
     // Step i adds ext[i - 1 + fs] and drops ext[i - 1].
     let (enter, leave) = (&ext[fs..fs + n - 1], &ext[..n - 1]);
     for (j, ((o, &e), &l)) in out[1..].iter_mut().zip(enter).zip(leave).enumerate() {
-        tmp = tmp.uniform_update(e - l, j + 2 == n && n % 2 == 0);
+        tmp = tmp.uniform_update(e - l, j + 2 == n && n.is_multiple_of(2));
         *o = tmp / size;
     }
 }

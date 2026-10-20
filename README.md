@@ -2,8 +2,12 @@
 
 **Faster SciPy calls. SciPy-compatible results.**
 
-Rust kernels and shared thread pools accelerate supported calls. Everything
-else stays with SciPy.
+Portable Rust kernels and shared thread pools accelerate supported calls.
+Everything else stays with SciPy.
+
+```sh
+pip install --pre fastscipy
+```
 
 ```python
 import fastscipy
@@ -17,49 +21,43 @@ clean = ndimage.median_filter(image, size=3)
 
 ![Image cleanup with SciPy and fastscipy](https://raw.githubusercontent.com/michael-L-i/fastscipy/main/docs/median-filter-demo.gif)
 
-*Run on a MacBook Pro with M5 Pro.*
+*Demo recorded on a MacBook Pro with M5 Pro.*
 
 [Explore eight more examples →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md)
 
-## Install
+## Install and use
 
-```sh
-pip install --pre fastscipy
-```
-
-Prebuilt wheels; no Rust required.
-
-**Published alpha (`0.1.0a1`): macOS 14+ Apple Silicon · SciPy 1.18 · Python 3.12–3.14.**
-Unsupported platforms and versions stay unpatched.
-
-Broader platform support is being validated for `0.1.0a2`.
-[Platform status →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
+The `0.1.0a2` candidate targets **Python 3.12–3.15 · SciPy 1.18**,
+with prebuilt wheels for **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
+and Windows. Validation is in progress; PyPI currently serves the Apple Silicon
+`0.1.0a1` release. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 
 Call `patch()` before importing libraries that use SciPy.
 Use `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,
 and `unpatch()` to restore SciPy.
 
-## Performance
+## Performance across platforms
 
-Geometric-mean speedups over unpatched SciPy, measured on an Apple M5 Pro.
+Geometric-mean speedups at **two threads**, with BLAS limited to one.
+These portability checkpoints use Python 3.13, NumPy 2.5.4, and SciPy 1.18.1;
+each comparison uses the same machine and inputs.
 
-| Area | Cases | 1 thread | 18 threads |
+| Platform | ndimage | stats | linalg |
 |---|---:|---:|---:|
-| linalg — stacks of small matrices | 19 | 10.0× | 75.9× |
-| ndimage | 41 | 13.3× | 68.2× |
-| interpolate | 12 | 15.6× | 44.3× |
-| csgraph | 9 | 5.8× | 15.5× |
-| signal | 22 | 4.7× | 12.4× |
-| sparse | 16 | 4.7× | 11.9× |
-| stats | 46 | 7.0× | 9.3× |
-| special | 32 | 1.0× | 7.4× |
-| spatial | 8 | 1.0× | 6.7× |
-| integrate | 3 | 1.6× | 1.6× |
-| optimize | 3 | 1.1× | 1.1× |
+| Linux x86_64 · glibc | 15.1× | 5.9× | 3.9× |
+| Linux ARM64 · glibc | 13.2× | 6.5× | 4.0× |
+| Linux x86_64 · musl | 12.3× | 6.0× | 5.1× |
+| Linux ARM64 · musl | 11.8× | 6.4× | 4.0× |
+| macOS Apple Silicon | 16.9× | 5.9× | 4.8× |
+| macOS Intel | 13.0× | 5.7× | 6.5× |
+| Windows x86_64 | 11.7× | 5.9× | 4.7× |
+| Windows ARM64 | 11.7× | 6.4× | 4.2× |
 
-Published run: 2026-10-18, SciPy 1.18.1, Python 3.13, release build; controls
-excluded. Results vary by workload and hardware.
-[Full results](https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.md) · [Latest expansion results](https://github.com/michael-L-i/fastscipy/blob/main/bench/README.md)
+The suite covers **407 cases across 13 areas**; a case is one function and
+input combination. The three columns summarize 43 image-processing,
+58 statistics, and 49 linear-algebra cases. Results vary by workload,
+hardware, and SciPy build.
+[Platform measurements and limitations](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md) · [Original M5 Pro benchmarks](https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.md)
 
 ## More
 

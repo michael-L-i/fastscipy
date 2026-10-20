@@ -12,6 +12,9 @@ rewritten to match a newer checkout.
 - `mac-arm64/tests-py313.json` and `tests-py315.json`: project-test summaries
   for the ABI-guard builds, with 7,048 passing tests on each Python version.
   These summaries contain no benchmark results.
+- `mac-arm64/tests-b471-py313.json` and `tests-b471-py315.json`: newer
+  revision `b4710e6` project-test summaries, with 7,116 passing tests on each
+  Python version. These summaries contain no benchmark or upstream results.
 - `mac-arm64/upstream-corrected-comparison.json`: comparison of 38 completed
   raw JUnit records across 19 upstream module partitions, re-evaluated with
   the corrected special-ufunc classifier. All 95,772 common executions have

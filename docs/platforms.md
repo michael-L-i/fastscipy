@@ -38,6 +38,12 @@ not final release validation:
   failures occurred in both the unpatched and patched runs; the report
   retains those failures, expected collection differences, and the corrected
   comparison's source revision.
+- macOS arm64, newer revision `b471`: all 7,116 project tests passed on
+  each of [Python 3.13](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py313.json)
+  and [Python 3.15](../bench/runs/2026-10-20-portability/mac-arm64/tests-b471-py315.json).
+  Benchmark and paired upstream checks for
+  this revision remain pending; the archived reports above describe earlier
+  checkpoints.
 - Linux aarch64 (glibc), revision `66f20ae`: 7,048 project tests passed;
   all 407 benchmark cases across 13 areas matched SciPy and met their
   expected fast-path checks. The archive contains the
@@ -48,13 +54,12 @@ not final release validation:
   expected fast-path checks. Four project tests exposed NaN-bit differences
   in uniform filtering; the fix awaits fresh native CI. The initial
   job also contained a stale Windows-platform simulation test, since fixed.
-- Windows arm64: all 407 benchmark outputs matched SciPy, but five missed
-  their expected fast paths. Project tests had 120 failures in arithmetic
-  calibration and fast-path checks. Fixes await the
-  [fresh native run](https://github.com/michael-L-i/fastscipy/actions/runs/39369748578);
-  a [diagnostic run](https://github.com/michael-L-i/fastscipy/actions/runs/39369369748)
-  confirmed the proposed correlation arithmetic against the installed SciPy
-  wheel in 85 of 85 software probe cases.
+- Windows arm64, revision `236b1bb`: the previous 120 calibration and
+  fast-path failures are fixed. Project tests reported 7,102 passed,
+  10 failed, and four skipped; the remaining failures concern float32 NaN
+  payloads in uniform filtering. All 407 benchmark cases matched SciPy and
+  met their expected fast-path checks. The NaN fix in revision `b471` awaits
+  the [fresh native run](https://github.com/michael-L-i/fastscipy/actions/runs/39372506350).
 
 These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
 must complete its own project, benchmark, and paired upstream checks.

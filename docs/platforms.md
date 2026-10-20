@@ -125,6 +125,33 @@ Special and spatial gain through threading; one-thread results are about
 1×. [Raw cases and machine metadata](../bench/runs/2026-10-20-portability/linux-arm64/release80/summary.json)
 retain individual timings, controls, identity checks, and expected paths.
 
+## Intel Accelerate reference reproducibility
+
+The [native reproduction](../bench/runs/2026-10-20-portability/mac-x86_64/reference-stability-956/README.md)
+found different results from repeated **unpatched** SciPy calls on the same
+inputs. NumPy 2.5.4's Intel Accelerate dot products and norms vary with buffer
+alignment. This affects Pearson correlation, linear regression, iterative
+solvers, and a least-squares cost. Numerical-gradient BFGS can also take a
+different path, even changing its termination status. A declined fast call
+still reproduced a statistics mismatch; falling back cannot create a unique
+byte reference for these cases.
+
+The default comparison remains byte-exact. Selected cases may explicitly
+provide an independent numerical validator. An exception is accepted only
+on Intel Mac with NumPy's Accelerate backend, after repeated unpatched calls
+actually demonstrate different results. The validator must accept both
+references and the accelerated result; types, shapes, warnings, solver
+convergence, and independent residual or minimizer checks remain enforced.
+Missing acceleration and deterministic mismatches still fail.
+
+These exceptions emit warnings and retain reference/result fingerprints in
+`reference-variance.jsonl` and the platform summary. Benchmark rows keep
+`identical: false`, report numerical validation separately, and are excluded
+from headline geometric means. This is a reproducibility limitation, not a
+byte-identity pass. Production numerical kernels are not changed by this
+test policy. The earlier failed preflight remains archived unchanged; the
+new policy and selector fix still require full candidate validation.
+
 ## Why each build is checked
 
 SciPy wheels can differ in compiler contraction, floating-point libraries,

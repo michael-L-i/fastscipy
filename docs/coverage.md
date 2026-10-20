@@ -1,9 +1,11 @@
 # What fastscipy accelerates
 
-Every fast path returns exactly what SciPy 1.18 returns, byte for byte. Each
-one also checks its arguments first and hands anything outside what it
-covers to SciPy unchanged, so SciPy produces every warning and error. The
-lists below give what is covered, how, and the main cases it hands back.
+Fast paths are checked against SciPy 1.18, byte for byte where its reference
+is reproducible. Intel Mac's Accelerate reductions can vary even in plain
+SciPy; [platform details](platforms.md) describe that measured limitation and
+the explicit numerical checks for those cases. Each path checks its arguments
+first and hands unsupported calls to SciPy. The lists below describe coverage
+and the main cases handed back.
 
 "Threads" means the work is split across the thread budget
 (`fastscipy.set_num_threads`, default: all cores). A path marked

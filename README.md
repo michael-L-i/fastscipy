@@ -1,6 +1,6 @@
 # fastscipy
 
-**Faster SciPy calls. The same results, byte for byte.**
+**Faster SciPy calls. SciPy-compatible results.**
 
 Rust kernels and shared thread pools accelerate supported calls. Everything
 else stays with SciPy.

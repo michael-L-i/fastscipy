@@ -15,3 +15,9 @@ Run locally with a release build:
 ```sh
 FASTSCIPY_NUM_THREADS=2 python bench/run.py
 ```
+
+Byte identity remains the default correctness check. The Intel Accelerate
+BFGS case can instead record proven variation in repeated plain SciPy calls
+and pass independent checks against the known minimizer. It stays marked
+nonidentical and is excluded from headline geometric means.
+[Reference evidence and policy](../docs/platforms.md)

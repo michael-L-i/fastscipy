@@ -91,12 +91,15 @@ def main():
     parser.add_argument("--budget", type=float, default=0.1)
     parser.add_argument("--max-rss-mb", type=int, default=4096)
     parser.add_argument("--timeout", type=int, default=2400, help="Seconds per test run or benchmark area")
+    parser.add_argument(
+        "--upstream-timeout", type=int, default=14400, help="Seconds for the complete serial paired upstream suite"
+    )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--bench-only", action="store_true")
     mode.add_argument("--tests-only", action="store_true")
     parser.add_argument("--upstream", action="store_true")
     args = parser.parse_args()
-    if args.budget <= 0 or args.max_rss_mb <= 0 or args.timeout <= 0:
+    if args.budget <= 0 or args.max_rss_mb <= 0 or args.timeout <= 0 or args.upstream_timeout <= 0:
         parser.error("Timing, memory, and timeout budgets must be positive")
     output = args.output.resolve()
     if output.exists() and any(output.iterdir()):
@@ -125,12 +128,18 @@ def main():
         },
         "timing_budget_seconds": args.budget,
         "memory_limit_mb": args.max_rss_mb,
+        "upstream_timeout_seconds": args.upstream_timeout,
         "runs": {},
         "areas": {},
     }
 
-    def execute(name, arguments):
-        result = run([sys.executable, *arguments], output / f"{name}.log", args.max_rss_mb, args.timeout)
+    def execute(name, arguments, timeout=None):
+        result = run(
+            [sys.executable, *arguments],
+            output / f"{name}.log",
+            args.max_rss_mb,
+            args.timeout if timeout is None else timeout,
+        )
         report["runs"][name] = result
         (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
         return result
@@ -160,7 +169,7 @@ def main():
                 "all_case_speedup_nt": mean([row["xnt"] for row in rows.values()]),
             }
     if args.upstream:
-        execute("upstream", ["tools/scipy_suite.py", "--pyargs", "scipy", "-n", "2"])
+        execute("upstream", ["tools/scipy_suite.py", "--partitioned", "--pyargs", "scipy"], args.upstream_timeout)
     (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     bad = any(run["returncode"] != 0 for run in report["runs"].values())
     if not args.tests_only:

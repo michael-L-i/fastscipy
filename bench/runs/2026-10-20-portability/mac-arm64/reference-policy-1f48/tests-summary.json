@@ -1,0 +1,18 @@
+{
+  "description": "Derived from original full-project JUnit; no tests rerun.",
+  "source_revision": "1f48cd63a544379363234081cc8178a574fea73f",
+  "xml": {
+    "file": "tests.xml",
+    "bytes": 825971,
+    "sha256": "ae4b80ed0771ae749770aba1ddfacb77d05d5d27345634987877b431d772fd0c"
+  },
+  "collected": 7275,
+  "passed": 7275,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "benchmark_cases": 407,
+  "byte_identical_cases": 407,
+  "reference_variance_exceptions": 0,
+  "upstream_run": false
+}

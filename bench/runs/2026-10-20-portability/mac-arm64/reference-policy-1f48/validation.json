@@ -1,0 +1,74 @@
+{
+  "build": {
+    "returncode": 0,
+    "seconds": 211.69346408298588,
+    "peak_rss_bytes": 5297045504,
+    "stopped": null
+  },
+  "pip_install_unavailable": {
+    "returncode": 1,
+    "seconds": 0.2275942089909222,
+    "peak_rss_bytes": 12943360,
+    "stopped": null
+  },
+  "install": {
+    "returncode": 0,
+    "seconds": 0.2244419589987956,
+    "peak_rss_bytes": 10665984,
+    "stopped": null
+  },
+  "installed": {
+    "returncode": 0,
+    "seconds": 1.567391291988315,
+    "peak_rss_bytes": 125009920,
+    "stopped": null
+  },
+  "focused": {
+    "returncode": 0,
+    "seconds": 9.024807083013002,
+    "peak_rss_bytes": 204767232,
+    "stopped": null
+  },
+  "bench_sparse": {
+    "returncode": 0,
+    "seconds": 0.8848718329973053,
+    "peak_rss_bytes": 120274944,
+    "stopped": null
+  },
+  "final_package": {
+    "returncode": 0,
+    "seconds": 0.44082158399396576,
+    "peak_rss_bytes": 18857984,
+    "stopped": null
+  },
+  "final_install": {
+    "returncode": 0,
+    "seconds": 0.2241219579882454,
+    "peak_rss_bytes": 18857984,
+    "stopped": null
+  },
+  "full_platform": {
+    "returncode": 0,
+    "seconds": 331.07818670899724,
+    "peak_rss_bytes": 1798635520,
+    "stopped": null
+  },
+  "oracle_safety": {
+    "returncode": 0,
+    "seconds": 1.0969216249941383,
+    "peak_rss_bytes": 120586240,
+    "stopped": null
+  },
+  "report_isolation": {
+    "returncode": 0,
+    "seconds": 0.8798920419940259,
+    "peak_rss_bytes": 128548864,
+    "stopped": null
+  },
+  "layout_safety": {
+    "returncode": 0,
+    "seconds": 1.1014548749953974,
+    "peak_rss_bytes": 120143872,
+    "stopped": null
+  }
+}

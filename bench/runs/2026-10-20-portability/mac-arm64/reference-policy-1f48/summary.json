@@ -1,0 +1,356 @@
+{
+  "recorded_utc": "2026-10-20T15:28:21.158513+00:00",
+  "benchmark_commit": "1f48cd63a544379363234081cc8178a574fea73f",
+  "fastscipy": "0.1.0a2",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "logical_cpus": 18,
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "15.0.0",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      },
+      "build": {
+        "cpu": "aarch64",
+        "family": "aarch64",
+        "endian": "little",
+        "system": "darwin"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      },
+      "lapack": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      }
+    },
+    "Python Information": {
+      "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/build-env-q3ulyt3x/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "NEON",
+        "NEON_FP16",
+        "NEON_VFPV4",
+        "ASIMD"
+      ],
+      "found": [
+        "ASIMDHP",
+        "ASIMDDP"
+      ],
+      "not found": [
+        "ASIMDFHM"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.05,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "tests": {
+      "returncode": 0,
+      "seconds": 103.36154470799374,
+      "peak_rss_bytes": 630718464,
+      "stopped": null
+    },
+    "cluster": {
+      "returncode": 0,
+      "seconds": 2.4314501250046305,
+      "peak_rss_bytes": 107347968,
+      "stopped": null
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 11.413332416996127,
+      "peak_rss_bytes": 257540096,
+      "stopped": null
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 5.467326624988345,
+      "peak_rss_bytes": 121028608,
+      "stopped": null
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 18.123393541987753,
+      "peak_rss_bytes": 445710336,
+      "stopped": null
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 11.627340083010495,
+      "peak_rss_bytes": 694910976,
+      "stopped": null
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 31.534355584008154,
+      "peak_rss_bytes": 1054294016,
+      "stopped": null
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 2.8770981669949833,
+      "peak_rss_bytes": 115408896,
+      "stopped": null
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 16.518967457988765,
+      "peak_rss_bytes": 1782808576,
+      "stopped": null
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 13.62401158400462,
+      "peak_rss_bytes": 1062158336,
+      "stopped": null
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 3.7361449589952826,
+      "peak_rss_bytes": 108052480,
+      "stopped": null
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 16.753296042006696,
+      "peak_rss_bytes": 589660160,
+      "stopped": null
+    },
+    "special": {
+      "returncode": 0,
+      "seconds": 76.81405937499949,
+      "peak_rss_bytes": 609239040,
+      "stopped": null
+    },
+    "stats": {
+      "returncode": 0,
+      "seconds": 16.4532006670197,
+      "peak_rss_bytes": 493469696,
+      "stopped": null
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6896645048357224,
+      "speedup_nt": 1.6965458655781431,
+      "all_case_speedup_1t": 1.6896645048357224,
+      "all_case_speedup_nt": 1.6965458655781431
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.746821829214902,
+      "speedup_nt": 4.367136643236844,
+      "all_case_speedup_1t": 3.746821829214902,
+      "all_case_speedup_nt": 4.367136643236844
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.7225413028529892,
+      "speedup_nt": 1.7286706525245807,
+      "all_case_speedup_1t": 1.7225413028529892,
+      "all_case_speedup_nt": 1.7286706525245807
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.876018610008634,
+      "speedup_nt": 4.6563177831691265,
+      "all_case_speedup_1t": 3.250531982248258,
+      "all_case_speedup_nt": 3.7843935233816057
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 4.180778637095111,
+      "speedup_nt": 5.136036690587201,
+      "all_case_speedup_1t": 4.180778637095111,
+      "all_case_speedup_nt": 5.136036690587201
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 12.576603263545325,
+      "speedup_nt": 20.780512873694832,
+      "all_case_speedup_1t": 12.576603263545325,
+      "all_case_speedup_nt": 20.780512873694832
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6531309000553964,
+      "speedup_nt": 1.635082150521128,
+      "all_case_speedup_1t": 1.6531309000553964,
+      "all_case_speedup_nt": 1.635082150521128
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.3078338864575665,
+      "speedup_nt": 3.9211890892112264,
+      "all_case_speedup_1t": 3.3078338864575665,
+      "all_case_speedup_nt": 3.9211890892112264
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.921152428775626,
+      "speedup_nt": 4.56180713631442,
+      "all_case_speedup_1t": 3.921152428775626,
+      "all_case_speedup_nt": 4.56180713631442
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.2947224679061953,
+      "speedup_nt": 1.2903441781867762,
+      "all_case_speedup_1t": 1.2947224679061953,
+      "all_case_speedup_nt": 1.2903441781867762
+    },
+    "spatial": {
+      "cases": 24,
+      "controls": 3,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.0004652143256718,
+      "speedup_nt": 1.7059832294882311,
+      "all_case_speedup_1t": 0.9995289747752117,
+      "all_case_speedup_nt": 1.5923556095199198
+    },
+    "special": {
+      "cases": 37,
+      "controls": 2,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.0045701092701165,
+      "speedup_nt": 1.8281573883685993,
+      "all_case_speedup_1t": 1.0045149714467518,
+      "all_case_speedup_nt": 1.768357507192108
+    },
+    "stats": {
+      "cases": 58,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 6.124536405568073,
+      "speedup_nt": 6.275145162241305,
+      "all_case_speedup_1t": 6.124536405568073,
+      "all_case_speedup_nt": 6.275145162241305
+    }
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "7275",
+      "time": "102.446",
+      "timestamp": "2026-10-20T08:28:21.642170-07:00",
+      "hostname": "DN0a1f2938.SUNet"
+    }
+  ],
+  "reference_variance": []
+}

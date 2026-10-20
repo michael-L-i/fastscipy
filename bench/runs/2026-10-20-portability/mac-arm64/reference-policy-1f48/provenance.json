@@ -1,0 +1,356 @@
+{
+  "description": "Local installed-wheel validation provenance; derived from original reports, package contents, and Git source trees.",
+  "full_project_benchmark_revision": "1f48cd63a544379363234081cc8178a574fea73f",
+  "rust_source_revision": "ec2d724a81c686bd06b4b238ce409d9cf3267b42",
+  "rust_source_tree": "c38b8980b13ba32759f6d3bfab9c4228f155a4a1",
+  "rust_tree_unchanged_through_full_run": true,
+  "python_wheel_sources_match_full_run_revision": [
+    {
+      "file": "fastscipy/__init__.py",
+      "sha256": "e283d56b3dc275c620f09eb06b6e69f0100067c219b0140a8454d95c358f0751",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_cluster.py",
+      "sha256": "9240fd8ac636138b340b78aebc040883ba4b6822e8865ed2939b707287d6c2b8",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_csgraph.py",
+      "sha256": "0bb657603ac535deac2ddb5f5d508eecf180b5d99e9fecb023b8df9745811800",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_integrate.py",
+      "sha256": "204290e12ed8373b361c750b1ec997bb02e8999abaa2a3e460b8a07fcc217188",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_interpolate.py",
+      "sha256": "793cea352a4c4cfe8fb8090236df35e9613c618a1fea35e413e12b92c4a2926a",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_linalg.py",
+      "sha256": "542bfdfaa5750b2772899c9d5ab8b6c507e692d34b4ff48a4b511996470c42c8",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage.py",
+      "sha256": "058133151f0c9eca5dcaaea3549954f6ad8bcada23017f974893f85ffb1da27a",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_correlate.py",
+      "sha256": "ec4aaaca4d42d8744bb190ad37ee0434393af743784aabbf419e318e4a9c6fb9",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_generic.py",
+      "sha256": "57edac18ca15773e5846791a49cb387177e9dbed95dd14ad84bc00c44a2a3a6d",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_interp.py",
+      "sha256": "b7d2e9d9e37c23fc66a8fcde98e8c03353173be7ad038a101c4df96013cefd44",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_label.py",
+      "sha256": "ae30f1bd350efc497ac9d3439e067a027beb20756a8d859bec6c86f11ba457e0",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_morph.py",
+      "sha256": "20510ca77e428e456731a9dd67c097c04382eb5ebfb50731b93128f0e24966d8",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_rank.py",
+      "sha256": "c4ab18545429c0ab3f67947f69f1c10acb28cdf82a50891b788e61a8a0b52f74",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_ndimage_seam.py",
+      "sha256": "c107de2c1ad26d8a9e734e8fe0b890fe19e77a0e472b5600b9f7644be7ad1a2f",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_optimize.py",
+      "sha256": "09a142127b33d9b3acb147225c6a52b0942a45d6495fe4dc4edc220b3ab1a5f2",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_patch.py",
+      "sha256": "860ef64b5cd2f97d6349ed83feb3346b471f59f27f8400f1bce6c90fec0d767d",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_signal.py",
+      "sha256": "c859f5da3eab2a259703c3b3bb2a153c48d05e96b6f88732e1e8f94d39d118b4",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_signal_algo.py",
+      "sha256": "3e43ae340775b1cae8cb7536183979cf298f8f6a3c53d25c4142b08ed78dad9e",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_signal_small.py",
+      "sha256": "01aa8db93f99d9dd84c3c634cc5bc24e423556f2af70d7439ef812191626f5dc",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_signal_threads.py",
+      "sha256": "1eb6fb4f4f02c1488bbd81d1f21142a46881899804472ae356bf551458837ee5",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_sparse.py",
+      "sha256": "2a44cfcd14a905bd9c425c299cee3ff6ff2e78bb950a2921330df3303b9fc869",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_sparse_linalg.py",
+      "sha256": "996539fff715fd558ddd0937af844988d7ea45b868ff37d3ee1c930f6f05b99b",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_spatial.py",
+      "sha256": "3c5182651fcf4e9b1cef97048079783151a3d1875b17239cd810606ea0e02723",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_special.py",
+      "sha256": "dc2bffab4cbe1a5bffa00591c4b0a8b6087803607f41a6b67f970d2983f63478",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_stats.py",
+      "sha256": "d54ab8260bad63d878aaab43f6891efb0a2beba328674e96612af014ddaf54a5",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_stats_algos.py",
+      "sha256": "972184661b7f3973aa7099c2a1b362179fd57bb1c4a43ee0e0ae2490d400c322",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_stats_dist.py",
+      "sha256": "230ee977eb95ff54389ea8440bc37093389a54fabab40f8752cc63073e1a8d71",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_stats_loop.py",
+      "sha256": "9908aaa28d1f03f2806e0fdb23c0d425dd5cefde8455a491b5eccdb3d607f1db",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_stats_rank.py",
+      "sha256": "c1d876c67ba97485c6a6a4fcf133e78698eac4a4d537d75178871cc0dc018452",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/_threads.py",
+      "sha256": "0cac6e494e6c746946bd459778c186fc7727d3472623333d767852ca7a725f6d",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/pytest_plugin.py",
+      "sha256": "164d379d0fbe70145d082f7d9c2662d88217838d438b8976305d406fc1211e0e",
+      "matches_source_revision": true
+    },
+    {
+      "file": "fastscipy/testing.py",
+      "sha256": "0e0aff90f042f9bfa0cb95569cdf09c4f45dcb637971f414d113012be086d67b",
+      "matches_source_revision": true
+    }
+  ],
+  "wheel": {
+    "filename": "fastscipy-0.1.0a2-cp313-cp313-macosx_14_0_arm64.whl",
+    "bytes": 4248985,
+    "sha256": "5928762440515ed8f89ff5558fc64e9e93c6027e5085e66c15202feaec5bfa57"
+  },
+  "setup_notes": {
+    "pip_install_unavailable": "Isolated environment lacked pip; this setup attempt returned1 and uv installation then succeeded. It was not a source/test failure.",
+    "uncached_build": "Initial build used the wrong target cache and was intentionally cancelled; returncode\u22129 is retained separately and was not the successful build."
+  },
+  "later_targeted_checks": {
+    "bfd6e5a": {
+      "scope": "unpatched sparse residual oracle safety",
+      "passed": 205,
+      "resource_record": "oracle_safety"
+    },
+    "d2c9d76": {
+      "scope": "reference-report isolation",
+      "passed": 13,
+      "resource_record": "report_isolation"
+    },
+    "d4fe822": {
+      "scope": "array-layout validation safety",
+      "passed": 194,
+      "resource_record": "layout_safety"
+    }
+  },
+  "limitation": "The7275-test/407-case full run certifies1f48, not the later safety-test revisions or current HEAD. No upstream suite was run in this checkpoint.",
+  "archived_raw_files": [
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/summary.json",
+      "archive_file": "summary.json",
+      "bytes": 9555,
+      "sha256": "e655648ee54a1678307827c6d7324872da368047118801395b874c0371db61a2"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-validation/validation.json",
+      "archive_file": "validation.json",
+      "bytes": 1607,
+      "sha256": "3c02ca43f1617bedee5bbc63c23b4914e05511019eb773acf56eb55d864e6ee8"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-validation/uncached-validation.json",
+      "archive_file": "uncached-validation.json",
+      "bytes": 131,
+      "sha256": "b1e747b402cc51496eee687b50e308e1d4f585e3a21da4e70734d1ea1a296935"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/signal.json",
+      "archive_file": "cases/signal.json",
+      "bytes": 12945,
+      "sha256": "19aa83469abdcbe459dad31fc948e48c2645c06a186e337db3b7f8246393e529"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/csgraph.json",
+      "archive_file": "cases/csgraph.json",
+      "bytes": 5380,
+      "sha256": "23a1881371858667f5feeb6fcf2c252017d2d826f902f53e5bafe0c953485170"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/linalg.json",
+      "archive_file": "cases/linalg.json",
+      "bytes": 15774,
+      "sha256": "19aaf41af58cf70dd31c66f26a14e4a47853e21c75d9b45062028fc6ea2336fe"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/integrate.json",
+      "archive_file": "cases/integrate.json",
+      "bytes": 11226,
+      "sha256": "4555a94c254eaa707c63778f58199dce2b665868c1606133d384cb544085eee3"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/sparse_linalg.json",
+      "archive_file": "cases/sparse_linalg.json",
+      "bytes": 6371,
+      "sha256": "b1be9fb24a735217dc9c977632952d267cd210c1b3c4165f3309230ad8d45486"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/special.json",
+      "archive_file": "cases/special.json",
+      "bytes": 11318,
+      "sha256": "0fb58092ac29e5f87f00977e8c30b4ad18f23c046d800878373f142d5ba84d14"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/interpolate.json",
+      "archive_file": "cases/interpolate.json",
+      "bytes": 10047,
+      "sha256": "d58ceda52bce9dabf78459101825f707e123c8bd8147271fe91a7b6906facd07"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/cluster.json",
+      "archive_file": "cases/cluster.json",
+      "bytes": 3798,
+      "sha256": "7fab4f66c87333728fd6b9bc1909a3cdd8a179b73d027b326b4a808b505bb20d"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/sparse.json",
+      "archive_file": "cases/sparse.json",
+      "bytes": 8481,
+      "sha256": "1ac684f81f22ac47ebf37b3460cb25362eb508564713e88b98aa1c09e47bfb42"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/optimize.json",
+      "archive_file": "cases/optimize.json",
+      "bytes": 4419,
+      "sha256": "6027c9e66859cdedba7a132f4eca2fe7abe98e46f044a55dc84e370bb876922c"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/ndimage.json",
+      "archive_file": "cases/ndimage.json",
+      "bytes": 13162,
+      "sha256": "d593d86cea1e67ab3eb78342f7e741378a4313dc187870bb20e991d003d64fd7"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/spatial.json",
+      "archive_file": "cases/spatial.json",
+      "bytes": 7634,
+      "sha256": "1f7e904627b101c1882774d1284b1c45ba7c6a155dab8656959db0c7dab218ac"
+    },
+    {
+      "source_file": "/tmp/fastscipy-reference-policy-mac-platform/cases/stats.json",
+      "archive_file": "cases/stats.json",
+      "bytes": 17392,
+      "sha256": "bf9c05cd059ec75fdf63657bbf2eea7d7c6444e68d9f46233cb03f48775b21ef"
+    }
+  ],
+  "external_validation_logs": [
+    {
+      "file": "bench-sparse.log",
+      "bytes": 260,
+      "sha256": "6f01e015ae737d7d2b3372e0078136aefab5ad1b4bff3b385b601c1cb80ed6e5"
+    },
+    {
+      "file": "build.log",
+      "bytes": 585,
+      "sha256": "fa2497990f4043c5ec8a58117221ed3994a0c09284a8c748947ba235ca37747e"
+    },
+    {
+      "file": "final_install.log",
+      "bytes": 473,
+      "sha256": "58597aa2c105602053d676ecd9fdcc1b5a2e135978d27200451200931630308e"
+    },
+    {
+      "file": "final_package.log",
+      "bytes": 413,
+      "sha256": "f465b5d94ff5a92e8e6a82184ae704c6828da651e88bd48c95798b2fc39fb275"
+    },
+    {
+      "file": "focused.log",
+      "bytes": 900,
+      "sha256": "9af938211576bcebb79550b88c466171c6257cf273e289ea5852fee230700eb2"
+    },
+    {
+      "file": "full_platform.log",
+      "bytes": 524,
+      "sha256": "ef5111b811a0255ca091ffc58995d4c57c3714140541452fed1a523f96b6fa24"
+    },
+    {
+      "file": "install.log",
+      "bytes": 459,
+      "sha256": "876a044247b6d72a582a3d8e9868b0a075aadec9441bbdaa0aee56aab6083d4a"
+    },
+    {
+      "file": "installed.log",
+      "bytes": 135,
+      "sha256": "ba36df84138aed18d04732ab4d1d5ba49a051df5ad29ea344eb52c6f6dfbac4e"
+    },
+    {
+      "file": "layout-safety.log",
+      "bytes": 260,
+      "sha256": "7d5f2446514bd1d467fbec9a8a54e5d65660e5210fc6aacf2115fef521a5156d"
+    },
+    {
+      "file": "oracle-safety.log",
+      "bytes": 260,
+      "sha256": "f0f1b9dca0cfa2c02f00cb59237f802a4c7861ecd1520ca38c776dde15192882"
+    },
+    {
+      "file": "reference-report-isolation.log",
+      "bytes": 99,
+      "sha256": "d93dcea5f5c4af276cccab69a9c3de7f909b9c2408c55f181632aac835c13483"
+    },
+    {
+      "file": "uncached-build.log",
+      "bytes": 421,
+      "sha256": "911748625d340a703f75b2283eb01defffdf33c8a1f73768cea244184c35ce19"
+    }
+  ]
+}

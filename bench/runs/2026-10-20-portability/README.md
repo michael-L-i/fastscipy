@@ -127,6 +127,13 @@ LSQR produced two exact variants on both reference and patched sides, with
 unchanged input buffers. Unchanged reports and an external-array hash manifest
 retain this narrower evidence separately from the earlier diagnostics.
 
+The [local Mac ARM reference-policy checkpoint](mac-arm64/reference-policy-1f48/README.md)
+tested installed Python source `1f48cd6` with the unchanged `ec2d724` Rust
+tree: 7,275 project tests and all 407 benchmark identity/expected-path checks
+passed, with zero reference-variance exceptions. It includes no new upstream
+run. Later oracle/report/layout safety changes have separate targeted results;
+the full result is not a claim about those later revisions.
+
 See [platform status](../../../docs/platforms.md) for the pending checks and
 Actions links. Earlier reports do not establish the behavior of later builds.
 

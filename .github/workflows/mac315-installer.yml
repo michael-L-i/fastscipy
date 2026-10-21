@@ -1,0 +1,60 @@
+name: Mac Python 3.15 installer smoke
+
+on:
+  push:
+    branches: [release-fixes]
+    paths:
+      - .github/workflows/mac315-installer.yml
+      - tools/probe_mac315_installer.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mac315-installer-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FASTSCIPY_NUM_THREADS: "2"
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  installer:
+    name: Installer / ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - arch: arm64
+            os: macos-15
+          - arch: x86_64
+            os: macos-15-intel
+    env:
+      EXPECTED_ARCH: ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install monitor tooling without source builds
+        run: >-
+          python -m pip install --only-binary=:all:
+          cibuildwheel==4.3.1 numpy==2.5.4 scipy==1.18.1 psutil
+      - name: Reproduce the official Python installer under bounded monitoring
+        run: python tools/probe_mac315_installer.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mac315-installer-${{ matrix.arch }}
+          path: |
+            artifacts/mac315-installer/*.json
+            artifacts/mac315-installer/*.log
+          if-no-files-found: warn
+          retention-days: 14

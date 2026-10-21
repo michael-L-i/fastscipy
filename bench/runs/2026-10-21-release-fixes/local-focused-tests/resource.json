@@ -1,0 +1,9 @@
+{
+  "purpose": "focused source-helper/monitor/sparse/stats regressions with unchanged installed1f48native; not release-wheel certification",
+  "result": {
+    "returncode": 0,
+    "seconds": 8.976118249993306,
+    "peak_rss_bytes": 208093184,
+    "stopped": null
+  }
+}

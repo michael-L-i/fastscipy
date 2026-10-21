@@ -65,7 +65,7 @@ jobs:
         run: |
           python -m venv .venv
           source .venv/bin/activate
-          pip install maturin "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis
+          pip install maturin "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis packaging psutil
           maturin develop --profile dev-release
       - name: Identity tests
         run: .venv/bin/python -m pytest tests -q
@@ -85,7 +85,7 @@ jobs:
         run: |
           python -m venv .venv
           source .venv/bin/activate
-          pip install maturin "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis pooch psutil
+          pip install maturin "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis pooch packaging psutil
           maturin develop --profile dev-release
       - name: Compare every test's outcome
         run: .venv/bin/python tools/platform_suite.py --output artifacts/upstream --tests-only --upstream --max-rss-mb 4096

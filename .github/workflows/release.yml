@@ -75,10 +75,10 @@ jobs:
         shell: bash
     strategy:
       fail-fast: false
-      max-parallel: ${{ inputs.validation_only && 2 || 4 }}
+      max-parallel: ${{ inputs.validation_only && 2 || 8 }}
       # A single wheel per job keeps slow native builds plus upstream checks
       # inside the six-hour job limit. Preflight uses two separate runner VMs;
-      # the full release uses four, with the same per-machine resource limits.
+      # the full release uses eight, with the same per-machine resource limits.
       matrix:
         python: ${{ fromJSON(inputs.validation_only && '["cp313"]' || '["cp312", "cp313", "cp314", "cp315"]') }}
         target:
@@ -123,6 +123,12 @@ jobs:
           python-version: "3.13"
       - uses: dtolnay/rust-toolchain@1.97.1
         if: runner.os != 'Linux'
+      - uses: Swatinem/rust-cache@v2
+        if: runner.os != 'Linux'
+        with:
+          shared-key: release-${{ matrix.target.name }}-${{ matrix.python }}
+          cache-workspace-crates: true
+          cache-on-failure: true
       - name: Install wheel tooling
         run: |
           python -m pip install "cibuildwheel==4.3.1" packaging twine psutil
@@ -188,6 +194,14 @@ jobs:
           name: release-report-${{ matrix.target.name }}-${{ matrix.python }}
           path: artifacts/
           if-no-files-found: warn
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && runner.os != 'Linux' }}
+        with:
+          # Debug wheels never match the release-dist-* publication pattern.
+          name: debug-wheel-${{ matrix.target.name }}-${{ matrix.python }}
+          path: target/wheels/*.whl
+          if-no-files-found: ignore
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:

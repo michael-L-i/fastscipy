@@ -86,7 +86,7 @@ completed support claim. It installs built wheels and runs project checks
 plus paired upstream SciPy comparisons.
 Builds use one Cargo job and bounded numerical thread and memory budgets.
 The preflight runs two wheel jobs concurrently on separate GitHub runner VMs;
-the full release runs four. Each VM retains its own 6 GiB build limit,
+the full release runs eight. Each VM retains its own 6 GiB build limit,
 4 GiB test limit, and two numerical threads; this adds no local RAM load.
 Publish a target only after its wheel validation finishes successfully.
 

@@ -6,7 +6,6 @@ No source overlay, compilation, benchmarks, tolerances, or acceptance decisions.
 # Configure numerical thread limits before importing numerical libraries.
 # ruff: noqa: E402
 
-
 import argparse
 import ast
 import base64

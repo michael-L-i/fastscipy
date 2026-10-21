@@ -22,19 +22,19 @@ def outcome(call):
     return r, [(x.category, str(x.message)) for x in w]
 
 
-def same(call, *, reference_validation=None):
-    """Assert patched == plain SciPy (result bytes, exceptions, warnings); return whether a fast path ran."""
-    if reference_validation is not None:
+def same(call, *, numerical_validation=None):
+    """Check SciPy compatibility, using bytes unless explicitly opting into bounded numeric validation."""
+    if numerical_validation is not None:
 
         def validated(expected, got):
-            accepted = reference_validation(expected, got)
+            accepted = numerical_validation(expected, got)
             assert accepted is True or accepted is None, _stats_validation_rejection(
-                expected, got, reference_validation.input_summary()
+                expected, got, numerical_validation.input_summary()
             )
             return accepted
 
         before = fast_calls()
-        check(lambda: outcome(call), fast=False, reference_validation=validated)
+        check(lambda: outcome(call), fast=False, numerical_validation=validated)
         return fast_calls() > before
     with fastscipy.disabled():
         expected = outcome(call)
@@ -61,6 +61,8 @@ def _stats_validation_rejection(expected, got, inputs=None):
                 "actual_shape": np.shape(bb),
                 "expected": repr(aa),
                 "actual": repr(bb),
+                "expected_hex": np.asarray(aa).tobytes().hex(),
+                "actual_hex": np.asarray(bb).tobytes().hex(),
             }
             for name, aa, bb in zip(getattr(a, "_fields", ()), a, b)
         }
@@ -68,16 +70,17 @@ def _stats_validation_rejection(expected, got, inputs=None):
         else None
     )
     return (
-        f"stats reference validator rejected: warnings_equal={identical(aw, bw)}; "
+        f"stats numerical validator rejected: warnings_equal={identical(aw, bw)}; "
         f"result_types={type(a)!r}/{type(b)!r}; metadata_equal={metadata!r}; fields={fields!r}; inputs={inputs!r}"
     )
 
 
-def _stats_reference_validation(x, y):
-    """Validate only observed Intel Accelerate reference variability.
+def _stats_numerical_validation(x, y):
+    """Validate explicit, bounded Intel Accelerate numerical compatibility.
 
-    ``check`` owns platform/backend gating, repeated unpatched evidence, and
-    reporting. This validator preserves the result and warning contracts.
+    ``check`` owns platform/backend gating and compatibility reporting.
+    This does not claim byte identity or require a repeated-reference witness.
+    The validator preserves result metadata and warning contracts.
     Unitful regression fields get absolute floors in their input data units.
     """
     eps64 = 64 * np.finfo(np.float64).eps
@@ -108,19 +111,40 @@ def _stats_reference_validation(x, y):
                 return False
             if np.ndim(aa) != 0 or np.ndim(bb) != 0:
                 return False
-        if not (0 <= b.pvalue <= 1 or identical(a.pvalue, b.pvalue)):
-            return False
         if type(a) is PearsonRResult:
-            if not identical(b.correlation, b.statistic):
-                return False
-            if not (-1 <= b.statistic <= 1 or identical(a.statistic, b.statistic)):
+            if not all(identical(result.correlation, result.statistic) for result in (a, b)):
                 return False
             if not all(identical(v, vars(b)[k]) for k, v in vars(a).items() if k != "correlation"):
+                return False
+            xx, yy = np.asarray(x), np.asarray(y)
+            undefined_infinite_input = (
+                xx.ndim == yy.ndim == 1
+                and xx.size == yy.size
+                and xx.size >= 3
+                and xx.dtype.kind in "fiu"
+                and yy.dtype.kind in "fiu"
+                and not (np.isnan(xx).any() or np.isnan(yy).any())
+                and (np.isinf(xx).any() or np.isinf(yy).any())
+            )
+            if undefined_infinite_input and all(np.isnan(value) for result in (a, b) for value in result):
+                # These inputs have no finite centered covariance. Official
+                # Intel CP312 SciPy alternates the statistic's NaN sign on the
+                # exact seeded release failures, including repeated plain calls:
+                # https://github.com/michael-L-i/fastscipy/actions/runs/39679272811
+                # NaN sign/payload are not a numerical value. Keep both fields
+                # NaN, scalar types/dtypes, every warning, metadata and each
+                # result's own correlation alias; do not relax other NaN cases.
+                return True
+            if not (0 <= b.pvalue <= 1 or identical(a.pvalue, b.pvalue)):
+                return False
+            if not (-1 <= b.statistic <= 1 or identical(a.statistic, b.statistic)):
                 return False
             statistic_floor = 64 * np.finfo(np.asarray(a.statistic).dtype).eps
             pvalue_floor = 64 * np.finfo(np.asarray(a.pvalue).dtype).eps
             return close(a.statistic, b.statistic, statistic_floor) and close(a.pvalue, b.pvalue, pvalue_floor)
 
+        if not (0 <= b.pvalue <= 1 or identical(a.pvalue, b.pvalue)):
+            return False
         if not (-1 <= b.rvalue <= 1 or identical(a.rvalue, b.rvalue)):
             return False
         if b.stderr < 0 or b.intercept_stderr < 0:
@@ -189,7 +213,7 @@ def _stats_reference_validation(x, y):
 @pytest.mark.parametrize("kind", ["pearsonr", "linregress"])
 def test_stats_reference_validator_contract(kind):
     x, y = np.arange(8.0), np.arange(8.0) / 3
-    validate = _stats_reference_validation(x, y)
+    validate = _stats_numerical_validation(x, y)
 
     def make(**changes):
         if kind == "pearsonr":
@@ -232,7 +256,7 @@ def test_stats_reference_validator_contract(kind):
 
 def test_stats_reference_validator_preserves_tiny_regression_units():
     x, y = np.arange(8.0), np.arange(8.0) * 1e-100
-    validate = _stats_reference_validation(x, y)
+    validate = _stats_numerical_validation(x, y)
     values = dict(
         slope=np.float64(1e-100),
         intercept=np.float64(0),
@@ -253,7 +277,7 @@ def test_stats_reference_validator_real_pearson_returns_literal_true(dtype, n):
     x, y = local.standard_normal((2, n)).astype(dtype)
     with fastscipy.disabled():
         expected = st.pearsonr(x, y)
-    validate = _stats_reference_validation(x, y)
+    validate = _stats_numerical_validation(x, y)
     assert validate((expected, []), (expected, [])) is True
 
     def other(statistic=expected.statistic, pvalue=expected.pvalue):
@@ -275,6 +299,58 @@ def test_stats_reference_validator_real_pearson_returns_literal_true(dtype, n):
     changed_metadata = other()
     changed_metadata._alternative = "less"
     assert validate((expected, []), (changed_metadata, [])) is False
+
+
+@pytest.mark.parametrize("inf_index", [0, -1])
+def test_pearson_undefined_infinity_nan_value_contract(inf_index):
+    # Real SciPy outputs with strided/read-only caller inputs. The native Intel
+    # proof reproduces both release cases' +/-NaN signs with unchanged warnings.
+    x = np.arange(34.0)[::2]
+    y = np.linspace(0.25, 2.25, 17)
+    y[inf_index] = np.inf
+    x.flags.writeable = y.flags.writeable = False
+    before = (x.tobytes(), y.tobytes())
+    with fastscipy.disabled():
+        expected, observed_warnings = outcome(lambda: st.pearsonr(x, y))
+    assert np.isnan(expected.statistic) and np.isnan(expected.pvalue)
+    assert observed_warnings == [(RuntimeWarning, "invalid value encountered in subtract")]
+    validate = _stats_numerical_validation(x, y)
+
+    def other(statistic_bits=0xFFF8000000000001, pvalue_bits=0x7FF8000000000002, **changes):
+        values = {
+            "statistic": np.asarray(statistic_bits, dtype=np.uint64).view(np.float64)[()],
+            "pvalue": np.asarray(pvalue_bits, dtype=np.uint64).view(np.float64)[()],
+            "alternative": expected._alternative,
+            "n": expected._n,
+            "x": expected._x,
+            "y": expected._y,
+            "axis": expected._axis,
+        }
+        values.update(changes)
+        return PearsonRResult(**values)
+
+    assert validate((expected, observed_warnings), (other(), observed_warnings)) is True
+    for wrong in (
+        other(statistic=np.float64(0)),
+        other(pvalue=np.float64(0.5)),
+        other(pvalue=np.float64(np.inf)),
+        other(pvalue=np.float32(np.nan)),
+        other(pvalue=np.array([np.nan])),
+        other(alternative="greater"),
+        other(axis=123),
+    ):
+        assert validate((expected, observed_warnings), (wrong, observed_warnings)) is False
+    inconsistent_alias = other()
+    inconsistent_alias.correlation = np.float64(0)
+    assert validate((expected, observed_warnings), (inconsistent_alias, observed_warnings)) is False
+    assert validate((inconsistent_alias, observed_warnings), (other(), observed_warnings)) is False
+    assert validate((expected, observed_warnings), (other(), [])) is False
+    # The observed infinity domain does not authorize changing NaN bits for
+    # finite inputs, NaN-containing inputs, or SciPy's special two-point case.
+    for xx, yy in ((np.arange(17.0), np.arange(17.0)), (x, np.full(17, np.nan)), (x[:2], y[:2])):
+        reject = _stats_numerical_validation(xx, yy)
+        assert reject((expected, observed_warnings), (other(), observed_warnings)) is False
+    assert before == (x.tobytes(), y.tobytes())
 
 
 def test_stats_reference_validator_ill_conditioned_intercept_identity():
@@ -323,7 +399,7 @@ def test_stats_reference_validator_ill_conditioned_intercept_identity():
     assert np.isfinite(expected.slope)
     for shift in (0.0, value):
         shifted_x = x + shift
-        validate = _stats_reference_validation(shifted_x, y)
+        validate = _stats_numerical_validation(shifted_x, y)
         fields = dict(zip(expected._fields, expected))
         fields["intercept"] = expected.intercept - expected.slope * shift
         fields["intercept_stderr"] = expected.intercept_stderr * (1 + shift / value)
@@ -481,8 +557,8 @@ def test_function_randomized(name, threads):
     for _ in range(150):
         args, kw = CASES[name]()
         before = [a.copy() for a in args if isinstance(a, np.ndarray)]
-        validation = _stats_reference_validation(*args) if name in ("pearsonr", "linregress") else None
-        fast += same(lambda: f(*args, **kw), reference_validation=validation)
+        validation = _stats_numerical_validation(*args) if name in ("pearsonr", "linregress") else None
+        fast += same(lambda: f(*args, **kw), numerical_validation=validation)
         assert all(a.tobytes() == b.tobytes() for a, b in zip((a for a in args if isinstance(a, np.ndarray)), before))
         res = outcome(lambda: f(*args, **kw))[0]
         if hasattr(res, "confidence_interval"):

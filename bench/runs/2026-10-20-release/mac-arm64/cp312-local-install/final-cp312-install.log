@@ -1,0 +1,15 @@
+Processing /tmp/fastscipy-final-release-audit/mac-arm64-cp312/dist/fastscipy-0.1.0a2-cp312-cp312-macosx_14_0_arm64.whl
+Collecting packaging
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting numpy<2.6,>=2.5 (from fastscipy==0.1.0a2)
+  Downloading numpy-2.5.4-cp312-cp312-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting scipy<1.19,>=1.18 (from fastscipy==0.1.0a2)
+  Downloading scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl.metadata (62 kB)
+Downloading numpy-2.5.4-cp312-cp312-macosx_14_0_arm64.whl (5.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 28.4 MB/s  0:00:00
+Downloading scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl (20.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 32.2 MB/s  0:00:00
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: packaging, numpy, scipy, fastscipy
+
+Successfully installed fastscipy-0.1.0a2 numpy-2.5.4 packaging-26.3 scipy-1.18.1

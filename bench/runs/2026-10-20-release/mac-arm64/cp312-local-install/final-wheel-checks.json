@@ -1,0 +1,43 @@
+{
+  "purpose": "actualfinalMacARMcp312wheel onMacM5Pro; notPyPIpublicationverification",
+  "runs": {
+    "create_environment": {
+      "returncode": 0,
+      "seconds": 0.44171354101854376,
+      "peak_rss_bytes": 28246016,
+      "stopped": null
+    },
+    "install": {
+      "returncode": 0,
+      "seconds": 4.357558791991323,
+      "peak_rss_bytes": 144654336,
+      "stopped": null
+    },
+    "components": {
+      "returncode": 0,
+      "seconds": 11.503883333003614,
+      "peak_rss_bytes": 103399424,
+      "stopped": null
+    },
+    "image_signal": {
+      "returncode": 0,
+      "seconds": 0.6515697499853559,
+      "peak_rss_bytes": 100401152,
+      "stopped": null
+    },
+    "sensor_statistics": {
+      "returncode": 0,
+      "seconds": 1.0763719579845201,
+      "peak_rss_bytes": 106528768,
+      "stopped": null
+    },
+    "dependencies": {
+      "returncode": 0,
+      "seconds": 0.21995895897271112,
+      "peak_rss_bytes": 13811712,
+      "stopped": null
+    }
+  },
+  "wheel": "/tmp/fastscipy-final-release-audit/mac-arm64-cp312/dist/fastscipy-0.1.0a2-cp312-cp312-macosx_14_0_arm64.whl",
+  "wheel_sha256": "97e6e89b8a0a5f465d9525e76369b16df44cb5acdb973cfa8c73061b95f45278"
+}

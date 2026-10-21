@@ -38,36 +38,140 @@ AREAS = {
 }
 
 
-def run(command, log, memory_mb, timeout):
+def run(command, log, memory_mb, timeout, *, allow_privileged_installer=False):
+    """Monitor readable RSS; only opted-in Darwin installer children may deny it.
+
+    A denied installer sample makes the recorded peak a lower bound. Root,
+    compiler, unknown-process and process-enumeration denials fail closed.
+    """
     started, peak, stopped = time.monotonic(), 0, None
+    denied, cleanup_errors, tree = {}, [], []
+    monitor_error = unexpected = None
+    installer_names = {"sudo", "installer", "installd", "package_script_service", "system_installd"}
     with log.open("w", encoding="utf-8") as stream:
         process = subprocess.Popen(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
-        while process.poll() is None:
+
+        def access_denied(child, operation):
+            nonlocal monitor_error, stopped
             try:
-                monitored = psutil.Process(process.pid)
-                tree = [monitored, *monitored.children(recursive=True)]
+                name = child.name()
+            except (psutil.AccessDenied, psutil.NoSuchProcess):
+                name = None
+            allowed = (
+                allow_privileged_installer
+                and sys.platform == "darwin"
+                and child.pid != process.pid
+                and operation == "memory_info"
+                and name in installer_names
+            )
+            elapsed = time.monotonic() - started
+            record = denied.setdefault(
+                child.pid,
+                {"pid": child.pid, "name": name, "first_denied_seconds": elapsed, "denied_samples": 0},
+            )
+            record.update(last_denied_seconds=elapsed, allowed_installer=allowed, operation=operation)
+            record["denied_samples"] += 1
+            if not allowed:
+                stopped = "monitor access denied"
+                monitor_error = {"type": "AccessDenied", "pid": child.pid, "name": name, "operation": operation}
+
+        try:
+            while process.poll() is None:
                 rss = 0
-                for child in tree:
+                try:
+                    monitored = psutil.Process(process.pid)
+                    tree = [monitored]
                     try:
-                        rss += child.memory_info().rss
-                    except psutil.NoSuchProcess:
-                        pass
-                peak = max(peak, rss)
-                if rss > memory_mb * 1024**2 or time.monotonic() - started > timeout:
-                    stopped = "memory limit" if rss > memory_mb * 1024**2 else "timeout"
-                    for child in reversed(tree):
+                        tree.extend(monitored.children(recursive=True))
+                    except psutil.AccessDenied:
+                        access_denied(monitored, "children")
+                    for child in tree:
                         try:
-                            child.kill()
+                            rss += child.memory_info().rss
                         except psutil.NoSuchProcess:
                             pass
+                        except psutil.AccessDenied:
+                            access_denied(child, "memory_info")
+                except psutil.NoSuchProcess:
+                    pass
+                peak = max(peak, rss)
+                if rss > memory_mb * 1024**2:
+                    stopped = "memory limit"
+                elif time.monotonic() - started > timeout and stopped is None:
+                    stopped = "timeout"
+                if stopped is not None:
                     break
+                time.sleep(0.2)
+        except BaseException as error:
+            # Preserve unexpected failures (including interrupts) after cleanup.
+            unexpected = error
+            stopped = "monitor error"
+            monitor_error = {"type": type(error).__name__, "message": str(error)}
+
+        if stopped is not None:
+            # Refresh descendants, retaining the last snapshot if enumeration fails.
+            descendants = {child.pid: child for child in tree if child.pid != process.pid}
+            try:
+                descendants.update({child.pid: child for child in psutil.Process(process.pid).children(recursive=True)})
             except psutil.NoSuchProcess:
-                break
-            time.sleep(0.2)
-        code = process.wait()
-    result = {"returncode": code, "seconds": time.monotonic() - started, "peak_rss_bytes": peak, "stopped": stopped}
-    print(f"{log.stem}: exit={code}, {result['seconds']:.1f}s, peak={peak / 1024**2:.0f} MiB", flush=True)
+                pass
+            except Exception as error:
+                cleanup_errors.append({"pid": process.pid, "operation": "children", "error": repr(error)})
+            for child in reversed(list(descendants.values())):
+                try:
+                    child.kill()
+                except psutil.NoSuchProcess:
+                    pass
+                except Exception as error:
+                    cleanup_errors.append({"pid": child.pid, "operation": "kill", "error": repr(error)})
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+            except Exception as error:
+                cleanup_errors.append({"pid": process.pid, "operation": "kill", "error": repr(error)})
+        try:
+            code = process.wait(timeout=10)
+        except subprocess.TimeoutExpired as error:
+            cleanup_errors.append({"pid": process.pid, "operation": "wait", "error": repr(error)})
+            code = 1
+        result = {
+            "returncode": code if code != 0 or stopped is None else 1,
+            "seconds": time.monotonic() - started,
+            "peak_rss_bytes": peak,
+            "stopped": stopped,
+            "rss_scope": "sampled_readable_process_tree",
+            "rss_complete": not denied and monitor_error is None,
+            "peak_rss_is_lower_bound": bool(denied) or monitor_error is not None,
+            "inaccessible_pids": sorted(denied),
+            "inaccessible_processes": list(denied.values()),
+            "cleanup_errors": cleanup_errors,
+        }
+        if monitor_error is not None:
+            result["monitor_error"] = monitor_error
+        if cleanup_errors:
+            result["returncode"] = result["returncode"] or 1
+        log.with_suffix(log.suffix + ".monitor.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    scope = "measured lower bound" if denied else "sampled tree"
+    print(
+        f"{log.stem}: exit={result['returncode']}, {result['seconds']:.1f}s, "
+        f"peak={peak / 1024**2:.0f} MiB ({scope}), stopped={stopped}",
+        flush=True,
+    )
+    if unexpected is not None:
+        raise unexpected.with_traceback(unexpected.__traceback__)
     return result
+
+
+def validation_record_groups(records):
+    """Keep compatibility checks separate from observed reference variation."""
+    return {
+        "reference_variance": [r for r in records if r.get("policy") == "intel-accelerate-reference-variance"],
+        "numerical_compatibility": [
+            r for r in records if r.get("policy") == "intel-accelerate-numerical-compatibility"
+        ],
+        "validation_records": records,
+    }
 
 
 def mean(values):
@@ -193,11 +297,13 @@ def main():
             ],
             args.upstream_timeout,
         )
-    report["reference_variance"] = (
+    records = (
         [json.loads(line) for line in reference_report.read_text(encoding="utf-8").splitlines()]
         if reference_report.exists()
         else []
     )
+    report.update(validation_record_groups(records))
+
     (output / "summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     bad = any(run["returncode"] != 0 for run in report["runs"].values())
     if not args.tests_only:

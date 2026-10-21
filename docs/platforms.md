@@ -1,10 +1,10 @@
 # Platform validation
 
 The published `0.1.0a1` release supports macOS 14+ on Apple Silicon, SciPy 1.18,
-and Python 3.12–3.14. Broader support is being evaluated for `0.1.0a2`.
+and Python 3.12–3.14. Broader support is being evaluated for `0.1.0a3`.
 The candidate release has not completed validation or been published.
 
-| Platform | Published `0.1.0a1` | `0.1.0a2` candidate |
+| Platform | Published `0.1.0a1` | `0.1.0a3` candidate |
 |---|---|---|
 | macOS arm64 | Experimental support | Revalidation pending |
 | macOS x86_64 | Unsupported | Validation pending |
@@ -20,6 +20,12 @@ and Python 3.12–3.15, for 32 planned wheels; that matrix is broader than the
 Python 3.13 development checks below.
 
 ## Evidence
+
+The [32-wheel `0.1.0a2` attempt](https://github.com/michael-L-i/fastscipy/actions/runs/39464216282)
+passed 28 wheel jobs and failed four Mac jobs; publication was skipped.
+The [failure archive](../bench/runs/2026-10-21-release-fixes/README.md)
+retains the original evidence. The `0.1.0a3` candidate includes fixes for
+those failures and requires a fresh complete release validation.
 
 The [eight-wheel CP313 preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
 finished at source `80dec52`: seven wheel jobs passed and Mac Intel failed
@@ -145,6 +151,12 @@ These checks do not depend on whether eight repeated calls happen to expose
 reference variation in the current allocation sequence. Missing acceleration
 and outputs outside the declared numerical bounds still fail.
 
+The native CP312 reproduction also found that plain SciPy alternates the
+sign bit of undefined Pearson statistics on the exact failing infinite-input
+fixtures. A narrowly scoped check accepts NaN value semantics only when
+the input domain, scalar types, warnings, metadata, and correlation alias
+remain correct; other nonfinite cases remain byte-exact.
+
 Numerical compatibility emits `NumericalCompatibilityWarning` and a distinct
 `intel-accelerate-numerical-compatibility` report record. It does not claim
 byte identity or observed per-call reference variation. Other platforms keep
@@ -218,6 +230,12 @@ upstream comparisons run unpatched and patched SciPy in module partitions.
 Process-tree RSS and elapsed-time budgets stop runs that exceed their
 configured limits. RSS is sampled and summed across processes, so shared
 pages can be counted more than once.
+
+On macOS, the official Python installer can contain privileged descendants
+whose RSS is unreadable. Only recognized installer descendants receive this
+exception; reports record their identities and mark the measured peak as a
+lower bound. Compiler and test processes remain monitored. Unknown access
+failures stop the run.
 
 Linux release builds run inside Docker containers with hard limits of 6 GiB
 and two CPUs. Their outer `build.json` measures the host cibuildwheel process

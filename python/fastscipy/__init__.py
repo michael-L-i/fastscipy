@@ -18,7 +18,7 @@ from . import _patch
 from ._patch import stats
 from ._threads import get_num_threads, set_num_threads
 
-__version__ = "0.1.0a2"
+__version__ = "0.1.0a3"
 __all__ = ["patch", "unpatch", "status", "stats", "disabled", "set_num_threads", "get_num_threads"]
 
 COMPONENTS = (

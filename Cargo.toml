@@ -1,6 +1,6 @@
 [package]
 name = "fastscipy"
-version = "0.1.0-alpha.2"
+version = "0.1.0-alpha.3"
 edition = "2024"
 license = "BSD-3-Clause"
 description = "Rust kernels for fastscipy, a drop-in accelerator for SciPy"

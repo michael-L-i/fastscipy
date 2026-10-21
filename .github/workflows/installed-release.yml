@@ -9,7 +9,7 @@ on:
       version:
         description: Published fastscipy version matching this checkout
         required: true
-        default: "0.1.0a2"
+        default: "0.1.0a3"
 
 permissions:
   contents: read
@@ -33,7 +33,7 @@ jobs:
           - {name: windows-amd64, runner: windows-2025, image: ""}
           - {name: windows-arm64, runner: windows-11-arm, image: ""}
     env:
-      FASTSCIPY_EXPECTED_VERSION: ${{ inputs.version || '0.1.0a2' }}
+      FASTSCIPY_EXPECTED_VERSION: ${{ inputs.version || '0.1.0a3' }}
       FASTSCIPY_NUM_THREADS: "2"
       OPENBLAS_NUM_THREADS: "1"
       OMP_NUM_THREADS: "1"

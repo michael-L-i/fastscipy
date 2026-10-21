@@ -18,7 +18,7 @@ def threads(request):
 
 
 def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=False):
-    """Validate complete histories only after check proves reference variance."""
+    """Validate complete histories for explicit numerical compatibility."""
 
     def validate(expected, actual):
         assert type(expected) is type(actual) is tuple and len(expected) == len(actual) == 2
@@ -58,7 +58,7 @@ def _iteration_reference_validation(a, b, rtol, *, minres=False, scalar_history=
 
 
 def _bicgstab_reference_validation(a, b, rtol):
-    """Validate convergence, not matching trajectories, after proven variance."""
+    """Validate convergence without claiming matching solver trajectories."""
 
     def validate(expected, actual):
         solutions = []
@@ -97,7 +97,7 @@ def _bicgstab_reference_validation(a, b, rtol):
 
 
 def _least_squares_reference_validation(a, b):
-    """Check the default undamped LSQR result after proven oracle variance."""
+    """Independently check the default undamped LSQR result."""
 
     def validate(expected, actual):
         assert type(expected) is type(actual) is tuple and len(expected) == len(actual) == 10
@@ -174,8 +174,9 @@ def test_solver_results_and_iteration_history(solver, n):
         return result, history
 
     # Larger solver histories can vary with Intel Accelerate buffer alignment.
-    # check gates this opt-in on that backend AND newly observed plain-reference
-    # variation for this exact call. The small n=8 cases retain byte-only checks.
+    # Explicit numerical compatibility is limited to that backend and records
+    # accuracy validation without claiming observed reference variance or byte
+    # identity. Small n=8 cases retain byte-only checks.
     validation = (
         _iteration_reference_validation(a, b, 1e-9, minres=solver is sl.minres, scalar_history=solver is sl.gmres)
         if n == 100
@@ -186,7 +187,7 @@ def test_solver_results_and_iteration_history(solver, n):
         # with amplified trajectory drift. Do not claim byte/roundoff-identical
         # histories here; retain that coverage with the exact fixture below.
         validation = _bicgstab_reference_validation(a, b, 1e-9)
-    check(run, reference_validation=validation)
+    check(run, numerical_validation=validation)
     assert a.data.tobytes() == a_before and b.tobytes() == b_before
 
 
@@ -208,6 +209,28 @@ def test_bicgstab_exact_complete_single_callback():
         return result, history
 
     check(run)
+
+
+@pytest.mark.parametrize("solver", [sl.qmr, sl.minres])
+def test_symmetric_solver_exact_complete_single_callback(solver):
+    # A single nonzero RHS gives exact power-of-two dot products and norms;
+    # neither allocator alignment nor reduction order can change this solve.
+    a = sparse.eye_array(100, format="csr") * 2
+    b = np.zeros(100)
+    b[1] = 2.0
+    known = b / 2
+    before = a.data.tobytes(), b.tobytes()
+
+    def run():
+        history = []
+        result = solver(a, b, rtol=1e-9, callback=lambda x: history.append(x.copy()))
+        assert result[1] == 0 and len(history) == 1
+        assert_identical(known, result[0])
+        assert_identical(known, history[0])
+        return result, history
+
+    check(run)
+    assert before == (a.data.tobytes(), b.tobytes())
 
 
 def test_bicgstab_reference_validator_accepts_distinct_valid_histories():
@@ -357,7 +380,7 @@ def test_iterative_rectangular_least_squares(solver, dtype):
         validation = (
             _least_squares_reference_validation(matrix, b) if solver is sl.lsqr and dtype is np.float64 else None
         )
-        check(lambda: solver(matrix, b), reference_validation=validation)
+        check(lambda: solver(matrix, b), numerical_validation=validation)
 
 
 def _least_squares_validator_example():

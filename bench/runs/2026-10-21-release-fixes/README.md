@@ -58,3 +58,11 @@ process-tree peak RSS. [Raw-file manifest](raw-file-manifest.json) lists origina
 byte sizes and SHA256 hashes plus archived-file hashes. Gzip files decompress
 byte for byte to the original records; JSON observations were not rewritten to
 claim later source changes or successful publication.
+
+The [official Mac3.15 installer monitor smoke](mac315-installer/README.md)
+passed on ARM and Intel at source `e057c24`, using the exact cibuildwheel4.3.1
+package/choices command. Both installed native ordinary-ABI Python3.15.0.
+Privileged installer RSS remained inaccessible: reported36.453/38.129MiB
+readable-tree peaks are lower bounds, not total memory measurements or proof
+of a1GiB total cap. This ran no Rust build, project suite, benchmarks, or wheel
+release validation. Original reports and source/package hashes are retained.

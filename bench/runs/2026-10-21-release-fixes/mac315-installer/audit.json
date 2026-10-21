@@ -1,0 +1,173 @@
+{
+  "purpose": "derived_installer_monitor_smoke_audit_not_wheel_release_validation",
+  "run_id": "39679702689",
+  "run_url": "https://github.com/michael-L-i/fastscipy/actions/runs/39679702689",
+  "source_head": "e057c2430c2036f362b935c74f951ffc0d8c3024",
+  "workflow_result": "success",
+  "matrix_jobs": {
+    "arm64": "success",
+    "x86_64": "success"
+  },
+  "source_hashes_verified_against_git": true,
+  "installer_URL": "https://www.python.org/ftp/python/3.15.0/python-3.15.0-macos11.pkg",
+  "cibuildwheel": "4.3.1",
+  "memory_limit_mib": 1024,
+  "timeout_seconds": 600,
+  "resource_limit_scope": "Readable sampled worker/descendant RSS only; privileged installer RSS is inaccessible and monitor coordinator RSS is outside this child tree. These runs do not prove total RSS below1GiB.",
+  "full_process_tree_peak_rss_bytes": null,
+  "privileged_process_peak_rss_bytes": null,
+  "results": {
+    "arm64": {
+      "returncode": 0,
+      "seconds": 30.411847999999992,
+      "readable_worker_tree_peak_rss_bytes": 38223872,
+      "readable_worker_tree_peak_rss_mib": 36.453125,
+      "rss_complete": false,
+      "peak_is_lower_bound": true,
+      "inaccessible_processes": [
+        {
+          "pid": 1139,
+          "name": "sudo",
+          "first_denied_seconds": 0.7189965419999993,
+          "denied_samples": 122,
+          "last_denied_seconds": 30.169333624999993,
+          "allowed_installer": true,
+          "operation": "memory_info"
+        },
+        {
+          "pid": 1140,
+          "name": "installer",
+          "first_denied_seconds": 0.7190223339999875,
+          "denied_samples": 122,
+          "last_denied_seconds": 30.169348999999997,
+          "allowed_installer": true,
+          "operation": "memory_info"
+        }
+      ],
+      "installed_version": [
+        3,
+        15,
+        0
+      ],
+      "installed_arch": "arm64",
+      "ordinary_ABI": "cpython-315-darwin",
+      "package": {
+        "bytes": 89032014,
+        "sha256": "7c7e7eca61cbfa5f0c6f80cd594cddbfd492f4e8b3fb87e3d9fa1efebaec43ed"
+      },
+      "choices": {
+        "bytes": 504,
+        "sha256": "5bcedeec50b019bc28c8e6dfd0d17f8c692786888845eab94831b41766e14231"
+      }
+    },
+    "x86_64": {
+      "returncode": 0,
+      "seconds": 98.25491659999997,
+      "readable_worker_tree_peak_rss_bytes": 39981056,
+      "readable_worker_tree_peak_rss_mib": 38.12890625,
+      "rss_complete": false,
+      "peak_is_lower_bound": true,
+      "inaccessible_processes": [
+        {
+          "pid": 2074,
+          "name": "sudo",
+          "first_denied_seconds": 1.192995733999993,
+          "denied_samples": 397,
+          "last_denied_seconds": 97.45628885199997,
+          "allowed_installer": true,
+          "operation": "memory_info"
+        },
+        {
+          "pid": 2075,
+          "name": "installer",
+          "first_denied_seconds": 1.4131653889999995,
+          "denied_samples": 396,
+          "last_denied_seconds": 97.45633195999997,
+          "allowed_installer": true,
+          "operation": "memory_info"
+        }
+      ],
+      "installed_version": [
+        3,
+        15,
+        0
+      ],
+      "installed_arch": "x86_64",
+      "ordinary_ABI": "cpython-315-darwin",
+      "package": {
+        "bytes": 89032014,
+        "sha256": "7c7e7eca61cbfa5f0c6f80cd594cddbfd492f4e8b3fb87e3d9fa1efebaec43ed"
+      },
+      "choices": {
+        "bytes": 504,
+        "sha256": "5bcedeec50b019bc28c8e6dfd0d17f8c692786888845eab94831b41766e14231"
+      }
+    }
+  },
+  "original_files": [
+    {
+      "file": "arm64/installed-python.json",
+      "bytes": 490,
+      "sha256": "6e94a6cf81fd0e3ea7d7c4d097781b292fb46a0ac7f4a833b22792aa826990cc"
+    },
+    {
+      "file": "arm64/installer-inputs.json",
+      "bytes": 1095,
+      "sha256": "6e6285f15e735971f5a9d4ae4d7797d37eca2a91c68c7bdd1e7aac5ecfbb2cfa"
+    },
+    {
+      "file": "arm64/installer.log",
+      "bytes": 1099,
+      "sha256": "d27e6833c338b3d563bf28771df24d664c8d0ed4b095843a7df35b7ac334e106"
+    },
+    {
+      "file": "arm64/installer.log.monitor.json",
+      "bytes": 819,
+      "sha256": "130eca88a9ec719bb97b02c5c7985ebee4d6b43e818c6e4a1df9abc8f4f054a3"
+    },
+    {
+      "file": "arm64/provenance.json",
+      "bytes": 719,
+      "sha256": "c66a65550f22a1f031a29b808462fb0ae55932dbbda9da73e79104ce0c8c9228"
+    },
+    {
+      "file": "arm64/report.json",
+      "bytes": 1656,
+      "sha256": "b8e63c42188704881b615e3a3d5c95517089d667bb595500af80f31b2d4d87b4"
+    },
+    {
+      "file": "x86_64/installed-python.json",
+      "bytes": 491,
+      "sha256": "109dd025d23d1526405869fafd444a4a090ae40585c807d9f832668b8317156e"
+    },
+    {
+      "file": "x86_64/installer-inputs.json",
+      "bytes": 1095,
+      "sha256": "6e6285f15e735971f5a9d4ae4d7797d37eca2a91c68c7bdd1e7aac5ecfbb2cfa"
+    },
+    {
+      "file": "x86_64/installer.log",
+      "bytes": 1100,
+      "sha256": "841b1425523b0a7c2c52fb52c05847b61bc1984b8a1d2cab68896d157ff91427"
+    },
+    {
+      "file": "x86_64/installer.log.monitor.json",
+      "bytes": 815,
+      "sha256": "566d2e4f3260bcc922ae16ee40b77f6e01169ec712d23322b90769982042d50d"
+    },
+    {
+      "file": "x86_64/provenance.json",
+      "bytes": 722,
+      "sha256": "93cb17a13b2656b941b73d651e843c2da2891e519af0f884d7f8a601ae56a37b"
+    },
+    {
+      "file": "x86_64/report.json",
+      "bytes": 1655,
+      "sha256": "07f660ad1265229bc46b9fbdde9c6424f91e32857787e6e29758e6ebe419670c"
+    }
+  ],
+  "no_rust_build": true,
+  "no_project_tests": true,
+  "no_benchmarks": true,
+  "no_wheel_validation_or_publication_claim": true
+}

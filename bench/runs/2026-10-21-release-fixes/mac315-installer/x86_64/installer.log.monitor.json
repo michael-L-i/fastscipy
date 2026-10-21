@@ -1,0 +1,34 @@
+{
+  "returncode": 0,
+  "seconds": 98.25491659999997,
+  "peak_rss_bytes": 39981056,
+  "stopped": null,
+  "rss_scope": "sampled_readable_process_tree",
+  "rss_complete": false,
+  "peak_rss_is_lower_bound": true,
+  "inaccessible_pids": [
+    2074,
+    2075
+  ],
+  "inaccessible_processes": [
+    {
+      "pid": 2074,
+      "name": "sudo",
+      "first_denied_seconds": 1.192995733999993,
+      "denied_samples": 397,
+      "last_denied_seconds": 97.45628885199997,
+      "allowed_installer": true,
+      "operation": "memory_info"
+    },
+    {
+      "pid": 2075,
+      "name": "installer",
+      "first_denied_seconds": 1.4131653889999995,
+      "denied_samples": 396,
+      "last_denied_seconds": 97.45633195999997,
+      "allowed_installer": true,
+      "operation": "memory_info"
+    }
+  ],
+  "cleanup_errors": []
+}

@@ -1,0 +1,21 @@
+{"installer_command": ["sudo", "installer", "-pkg", "/Users/runner/work/fastscipy/fastscipy/artifacts/mac315-installer/python-3.15.0-macos11.pkg", "-applyChoiceChangesXML", "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cibuildwheel/resources/free-threaded-enable-315.xml", "-target", "/"]}
+installer: Package name is Python
+installer: choices changes file '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cibuildwheel/resources/free-threaded-enable-315.xml' applied
+installer: Upgrading at base path /
+installer: The upgrade was successful.
+{
+  "version": [
+    3,
+    15,
+    0
+  ],
+  "python": "3.15.0 (v3.15.0:d220409a13b, Oct  9 2026, 08:17:44) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "machine": "arm64",
+  "executable": "/Library/Frameworks/Python.framework/Versions/3.15/bin/python3.15",
+  "abiflags": "",
+  "SOABI": "cpython-315-darwin",
+  "Py_GIL_DISABLED": 0,
+  "purpose": "official_mac315_installer_monitor_smoke_not_release_validation",
+  "native_arch_verified": true,
+  "ordinary_non_free_threaded_ABI_verified": true
+}

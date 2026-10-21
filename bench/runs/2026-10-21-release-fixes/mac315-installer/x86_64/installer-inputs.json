@@ -1,0 +1,26 @@
+{
+  "purpose": "official_mac315_installer_monitor_smoke_not_release_validation",
+  "url": "https://www.python.org/ftp/python/3.15.0/python-3.15.0-macos11.pkg",
+  "package": {
+    "bytes": 89032014,
+    "sha256": "7c7e7eca61cbfa5f0c6f80cd594cddbfd492f4e8b3fb87e3d9fa1efebaec43ed"
+  },
+  "cibuildwheel": "4.3.1",
+  "choices_path": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cibuildwheel/resources/free-threaded-enable-315.xml",
+  "choices": {
+    "bytes": 504,
+    "sha256": "5bcedeec50b019bc28c8e6dfd0d17f8c692786888845eab94831b41766e14231"
+  },
+  "command": [
+    "sudo",
+    "installer",
+    "-pkg",
+    "/Users/runner/work/fastscipy/fastscipy/artifacts/mac315-installer/python-3.15.0-macos11.pkg",
+    "-applyChoiceChangesXML",
+    "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cibuildwheel/resources/free-threaded-enable-315.xml",
+    "-target",
+    "/"
+  ],
+  "original_failure_run": "39464216282",
+  "match": "Same official package, cibuildwheel choices XML, and sudo installer arguments as both failed Mac315 jobs"
+}

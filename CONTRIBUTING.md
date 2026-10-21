@@ -50,7 +50,7 @@ A component defines:
 
 A fast path takes the same arguments as the function it replaces, and either
 returns SciPy's exact result or `NotImplemented` to hand the call to SciPy.
-The rules that keep results identical:
+The rules that keep results compatible:
 
 1. **Decline anything you have not matched.** Check dtype, layout, options
    and sizes up front, and leave every warning and error to SciPy. Never
@@ -62,9 +62,11 @@ The rules that keep results identical:
    `crate::pool::pool().install(...)` in Rust, inside `py.detach(...)`, and
    `fastscipy._threads.parallel_map` in Python. Never create another pool.
    Only go parallel above a measured size.
-4. **Test against SciPy, not against expected values.** Add randomized
-   cases to `tests/test_<area>.py` with `fastscipy.testing.check`, which
-   compares bytes and asserts the fast path ran, on 1 and several threads.
+4. **Compare with SciPy and check independent properties.** Add randomized
+   cases to `tests/test_<area>.py` with `fastscipy.testing.check`, on one
+   and several threads. Byte comparison is the default. Explicit numerical
+   contracts are limited to documented Intel Accelerate cases and must
+   retain result-contract, warning, input-mutation, and fast-path checks.
    Include declined cases and edge cases (empty, NaN, inf, ties, strided).
 5. **Show it is faster.** Add cases to `bench/bench_<area>.py`, and make
    sure `bench/run.py <area> --check` passes.

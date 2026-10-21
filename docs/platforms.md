@@ -136,13 +136,22 @@ different path, even changing its termination status. A declined fast call
 still reproduced a statistics mismatch; falling back cannot create a unique
 byte reference for these cases.
 
-The default comparison remains byte-exact. Selected cases may explicitly
-provide an independent numerical validator. An exception is accepted only
-on Intel Mac with NumPy's Accelerate backend, after repeated unpatched calls
-actually demonstrate different results. The validator must accept both
-references and the accelerated result; types, shapes, warnings, solver
-convergence, and independent residual or minimizer checks remain enforced.
-Missing acceleration and deterministic mismatches still fail.
+The default comparison remains byte-exact. Selected Intel Mac tests with
+NumPy's Accelerate backend explicitly opt into a numerical compatibility
+contract. They check result types, shapes, layouts, warnings, and tight
+numerical bounds. Solver checks also verify independent equation residuals;
+separate deterministic fixtures retain exact callback and solution coverage.
+These checks do not depend on whether eight repeated calls happen to expose
+reference variation in the current allocation sequence. Missing acceleration
+and outputs outside the declared numerical bounds still fail.
+
+Numerical compatibility emits `NumericalCompatibilityWarning` and a distinct
+`intel-accelerate-numerical-compatibility` report record. It does not claim
+byte identity or observed per-call reference variation. Other platforms keep
+byte-exact comparisons. Benchmarks retain the separate, stricter
+`reference_variance` policy: they must observe a changed unpatched reference,
+pass their numerical validator, and exclude nonidentical rows from headline
+averages.
 
 The newer [BiCGSTAB diagnostic](../bench/runs/2026-10-20-portability/mac-x86_64/reference-stability-b785/README.md)
 found 40–42 callbacks from repeated unpatched runs in both patch scopes, with
@@ -150,18 +159,18 @@ varying trajectories; patched runs produced 40–43 callbacks overall. All 65
 saved final solutions satisfied the requested residual bound, but common
 callback prefixes were not byte-identical. For this specific 100-equation
 fixture, the candidate validator permits different counts and trajectories
-only after reference variation is demonstrated. It checks finite, correctly
+under its explicit numerical contract. It checks finite, correctly
 shaped histories, successful termination, final residuals, and a solution
 error bound. A separate deterministic single-callback fixture requires exact
-solution and callback bytes without a reference-variation exception. This
+solution and callback bytes without a numerical exception. This
 retains exact callback coverage without claiming identical trajectories for
 the unstable fixture; the revised checks still need candidate validation.
 
-These exceptions emit warnings and retain reference/result fingerprints in
-`reference-variance.jsonl` and the platform summary. Benchmark rows keep
+Both policies retain reference/result fingerprints in `reference-variance.jsonl`.
+Platform summaries distinguish `reference_variance` and
+`numerical_compatibility` records explicitly. Benchmark rows keep
 `identical: false`, report numerical validation separately, and are excluded
-from headline geometric means. This is a reproducibility limitation, not a
-byte-identity pass. Production numerical kernels are not changed by this
+from headline geometric means. These records are not byte-identity passes. Production numerical kernels are not changed by this
 test policy. The earlier failed preflight remains archived unchanged; the
 new policy and selector fix still require full candidate validation.
 

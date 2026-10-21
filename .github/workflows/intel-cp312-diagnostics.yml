@@ -1,0 +1,89 @@
+# Put on isolated diagnostics/intel-cp312-release-proof branch, never release-ops.
+# This workflow has no push/tag/publish trigger and no build step.
+name: Intel CP312 release correctness diagnostics
+on:
+  push:
+    branches: [release-fixes]
+    paths: [".github/workflows/intel-cp312-diagnostics.yml", "tools/probe_intel_cp312.py"]
+  workflow_dispatch:
+    inputs:
+      wheel_run:
+        description: "Run with an AVAILABLE CP312 Intel wheel artifact; empty means unpatched reference only"
+        type: string
+        default: ""
+      wheel_artifact:
+        description: "Exact artifact name (failed release CP312 wheel was not uploaded)"
+        type: string
+        default: ""
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnostics:
+    runs-on: macos-15-intel
+    timeout-minutes: 15
+    env:
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      FASTSCIPY_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: diagnostic
+      - uses: actions/checkout@v5
+        with:
+          ref: 1cf67791b17ab2bb3c72d6af62bd2292e8034583
+          path: release-source
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install official binary dependencies only
+        run: python -m pip install --only-binary=:all: numpy==2.5.4 scipy==1.18.1 psutil
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.wheel_run != '' }}
+        with:
+          name: ${{ inputs.wheel_artifact }}
+          run-id: ${{ inputs.wheel_run }}
+          github-token: ${{ github.token }}
+          path: wheel
+      - name: Install available prior wheel without source overlay
+        if: ${{ inputs.wheel_run != '' }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, subprocess, sys
+          wheels = list(Path('wheel').rglob('*.whl'))
+          assert len(wheels) == 1, wheels
+          assert '-cp312-cp312-macosx_' in wheels[0].name and wheels[0].name.endswith('_x86_64.whl'), wheels
+          print(wheels[0], hashlib.sha256(wheels[0].read_bytes()).hexdigest())
+          subprocess.run([sys.executable,'-m','pip','install','--no-deps',str(wheels[0])],check=True)
+          PY
+      - name: Bounded diagnostics only
+        env:
+          WHEEL_RUN: ${{ inputs.wheel_run }}
+          WHEEL_ARTIFACT: ${{ inputs.wheel_artifact }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util, json, os, sys
+          source = Path('release-source').resolve()
+          spec = importlib.util.spec_from_file_location('_monitor', source/'tools/platform_suite.py')
+          monitor = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(monitor)
+          output = Path('artifacts').resolve()
+          output.mkdir(exist_ok=True)
+          command = [sys.executable,'-I',str(Path('diagnostic/tools/probe_intel_cp312.py').resolve()),'--source-root',str(source),'--output',str(output/'numeric-proof.json')]
+          if not os.environ['WHEEL_RUN']:
+              command += ['--reference-only']
+          result = monitor.run(command, output/'diagnostics.log', 256, 120)
+          (output/'resources.json').write_text(json.dumps(result,indent=2))
+          (output/'provenance.json').write_text(json.dumps({'purpose':'correctness diagnostics only; no publish/build/full-suite claim','source':'1cf67791b17ab2bb3c72d6af62bd2292e8034583','diagnostic_source':os.environ['GITHUB_SHA'],'wheel_run':os.environ['WHEEL_RUN'],'wheel_artifact':os.environ['WHEEL_ARTIFACT'],'python':sys.version},indent=2))
+          sys.exit(result['returncode'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intel-cp312-release-correctness
+          path: artifacts/
+          if-no-files-found: error

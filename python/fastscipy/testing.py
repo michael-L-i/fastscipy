@@ -51,6 +51,10 @@ class ReferenceVarianceWarning(RuntimeWarning):
     """An explicitly checked Intel Accelerate reference was not byte-stable."""
 
 
+class NumericalCompatibilityWarning(RuntimeWarning):
+    """An explicit Intel Accelerate numerical contract passed without byte identity."""
+
+
 @functools.cache
 def _alignment_sensitive_reference():
     return (
@@ -115,7 +119,40 @@ def reference_variance(call, expected, actual, validate):
     return None
 
 
-def check(call, fast=True, *, reference_validation=None):
+def numerical_compatibility(expected, actual, validate):
+    """Apply an opted-in numerical contract on Intel Accelerate only.
+
+    This does not claim repeated-reference variation or byte identity. The
+    caller's validator must enforce result contracts and numerical bounds;
+    solver validators additionally check independent equation residuals.
+    """
+    if validate is None or not _alignment_sensitive_reference():
+        return None
+    result = validate(expected, actual)
+    assert result is None or result is True, "numerical validator rejected result"
+    record = {
+        "policy": "intel-accelerate-numerical-compatibility",
+        "test": os.environ.get("PYTEST_CURRENT_TEST"),
+        "validator": f"{validate.__module__}.{validate.__qualname__}",
+        "reference_sha256": hashlib.sha256(pickle.dumps(expected, protocol=5)).hexdigest(),
+        "actual_sha256": hashlib.sha256(pickle.dumps(actual, protocol=5)).hexdigest(),
+        "reference_variance_observed": False,
+        "numpy": np.__version__,
+        "platform": platform.platform(),
+    }
+    if destination := os.environ.get("FASTSCIPY_REFERENCE_REPORT"):
+        with open(destination, "a", encoding="utf-8") as output:
+            output.write(json.dumps(record) + "\n")
+    warnings.warn(
+        f"Intel Accelerate numerical contract {record['validator']} passed. "
+        "Byte identity and per-call reference variation are not established.",
+        NumericalCompatibilityWarning,
+        stacklevel=2,
+    )
+    return record
+
+
+def check(call, fast=True, *, reference_validation=None, numerical_validation=None):
     """Assert ``call()`` gives the same result patched as on plain SciPy, and
     (if ``fast``) that it took a fast path. ``call`` must look SciPy functions
     up at call time (``scipy.special.erf(x)``, not a name bound before patching).
@@ -123,8 +160,15 @@ def check(call, fast=True, *, reference_validation=None):
     Optional ``reference_validation(expected, actual)`` must raise on a bad
     numerical result; only proven Intel Accelerate reference variation can
     use it in place of byte identity, with an explicit warning and report.
+    Alternatively, explicit ``numerical_validation`` checks a bounded
+    numerical contract on Intel Accelerate, without requiring a varying
+    reference in this particular allocation sequence. It emits a distinct
+    warning/report and leaves comparisons on other backends byte-exact.
     """
     import fastscipy
+
+    if reference_validation is not None and numerical_validation is not None:
+        raise ValueError("Choose reference_validation or numerical_validation")
 
     expected_error = None
     with fastscipy.disabled():
@@ -146,6 +190,11 @@ def check(call, fast=True, *, reference_validation=None):
     if fast:
         assert fast_calls() > before, "fast path did not run"
     if not identical(expected, got):
-        if reference_variance(call, expected, got, reference_validation) is None:
+        accepted = (
+            numerical_compatibility(expected, got, numerical_validation)
+            if numerical_validation is not None
+            else reference_variance(call, expected, got, reference_validation)
+        )
+        if accepted is None:
             assert_identical(expected, got)
     return got

@@ -137,7 +137,7 @@ jobs:
           import json, sys
           from pathlib import Path
           from tools.platform_suite import run
-          result = run([sys.executable, "-m", "cibuildwheel", "--output-dir", "wheelhouse"], Path("artifacts/build.log"), 6144, 21000)
+          result = run([sys.executable, "-m", "cibuildwheel", "--output-dir", "wheelhouse"], Path("artifacts/build.log"), 6144, 21000, allow_privileged_installer=sys.platform == "darwin")
           result["rss_scope"] = "host_cibuildwheel_process_tree"
           if sys.platform == "linux":
               result.update(

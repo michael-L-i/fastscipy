@@ -39,7 +39,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install official binary dependencies only
-        run: python -m pip install --only-binary=:all: numpy==2.5.4 scipy==1.18.1 psutil
+        run: |
+          python -m pip install --only-binary=:all: numpy==2.5.4 scipy==1.18.1 psutil
       - uses: actions/download-artifact@v4
         if: ${{ inputs.wheel_run != '' }}
         with:

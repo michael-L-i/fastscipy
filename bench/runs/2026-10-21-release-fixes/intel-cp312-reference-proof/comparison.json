@@ -1,0 +1,146 @@
+{
+  "run": 39679272811,
+  "source": "1cf67791b17ab2bb3c72d6af62bd2292e8034583",
+  "script_sha256": "ee8894fff5f835a95987c2ab7808fa7bee9b58f989960334d9171faab0451be1",
+  "test_source_sha256": "38bd4802300d4edc5dddd356fc52271b094d287f935eef4a384338242f3ac88b",
+  "reference_only": true,
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1"
+  },
+  "python": "3.12.10 (v3.12.10:0cc81280367, Apr  8 2025, 08:47:00) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "solvers": [
+    {
+      "solver": "qmr",
+      "native_threads": 1,
+      "plain_repeats": 12,
+      "numeric_contract_variants": 8,
+      "callback_counts": [
+        53
+      ],
+      "inputs_unchanged": true,
+      "independent_residual_norm_range": [
+        7.296580868275779e-09,
+        7.2965811935338824e-09
+      ],
+      "raw_probe_generic_norm_b_limit": 9.71521190871882e-09,
+      "minres_backward_error_limit_range": null,
+      "actual_method_criterion_passed": true
+    },
+    {
+      "solver": "qmr",
+      "native_threads": 2,
+      "plain_repeats": 12,
+      "numeric_contract_variants": 4,
+      "callback_counts": [
+        53
+      ],
+      "inputs_unchanged": true,
+      "independent_residual_norm_range": [
+        7.296581004214167e-09,
+        7.296581173535811e-09
+      ],
+      "raw_probe_generic_norm_b_limit": 9.71521190871882e-09,
+      "minres_backward_error_limit_range": null,
+      "actual_method_criterion_passed": true
+    },
+    {
+      "solver": "minres",
+      "native_threads": 1,
+      "plain_repeats": 12,
+      "numeric_contract_variants": 6,
+      "callback_counts": [
+        47
+      ],
+      "inputs_unchanged": true,
+      "independent_residual_norm_range": [
+        2.2735309581169432e-07,
+        2.2735309679125733e-07
+      ],
+      "raw_probe_generic_norm_b_limit": 9.71521190871882e-09,
+      "minres_backward_error_limit_range": [
+        4.444969142530031e-07,
+        4.4449691425300384e-07
+      ],
+      "actual_method_criterion_passed": true
+    },
+    {
+      "solver": "minres",
+      "native_threads": 2,
+      "plain_repeats": 12,
+      "numeric_contract_variants": 3,
+      "callback_counts": [
+        47
+      ],
+      "inputs_unchanged": true,
+      "independent_residual_norm_range": [
+        2.273530959277866e-07,
+        2.2735309679125733e-07
+      ],
+      "raw_probe_generic_norm_b_limit": 9.71521190871882e-09,
+      "minres_backward_error_limit_range": [
+        4.444969142530031e-07,
+        4.444969142530038e-07
+      ],
+      "actual_method_criterion_passed": true
+    }
+  ],
+  "pearson": [
+    {
+      "source_test_threads": 1,
+      "seed": 12345,
+      "iteration": 131,
+      "n": 17,
+      "inputs_unchanged": true,
+      "plain_repeat_count": 16,
+      "plain_statistic_bits": {
+        "000000000000f8ff": 8,
+        "000000000000f87f": 8
+      },
+      "plain_pvalue_bits": {
+        "000000000000f87f": 16
+      },
+      "grid_count": 64,
+      "grid_statistic_bits": {
+        "000000000000f8ff": 32,
+        "000000000000f87f": 32
+      },
+      "grid_pvalue_bits": {
+        "000000000000f87f": 64
+      },
+      "warning_variants": [
+        "[{\"category\": \"builtins.RuntimeWarning\", \"message\": \"invalid value encountered in subtract\"}]"
+      ],
+      "all_domain_properties": true
+    },
+    {
+      "source_test_threads": 4,
+      "seed": 12345,
+      "iteration": 6,
+      "n": 30,
+      "inputs_unchanged": true,
+      "plain_repeat_count": 16,
+      "plain_statistic_bits": {
+        "000000000000f87f": 8,
+        "000000000000f8ff": 8
+      },
+      "plain_pvalue_bits": {
+        "000000000000f87f": 16
+      },
+      "grid_count": 64,
+      "grid_statistic_bits": {
+        "000000000000f87f": 32,
+        "000000000000f8ff": 32
+      },
+      "grid_pvalue_bits": {
+        "000000000000f87f": 64
+      },
+      "warning_variants": [
+        "[{\"category\": \"builtins.RuntimeWarning\", \"message\": \"invalid value encountered in subtract\"}]"
+      ],
+      "all_domain_properties": true
+    }
+  ],
+  "scope": "Official NumPy/SciPy reference-only diagnostic; no fastscipy wheel, patched comparison, full suite, or release certification. MINRES generic norm-b residual_limit in the raw diagnostic is not its stopping contract; backward-error criterion is reported separately."
+}

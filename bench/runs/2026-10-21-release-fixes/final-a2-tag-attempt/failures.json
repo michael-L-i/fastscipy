@@ -1,0 +1,66 @@
+[
+  {
+    "platform": "macos-x86_64",
+    "python": "cp312",
+    "failed_ids": [
+      "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-qmr]",
+      "tests/test_stats.py::test_function_randomized[1t-pearsonr]",
+      "tests/test_stats.py::test_function_randomized[4t-pearsonr]"
+    ],
+    "junit": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "3",
+        "skipped": "0",
+        "tests": "7311",
+        "time": "382.491",
+        "timestamp": "2026-10-20T19:19:23.990403+00:00",
+        "hostname": "iad01-ar515-91b663d0-09fc-467d-80b0-9db8574d8a89-9EA2C13A9605.local"
+      }
+    ],
+    "source_log_sha256": "ffde662fdb51aaf84812c970f361fe061316635e0ceb8659543798a88ad631e6",
+    "source_junit_sha256": "f60c05aaedca91490393026fc952ee394c2f0aa967bb8dcbe9cafdee4f3c6b8d",
+    "solver_failure_classification": "Existing numerical/history/residual validator passed; eight retained plain repeats did not demonstrate byte variation, so final assert_identical rejected. No semantic/history validation failure in this log.",
+    "pearson_classification": "Original run failed on NaN correlation metadata byte equality; independent reference-only CP312 proof below establishes NaN sign instability for exact inputs."
+  },
+  {
+    "platform": "macos-x86_64",
+    "python": "cp313",
+    "failed_ids": [
+      "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-minres]"
+    ],
+    "junit": [
+      {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "7311",
+        "time": "508.727",
+        "timestamp": "2026-10-20T22:01:22.034395+00:00",
+        "hostname": "iad01-dz251-9a39c526-7e7e-4ebe-9a68-bc5fab8b0966-8ABBD3EBE63E.local"
+      }
+    ],
+    "source_log_sha256": "dfd68288f2a59f09bad9e787a17b2f8d97890b5059c7931b23c2ddabcee5941a",
+    "source_junit_sha256": "8f4d46b6f630309478477c61cd4a5b87422f621e821c3832fed7a982dbedd479",
+    "solver_failure_classification": "Existing numerical/history/residual validator passed; eight retained plain repeats did not demonstrate byte variation, so final assert_identical rejected. No semantic/history validation failure in this log.",
+    "pearson_classification": null
+  },
+  {
+    "platform": "macos-arm64",
+    "python": "cp315",
+    "failed_test_ids": [],
+    "classification": "Build supervisor raised psutil.AccessDenied reading child RSS during cibuildwheel interpreter setup; project tests/installed activation were not reached. This is an incomplete wheel-validation job, not a passing numerical result.",
+    "raw_job_log_sha256": "553d284ba887e39598f0dcfa1518a4650f7b84875202414cfafa46aee2ed48bf",
+    "build_log_sha256": "2bc25743abef915640df2369a6ab6ad3d0f25425f27366956c0b2bbfcfb459aa"
+  },
+  {
+    "platform": "macos-x86_64",
+    "python": "cp315",
+    "failed_test_ids": [],
+    "classification": "Build supervisor raised psutil.AccessDenied reading child RSS during cibuildwheel interpreter setup; project tests/installed activation were not reached. This is an incomplete wheel-validation job, not a passing numerical result.",
+    "raw_job_log_sha256": "0aafe530123cb901ae97a529527ab068e81cb4816e7970333514bd20a952b7cc",
+    "build_log_sha256": "d836f1e177aa18304e6ee2db24640b91ed5cfb2cad49e9957ff796d0c25127ee"
+  }
+]

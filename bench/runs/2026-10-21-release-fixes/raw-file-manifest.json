@@ -1,0 +1,138 @@
+[
+  {
+    "archive": "final-a2-tag-attempt/raw-run.json.gz",
+    "source_file": "/tmp/fastscipy-final-a2-run.json",
+    "uncompressed_bytes": 86587,
+    "uncompressed_sha256": "68c3c94cdbd26ce8127d10fcc623f441b19f37b869a4b36f0bbd9fb1b922a3d4",
+    "archive_sha256": "97e5a78f23692ac76f547012bd2f868ab58b30020e073f5c3ac747952b8bba10",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp312-tests.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp312/report/cpython-312/tests.log",
+    "uncompressed_bytes": 431134,
+    "uncompressed_sha256": "ffde662fdb51aaf84812c970f361fe061316635e0ceb8659543798a88ad631e6",
+    "archive_sha256": "43a896964452ff69e79e07b6c2a54b4d0fe58ff7b6909738f4916c19e47347a1",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp312-tests.xml.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp312/report/cpython-312/tests.xml",
+    "uncompressed_bytes": 1257497,
+    "uncompressed_sha256": "f60c05aaedca91490393026fc952ee394c2f0aa967bb8dcbe9cafdee4f3c6b8d",
+    "archive_sha256": "fd8a5f12cc8c81afe9fec50ffcb23c673d7340e8aa3aff483f1d16d7ebda0d69",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp312-build.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp312/report/build.log",
+    "uncompressed_bytes": 20826,
+    "uncompressed_sha256": "137d980c82d291d06ad4ca8fd37f08caaab1131906c17bc17b0468e25859f7f2",
+    "archive_sha256": "c7b126855b3ee3d4ba828ef49e82e8dfe1a5f2ceb13d3e49b0585a2ca74c5b98",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp312-build.json.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp312/report/build.json",
+    "uncompressed_bytes": 150,
+    "uncompressed_sha256": "f87774c6844e3d1444364b77e709ab3e96428ced25b8fd00f7bdd66c77859efc",
+    "archive_sha256": "97f7c886278c048e228355ade0b23fd6a2f384c3783347540fbada3706ce1711",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp313-tests.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp313/report/cpython-313/tests.log",
+    "uncompressed_bytes": 377311,
+    "uncompressed_sha256": "dfd68288f2a59f09bad9e787a17b2f8d97890b5059c7931b23c2ddabcee5941a",
+    "archive_sha256": "5e09d5dc63d1fe0cffb46e234da3d95bb2bd2eab97af00b549d4adc12747a94b",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp313-tests.xml.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp313/report/cpython-313/tests.xml",
+    "uncompressed_bytes": 1203249,
+    "uncompressed_sha256": "8f4d46b6f630309478477c61cd4a5b87422f621e821c3832fed7a982dbedd479",
+    "archive_sha256": "7a3f973ea89ada5b62abcf120a141df160916a07f242b4b84b01b1be69e6b3c1",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp313-build.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp313/report/build.log",
+    "uncompressed_bytes": 21867,
+    "uncompressed_sha256": "3a052a082f557e35f9b218fec3ee2629a4e2b6c43b9aea20cd0f19eb89f904dc",
+    "archive_sha256": "62694af9e93de321ed9fc746860e650c94ba48a727c6579e95364b5271a242f6",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp313-build.json.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp313/report/build.json",
+    "uncompressed_bytes": 151,
+    "uncompressed_sha256": "3477010f98740ead81790b6ae3e1c79e91e9b5afa170a0950aeae954f4c5fd73",
+    "archive_sha256": "0bab78addfe5fdd54ac9315736e0a52e9c1eac0f07462121ab27b49bac47cba2",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-arm64-cp315-job.log.gz",
+    "source_file": "/tmp/fastscipy-final-mac-arm64-cp315-job.log",
+    "uncompressed_bytes": 105892,
+    "uncompressed_sha256": "553d284ba887e39598f0dcfa1518a4650f7b84875202414cfafa46aee2ed48bf",
+    "archive_sha256": "3a0b80fe09691d2eafd1fbbca5e2ad28d697ed4344bfb5ac1afafb3eef31c91d",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-arm64-cp315-build.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-arm64-cp315/report/build.log",
+    "uncompressed_bytes": 3008,
+    "uncompressed_sha256": "2bc25743abef915640df2369a6ab6ad3d0f25425f27366956c0b2bbfcfb459aa",
+    "archive_sha256": "3752c4331dab58fcaa0b4f145fb692265140484c6c5e76080d85f6cc61d8d79f",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp315-job.log.gz",
+    "source_file": "/tmp/fastscipy-final-mac-x86_64-cp315-job.log",
+    "uncompressed_bytes": 106482,
+    "uncompressed_sha256": "0aafe530123cb901ae97a529527ab068e81cb4816e7970333514bd20a952b7cc",
+    "archive_sha256": "5eed232e1275d9b3c4c034672c3d57cf007ebd924fff082d9601fefac8c79df9",
+    "gzip": true
+  },
+  {
+    "archive": "final-a2-tag-attempt/macos-x86_64-cp315-build.log.gz",
+    "source_file": "/tmp/fastscipy-final-release-audit/mac-x86_64-cp315/report/build.log",
+    "uncompressed_bytes": 2996,
+    "uncompressed_sha256": "d836f1e177aa18304e6ee2db24640b91ed5cfb2cad49e9957ff796d0c25127ee",
+    "archive_sha256": "54298aef5f2f4be44aa7db2c502af4ed40f6c50076414ab47e4cd8ab847810c9",
+    "gzip": true
+  },
+  {
+    "archive": "intel-cp312-reference-proof/numeric-proof.json.gz",
+    "source_file": "/tmp/fastscipy-intel-cp312-reference-proof/numeric-proof.json",
+    "uncompressed_bytes": 6162485,
+    "uncompressed_sha256": "1c2f16e63d002f85d39cf8e102ccb1bb1ea4c214455b8fed61b8c2b3c5ad8fee",
+    "archive_sha256": "377c4fd6f0f24c31e9ac0905f43a1cccc3ca1f3b85093bcb78f8da2207cd3bfa",
+    "gzip": true
+  },
+  {
+    "archive": "intel-cp312-reference-proof/resources.json",
+    "source_file": "/tmp/fastscipy-intel-cp312-reference-proof/resources.json",
+    "uncompressed_bytes": 102,
+    "uncompressed_sha256": "acad2e7b3b9916b6bca1cf005b764dec80f03cd9203fd0cdd47563e204c5ea08",
+    "archive_sha256": "acad2e7b3b9916b6bca1cf005b764dec80f03cd9203fd0cdd47563e204c5ea08",
+    "gzip": false
+  },
+  {
+    "archive": "intel-cp312-reference-proof/provenance.json",
+    "source_file": "/tmp/fastscipy-intel-cp312-reference-proof/provenance.json",
+    "uncompressed_bytes": 353,
+    "uncompressed_sha256": "3f3d1a395a5ba740b7875f3a3477728f9f624aa94af5ea31f14a9f3e2fb020b7",
+    "archive_sha256": "3f3d1a395a5ba740b7875f3a3477728f9f624aa94af5ea31f14a9f3e2fb020b7",
+    "gzip": false
+  },
+  {
+    "archive": "intel-cp312-reference-proof/diagnostics.log",
+    "source_file": "/tmp/fastscipy-intel-cp312-reference-proof/diagnostics.log",
+    "uncompressed_bytes": 201,
+    "uncompressed_sha256": "294b05f514dac07743aa11eae381f33b90fb9a2b6ce162f33493bbc33eb71d7c",
+    "archive_sha256": "294b05f514dac07743aa11eae381f33b90fb9a2b6ce162f33493bbc33eb71d7c",
+    "gzip": false
+  }
+]

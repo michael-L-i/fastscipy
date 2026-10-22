@@ -7,16 +7,23 @@ smokes run solely in newly created binary-only CP313/optional CP315 Mac ARM venv
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
-import sys
 from urllib.request import urlopen
 
 RUN = "39738398406"
 SOURCE = "46b33f2882f0b10a126169bed0a088705cf402a0"
 VERSION = "0.1.0a4"
-TARGETS = {"macos-arm64", "macos-x86_64", "windows-amd64", "windows-arm64", "manylinux-aarch64", "manylinux-x86_64", "musllinux-aarch64", "musllinux-x86_64"}
+TARGETS = {
+    "macos-arm64",
+    "macos-x86_64",
+    "windows-amd64",
+    "windows-arm64",
+    "manylinux-aarch64",
+    "manylinux-x86_64",
+    "musllinux-aarch64",
+    "musllinux-x86_64",
+}
 
 
 def call(command, *, cwd=None, env=None, timeout=300):
@@ -46,16 +53,54 @@ def main():
         raise RuntimeError("Output directory must be empty")
     output.mkdir(parents=True, exist_ok=True)
     # This guard runs before downloading artifacts, creating environments, or pip.
-    run = json.loads(call(["gh", "run", "view", RUN, "--repo", "michael-L-i/fastscipy", "--json", "status,conclusion,headSha,headBranch,event,jobs,url"]))
+    run = json.loads(
+        call(
+            [
+                "gh",
+                "run",
+                "view",
+                RUN,
+                "--repo",
+                "michael-L-i/fastscipy",
+                "--json",
+                "status,conclusion,headSha,headBranch,event,jobs,url",
+            ]
+        )
+    )
     save(output / "release-run.json", run)
     jobs = run["jobs"]
     wheels = [j for j in jobs if j["name"].startswith("Wheel /")]
     required = {"Source distribution and version guards", "Verify complete release artifact set", "pypi"}
     by_name = {j["name"]: j for j in jobs}
-    if not (run["headSha"] == SOURCE and run["headBranch"] == f"v{VERSION}" and run["event"] == "push" and run["status"] == "completed" and run["conclusion"] == "success" and len(wheels) == 32 and all(j["conclusion"] == "success" for j in wheels) and all(by_name.get(n, {}).get("conclusion") == "success" for n in required)):
-        raise RuntimeError("Exact tagged source, all 32 wheel jobs, complete-set gate and PyPI publisher must have succeeded")
+    if not (
+        run["headSha"] == SOURCE
+        and run["headBranch"] == f"v{VERSION}"
+        and run["event"] == "push"
+        and run["status"] == "completed"
+        and run["conclusion"] == "success"
+        and len(wheels) == 32
+        and all(j["conclusion"] == "success" for j in wheels)
+        and all(by_name.get(n, {}).get("conclusion") == "success" for n in required)
+    ):
+        raise RuntimeError(
+            "Exact tagged source, all 32 wheel jobs, complete-set gate and PyPI publisher must have succeeded"
+        )
     artifact_dir = output / "run-artifacts"
-    call(["gh", "run", "download", RUN, "--repo", "michael-L-i/fastscipy", "--pattern", "release-dist-*", "--dir", str(artifact_dir)], timeout=600)
+    call(
+        [
+            "gh",
+            "run",
+            "download",
+            RUN,
+            "--repo",
+            "michael-L-i/fastscipy",
+            "--pattern",
+            "release-dist-*",
+            "--dir",
+            str(artifact_dir),
+        ],
+        timeout=600,
+    )
     files = [p for p in artifact_dir.rglob("*") if p.is_file()]
     manifest = {}
     slots = set()
@@ -68,7 +113,7 @@ def main():
         prefix = f"fastscipy-{VERSION}-"
         if not path.name.startswith(prefix) or not path.name.endswith(".whl"):
             raise RuntimeError(f"Unexpected distribution {path.name}")
-        py, abi, platforms = path.name[len(prefix):-4].split("-")
+        py, abi, platforms = path.name[len(prefix) : -4].split("-")
         if py not in {"cp312", "cp313", "cp314", "cp315"} or abi != py:
             raise RuntimeError(f"Unexpected interpreter/ABI {path.name}")
         families = set()
@@ -94,11 +139,28 @@ def main():
     with urlopen(f"https://pypi.org/pypi/fastscipy/{VERSION}/json", timeout=30) as response:
         published = json.load(response)
     save(output / "pypi-release.json", published)
-    remote = {entry["filename"]: {"size": entry["size"], "sha256": entry["digests"]["sha256"]} for entry in published["urls"]}
-    if published["info"]["version"] != VERSION or len(published["urls"]) != 33 or remote != manifest or any(e["yanked"] for e in published["urls"]):
+    remote = {
+        entry["filename"]: {"size": entry["size"], "sha256": entry["digests"]["sha256"]} for entry in published["urls"]
+    }
+    if (
+        published["info"]["version"] != VERSION
+        or len(published["urls"]) != 33
+        or remote != manifest
+        or any(e["yanked"] for e in published["urls"])
+    ):
         raise RuntimeError("PyPI filenames/sizes/SHA256 do not exactly match the 33 validated run artifacts")
-    save(output / "verification.json", {"run": RUN, "source": SOURCE, "version": VERSION, "published_distribution_hashes_match": True, "distribution_count": 33})
+    save(
+        output / "verification.json",
+        {
+            "run": RUN,
+            "source": SOURCE,
+            "version": VERSION,
+            "published_distribution_hashes_match": True,
+            "distribution_count": 33,
+        },
+    )
     print(json.dumps({"verified": True, "output": str(output), "distribution_count": 33}))
+
 
 if __name__ == "__main__":
     main()

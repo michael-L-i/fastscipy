@@ -1,0 +1,68 @@
+name: Intel CP313 focused optimization correctness
+on:
+  push:
+    branches: [release-fixes]
+    paths: [".github/workflows/intel-optimize-correctness.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: intel-optimize-correctness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  focused:
+    runs-on: macos-15-intel
+    timeout-minutes: 55
+    env:
+      FASTSCIPY_NUM_THREADS: "2"
+      FASTSCIPY_STRICT: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install binary test dependencies
+        run: |
+          python -m pip install --only-binary=:all: numpy==2.5.4 scipy==1.18.1 pytest pytest-xdist hypothesis packaging psutil pooch
+      - uses: actions/download-artifact@v4
+        with:
+          name: debug-wheel-macos-x86_64-cp313
+          run-id: 39680660563
+          github-token: ${{ github.token }}
+          path: prior-wheel
+      - name: Record wheel provenance and install unchanged a3 wheel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts
+          gh api repos/${{ github.repository }}/actions/runs/39680660563 --jq '{id,head_sha,head_branch,conclusion,html_url}' > artifacts/wheel-run.json
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, subprocess, sys
+          wheels = list(Path('prior-wheel').rglob('*.whl'))
+          assert len(wheels) == 1, wheels
+          wheel = wheels[0]
+          assert '-cp313-cp313-macosx_' in wheel.name and wheel.name.endswith('_x86_64.whl'), wheel
+          print(wheel, hashlib.sha256(wheel.read_bytes()).hexdigest())
+          subprocess.run([sys.executable, '-m', 'pip', 'install', '--no-deps', str(wheel)], check=True)
+          Path('artifacts/wheel-path.txt').write_text(str(wheel.resolve()))
+          PY
+      - name: Repeat optimization correctness three times under resource caps
+        run: |
+          python -I tools/verify_intel_optimize.py --wheel "$(cat artifacts/wheel-path.txt)" --output artifacts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intel-cp313-optimize-correctness
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14

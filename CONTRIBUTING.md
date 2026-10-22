@@ -82,7 +82,7 @@ BSD-3-Clause license of this project.
 ## Releases
 
 The published `0.1.0a1` wheels target macOS 14+ arm64 and Python 3.12–3.14.
-The `0.1.0a3` candidate `Release` workflow targets eight platforms and
+The `0.1.0a4` candidate `Release` workflow targets eight platforms and
 Python 3.12–3.15: 32 wheels in total. Its configured targets are not a
 completed support claim. It installs built wheels and runs project checks
 plus paired upstream SciPy comparisons.

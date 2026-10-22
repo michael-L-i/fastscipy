@@ -1,10 +1,10 @@
 # Platform validation
 
 The published `0.1.0a1` release supports macOS 14+ on Apple Silicon, SciPy 1.18,
-and Python 3.12–3.14. Broader support is being evaluated for `0.1.0a3`.
+and Python 3.12–3.14. Broader support is being evaluated for `0.1.0a4`.
 The candidate release has not completed validation or been published.
 
-| Platform | Published `0.1.0a1` | `0.1.0a3` candidate |
+| Platform | Published `0.1.0a1` | `0.1.0a4` candidate |
 |---|---|---|
 | macOS arm64 | Experimental support | Revalidation pending |
 | macOS x86_64 | Unsupported | Validation pending |
@@ -20,6 +20,13 @@ and Python 3.12–3.15, for 32 planned wheels; that matrix is broader than the
 Python 3.13 development checks below.
 
 ## Evidence
+
+The [32-wheel `0.1.0a3` attempt](https://github.com/michael-L-i/fastscipy/actions/runs/39680660563)
+passed 31 wheel jobs and failed the Intel Mac CP313 least-squares cost
+comparison. Publication was skipped. The [a3 archive](../bench/runs/2026-10-22-release-a3/README.md)
+retains the original result. The a4 candidate applies the existing explicit
+Intel numerical policy to that cost check while preserving byte comparisons
+for every other result field and the independent residual-cost bound.
 
 The [32-wheel `0.1.0a2` attempt](https://github.com/michael-L-i/fastscipy/actions/runs/39464216282)
 passed 28 wheel jobs and failed four Mac jobs; publication was skipped.

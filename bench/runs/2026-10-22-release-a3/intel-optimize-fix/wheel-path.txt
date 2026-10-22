@@ -1,0 +1,1 @@
+/Users/runner/work/fastscipy/fastscipy/prior-wheel/fastscipy-0.1.0a3-cp313-cp313-macosx_10_9_x86_64.whl

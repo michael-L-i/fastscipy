@@ -1,0 +1,189 @@
+{
+  "purpose": "partial optimize correctness regression with unchanged a3 wheel; no build or benchmark",
+  "source": "c29cc5a7be8b4c29055097d360689520682eb6a5",
+  "wheel_source": "cf06af752abee2aebffa3b687398f1f76ef94eb8",
+  "wheel_run": 39680660563,
+  "wheel_artifact": "debug-wheel-macos-x86_64-cp313",
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O",
+  "installed": {
+    "package": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy",
+    "native": "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy/_native.cpython-313-darwin.so",
+    "native_sha256": "12568446427debe6d92819fc0d3cd303a139b4f9df9d159fffd993729a9b9402",
+    "wheel": "fastscipy-0.1.0a3-cp313-cp313-macosx_10_9_x86_64.whl",
+    "wheel_sha256": "728044480a929d6c387ad36660dbb65fdf4cb17c3a727117493e8533b539bbec",
+    "installed_files_sha256": {
+      "fastscipy/__init__.py": "de59d4dd660123cf0755481ca8692a27212b38c23235482ecbc33bd4d31bd26f",
+      "fastscipy/_cluster.py": "9240fd8ac636138b340b78aebc040883ba4b6822e8865ed2939b707287d6c2b8",
+      "fastscipy/_csgraph.py": "0bb657603ac535deac2ddb5f5d508eecf180b5d99e9fecb023b8df9745811800",
+      "fastscipy/_integrate.py": "204290e12ed8373b361c750b1ec997bb02e8999abaa2a3e460b8a07fcc217188",
+      "fastscipy/_interpolate.py": "793cea352a4c4cfe8fb8090236df35e9613c618a1fea35e413e12b92c4a2926a",
+      "fastscipy/_linalg.py": "542bfdfaa5750b2772899c9d5ab8b6c507e692d34b4ff48a4b511996470c42c8",
+      "fastscipy/_native.cpython-313-darwin.so": "12568446427debe6d92819fc0d3cd303a139b4f9df9d159fffd993729a9b9402",
+      "fastscipy/_ndimage.py": "058133151f0c9eca5dcaaea3549954f6ad8bcada23017f974893f85ffb1da27a",
+      "fastscipy/_ndimage_correlate.py": "ec4aaaca4d42d8744bb190ad37ee0434393af743784aabbf419e318e4a9c6fb9",
+      "fastscipy/_ndimage_generic.py": "57edac18ca15773e5846791a49cb387177e9dbed95dd14ad84bc00c44a2a3a6d",
+      "fastscipy/_ndimage_interp.py": "b7d2e9d9e37c23fc66a8fcde98e8c03353173be7ad038a101c4df96013cefd44",
+      "fastscipy/_ndimage_label.py": "ae30f1bd350efc497ac9d3439e067a027beb20756a8d859bec6c86f11ba457e0",
+      "fastscipy/_ndimage_morph.py": "20510ca77e428e456731a9dd67c097c04382eb5ebfb50731b93128f0e24966d8",
+      "fastscipy/_ndimage_rank.py": "c4ab18545429c0ab3f67947f69f1c10acb28cdf82a50891b788e61a8a0b52f74",
+      "fastscipy/_ndimage_seam.py": "c107de2c1ad26d8a9e734e8fe0b890fe19e77a0e472b5600b9f7644be7ad1a2f",
+      "fastscipy/_optimize.py": "09a142127b33d9b3acb147225c6a52b0942a45d6495fe4dc4edc220b3ab1a5f2",
+      "fastscipy/_patch.py": "860ef64b5cd2f97d6349ed83feb3346b471f59f27f8400f1bce6c90fec0d767d",
+      "fastscipy/_signal.py": "c859f5da3eab2a259703c3b3bb2a153c48d05e96b6f88732e1e8f94d39d118b4",
+      "fastscipy/_signal_algo.py": "3e43ae340775b1cae8cb7536183979cf298f8f6a3c53d25c4142b08ed78dad9e",
+      "fastscipy/_signal_small.py": "01aa8db93f99d9dd84c3c634cc5bc24e423556f2af70d7439ef812191626f5dc",
+      "fastscipy/_signal_threads.py": "1eb6fb4f4f02c1488bbd81d1f21142a46881899804472ae356bf551458837ee5",
+      "fastscipy/_sparse.py": "2a44cfcd14a905bd9c425c299cee3ff6ff2e78bb950a2921330df3303b9fc869",
+      "fastscipy/_sparse_linalg.py": "7460839e7c9b60c882467308cda0625104eed78a5ecadc7b6f44cb0c1e7e461c",
+      "fastscipy/_spatial.py": "3c5182651fcf4e9b1cef97048079783151a3d1875b17239cd810606ea0e02723",
+      "fastscipy/_special.py": "dc2bffab4cbe1a5bffa00591c4b0a8b6087803607f41a6b67f970d2983f63478",
+      "fastscipy/_stats.py": "d54ab8260bad63d878aaab43f6891efb0a2beba328674e96612af014ddaf54a5",
+      "fastscipy/_stats_algos.py": "972184661b7f3973aa7099c2a1b362179fd57bb1c4a43ee0e0ae2490d400c322",
+      "fastscipy/_stats_dist.py": "230ee977eb95ff54389ea8440bc37093389a54fabab40f8752cc63073e1a8d71",
+      "fastscipy/_stats_loop.py": "9908aaa28d1f03f2806e0fdb23c0d425dd5cefde8455a491b5eccdb3d607f1db",
+      "fastscipy/_stats_rank.py": "c1d876c67ba97485c6a6a4fcf133e78698eac4a4d537d75178871cc0dc018452",
+      "fastscipy/_threads.py": "0cac6e494e6c746946bd459778c186fc7727d3472623333d767852ca7a725f6d",
+      "fastscipy/pytest_plugin.py": "164d379d0fbe70145d082f7d9c2662d88217838d438b8976305d406fc1211e0e",
+      "fastscipy/testing.py": "d97d88c5ba644facdd3009d14242189df560d629f0783ec8d04fffecb81fc938"
+    },
+    "versions": {
+      "fastscipy": "0.1.0a3",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1"
+    }
+  },
+  "source_files_sha256": {
+    "tests/test_optimize.py": "446e420c14b96add5e82ff8f42b82c136bee2bb9a9d5fcec4b760d28c7cb553b",
+    "tests/conftest.py": "6ae575b6bd9363bda21d719b24f08e0507d67a4a9d6bcb9ab39b2b37a2d0c39e",
+    "python/fastscipy/testing.py": "d97d88c5ba644facdd3009d14242189df560d629f0783ec8d04fffecb81fc938",
+    "tools/platform_suite.py": "2506523b3ecb7d984a4f6475f8031c3292b651cd6edc62bad1f3f1aa249b8252"
+  },
+  "environment": {
+    "FASTSCIPY_STRICT": "1",
+    "FASTSCIPY_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "FASTSCIPY_ANY_PLATFORM": null,
+    "FASTSCIPY_ANY_VERSION": null
+  },
+  "runs": [
+    {
+      "repeat": 1,
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "-q",
+        "--import-mode=importlib",
+        "/Users/runner/work/fastscipy/fastscipy/tests/test_optimize.py",
+        "--junitxml=/Users/runner/work/fastscipy/fastscipy/artifacts/optimize-1.xml"
+      ],
+      "resources": {
+        "returncode": 0,
+        "seconds": 8.41944348800007,
+        "peak_rss_bytes": 122118144,
+        "stopped": null,
+        "rss_scope": "sampled_readable_process_tree",
+        "rss_complete": true,
+        "peak_rss_is_lower_bound": false,
+        "inaccessible_pids": [],
+        "inaccessible_processes": [],
+        "cleanup_errors": []
+      },
+      "junit": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "98",
+          "time": "4.909",
+          "timestamp": "2026-10-22T07:05:10.924253+00:00",
+          "hostname": "sjc20-cw752-e68628eb-de24-403b-b515-1c56241c9126-3E9C1BCE12F4.local"
+        }
+      ],
+      "junit_sha256": "2c721871ee5caa6bed1992f4ef195187585d108e2b8629f13bee80a990e631d6"
+    },
+    {
+      "repeat": 2,
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "-q",
+        "--import-mode=importlib",
+        "/Users/runner/work/fastscipy/fastscipy/tests/test_optimize.py",
+        "--junitxml=/Users/runner/work/fastscipy/fastscipy/artifacts/optimize-2.xml"
+      ],
+      "resources": {
+        "returncode": 0,
+        "seconds": 25.475838350999993,
+        "peak_rss_bytes": 111230976,
+        "stopped": null,
+        "rss_scope": "sampled_readable_process_tree",
+        "rss_complete": true,
+        "peak_rss_is_lower_bound": false,
+        "inaccessible_pids": [],
+        "inaccessible_processes": [],
+        "cleanup_errors": []
+      },
+      "junit": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "98",
+          "time": "20.229",
+          "timestamp": "2026-10-22T07:05:21.104827+00:00",
+          "hostname": "sjc20-cw752-e68628eb-de24-403b-b515-1c56241c9126-3E9C1BCE12F4.local"
+        }
+      ],
+      "junit_sha256": "8a93266a1a08a08f138f38ddf6f08a39ada94134b58b354e7458611ec79efb5c"
+    },
+    {
+      "repeat": 3,
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python",
+        "-I",
+        "-m",
+        "pytest",
+        "-q",
+        "--import-mode=importlib",
+        "/Users/runner/work/fastscipy/fastscipy/tests/test_optimize.py",
+        "--junitxml=/Users/runner/work/fastscipy/fastscipy/artifacts/optimize-3.xml"
+      ],
+      "resources": {
+        "returncode": 0,
+        "seconds": 11.141207892000011,
+        "peak_rss_bytes": 110735360,
+        "stopped": null,
+        "rss_scope": "sampled_readable_process_tree",
+        "rss_complete": true,
+        "peak_rss_is_lower_bound": false,
+        "inaccessible_pids": [],
+        "inaccessible_processes": [],
+        "cleanup_errors": []
+      },
+      "junit": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "98",
+          "time": "9.261",
+          "timestamp": "2026-10-22T07:05:44.853151+00:00",
+          "hostname": "sjc20-cw752-e68628eb-de24-403b-b515-1c56241c9126-3E9C1BCE12F4.local"
+        }
+      ],
+      "junit_sha256": "19661be5e17403f20723f46926521871916ab72f95ae34032e7527582cce8d17"
+    }
+  ],
+  "complete": true,
+  "returncode": 0
+}

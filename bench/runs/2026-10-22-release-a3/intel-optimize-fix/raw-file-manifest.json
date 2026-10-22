@@ -1,0 +1,102 @@
+{
+  "run": 39737974936,
+  "source_directory": "/tmp/fastscipy-intel-optimize-fix-39737974936",
+  "files": [
+    {
+      "path": "numerical-policy-1.jsonl",
+      "bytes": 6664,
+      "sha256": "8a760862d32bd0fbe4b628d9f21b64ea84d9d35017da28c547f01bf33f9a831c",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "numerical-policy-2.jsonl",
+      "bytes": 5712,
+      "sha256": "69cc25f942ce51b8bc4b90e33aa5de4fdc8efb26c74f37a2a5cb136eab4a7790",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "numerical-policy-3.jsonl",
+      "bytes": 7616,
+      "sha256": "d27746664e4a0b694d45ccbba54d679f051f704fcbed4c39d30c96f0eecf7ed4",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-1.log",
+      "bytes": 832,
+      "sha256": "166691e2651adc1883fad21787a02908d7ee2c2cd1707dd56ac4ec32ee18a664",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-1.log.monitor.json",
+      "bytes": 293,
+      "sha256": "7e583bf8e67fefb57c5bbd1a334efc4044eb14e05f0ca456073e7db1ed94ceee",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-1.xml",
+      "bytes": 10803,
+      "sha256": "2c721871ee5caa6bed1992f4ef195187585d108e2b8629f13bee80a990e631d6",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-2.log",
+      "bytes": 766,
+      "sha256": "cbdb1113e988bd69629e7d2669f3075dc4df70be62ae6a5067583306a3004b92",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-2.log.monitor.json",
+      "bytes": 295,
+      "sha256": "8098276993551fcf685f636becf25d36bb5de60b37282c4ce9c3051782104841",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-2.xml",
+      "bytes": 10805,
+      "sha256": "8a93266a1a08a08f138f38ddf6f08a39ada94134b58b354e7458611ec79efb5c",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-3.log",
+      "bytes": 832,
+      "sha256": "71c9087d9cb0d1193058c250e508dc969f5be6fc7490ba23a048fda7ea76c6d6",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-3.log.monitor.json",
+      "bytes": 295,
+      "sha256": "fba428b5fda593671cb9f9d8bfb5092e7d4896d9855c72c9224b89e784f54f6e",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "optimize-3.xml",
+      "bytes": 10803,
+      "sha256": "19661be5e17403f20723f46926521871916ab72f95ae34032e7527582cce8d17",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "run.json",
+      "bytes": 12601,
+      "sha256": "d4709e5ce05773b1207aca286b089e90dd2afca0663027a7094f21d4b6730367",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 8857,
+      "sha256": "3ffaaf86097e75012dd2173817447ad6d9b1f1ff98270b0697e6a0e63afb4981",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "wheel-path.txt",
+      "bytes": 103,
+      "sha256": "66b0b62a4fc530fe6cbf59ea2dd88f951a97e622233ff6eb39e3845caf356a84",
+      "preservation": "unchanged raw artifact bytes"
+    },
+    {
+      "path": "wheel-run.json",
+      "bytes": 200,
+      "sha256": "ae55650931dbde8874ca50f4cd66bac83600fe0e541775b6a6d05ccb4df8bf5d",
+      "preservation": "unchanged raw artifact bytes"
+    }
+  ]
+}

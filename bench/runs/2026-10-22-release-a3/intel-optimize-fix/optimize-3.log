@@ -1,0 +1,10 @@
+........................................................................ [ 73%]
+..........................                                               [100%]
+=============================== warnings summary ===============================
+tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4]
+tests/test_optimize.py::test_lsq_linear_dense_unbounded[2-shape4]
+  /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/fastscipy/testing.py:194: NumericalCompatibilityWarning: Intel Accelerate numerical contract tests.test_optimize._validate_lsq_cost passed. Byte identity and per-call reference variation are not established.
+    numerical_compatibility(expected, got, numerical_validation)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+98 passed, 2 warnings in 9.56s

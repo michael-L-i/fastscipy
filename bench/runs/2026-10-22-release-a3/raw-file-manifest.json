@@ -1,0 +1,499 @@
+{
+  "description": "Original JSON/log evidence copied unchanged or gzip-compressed with byte-exact roundtrip checks; upstream XML hashes are in intel-cp313/upstream-comparison.json.",
+  "files": [
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/build.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "fb00866553fcf4eab1e5072e778bf71aa7358c80a935a9d745add8596eeb3a62"
+      },
+      "archive": "intel-cp313/build.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "fb00866553fcf4eab1e5072e778bf71aa7358c80a935a9d745add8596eeb3a62"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/build.log.monitor.json",
+      "original": {
+        "bytes": 293,
+        "sha256": "42357e46472ba2480eb6a7aef250d09eb6c8d96f9b6eab6452ddf95109a0f00e"
+      },
+      "archive": "intel-cp313/build.log.monitor.json",
+      "archived": {
+        "bytes": 293,
+        "sha256": "42357e46472ba2480eb6a7aef250d09eb6c8d96f9b6eab6452ddf95109a0f00e"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/build.log",
+      "original": {
+        "bytes": 22302,
+        "sha256": "bee6286b68c1ed0bc209219d0e25cf1470402e4696a20cfdb48b3043a597e416"
+      },
+      "archive": "intel-cp313/build.log.gz",
+      "archived": {
+        "bytes": 4941,
+        "sha256": "08382fba3e04f0355a557850184cce0ef91c6a19807e740c5673b36dc17aeb2c"
+      },
+      "gzip": true
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/summary.json",
+      "original": {
+        "bytes": 80667,
+        "sha256": "203138920408d200a46aee02dfd5c92bc37b64e478703237d426552b0bcf69f7"
+      },
+      "archive": "intel-cp313/summary.json",
+      "archived": {
+        "bytes": 80667,
+        "sha256": "203138920408d200a46aee02dfd5c92bc37b64e478703237d426552b0bcf69f7"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/reference-variance.jsonl",
+      "original": {
+        "bytes": 30092,
+        "sha256": "43f0b50e63b56cfd79c41eaf82a4e42616ac5fc07e79daad283e7e78238c055a"
+      },
+      "archive": "intel-cp313/validation-records.jsonl",
+      "archived": {
+        "bytes": 30092,
+        "sha256": "43f0b50e63b56cfd79c41eaf82a4e42616ac5fc07e79daad283e7e78238c055a"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cluster.log.monitor.json",
+      "original": {
+        "bytes": 293,
+        "sha256": "faf7c176801ca9ee4b5f736b61a3e948d16e4e196ec4347ae7dcf07ea4144acd"
+      },
+      "archive": "intel-cp313/monitors/cluster.log.monitor.json",
+      "archived": {
+        "bytes": 293,
+        "sha256": "faf7c176801ca9ee4b5f736b61a3e948d16e4e196ec4347ae7dcf07ea4144acd"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/csgraph.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "e7e46fd7f528b9f8a7c6389cf2c895ff882f009f1036c10003a15b906182faa6"
+      },
+      "archive": "intel-cp313/monitors/csgraph.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "e7e46fd7f528b9f8a7c6389cf2c895ff882f009f1036c10003a15b906182faa6"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/integrate.log.monitor.json",
+      "original": {
+        "bytes": 295,
+        "sha256": "c54fc013821003a18df9c45eceefe9a228dff801458d77e4b73fc74769bbc839"
+      },
+      "archive": "intel-cp313/monitors/integrate.log.monitor.json",
+      "archived": {
+        "bytes": 295,
+        "sha256": "c54fc013821003a18df9c45eceefe9a228dff801458d77e4b73fc74769bbc839"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/interpolate.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "9847483ca6d44f862a78178f64eaef78d44c3f8c86e5234f4aa816830185f2cb"
+      },
+      "archive": "intel-cp313/monitors/interpolate.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "9847483ca6d44f862a78178f64eaef78d44c3f8c86e5234f4aa816830185f2cb"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/linalg.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "5281677e944ad551f1ff1e150316c797cd9268b86b108f0c6f58ba11dd25fa22"
+      },
+      "archive": "intel-cp313/monitors/linalg.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "5281677e944ad551f1ff1e150316c797cd9268b86b108f0c6f58ba11dd25fa22"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/ndimage.log.monitor.json",
+      "original": {
+        "bytes": 295,
+        "sha256": "8b744fcd0eabce2648b54d1a9a8a65e2fbbf4afd1223a372afbd0d86a7ce3940"
+      },
+      "archive": "intel-cp313/monitors/ndimage.log.monitor.json",
+      "archived": {
+        "bytes": 295,
+        "sha256": "8b744fcd0eabce2648b54d1a9a8a65e2fbbf4afd1223a372afbd0d86a7ce3940"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/optimize.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "0932d0fe86661f3eababfc0b8bfecad6f81dc9bf67119491af5580c64690f7ae"
+      },
+      "archive": "intel-cp313/monitors/optimize.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "0932d0fe86661f3eababfc0b8bfecad6f81dc9bf67119491af5580c64690f7ae"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/signal.log.monitor.json",
+      "original": {
+        "bytes": 295,
+        "sha256": "93d3da337d4aeaafb5e8512e334180c6652abfa05779c9ad946823acd1d794b1"
+      },
+      "archive": "intel-cp313/monitors/signal.log.monitor.json",
+      "archived": {
+        "bytes": 295,
+        "sha256": "93d3da337d4aeaafb5e8512e334180c6652abfa05779c9ad946823acd1d794b1"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/sparse.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "88c328185ca4a27299d8f20f2b1e0d7f47c79787c1d16b31987c0b96d5f6c596"
+      },
+      "archive": "intel-cp313/monitors/sparse.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "88c328185ca4a27299d8f20f2b1e0d7f47c79787c1d16b31987c0b96d5f6c596"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/sparse_linalg.log.monitor.json",
+      "original": {
+        "bytes": 293,
+        "sha256": "15d5d689515049578dce0e4926ff977091c5d5f66fe3b4247d871bfb40b0d14c"
+      },
+      "archive": "intel-cp313/monitors/sparse_linalg.log.monitor.json",
+      "archived": {
+        "bytes": 293,
+        "sha256": "15d5d689515049578dce0e4926ff977091c5d5f66fe3b4247d871bfb40b0d14c"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/spatial.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "c11e9de482c34d155b1cba7e2d5376427066a42d1febcb41d97d2caf15a2962e"
+      },
+      "archive": "intel-cp313/monitors/spatial.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "c11e9de482c34d155b1cba7e2d5376427066a42d1febcb41d97d2caf15a2962e"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/special.log.monitor.json",
+      "original": {
+        "bytes": 295,
+        "sha256": "3d6d8e104774cf4e61fc5b1a492d43e71cc9c7f5a298cbcbc68a533077c736dc"
+      },
+      "archive": "intel-cp313/monitors/special.log.monitor.json",
+      "archived": {
+        "bytes": 295,
+        "sha256": "3d6d8e104774cf4e61fc5b1a492d43e71cc9c7f5a298cbcbc68a533077c736dc"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/stats.log.monitor.json",
+      "original": {
+        "bytes": 294,
+        "sha256": "028ceff40960e8ed3c6880b5e8a914b29865c50ad2d3e42431d961e868a4e48b"
+      },
+      "archive": "intel-cp313/monitors/stats.log.monitor.json",
+      "archived": {
+        "bytes": 294,
+        "sha256": "028ceff40960e8ed3c6880b5e8a914b29865c50ad2d3e42431d961e868a4e48b"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/tests.log.monitor.json",
+      "original": {
+        "bytes": 295,
+        "sha256": "af5da28619148d3c859b90fb69c54a14b14933fe227f061852d51e21aa74d5ff"
+      },
+      "archive": "intel-cp313/monitors/tests.log.monitor.json",
+      "archived": {
+        "bytes": 295,
+        "sha256": "af5da28619148d3c859b90fb69c54a14b14933fe227f061852d51e21aa74d5ff"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/upstream.log.monitor.json",
+      "original": {
+        "bytes": 296,
+        "sha256": "8f01a7dd25697ea8f0856dac5de82653be52ba911630762a558f86fab054c95a"
+      },
+      "archive": "intel-cp313/monitors/upstream.log.monitor.json",
+      "archived": {
+        "bytes": 296,
+        "sha256": "8f01a7dd25697ea8f0856dac5de82653be52ba911630762a558f86fab054c95a"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/cluster.json",
+      "original": {
+        "bytes": 3770,
+        "sha256": "e5381c6c20f712e50bf92867bbedc6b10cd13396e856a12f6545d327a8bf5b76"
+      },
+      "archive": "intel-cp313/cases/cluster.json",
+      "archived": {
+        "bytes": 3770,
+        "sha256": "e5381c6c20f712e50bf92867bbedc6b10cd13396e856a12f6545d327a8bf5b76"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/csgraph.json",
+      "original": {
+        "bytes": 5372,
+        "sha256": "71b117619cf1009cd12a6f34005a0dd17fe9c4e07428891f71ccdcbd135c82ba"
+      },
+      "archive": "intel-cp313/cases/csgraph.json",
+      "archived": {
+        "bytes": 5372,
+        "sha256": "71b117619cf1009cd12a6f34005a0dd17fe9c4e07428891f71ccdcbd135c82ba"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/integrate.json",
+      "original": {
+        "bytes": 11138,
+        "sha256": "9c63b546f91d8b66cbb95c46cf13e2e51d883bf1224f467439507b5192f56b74"
+      },
+      "archive": "intel-cp313/cases/integrate.json",
+      "archived": {
+        "bytes": 11138,
+        "sha256": "9c63b546f91d8b66cbb95c46cf13e2e51d883bf1224f467439507b5192f56b74"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/interpolate.json",
+      "original": {
+        "bytes": 10018,
+        "sha256": "2347a83db06253f87693271d03939b12f68792f249b8cd18b988f2f00aaf9894"
+      },
+      "archive": "intel-cp313/cases/interpolate.json",
+      "archived": {
+        "bytes": 10018,
+        "sha256": "2347a83db06253f87693271d03939b12f68792f249b8cd18b988f2f00aaf9894"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/linalg.json",
+      "original": {
+        "bytes": 15704,
+        "sha256": "9d31d975372fbcf29ed84c62469f4b8d42de0fd39835d17a4787b2d0430ce27d"
+      },
+      "archive": "intel-cp313/cases/linalg.json",
+      "archived": {
+        "bytes": 15704,
+        "sha256": "9d31d975372fbcf29ed84c62469f4b8d42de0fd39835d17a4787b2d0430ce27d"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/ndimage.json",
+      "original": {
+        "bytes": 13133,
+        "sha256": "f42c6c700cf3c4dbd8622c4197e931ba110d4ce442a7f629af41d2fbe23e7369"
+      },
+      "archive": "intel-cp313/cases/ndimage.json",
+      "archived": {
+        "bytes": 13133,
+        "sha256": "f42c6c700cf3c4dbd8622c4197e931ba110d4ce442a7f629af41d2fbe23e7369"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/optimize.json",
+      "original": {
+        "bytes": 5525,
+        "sha256": "1b12dd074b15967479a0a866a6b51852d879a535488844b80970179463b4942a"
+      },
+      "archive": "intel-cp313/cases/optimize.json",
+      "archived": {
+        "bytes": 5525,
+        "sha256": "1b12dd074b15967479a0a866a6b51852d879a535488844b80970179463b4942a"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/signal.json",
+      "original": {
+        "bytes": 12900,
+        "sha256": "69a896dd351f131d1dc476da781112cf9470e9ec829c0b6f9941bdae42f1e281"
+      },
+      "archive": "intel-cp313/cases/signal.json",
+      "archived": {
+        "bytes": 12900,
+        "sha256": "69a896dd351f131d1dc476da781112cf9470e9ec829c0b6f9941bdae42f1e281"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/sparse.json",
+      "original": {
+        "bytes": 8471,
+        "sha256": "37636e1f92e423287d7cfd8771015f8ef9c9b7279e4c1282036c450a9fc8e912"
+      },
+      "archive": "intel-cp313/cases/sparse.json",
+      "archived": {
+        "bytes": 8471,
+        "sha256": "37636e1f92e423287d7cfd8771015f8ef9c9b7279e4c1282036c450a9fc8e912"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/sparse_linalg.json",
+      "original": {
+        "bytes": 6346,
+        "sha256": "bf10838c680cda0c48746de54187ad5ad7bbcc5383d752103abaf886e341cda5"
+      },
+      "archive": "intel-cp313/cases/sparse_linalg.json",
+      "archived": {
+        "bytes": 6346,
+        "sha256": "bf10838c680cda0c48746de54187ad5ad7bbcc5383d752103abaf886e341cda5"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/spatial.json",
+      "original": {
+        "bytes": 7627,
+        "sha256": "9ea6b804c0112388de2f986afbc7c57ebda9e1da40a5d4d382b5430d5025a460"
+      },
+      "archive": "intel-cp313/cases/spatial.json",
+      "archived": {
+        "bytes": 7627,
+        "sha256": "9ea6b804c0112388de2f986afbc7c57ebda9e1da40a5d4d382b5430d5025a460"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/special.json",
+      "original": {
+        "bytes": 11293,
+        "sha256": "9859166c796f247bcb259032f2528b1ac630fbd137dd9de9f8505b780e4ac842"
+      },
+      "archive": "intel-cp313/cases/special.json",
+      "archived": {
+        "bytes": 11293,
+        "sha256": "9859166c796f247bcb259032f2528b1ac630fbd137dd9de9f8505b780e4ac842"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/cases/stats.json",
+      "original": {
+        "bytes": 17313,
+        "sha256": "07ed3fb9091b2a03b27285367c0f48a1837c19fc967f5f66e10ec151ca4550e8"
+      },
+      "archive": "intel-cp313/cases/stats.json",
+      "archived": {
+        "bytes": 17313,
+        "sha256": "07ed3fb9091b2a03b27285367c0f48a1837c19fc967f5f66e10ec151ca4550e8"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/tests.xml",
+      "original": {
+        "bytes": 840234,
+        "sha256": "d1dafcebb04e8319d3bdea3ed9241cb4157065fe53ba9ea6f22c2133e7a7aebe"
+      },
+      "archive": "intel-cp313/tests.xml.gz",
+      "archived": {
+        "bytes": 39265,
+        "sha256": "faea968e5c645fa351e3bf03d2abd4e29abc34c7351a5a04ae08e7813b67f9e3"
+      },
+      "gzip": true
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/tests.log",
+      "original": {
+        "bytes": 18514,
+        "sha256": "6b450d379d8e713f869cd590d46a053d415d354399ba4498daeb62f1f32ba888"
+      },
+      "archive": "intel-cp313/tests.log.gz",
+      "archived": {
+        "bytes": 2209,
+        "sha256": "b8f03286e40c40ec5e6c26c8d74e73d11d6382d7f92dc41a1a89a4ba2b8fc988"
+      },
+      "gzip": true
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/upstream.log",
+      "original": {
+        "bytes": 283331,
+        "sha256": "052a6c9e1ce5be03ffcad1b3d83338bd8cabc82ea1ee26de600855c1aa09f701"
+      },
+      "archive": "intel-cp313/upstream.log.gz",
+      "archived": {
+        "bytes": 10829,
+        "sha256": "31e2a50766671e2cec0f2175a317bfdae3c0fde75efb3ded5eacf06f9019e0e8"
+      },
+      "gzip": true
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/upstream-junit/manifest.json",
+      "original": {
+        "bytes": 1805,
+        "sha256": "70e33ed77079caf3081b6aa7d7c08a0581e82de9ed580c4bd54f7792b6d77eec"
+      },
+      "archive": "intel-cp313/upstream/manifest.json",
+      "archived": {
+        "bytes": 1805,
+        "sha256": "70e33ed77079caf3081b6aa7d7c08a0581e82de9ed580c4bd54f7792b6d77eec"
+      },
+      "gzip": false
+    },
+    {
+      "source": "/tmp/fastscipy-a3-intel313-report/cpython-313/upstream-junit/partition-results.json",
+      "original": {
+        "bytes": 51199,
+        "sha256": "5f63283649dd3521d1ac8f1602997a6e269e1a848a1dba6f696e1c85aaf38d3c"
+      },
+      "archive": "intel-cp313/upstream/partition-results.json",
+      "archived": {
+        "bytes": 51199,
+        "sha256": "5f63283649dd3521d1ac8f1602997a6e269e1a848a1dba6f696e1c85aaf38d3c"
+      },
+      "gzip": false
+    }
+  ]
+}

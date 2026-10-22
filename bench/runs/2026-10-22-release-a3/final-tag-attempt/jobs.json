@@ -1,0 +1,345 @@
+{
+  "run": 39680660563,
+  "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563",
+  "source": "cf06af752abee2aebffa3b687398f1f76ef94eb8",
+  "tag": "v0.1.0a3",
+  "event": "push",
+  "conclusion": "failure",
+  "wheel_jobs": 32,
+  "wheel_successes": 31,
+  "jobs": [
+    {
+      "id": 119501979045,
+      "name": "Source distribution and version guards",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119501979045",
+      "started_at": "2026-10-21T21:40:21Z",
+      "completed_at": "2026-10-21T21:40:44Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179813,
+      "name": "Wheel / manylinux-aarch64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179813",
+      "started_at": "2026-10-21T23:27:33Z",
+      "completed_at": "2026-10-21T23:42:13Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179817,
+      "name": "Wheel / windows-arm64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179817",
+      "started_at": "2026-10-21T23:00:36Z",
+      "completed_at": "2026-10-21T23:58:43Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179839,
+      "name": "Wheel / macos-arm64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179839",
+      "started_at": "2026-10-21T21:40:48Z",
+      "completed_at": "2026-10-21T21:57:01Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179846,
+      "name": "Wheel / musllinux-x86_64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179846",
+      "started_at": "2026-10-21T21:40:48Z",
+      "completed_at": "2026-10-21T23:10:58Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179857,
+      "name": "Wheel / musllinux-x86_64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179857",
+      "started_at": "2026-10-21T22:01:02Z",
+      "completed_at": "2026-10-22T00:47:53Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179864,
+      "name": "Wheel / musllinux-aarch64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179864",
+      "started_at": "2026-10-21T21:40:49Z",
+      "completed_at": "2026-10-21T22:01:36Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179877,
+      "name": "Wheel / manylinux-x86_64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179877",
+      "started_at": "2026-10-21T23:11:02Z",
+      "completed_at": "2026-10-21T23:48:23Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179906,
+      "name": "Wheel / manylinux-aarch64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179906",
+      "started_at": "2026-10-21T21:57:06Z",
+      "completed_at": "2026-10-21T22:47:55Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179911,
+      "name": "Wheel / windows-amd64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179911",
+      "started_at": "2026-10-21T21:40:48Z",
+      "completed_at": "2026-10-22T00:27:51Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179926,
+      "name": "Wheel / musllinux-aarch64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179926",
+      "started_at": "2026-10-21T22:01:40Z",
+      "completed_at": "2026-10-21T23:00:32Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179972,
+      "name": "Wheel / manylinux-aarch64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179972",
+      "started_at": "2026-10-21T21:40:49Z",
+      "completed_at": "2026-10-21T21:55:53Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179974,
+      "name": "Wheel / manylinux-x86_64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179974",
+      "started_at": "2026-10-21T21:40:48Z",
+      "completed_at": "2026-10-21T22:46:53Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502179983,
+      "name": "Wheel / macos-arm64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502179983",
+      "started_at": "2026-10-21T22:46:56Z",
+      "completed_at": "2026-10-21T23:28:40Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502180010,
+      "name": "Wheel / macos-x86_64 / cp313",
+      "conclusion": "failure",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502180010",
+      "started_at": "2026-10-21T22:47:58Z",
+      "completed_at": "2026-10-22T02:20:59Z",
+      "failed_steps": [
+        "Build, repair, and test installed wheels"
+      ]
+    },
+    {
+      "id": 119502180014,
+      "name": "Wheel / windows-amd64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502180014",
+      "started_at": "2026-10-21T22:58:04Z",
+      "completed_at": "2026-10-22T02:07:47Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502180034,
+      "name": "Wheel / macos-x86_64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502180034",
+      "started_at": "2026-10-21T21:40:50Z",
+      "completed_at": "2026-10-21T23:27:28Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502180041,
+      "name": "Wheel / manylinux-x86_64 / cp313",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502180041",
+      "started_at": "2026-10-21T21:55:56Z",
+      "completed_at": "2026-10-21T22:58:02Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502180062,
+      "name": "Wheel / windows-arm64 / cp312",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502180062",
+      "started_at": "2026-10-21T21:40:48Z",
+      "completed_at": "2026-10-21T22:00:59Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502181910,
+      "name": "Wheel / musllinux-aarch64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502181910",
+      "started_at": "2026-10-21T23:42:18Z",
+      "completed_at": "2026-10-22T00:04:32Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502181926,
+      "name": "Wheel / musllinux-x86_64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502181926",
+      "started_at": "2026-10-21T23:28:42Z",
+      "completed_at": "2026-10-22T01:12:42Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182052,
+      "name": "Wheel / windows-amd64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182052",
+      "started_at": "2026-10-22T00:04:27Z",
+      "completed_at": "2026-10-22T01:22:36Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182102,
+      "name": "Wheel / macos-x86_64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182102",
+      "started_at": "2026-10-21T23:58:47Z",
+      "completed_at": "2026-10-22T01:57:28Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182175,
+      "name": "Wheel / macos-arm64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182175",
+      "started_at": "2026-10-21T23:48:26Z",
+      "completed_at": "2026-10-22T00:04:25Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182268,
+      "name": "Wheel / manylinux-x86_64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182268",
+      "started_at": "2026-10-22T00:24:51Z",
+      "completed_at": "2026-10-22T01:24:57Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182302,
+      "name": "Wheel / windows-arm64 / cp314",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182302",
+      "started_at": "2026-10-22T00:04:34Z",
+      "completed_at": "2026-10-22T00:24:47Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182458,
+      "name": "Wheel / manylinux-aarch64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182458",
+      "started_at": "2026-10-22T00:27:56Z",
+      "completed_at": "2026-10-22T00:42:45Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182667,
+      "name": "Wheel / musllinux-x86_64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182667",
+      "started_at": "2026-10-22T00:42:48Z",
+      "completed_at": "2026-10-22T02:38:53Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502182695,
+      "name": "Wheel / musllinux-aarch64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502182695",
+      "started_at": "2026-10-22T00:47:57Z",
+      "completed_at": "2026-10-22T01:08:25Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502183963,
+      "name": "Wheel / macos-arm64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502183963",
+      "started_at": "2026-10-22T01:08:29Z",
+      "completed_at": "2026-10-22T01:29:15Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502183990,
+      "name": "Wheel / macos-x86_64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502183990",
+      "started_at": "2026-10-22T01:12:45Z",
+      "completed_at": "2026-10-22T03:00:04Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502184073,
+      "name": "Wheel / windows-amd64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502184073",
+      "started_at": "2026-10-22T01:22:38Z",
+      "completed_at": "2026-10-22T03:08:19Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119502184347,
+      "name": "Wheel / windows-arm64 / cp315",
+      "conclusion": "success",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119502184347",
+      "started_at": "2026-10-22T01:25:00Z",
+      "completed_at": "2026-10-22T01:45:29Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119615502378,
+      "name": "pypi",
+      "conclusion": "skipped",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119615502378",
+      "started_at": "2026-10-22T03:08:19Z",
+      "completed_at": "2026-10-22T03:08:19Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119615502619,
+      "name": "testpypi",
+      "conclusion": "skipped",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119615502619",
+      "started_at": "2026-10-22T03:08:20Z",
+      "completed_at": "2026-10-22T03:08:19Z",
+      "failed_steps": []
+    },
+    {
+      "id": 119615503254,
+      "name": "Verify complete release artifact set",
+      "conclusion": "skipped",
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39680660563/job/119615503254",
+      "started_at": "2026-10-22T03:08:20Z",
+      "completed_at": "2026-10-22T03:08:19Z",
+      "failed_steps": []
+    }
+  ],
+  "raw_run": {
+    "original_bytes": 100075,
+    "original_sha256": "4f07aacb77bc94f55880a77a8ffee1e0e658b2e2f5d8bdb3e04eca12c03a8222",
+    "archive": "raw-run.json.gz",
+    "bytes": 5537,
+    "sha256": "464794547c25d7c08a7bbfb033615abc5c972c3f0d74a315aa2f457c21c30a59"
+  }
+}

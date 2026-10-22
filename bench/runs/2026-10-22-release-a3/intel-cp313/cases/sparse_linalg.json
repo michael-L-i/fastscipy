@@ -1,0 +1,229 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 4,
+  "platform": "darwin"
+ },
+ "cases": {
+  "LinearOperator CSR rmatvec float64 n=32 x100 calls": {
+   "scipy_ms": 1.656165000895271,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.9951140000339365,
+   "x1t": 1.6642967547826588,
+   "nt_ms": 0.9967519999918295,
+   "xnt": 1.6615617534841634,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsqr tridiagonal float64 n=32": {
+   "scipy_ms": 3.5296490004839143,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.792666000459576,
+   "x1t": 1.2638994422902905,
+   "nt_ms": 3.1587239991495153,
+   "xnt": 1.117428746998557,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsmr tridiagonal float64 n=32": {
+   "scipy_ms": 3.4177800007455517,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.887589000238222,
+   "x1t": 1.1836102715668988,
+   "nt_ms": 2.7179179996892344,
+   "xnt": 1.2574993068725175,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "LinearOperator CSR rmatvec float64 n=128 x100 calls": {
+   "scipy_ms": 2.2138660006021382,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.1183080005139345,
+   "x1t": 1.9796567668162297,
+   "nt_ms": 1.3943470003141556,
+   "xnt": 1.5877439404275546,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsqr tridiagonal float64 n=128": {
+   "scipy_ms": 15.950032999171526,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 14.280286000939668,
+   "x1t": 1.1169267196834842,
+   "nt_ms": 11.87529099843232,
+   "xnt": 1.3431277600925418,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsmr tridiagonal float64 n=128": {
+   "scipy_ms": 10.040717999800108,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 9.931755001161946,
+   "x1t": 1.010971172630156,
+   "nt_ms": 11.548287999175955,
+   "xnt": 0.8694551088885711,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "LinearOperator CSR rmatvec complex128 n=32 x100 calls": {
+   "scipy_ms": 1.6241170014836825,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.0094419994857162,
+   "x1t": 1.6089255274806544,
+   "nt_ms": 1.1421660001360578,
+   "xnt": 1.4219623078345998,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsqr tridiagonal complex128 n=32": {
+   "scipy_ms": 4.200544999548583,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.674596000564634,
+   "x1t": 1.1431311085363214,
+   "nt_ms": 3.711864999786485,
+   "xnt": 1.131653494884703,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsmr tridiagonal complex128 n=32": {
+   "scipy_ms": 4.2826850003621075,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 3.6073439987376332,
+   "x1t": 1.1872128086095493,
+   "nt_ms": 2.8189170006953645,
+   "xnt": 1.5192660866941678,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "LinearOperator CSR rmatvec complex128 n=128 x100 calls": {
+   "scipy_ms": 2.329327000552439,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.2114889996155398,
+   "x1t": 1.9226976070700104,
+   "nt_ms": 1.639523999983794,
+   "xnt": 1.4207337011080432,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsqr tridiagonal complex128 n=128": {
+   "scipy_ms": 15.94663800096896,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 13.28830599959474,
+   "x1t": 1.200050480584605,
+   "nt_ms": 17.04827200046566,
+   "xnt": 0.9353814862018504,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsmr tridiagonal complex128 n=128": {
+   "scipy_ms": 15.695111000241013,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 14.202371999999741,
+   "x1t": 1.1051049078450628,
+   "nt_ms": 10.807888000272214,
+   "xnt": 1.452190381677318,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "LinearOperator CSR matvec n=32 x100 calls": {
+   "scipy_ms": 1.5679490006732522,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.0597109994705534,
+   "x1t": 1.4796005717187248,
+   "nt_ms": 0.9182369994960027,
+   "xnt": 1.7075646064511234,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "cg tridiagonal n=32": {
+   "scipy_ms": 1.1156920008943416,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.8244669988926034,
+   "x1t": 1.353228209731744,
+   "nt_ms": 0.8806059995549731,
+   "xnt": 1.2669593455622294,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "bicgstab tridiagonal n=32": {
+   "scipy_ms": 1.6003040000214241,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.160687001174665,
+   "x1t": 1.3787558561454103,
+   "nt_ms": 1.2853280004492262,
+   "xnt": 1.2450549583157862,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "gmres tridiagonal n=32": {
+   "scipy_ms": 9.101001000090037,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.805802999428124,
+   "x1t": 1.1659275798731792,
+   "nt_ms": 9.024921000673203,
+   "xnt": 1.008429990623869,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "LinearOperator CSR matvec n=256 x100 calls": {
+   "scipy_ms": 1.7715619997034082,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.1745559986593435,
+   "x1t": 1.5082822800492244,
+   "nt_ms": 1.0403260002931347,
+   "xnt": 1.7028912083368404,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "cg tridiagonal n=256": {
+   "scipy_ms": 3.8402879999921424,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.6787979986693244,
+   "x1t": 1.433586258426272,
+   "nt_ms": 2.692713000215008,
+   "xnt": 1.4261779846888631,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "bicgstab tridiagonal n=256": {
+   "scipy_ms": 5.566705998717225,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 4.215924000163795,
+   "x1t": 1.3203999878795134,
+   "nt_ms": 6.143884000266553,
+   "xnt": 0.9060564943081141,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "gmres tridiagonal n=256": {
+   "scipy_ms": 37.66450700095447,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 37.627826000971254,
+   "x1t": 1.0009748370788754,
+   "nt_ms": 37.914341999567114,
+   "xnt": 0.993410541092458,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  }
+ }
+}

@@ -1,0 +1,1708 @@
+{
+  "recorded_utc": "2026-10-22T00:50:33.507347+00:00",
+  "benchmark_commit": "cf06af752abee2aebffa3b687398f1f76ef94eb8",
+  "fastscipy": "0.1.0a3",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O",
+  "machine": "x86_64",
+  "processor": "i386",
+  "logical_cpus": 4,
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numpy_config": {
+    "Compilers": {
+      "c": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "17.0.0",
+        "commands": "cc"
+      },
+      "cython": {
+        "name": "cython",
+        "linker": "cython",
+        "version": "3.3.0",
+        "commands": "cython"
+      },
+      "c++": {
+        "name": "clang",
+        "linker": "ld64",
+        "version": "17.0.0",
+        "commands": "c++"
+      }
+    },
+    "Machine Information": {
+      "host": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "darwin"
+      },
+      "build": {
+        "cpu": "x86_64",
+        "family": "x86_64",
+        "endian": "little",
+        "system": "darwin"
+      }
+    },
+    "Build Dependencies": {
+      "blas": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      },
+      "lapack": {
+        "name": "accelerate",
+        "found": true,
+        "version": "unknown",
+        "detection method": "system",
+        "include directory": "unknown",
+        "lib directory": "unknown",
+        "openblas configuration": "unknown",
+        "pc file directory": "unknown"
+      }
+    },
+    "Python Information": {
+      "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/build-env-7r9kf1zx/bin/python",
+      "version": "3.13"
+    },
+    "SIMD Extensions": {
+      "baseline": [
+        "X86_V2"
+      ],
+      "found": [
+        "X86_V3"
+      ],
+      "not found": [
+        "X86_V4",
+        "AVX512_ICL"
+      ]
+    }
+  },
+  "thread_budget": 2,
+  "blas_thread_budget": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_budget_seconds": 0.1,
+  "memory_limit_mb": 4096,
+  "scipy_available_memory": "2048Mib",
+  "upstream_timeout_seconds": 14400,
+  "runs": {
+    "tests": {
+      "returncode": 1,
+      "seconds": 467.60346049799955,
+      "peak_rss_bytes": 394690560,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "cluster": {
+      "returncode": 0,
+      "seconds": 6.022396086999834,
+      "peak_rss_bytes": 91889664,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "csgraph": {
+      "returncode": 0,
+      "seconds": 34.38920644799964,
+      "peak_rss_bytes": 227184640,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "integrate": {
+      "returncode": 0,
+      "seconds": 13.307741956999962,
+      "peak_rss_bytes": 102068224,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "interpolate": {
+      "returncode": 0,
+      "seconds": 81.19421129500006,
+      "peak_rss_bytes": 291729408,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "linalg": {
+      "returncode": 0,
+      "seconds": 53.67045130900078,
+      "peak_rss_bytes": 588726272,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "ndimage": {
+      "returncode": 0,
+      "seconds": 119.10834006200093,
+      "peak_rss_bytes": 763600896,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "optimize": {
+      "returncode": 0,
+      "seconds": 9.394392927999434,
+      "peak_rss_bytes": 106823680,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "signal": {
+      "returncode": 0,
+      "seconds": 60.68006377900019,
+      "peak_rss_bytes": 1636642816,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "sparse": {
+      "returncode": 0,
+      "seconds": 63.38514321200091,
+      "peak_rss_bytes": 749514752,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "sparse_linalg": {
+      "returncode": 0,
+      "seconds": 9.574510387001283,
+      "peak_rss_bytes": 93126656,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "spatial": {
+      "returncode": 0,
+      "seconds": 67.47490508999908,
+      "peak_rss_bytes": 540381184,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "special": {
+      "returncode": 0,
+      "seconds": 287.81350564700006,
+      "peak_rss_bytes": 745398272,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "stats": {
+      "returncode": 0,
+      "seconds": 60.75335841699962,
+      "peak_rss_bytes": 366366720,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    },
+    "upstream": {
+      "returncode": 0,
+      "seconds": 4035.2224636299998,
+      "peak_rss_bytes": 1171890176,
+      "stopped": null,
+      "rss_scope": "sampled_readable_process_tree",
+      "rss_complete": true,
+      "peak_rss_is_lower_bound": false,
+      "inaccessible_pids": [],
+      "inaccessible_processes": [],
+      "cleanup_errors": []
+    }
+  },
+  "areas": {
+    "cluster": {
+      "cases": 12,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6443374989069652,
+      "speedup_nt": 1.643539003428886,
+      "all_case_speedup_1t": 1.6443374989069652,
+      "all_case_speedup_nt": 1.643539003428886
+    },
+    "csgraph": {
+      "cases": 16,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.783920946354188,
+      "speedup_nt": 4.471230843955604,
+      "all_case_speedup_1t": 3.783920946354188,
+      "all_case_speedup_nt": 4.471230843955604
+    },
+    "integrate": {
+      "cases": 35,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.7724832559412886,
+      "speedup_nt": 1.762819167246044,
+      "all_case_speedup_1t": 1.7724832559412886,
+      "all_case_speedup_nt": 1.762819167246044
+    },
+    "interpolate": {
+      "cases": 31,
+      "controls": 4,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.8498522524020795,
+      "speedup_nt": 4.497425774852518,
+      "all_case_speedup_1t": 3.195886737496487,
+      "all_case_speedup_nt": 3.6633975344632814
+    },
+    "linalg": {
+      "cases": 49,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 5.530224615125821,
+      "speedup_nt": 6.535328890316921,
+      "all_case_speedup_1t": 5.530224615125821,
+      "all_case_speedup_nt": 6.535328890316921
+    },
+    "ndimage": {
+      "cases": 43,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 8.028616289947491,
+      "speedup_nt": 12.254519581782793,
+      "all_case_speedup_1t": 8.028616289947491,
+      "all_case_speedup_nt": 12.254519581782793
+    },
+    "optimize": {
+      "cases": 14,
+      "controls": 0,
+      "nonidentical": [
+        "minimize BFGS rosen n=10 (numerical gradient)"
+      ],
+      "reference_variance": [
+        "minimize BFGS rosen n=10 (numerical gradient)"
+      ],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.6612587100093357,
+      "speedup_nt": 1.6741792629037202,
+      "all_case_speedup_1t": 1.5908345101893804,
+      "all_case_speedup_nt": 1.6073614547418815
+    },
+    "signal": {
+      "cases": 41,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 3.8757795454015374,
+      "speedup_nt": 4.33472851032571,
+      "all_case_speedup_1t": 3.8757795454015374,
+      "all_case_speedup_nt": 4.33472851032571
+    },
+    "sparse": {
+      "cases": 27,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 4.177931836722749,
+      "speedup_nt": 4.550333202173889,
+      "all_case_speedup_1t": 4.177931836722749,
+      "all_case_speedup_nt": 4.550333202173889
+    },
+    "sparse_linalg": {
+      "cases": 20,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.3266136973646367,
+      "speedup_nt": 1.2711254397021237,
+      "all_case_speedup_1t": 1.3266136973646367,
+      "all_case_speedup_nt": 1.2711254397021237
+    },
+    "spatial": {
+      "cases": 24,
+      "controls": 3,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 1.0259200542399496,
+      "speedup_nt": 1.5301685405311107,
+      "all_case_speedup_1t": 1.0272280405405605,
+      "all_case_speedup_nt": 1.4568195516126092
+    },
+    "special": {
+      "cases": 37,
+      "controls": 2,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 0.99679656420013,
+      "speedup_nt": 1.5713843106428171,
+      "all_case_speedup_1t": 0.995593913448843,
+      "all_case_speedup_nt": 1.531867493580632
+    },
+    "stats": {
+      "cases": 58,
+      "controls": 0,
+      "nonidentical": [],
+      "reference_variance": [],
+      "unexplained_nonidentical": [],
+      "missing_fast_path": [],
+      "speedup_1t": 5.343214699516764,
+      "speedup_nt": 5.570150881426058,
+      "all_case_speedup_1t": 5.343214699516764,
+      "all_case_speedup_nt": 5.570150881426058
+    }
+  },
+  "tests": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "tests": "7347",
+      "time": "465.006",
+      "timestamp": "2026-10-22T00:50:33.897116+00:00",
+      "hostname": "iad01-dz252-30a59c3b-41cb-4bc7-9f8c-9fd174975e7a-8E054E7215AC.local"
+    }
+  ],
+  "reference_variance": [
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 3,
+      "reference_sha256": "1789dcb62f656974ad69bc85febe4fc8cef193af786a0cf4f7ff7d88d74a4061",
+      "repeated_reference_sha256": "a5cf0869d0f3225e45424c57cf45d9efc58f593b7de45b1201cbba9c960b6eff",
+      "actual_sha256": "a5cf0869d0f3225e45424c57cf45d9efc58f593b7de45b1201cbba9c960b6eff",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 6,
+      "reference_sha256": "d9239427dece06e7ffa4887afea143a9a836fc3db73de38b7923c33db35c5f32",
+      "repeated_reference_sha256": "0980a0759a0e7e17576f4c1bb8d9d480da461a151fa9dc34497bdaa4f202945b",
+      "actual_sha256": "0980a0759a0e7e17576f4c1bb8d9d480da461a151fa9dc34497bdaa4f202945b",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 4,
+      "reference_sha256": "34b0cfb4c623396ba022fa9244041dda4d9e79cb5e00399ddbfdb9fb7c8294f2",
+      "repeated_reference_sha256": "a4c0703a989e965348129118e0099ae4818de67f9380ace08c822f60596b20bc",
+      "actual_sha256": "a4c0703a989e965348129118e0099ae4818de67f9380ace08c822f60596b20bc",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": null,
+      "validator": "bench_optimize._bfgs_reference_validation",
+      "reference_trials": 1,
+      "reference_sha256": "dd16840c420a02728590ecf1e361f44d8aed5c583663fd86d2248e678242315f",
+      "repeated_reference_sha256": "5f03eafcfd3fe41f4178d0c5db975ff9b8dc51cd16abdece06fce97b3a87c765",
+      "actual_sha256": "01390d53c9ddc83c52e1066fe8a562c1dfb5dbf1c6318c1ee712f7332964ecd6",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": null,
+      "validator": "bench_optimize._bfgs_reference_validation",
+      "reference_trials": 1,
+      "reference_sha256": "dd16840c420a02728590ecf1e361f44d8aed5c583663fd86d2248e678242315f",
+      "repeated_reference_sha256": "5cafee76fe8ba6edd7f62e759312e9f5f725254c24eb6c86c5cadfa54784ef0c",
+      "actual_sha256": "cd7650715151c1d950a8eacf43cf8b70dc4f930f464a1ba57d80a81e29e9ccc4",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    }
+  ],
+  "numerical_compatibility": [
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-cg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "70951b6e709dd8d44c917dab91f06c0fbb98111dc1bb58c224e3b92807df4296",
+      "actual_sha256": "7dd2bf286c04e7df766e84c165a4bec195e5dff2d7199fd309e6f66667362018",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "c1a329050838dcd2787cf138a5ce0ad61221720a5229d5b8cc3331cb03d47c2f",
+      "actual_sha256": "3b7bceea47ff86782602854e8b1d7626ceb9b4eefa9b25370128f7c9042dd909",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicgstab] (call)",
+      "validator": "test_sparse_linalg._bicgstab_reference_validation.<locals>.validate",
+      "reference_sha256": "0b29efe025c8be4b3f4b9827e0b587ef39f9d8b655e3ca0a1285f9cf7e82debf",
+      "actual_sha256": "e7cf218c8747b794c983289473f4c7e5dc48cd751df449ca422f8c3191c3a997",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-cgs] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "aa0f2aa154a53a49553f83081381ae8347a3b17eadb700e260595cbc3695dc5a",
+      "actual_sha256": "ae6b643f7d9762033c13108bf9e4a854981836df7d76eeaea08144c5b80d9979",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-lgmres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "066ef81e42be94a3b13599f6298eded52d1d5dd5455fa4d3aed94107630d98ea",
+      "actual_sha256": "45c04ba419ef04e52a10122c25a748b171f230d9b902ec2cf32be61b3f887704",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-minres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "4537ec55135ce3053c8e62bffb4607af93cb43e9713c3867601f55ed61a2c72e",
+      "actual_sha256": "9017609db2cadd10b8208919ded97d7612f1e5b39ca6ad2b899ffe58e8c6bcc2",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-qmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "ed8ad21c1eb8aeb519cb81b36333b1fedccdee4f4398bb3febae73b7bd4befe0",
+      "actual_sha256": "c3baf807566dc1741b6a6186252cdc8ca433798580766acf2c1b4f099aa985dd",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-tfqmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "a9f1956ea459923cec9e8d955b270dd82fac0c441c960612d913f36f9b127b55",
+      "actual_sha256": "dc1b3090ec6f4bfa6b8edd2d8bb9724575b89619ca8fe606341fcfda6a4bf7ec",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-gcrotmk] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "230cf1ff3a693c0ae8b02ed835da5bd65095a027a36ec87d4fa5bb6798fdc1f3",
+      "actual_sha256": "b4ad8e421df4244225b366b5450672ad94b46ef6eab930f8af69346b168fd542",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-cg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "f573dae872653101407e0335b04ef9ea7003b82ad17bbffdb1c9301bb6cf9063",
+      "actual_sha256": "243322047ec1e90af9f6a71dde5d42b60c85644f1c009659ad192f2ec2345d22",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-bicgstab] (call)",
+      "validator": "test_sparse_linalg._bicgstab_reference_validation.<locals>.validate",
+      "reference_sha256": "29eae1960d091115bd30bd5c51f216dfa431bdde6d40f00aed8c989c2bd7c5b4",
+      "actual_sha256": "962aed406c9b79306b48bdecac11f86434ea82ef777dff5a5256f3581142315d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-cgs] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "aa0f2aa154a53a49553f83081381ae8347a3b17eadb700e260595cbc3695dc5a",
+      "actual_sha256": "ae6b643f7d9762033c13108bf9e4a854981836df7d76eeaea08144c5b80d9979",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-lgmres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "412e5821a20c77d5e099132d476493a46ea91cb341399852a4f885ca0a3308a1",
+      "actual_sha256": "6180d979bf854f12c0cac71791eca3cb269905ed2cc1fb9b0d1082cff9324fe7",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-tfqmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "a8c7ba03565c9f64ebaa02feee6761f68461290ab46285ced913f7fb40bd294b",
+      "actual_sha256": "72d71be34301613ba5a3510b7fff928475e94c8b5c966cdd5e39655b14467ed8",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-gcrotmk] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "5bd888a8d39205bbe26d49dab876ee10a23110841bc92a64b5beab45429847f5",
+      "actual_sha256": "9f722d2aa2a2ddd2986903be41ea9968b4f8da3ecaa362288dd6772dbf6538fc",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_iterative_rectangular_least_squares[1-float64-lsqr] (call)",
+      "validator": "test_sparse_linalg._least_squares_reference_validation.<locals>.validate",
+      "reference_sha256": "25f40269fa2b98429c9affdf0a9359cbf9c05e79a3b47d533ae9630fc82d467a",
+      "actual_sha256": "9f86a353a782c2a22a502b90b1f6ae1ab3baf05078b8a9c74e8b5db383b19bb9",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7085124656b3823c5da7c7297410c7a19483863dbcb84feff00ee3bab22a388d",
+      "actual_sha256": "55338bb18e0289f27342a701ec74b85bf8925f7c73b97672c7c097d770ccf1d9",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "30e017045d184abdc320a882a1d05d6b0bfde2e7e9ad3ee6c56209e2fc3a62fd",
+      "actual_sha256": "ddea9433c5abefe51ab7daaeaa58f0c1d93907131750de3d26ef5830b94fc1af",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "dd19548462f2714e66752a91debdddbf5c109ae9d4c5e26d555a746bfd00bff3",
+      "actual_sha256": "5ac4edfe1dee7e88711e2ea3a908ead7b8410e40020552fa6122ac9522548ce8",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7be96200372d88f68372bc142f7cdf6f7ec6f819aa8e3aa524cdeebf821100f8",
+      "actual_sha256": "3078115f34b67bb6e6d8a98ede000356b576a7af63b70c1b516ea8366cda9bb7",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "5bfa5df69202c26435d1e6873ac410fc6a0ce6abfe41ce1aec8d56e9280a2582",
+      "actual_sha256": "6b99ac921539ddb503356e88dbdf52c93fa50aa198822cc22dadec63505d6e3d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "87b6cb330c5fb1edfaccc181d45d77e7d530ed1bcb7a6c915cb4d667f9657304",
+      "actual_sha256": "aeb4c84be55172c1cc2de2ccb3fbaf7ec3ecb38741829568a4d2d50346b615a0",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0f53ba4f66c5c15c10acece2e601f0b690f366c2edb60c246e1c52e57fd9b228",
+      "actual_sha256": "67fd8435b1b4bf1253ee04d10f555c8e02012027842bf41c0037861b58275370",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0e373a0fa8c2c8af06882330f64a42f85a6b89d383446a3d66c21ff68c8e11a6",
+      "actual_sha256": "f00896a4c9a1f4b408414f93c3cac20d376f4348ef6129c630326fdd0ddb0a92",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "6a7ff09e603c9271a37f9ea3d61db317828344879f4ec96519f95d041d5b89ac",
+      "actual_sha256": "9faacd3045067127c3f0b2e040f54d19bf309957c5df84a9aa9c132c6429a20b",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "b05b4648c81424512b07ab728023a727cb5979d8a6d944294259efc7484d6e2f",
+      "actual_sha256": "3ed199e0e1bf023285289f241c590c3a3d6ffe9fe0a87bbc4c5a39af6c12c779",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "2c0262d4945ea241596cc84dfcc86ff767b356c054187b62f2527db8fbc0cc80",
+      "actual_sha256": "f3d6cd1a22f1389f15cced3aed8b6e9eb99d4e6bde12d6d0dec5be78a30869a1",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "48c015be8255aa3a864f3647fceb9afa0588468495fd4b9cb9ce3e83fad390f2",
+      "actual_sha256": "5e54fbbb6124ad8ad47f9c83528568ab76248f219918edd132f21092ce5e713d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "280f6d8502d7c2a35d9e0065642dd87646bfa2b559bb2778fada7a7c676c56d3",
+      "actual_sha256": "91c21d0bba20e7c66b97e4d6cf3922753b74d29b6783d122bbc7ae2ef5e46c3f",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "8c468fafec43fb9a776d0873b5196cf09e09e3f9169a1a9a992cb7007cc20828",
+      "actual_sha256": "8e29caa599fa972f55c6c3896d52afc90f6f076861afefacd39eaaacfa78d21e",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "00a79f149701d45c0fe8d636e2979a63fda4f277f9dc754030bde6f4805d1d5f",
+      "actual_sha256": "c3d923ab78a7bc9dd561ceddd43219859ae82484c7f6b82e0ea3299fae69bca0",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "ffd411d081bf51c20740d43b6874f7cb355de2e2be45b03b597db0a2dac5a3cd",
+      "actual_sha256": "786a04f0a55b201c54e158e6b795668c69e40231e6331b6eb223569d0b2a459c",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "162113b75841417155b7014c3b1da361dfe2d8b0d5641595190dc69d0b4a4503",
+      "actual_sha256": "87fc2e9997f4f03b600d312352010a02ca1ef197e7dcc9ba9eb8f9a8d5c8ee95",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "a23d33e5585f0fca42fb652a14d04542d5292462f1758331227823df31250d17",
+      "actual_sha256": "aa4e6c56edcd64db56b6b49e71458f1b3edfe16bc8a3478c457da1cae478c73e",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "4b315a129c43190f07aacd43eaa9839417d698ddabfb1bf3abb723bd26cf2817",
+      "actual_sha256": "92e67dde6452285a365e715126aaec208d28fddd9a703aa3e33cf76c59655eac",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "77d1d22c19cb0d5b23097b5fff389ba9ebcc5a6931b44edf0ffc1ac719ebf1a0",
+      "actual_sha256": "9af5b6f0f4fbdca99f4cacc5d1d1bd896737a22207a38eaa5eb40f6cbe45538d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "28a50509af6cae1de8bc62c1400bde05e5b623d0a22d67249b23a046afda0a83",
+      "actual_sha256": "6ee3e0cebce048caab6a60b0b67675cb6d2339f9c04b95a4d65c84b78d18cec4",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "3fbee0e4bcd60913af30126c77dc4188e53387fc44513cbc74c551f22d9711d5",
+      "actual_sha256": "a02ba1b7780c1f079299f62e4e9e7e433c7aebbd372e7bdaa85e0f0bfe440508",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "c32ce1f225749b7b4205ae95b7e6a8012eceee4aabea795c4d0faccf2e9b6014",
+      "actual_sha256": "003b41c9c8ed65adc64c335eed413785255754498b2375a9eeb45b9c9825de02",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "70dd8afe013be0d0de182f4b1f94d477e4b018cdd59fccb3bce17b0c2bb09922",
+      "actual_sha256": "61917e67550f944579e17025aed7c42515a8eb5e9c676c771d2d63d42b5fb490",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "232456458ed8374e2e0269221b4982550ca1bca4245288c3e9ccf5d288fb3f3f",
+      "actual_sha256": "2778dbbe1a6b02d4f1cde7766aa4b488e6dc92099c1d7153e19d8a7685fa8499",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "007bccd0961d8a7c80cd20f4b62c8589752486748a1440f333f1c21bd57db98a",
+      "actual_sha256": "bf2cd87961eef196f16c81894e4f07ef202cec4657df69a3f6110cf1f59b2831",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "6f061226a7047ce68cb32d57d59b80043075b2d1beb6d3ec5c008f0820111b1c",
+      "actual_sha256": "0f05145442e9bbdf47fc4c31ec2b14d86dddf1a7355de2f2059a663e530bad05",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "fc6ac1839e5fd11317f263c4b36a11bbc586f311091887c98cd0916beb6876ba",
+      "actual_sha256": "c7e1e040a15eb891e75f9f5cbc5359bffd2ecf1615c207e84a165b53045c8780",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0b37ff94830afabdce7ebc6e3a5440423d78af55d949359ca2e6cf942a9515fe",
+      "actual_sha256": "caa2b00a4d4275aa8aaf4432a54bf45275e0318e77a46ea4935222fd6092bb36",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7b7b65741d80d85c0cab7eb7ed2737728d01751c84c35722e75d6798e2c35867",
+      "actual_sha256": "41df6c5141634416c1ace62560ca634eea9bfbfbecbfd08970102e6ec96b2057",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "d9d731fa721b6e8366042ffaf5f7519c78abef598cd37d3bcda64a98e250642a",
+      "actual_sha256": "a486a38ebcd183bcc86b04940f1fe15199fd16fbfe31a7415fef5795616bc400",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "371ba930d7d98ce81a4b5240de22236c078ed9a66074d177cc41e53875f18a1a",
+      "actual_sha256": "59c994348cdd5850d6be7dcbe918babe4e60e0db176af5fe988033d2625380b6",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "fa4c7d5f0dad4f93928bbe340c1764ac69c57a833e3f37774b2fcf102ffb680a",
+      "actual_sha256": "0b90fea8b661ef7fdf8e8913c85b07339c2ca07acb4bb84d5c975f238b11f3ed",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "d292c4f9e489e80581b99bf6f244922872f46df27d053cc3d69e3ac469fdf9b9",
+      "actual_sha256": "8c80ec6a4afdbe6bacf0a7909f67d1f3d23e999b9dd4287f28b6526957e8dbfc",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "5bc840f35dfa136f1afbce202bb5acc0b0977e49e9ca377ccca3f42a243f8f68",
+      "actual_sha256": "e754f1005963aa26d202d08eff751e598bf53970a247f4b034a3234743a4cd22",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "92ce7ce47dd8ecfe1c3e20cb63904ab70a78f86b5bf9944789ad5d82666389c9",
+      "actual_sha256": "5ab62665e3696e3ea9f9576eed6ff958c364fea2da1a957415e0e676a0692662",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "c5326a750c96ec119aee989e67a52a96d11ed98921e92acbc00984cb960b664f",
+      "actual_sha256": "a6d6a502524d7c8dd2255a027241fb3762c87fc57e804be740fd7e4fa359ef43",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "b8a11445cfc08c294aed03f2933cdce48ae25532542cc41be22861edba389586",
+      "actual_sha256": "87dae8b1cad3315bf7842dcae99e24b9b5f252e6342578e0ff0bc5a50345dadf",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "a2831b8223eb7a5ad2c27cee1ca32fdb262405fc99861ec658e52425877615ba",
+      "actual_sha256": "94ebcc29ec319a77f2f313e95da78939d82f6094a31f498767193c6d5f10be2a",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "31eadea2ded2668af49e5e9429914d02cb3599da3032bd4ad4dac4a4f2933eb0",
+      "actual_sha256": "3baf12e6a786614b14ba34db8d83aec9ffc90c55314d40f0166e843fe3031161",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "872fb4877ff088e35b742e90896f8301447aa893dd91e894252798191412c6f7",
+      "actual_sha256": "677d627f71d1ed63a811c96325b98f0a11e3515455ca90f9106ebd71d050348c",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    }
+  ],
+  "validation_records": [
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 3,
+      "reference_sha256": "1789dcb62f656974ad69bc85febe4fc8cef193af786a0cf4f7ff7d88d74a4061",
+      "repeated_reference_sha256": "a5cf0869d0f3225e45424c57cf45d9efc58f593b7de45b1201cbba9c960b6eff",
+      "actual_sha256": "a5cf0869d0f3225e45424c57cf45d9efc58f593b7de45b1201cbba9c960b6eff",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 6,
+      "reference_sha256": "d9239427dece06e7ffa4887afea143a9a836fc3db73de38b7923c33db35c5f32",
+      "repeated_reference_sha256": "0980a0759a0e7e17576f4c1bb8d9d480da461a151fa9dc34497bdaa4f202945b",
+      "actual_sha256": "0980a0759a0e7e17576f4c1bb8d9d480da461a151fa9dc34497bdaa4f202945b",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": "tests/test_optimize.py::test_lsq_linear_dense_unbounded[1-shape4] (call)",
+      "validator": "test_optimize._validate_lsq_cost",
+      "reference_trials": 4,
+      "reference_sha256": "34b0cfb4c623396ba022fa9244041dda4d9e79cb5e00399ddbfdb9fb7c8294f2",
+      "repeated_reference_sha256": "a4c0703a989e965348129118e0099ae4818de67f9380ace08c822f60596b20bc",
+      "actual_sha256": "a4c0703a989e965348129118e0099ae4818de67f9380ace08c822f60596b20bc",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-cg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "70951b6e709dd8d44c917dab91f06c0fbb98111dc1bb58c224e3b92807df4296",
+      "actual_sha256": "7dd2bf286c04e7df766e84c165a4bec195e5dff2d7199fd309e6f66667362018",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "c1a329050838dcd2787cf138a5ce0ad61221720a5229d5b8cc3331cb03d47c2f",
+      "actual_sha256": "3b7bceea47ff86782602854e8b1d7626ceb9b4eefa9b25370128f7c9042dd909",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-bicgstab] (call)",
+      "validator": "test_sparse_linalg._bicgstab_reference_validation.<locals>.validate",
+      "reference_sha256": "0b29efe025c8be4b3f4b9827e0b587ef39f9d8b655e3ca0a1285f9cf7e82debf",
+      "actual_sha256": "e7cf218c8747b794c983289473f4c7e5dc48cd751df449ca422f8c3191c3a997",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-cgs] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "aa0f2aa154a53a49553f83081381ae8347a3b17eadb700e260595cbc3695dc5a",
+      "actual_sha256": "ae6b643f7d9762033c13108bf9e4a854981836df7d76eeaea08144c5b80d9979",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-lgmres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "066ef81e42be94a3b13599f6298eded52d1d5dd5455fa4d3aed94107630d98ea",
+      "actual_sha256": "45c04ba419ef04e52a10122c25a748b171f230d9b902ec2cf32be61b3f887704",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-minres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "4537ec55135ce3053c8e62bffb4607af93cb43e9713c3867601f55ed61a2c72e",
+      "actual_sha256": "9017609db2cadd10b8208919ded97d7612f1e5b39ca6ad2b899ffe58e8c6bcc2",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-qmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "ed8ad21c1eb8aeb519cb81b36333b1fedccdee4f4398bb3febae73b7bd4befe0",
+      "actual_sha256": "c3baf807566dc1741b6a6186252cdc8ca433798580766acf2c1b4f099aa985dd",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-tfqmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "a9f1956ea459923cec9e8d955b270dd82fac0c441c960612d913f36f9b127b55",
+      "actual_sha256": "dc1b3090ec6f4bfa6b8edd2d8bb9724575b89619ca8fe606341fcfda6a4bf7ec",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[1-100-gcrotmk] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "230cf1ff3a693c0ae8b02ed835da5bd65095a027a36ec87d4fa5bb6798fdc1f3",
+      "actual_sha256": "b4ad8e421df4244225b366b5450672ad94b46ef6eab930f8af69346b168fd542",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-cg] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "f573dae872653101407e0335b04ef9ea7003b82ad17bbffdb1c9301bb6cf9063",
+      "actual_sha256": "243322047ec1e90af9f6a71dde5d42b60c85644f1c009659ad192f2ec2345d22",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-bicgstab] (call)",
+      "validator": "test_sparse_linalg._bicgstab_reference_validation.<locals>.validate",
+      "reference_sha256": "29eae1960d091115bd30bd5c51f216dfa431bdde6d40f00aed8c989c2bd7c5b4",
+      "actual_sha256": "962aed406c9b79306b48bdecac11f86434ea82ef777dff5a5256f3581142315d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-cgs] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "aa0f2aa154a53a49553f83081381ae8347a3b17eadb700e260595cbc3695dc5a",
+      "actual_sha256": "ae6b643f7d9762033c13108bf9e4a854981836df7d76eeaea08144c5b80d9979",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-lgmres] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "412e5821a20c77d5e099132d476493a46ea91cb341399852a4f885ca0a3308a1",
+      "actual_sha256": "6180d979bf854f12c0cac71791eca3cb269905ed2cc1fb9b0d1082cff9324fe7",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-tfqmr] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "a8c7ba03565c9f64ebaa02feee6761f68461290ab46285ced913f7fb40bd294b",
+      "actual_sha256": "72d71be34301613ba5a3510b7fff928475e94c8b5c966cdd5e39655b14467ed8",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_solver_results_and_iteration_history[2-100-gcrotmk] (call)",
+      "validator": "test_sparse_linalg._iteration_reference_validation.<locals>.validate",
+      "reference_sha256": "5bd888a8d39205bbe26d49dab876ee10a23110841bc92a64b5beab45429847f5",
+      "actual_sha256": "9f722d2aa2a2ddd2986903be41ea9968b4f8da3ecaa362288dd6772dbf6538fc",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_sparse_linalg.py::test_iterative_rectangular_least_squares[1-float64-lsqr] (call)",
+      "validator": "test_sparse_linalg._least_squares_reference_validation.<locals>.validate",
+      "reference_sha256": "25f40269fa2b98429c9affdf0a9359cbf9c05e79a3b47d533ae9630fc82d467a",
+      "actual_sha256": "9f86a353a782c2a22a502b90b1f6ae1ab3baf05078b8a9c74e8b5db383b19bb9",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7085124656b3823c5da7c7297410c7a19483863dbcb84feff00ee3bab22a388d",
+      "actual_sha256": "55338bb18e0289f27342a701ec74b85bf8925f7c73b97672c7c097d770ccf1d9",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "30e017045d184abdc320a882a1d05d6b0bfde2e7e9ad3ee6c56209e2fc3a62fd",
+      "actual_sha256": "ddea9433c5abefe51ab7daaeaa58f0c1d93907131750de3d26ef5830b94fc1af",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "dd19548462f2714e66752a91debdddbf5c109ae9d4c5e26d555a746bfd00bff3",
+      "actual_sha256": "5ac4edfe1dee7e88711e2ea3a908ead7b8410e40020552fa6122ac9522548ce8",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7be96200372d88f68372bc142f7cdf6f7ec6f819aa8e3aa524cdeebf821100f8",
+      "actual_sha256": "3078115f34b67bb6e6d8a98ede000356b576a7af63b70c1b516ea8366cda9bb7",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "5bfa5df69202c26435d1e6873ac410fc6a0ce6abfe41ce1aec8d56e9280a2582",
+      "actual_sha256": "6b99ac921539ddb503356e88dbdf52c93fa50aa198822cc22dadec63505d6e3d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "87b6cb330c5fb1edfaccc181d45d77e7d530ed1bcb7a6c915cb4d667f9657304",
+      "actual_sha256": "aeb4c84be55172c1cc2de2ccb3fbaf7ec3ecb38741829568a4d2d50346b615a0",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0f53ba4f66c5c15c10acece2e601f0b690f366c2edb60c246e1c52e57fd9b228",
+      "actual_sha256": "67fd8435b1b4bf1253ee04d10f555c8e02012027842bf41c0037861b58275370",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0e373a0fa8c2c8af06882330f64a42f85a6b89d383446a3d66c21ff68c8e11a6",
+      "actual_sha256": "f00896a4c9a1f4b408414f93c3cac20d376f4348ef6129c630326fdd0ddb0a92",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "6a7ff09e603c9271a37f9ea3d61db317828344879f4ec96519f95d041d5b89ac",
+      "actual_sha256": "9faacd3045067127c3f0b2e040f54d19bf309957c5df84a9aa9c132c6429a20b",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "b05b4648c81424512b07ab728023a727cb5979d8a6d944294259efc7484d6e2f",
+      "actual_sha256": "3ed199e0e1bf023285289f241c590c3a3d6ffe9fe0a87bbc4c5a39af6c12c779",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "2c0262d4945ea241596cc84dfcc86ff767b356c054187b62f2527db8fbc0cc80",
+      "actual_sha256": "f3d6cd1a22f1389f15cced3aed8b6e9eb99d4e6bde12d6d0dec5be78a30869a1",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "48c015be8255aa3a864f3647fceb9afa0588468495fd4b9cb9ce3e83fad390f2",
+      "actual_sha256": "5e54fbbb6124ad8ad47f9c83528568ab76248f219918edd132f21092ce5e713d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "280f6d8502d7c2a35d9e0065642dd87646bfa2b559bb2778fada7a7c676c56d3",
+      "actual_sha256": "91c21d0bba20e7c66b97e4d6cf3922753b74d29b6783d122bbc7ae2ef5e46c3f",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "8c468fafec43fb9a776d0873b5196cf09e09e3f9169a1a9a992cb7007cc20828",
+      "actual_sha256": "8e29caa599fa972f55c6c3896d52afc90f6f076861afefacd39eaaacfa78d21e",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "00a79f149701d45c0fe8d636e2979a63fda4f277f9dc754030bde6f4805d1d5f",
+      "actual_sha256": "c3d923ab78a7bc9dd561ceddd43219859ae82484c7f6b82e0ea3299fae69bca0",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "ffd411d081bf51c20740d43b6874f7cb355de2e2be45b03b597db0a2dac5a3cd",
+      "actual_sha256": "786a04f0a55b201c54e158e6b795668c69e40231e6331b6eb223569d0b2a459c",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "162113b75841417155b7014c3b1da361dfe2d8b0d5641595190dc69d0b4a4503",
+      "actual_sha256": "87fc2e9997f4f03b600d312352010a02ca1ef197e7dcc9ba9eb8f9a8d5c8ee95",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "a23d33e5585f0fca42fb652a14d04542d5292462f1758331227823df31250d17",
+      "actual_sha256": "aa4e6c56edcd64db56b6b49e71458f1b3edfe16bc8a3478c457da1cae478c73e",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "4b315a129c43190f07aacd43eaa9839417d698ddabfb1bf3abb723bd26cf2817",
+      "actual_sha256": "92e67dde6452285a365e715126aaec208d28fddd9a703aa3e33cf76c59655eac",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[1t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "77d1d22c19cb0d5b23097b5fff389ba9ebcc5a6931b44edf0ffc1ac719ebf1a0",
+      "actual_sha256": "9af5b6f0f4fbdca99f4cacc5d1d1bd896737a22207a38eaa5eb40f6cbe45538d",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "28a50509af6cae1de8bc62c1400bde05e5b623d0a22d67249b23a046afda0a83",
+      "actual_sha256": "6ee3e0cebce048caab6a60b0b67675cb6d2339f9c04b95a4d65c84b78d18cec4",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "3fbee0e4bcd60913af30126c77dc4188e53387fc44513cbc74c551f22d9711d5",
+      "actual_sha256": "a02ba1b7780c1f079299f62e4e9e7e433c7aebbd372e7bdaa85e0f0bfe440508",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "c32ce1f225749b7b4205ae95b7e6a8012eceee4aabea795c4d0faccf2e9b6014",
+      "actual_sha256": "003b41c9c8ed65adc64c335eed413785255754498b2375a9eeb45b9c9825de02",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "70dd8afe013be0d0de182f4b1f94d477e4b018cdd59fccb3bce17b0c2bb09922",
+      "actual_sha256": "61917e67550f944579e17025aed7c42515a8eb5e9c676c771d2d63d42b5fb490",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "232456458ed8374e2e0269221b4982550ca1bca4245288c3e9ccf5d288fb3f3f",
+      "actual_sha256": "2778dbbe1a6b02d4f1cde7766aa4b488e6dc92099c1d7153e19d8a7685fa8499",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "007bccd0961d8a7c80cd20f4b62c8589752486748a1440f333f1c21bd57db98a",
+      "actual_sha256": "bf2cd87961eef196f16c81894e4f07ef202cec4657df69a3f6110cf1f59b2831",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "6f061226a7047ce68cb32d57d59b80043075b2d1beb6d3ec5c008f0820111b1c",
+      "actual_sha256": "0f05145442e9bbdf47fc4c31ec2b14d86dddf1a7355de2f2059a663e530bad05",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "fc6ac1839e5fd11317f263c4b36a11bbc586f311091887c98cd0916beb6876ba",
+      "actual_sha256": "c7e1e040a15eb891e75f9f5cbc5359bffd2ecf1615c207e84a165b53045c8780",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "0b37ff94830afabdce7ebc6e3a5440423d78af55d949359ca2e6cf942a9515fe",
+      "actual_sha256": "caa2b00a4d4275aa8aaf4432a54bf45275e0318e77a46ea4935222fd6092bb36",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "7b7b65741d80d85c0cab7eb7ed2737728d01751c84c35722e75d6798e2c35867",
+      "actual_sha256": "41df6c5141634416c1ace62560ca634eea9bfbfbecbfd08970102e6ec96b2057",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "d9d731fa721b6e8366042ffaf5f7519c78abef598cd37d3bcda64a98e250642a",
+      "actual_sha256": "a486a38ebcd183bcc86b04940f1fe15199fd16fbfe31a7415fef5795616bc400",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "371ba930d7d98ce81a4b5240de22236c078ed9a66074d177cc41e53875f18a1a",
+      "actual_sha256": "59c994348cdd5850d6be7dcbe918babe4e60e0db176af5fe988033d2625380b6",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "fa4c7d5f0dad4f93928bbe340c1764ac69c57a833e3f37774b2fcf102ffb680a",
+      "actual_sha256": "0b90fea8b661ef7fdf8e8913c85b07339c2ca07acb4bb84d5c975f238b11f3ed",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "d292c4f9e489e80581b99bf6f244922872f46df27d053cc3d69e3ac469fdf9b9",
+      "actual_sha256": "8c80ec6a4afdbe6bacf0a7909f67d1f3d23e999b9dd4287f28b6526957e8dbfc",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "5bc840f35dfa136f1afbce202bb5acc0b0977e49e9ca377ccca3f42a243f8f68",
+      "actual_sha256": "e754f1005963aa26d202d08eff751e598bf53970a247f4b034a3234743a4cd22",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "92ce7ce47dd8ecfe1c3e20cb63904ab70a78f86b5bf9944789ad5d82666389c9",
+      "actual_sha256": "5ab62665e3696e3ea9f9576eed6ff958c364fea2da1a957415e0e676a0692662",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "c5326a750c96ec119aee989e67a52a96d11ed98921e92acbc00984cb960b664f",
+      "actual_sha256": "a6d6a502524d7c8dd2255a027241fb3762c87fc57e804be740fd7e4fa359ef43",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-pearsonr] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "b8a11445cfc08c294aed03f2933cdce48ae25532542cc41be22861edba389586",
+      "actual_sha256": "87dae8b1cad3315bf7842dcae99e24b9b5f252e6342578e0ff0bc5a50345dadf",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "a2831b8223eb7a5ad2c27cee1ca32fdb262405fc99861ec658e52425877615ba",
+      "actual_sha256": "94ebcc29ec319a77f2f313e95da78939d82f6094a31f498767193c6d5f10be2a",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "31eadea2ded2668af49e5e9429914d02cb3599da3032bd4ad4dac4a4f2933eb0",
+      "actual_sha256": "3baf12e6a786614b14ba34db8d83aec9ffc90c55314d40f0166e843fe3031161",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-numerical-compatibility",
+      "test": "tests/test_stats.py::test_function_randomized[4t-linregress] (call)",
+      "validator": "test_stats.same.<locals>.validated",
+      "reference_sha256": "872fb4877ff088e35b742e90896f8301447aa893dd91e894252798191412c6f7",
+      "actual_sha256": "677d627f71d1ed63a811c96325b98f0a11e3515455ca90f9106ebd71d050348c",
+      "reference_variance_observed": false,
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": null,
+      "validator": "bench_optimize._bfgs_reference_validation",
+      "reference_trials": 1,
+      "reference_sha256": "dd16840c420a02728590ecf1e361f44d8aed5c583663fd86d2248e678242315f",
+      "repeated_reference_sha256": "5f03eafcfd3fe41f4178d0c5db975ff9b8dc51cd16abdece06fce97b3a87c765",
+      "actual_sha256": "01390d53c9ddc83c52e1066fe8a562c1dfb5dbf1c6318c1ee712f7332964ecd6",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    },
+    {
+      "policy": "intel-accelerate-reference-variance",
+      "test": null,
+      "validator": "bench_optimize._bfgs_reference_validation",
+      "reference_trials": 1,
+      "reference_sha256": "dd16840c420a02728590ecf1e361f44d8aed5c583663fd86d2248e678242315f",
+      "repeated_reference_sha256": "5cafee76fe8ba6edd7f62e759312e9f5f725254c24eb6c86c5cadfa54784ef0c",
+      "actual_sha256": "cd7650715151c1d950a8eacf43cf8b70dc4f930f464a1ba57d80a81e29e9ccc4",
+      "numpy": "2.5.4",
+      "platform": "macOS-15.7.9-x86_64-i386-64bit-Mach-O"
+    }
+  ]
+}

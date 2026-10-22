@@ -1,0 +1,12 @@
+{
+  "returncode": 1,
+  "seconds": 12667.143583081,
+  "peak_rss_bytes": 4580220928,
+  "stopped": null,
+  "rss_scope": "host_cibuildwheel_process_tree",
+  "rss_complete": true,
+  "peak_rss_is_lower_bound": false,
+  "inaccessible_pids": [],
+  "inaccessible_processes": [],
+  "cleanup_errors": []
+}

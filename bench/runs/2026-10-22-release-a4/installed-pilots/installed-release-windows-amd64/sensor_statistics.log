@@ -1,0 +1,50 @@
+{
+  "purpose": "installed-wheel sensor-analysis pilot, not all-platform release certification",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "fastscipy": "0.1.0a4",
+  "package_path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Lib\\site-packages\\fastscipy\\__init__.py",
+  "activation": {
+    "ndimage": "on",
+    "special": "on",
+    "stats": "on",
+    "signal": "on",
+    "sparse": "on",
+    "sparse_linalg": "on",
+    "linalg": "on",
+    "interpolate": "on",
+    "spatial": "on",
+    "csgraph": "on",
+    "cluster": "on",
+    "integrate": "on",
+    "optimize": "on"
+  },
+  "input_bytes": 851968,
+  "channels": 12,
+  "samples_per_channel": 8192,
+  "default_gate_without_overrides": true,
+  "thread_budget": 2,
+  "blas_threads": 1,
+  "fast_calls": 1440,
+  "nan_omit_fallback_verified": true,
+  "input_unchanged": true,
+  "independent_ols_and_signal_properties_verified": true,
+  "sustained_repetitions": 16,
+  "traced_python_bytes": 442,
+  "traced_python_peak_bytes": 463210,
+  "timing": {
+    "scipy_seconds": [
+      0.01654519999999593,
+      0.01714190000001281,
+      0.01623070000002258
+    ],
+    "patched_seconds": [
+      0.005163000000010243,
+      0.005650399999979072,
+      0.005190999999996393
+    ]
+  },
+  "median_workflow_speedup": 3.1872856867669865,
+  "warnings": []
+}

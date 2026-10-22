@@ -27,7 +27,7 @@ clean = ndimage.median_filter(image, size=3)
 
 ## Install and use
 
-Prebuilt wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust required.
+Published **0.1.0a4** wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust required.
 Supports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
 and Windows. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 

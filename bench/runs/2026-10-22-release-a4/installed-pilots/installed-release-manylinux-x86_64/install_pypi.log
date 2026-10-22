@@ -1,0 +1,18 @@
+Collecting fastscipy==0.1.0a4
+  Downloading fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl.metadata (4.5 kB)
+Collecting packaging
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting numpy<2.6,>=2.5 (from fastscipy==0.1.0a4)
+  Downloading numpy-2.5.4-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting scipy<1.19,>=1.18 (from fastscipy==0.1.0a4)
+  Downloading scipy-1.18.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Downloading fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl (11.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.9/11.9 MB 16.6 MB/s  0:00:00
+Downloading numpy-2.5.4-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 197.3 MB/s  0:00:00
+Downloading scipy-1.18.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 404.1 MB/s  0:00:00
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: packaging, numpy, scipy, fastscipy
+
+Successfully installed fastscipy-0.1.0a4 numpy-2.5.4 packaging-26.3 scipy-1.18.1

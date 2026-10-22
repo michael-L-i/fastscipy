@@ -1,0 +1,101 @@
+{
+  "purpose": "clean PyPI wheel installation and application pilots; separate from release certification",
+  "version": "0.1.0a4",
+  "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "machine": "AMD64",
+  "source_sha": "1a3eb809c0cd29be421b6f0ea38c247ac3a24d19",
+  "native_threads": 2,
+  "blas_threads": 1,
+  "runs": {
+    "create_environment": {
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\x64\\python.exe",
+        "-I",
+        "-m",
+        "venv",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env"
+      ],
+      "returncode": 0,
+      "seconds": 4.291142699999995,
+      "peak_rss_bytes": 115716096,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "install_pypi": {
+      "command": [
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--no-cache-dir",
+        "--only-binary=:all:",
+        "--report",
+        "D:\\a\\fastscipy\\fastscipy\\artifacts\\installed-release\\pip-install.json",
+        "fastscipy==0.1.0a4",
+        "packaging"
+      ],
+      "returncode": 0,
+      "seconds": 14.084043100000002,
+      "peak_rss_bytes": 122634240,
+      "memory_limit_mb": 1024,
+      "stopped": null
+    },
+    "components": {
+      "command": [
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Scripts\\python.exe",
+        "-I",
+        "D:\\a\\fastscipy\\fastscipy\\tools\\check_release.py",
+        "--installed"
+      ],
+      "returncode": 0,
+      "seconds": 1.6482699999999966,
+      "peak_rss_bytes": 109404160,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "image_signal": {
+      "command": [
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Scripts\\python.exe",
+        "-I",
+        "D:\\a\\fastscipy\\fastscipy\\tools\\pilot_image_signal.py"
+      ],
+      "returncode": 0,
+      "seconds": 1.2329215000000033,
+      "peak_rss_bytes": 103514112,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "sensor_statistics": {
+      "command": [
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Scripts\\python.exe",
+        "-I",
+        "D:\\a\\fastscipy\\fastscipy\\tools\\pilot_stats.py"
+      ],
+      "returncode": 0,
+      "seconds": 1.4450855999999987,
+      "peak_rss_bytes": 104476672,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "dependencies": {
+      "command": [
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\fastscipy-pypi-pilot-vxdmb_pz\\env\\Scripts\\python.exe",
+        "-I",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0,
+      "seconds": 0.4095345000000066,
+      "peak_rss_bytes": 45748224,
+      "memory_limit_mb": 512,
+      "stopped": null
+    }
+  },
+  "passed": true
+}

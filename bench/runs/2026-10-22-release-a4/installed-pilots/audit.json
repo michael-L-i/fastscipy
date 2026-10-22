@@ -1,0 +1,64 @@
+{
+  "version": "0.1.0a4",
+  "release_source": "46b33f2882f0b10a126169bed0a088705cf402a0",
+  "pilot_source": "1a3eb809c0cd29be421b6f0ea38c247ac3a24d19",
+  "run_id": 39793298085,
+  "platforms": [
+    {
+      "target": "macos-arm64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/5d/27/ffab4a381203cb6765cb7d834cb1a701c622418059a91d15ec89db170770/fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl",
+      "wheel_sha256": "05dc27763f64b5e461aee1be13cec557b249c1e50a768f4cb3e2681cbc44c97c",
+      "application_peak_rss_bytes": 124960768
+    },
+    {
+      "target": "macos-x86_64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/38/35/e816637ba3da599661d6135d62916e3a80e667e35a9ce5d408cdf7354dd0/fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_x86_64.whl",
+      "wheel_sha256": "0642e8f8f21706cfcd48529b8e001c526dfcc4e99904fc92fb860fd290c2becb",
+      "application_peak_rss_bytes": 96260096
+    },
+    {
+      "target": "manylinux-aarch64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/5a/12/03072ecfcec96bafc92ea0d9c0aacb402a0f283b07a89bb58383c03c9b81/fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_aarch64.whl",
+      "wheel_sha256": "a79481422e97189054e40eae7e87616077cdec2dbb53ec52754428ffc42e547b",
+      "application_peak_rss_bytes": 138649600
+    },
+    {
+      "target": "manylinux-x86_64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/14/50/c658922fc7728bd783f9f70d7466dcdd338872b539314639f7bbab3dd0e8/fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl",
+      "wheel_sha256": "a664dbefd458bf795ca80b0357b836e1ecccbfdf8c70ddcd7575cd35f922c3ec",
+      "application_peak_rss_bytes": 127975424
+    },
+    {
+      "target": "musllinux-aarch64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/72/c2/23fabba380165a21d5cd354a2a2ec7f8de044a936a368018af85d942f7b4/fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_aarch64.whl",
+      "wheel_sha256": "f94cea3f704b46fd50aae5755f8eafd2fb7f81076e4587a6438154e7769ba310",
+      "application_peak_rss_bytes": 124628992
+    },
+    {
+      "target": "musllinux-x86_64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/f4/82/6f30a0e935902233191e7bf0e2d2b01531a6b9225aa1790f8c277eb4e31e/fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_x86_64.whl",
+      "wheel_sha256": "4076437d6cc3b63180c3fe6ae7f7e1655ede365020a2a8fcb09e696c62594981",
+      "application_peak_rss_bytes": 135528448
+    },
+    {
+      "target": "windows-amd64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/73/0a/5067399a50dbcb40ac9999a5d5978382caf53b02370a62dc874ff8e11595/fastscipy-0.1.0a4-cp313-cp313-win_amd64.whl",
+      "wheel_sha256": "13259ddab758ff6fd2237c26774e5196cf75a6295267c099d7bbc5e0b16a6ffa",
+      "application_peak_rss_bytes": 109404160
+    },
+    {
+      "target": "windows-arm64",
+      "passed": true,
+      "wheel_url": "https://files.pythonhosted.org/packages/7e/81/c32bfe9329a6eb7510a55dbefde0457316a334c424996134e73f289971f0/fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl",
+      "wheel_sha256": "3db88a3dc48731b0e474baab43fb8085294d21132de134ededd0d4d96665429a",
+      "application_peak_rss_bytes": 121184256
+    }
+  ]
+}

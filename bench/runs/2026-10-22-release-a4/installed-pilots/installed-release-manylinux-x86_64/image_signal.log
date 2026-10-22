@@ -1,0 +1,52 @@
+{
+  "python": "3.13.17 (main, Oct 21 2026, 22:33:32) [GCC 14.2.0]",
+  "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.41",
+  "fastscipy": "0.1.0a4",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "threads": 2,
+  "blas_threads": 1,
+  "repeat": 3,
+  "input_array_bytes": 393216,
+  "application_pilots_only": true,
+  "pipelines": {
+    "image_cleanup_segmentation": {
+      "byte_identical": true,
+      "independent_properties": "passed",
+      "seconds": {
+        "plain": [
+          0.004448388999996666,
+          0.003951752999995506,
+          0.0038171939999998017
+        ],
+        "patched": [
+          0.002771615999996868,
+          0.000917209000000696,
+          0.0007893789999968703
+        ]
+      }
+    },
+    "sensor_filter_peak_features": {
+      "byte_identical": true,
+      "independent_properties": "passed",
+      "seconds": {
+        "plain": [
+          0.0036522199999993177,
+          0.0030531519999996704,
+          0.0028322750000029373
+        ],
+        "patched": [
+          0.0027847650000012436,
+          0.0017495920000030196,
+          0.0016950509999986707
+        ]
+      }
+    }
+  },
+  "fallback_control": {
+    "custom_metric_callbacks": 16,
+    "byte_identical": true,
+    "fast_calls": 0
+  },
+  "inputs_unchanged": true
+}

@@ -1,0 +1,52 @@
+{
+  "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+  "fastscipy": "0.1.0a4",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "threads": 2,
+  "blas_threads": 1,
+  "repeat": 3,
+  "input_array_bytes": 393216,
+  "application_pilots_only": true,
+  "pipelines": {
+    "image_cleanup_segmentation": {
+      "byte_identical": true,
+      "independent_properties": "passed",
+      "seconds": {
+        "plain": [
+          0.0036618340000131866,
+          0.0029497920000096656,
+          0.0029392499999971733
+        ],
+        "patched": [
+          0.0022782079999927873,
+          0.0011776250000110622,
+          0.0010910419999987653
+        ]
+      }
+    },
+    "sensor_filter_peak_features": {
+      "byte_identical": true,
+      "independent_properties": "passed",
+      "seconds": {
+        "plain": [
+          0.0031342500000022255,
+          0.0018430830000113474,
+          0.002004500000012399
+        ],
+        "patched": [
+          0.0019527500000009468,
+          0.0013230419999956666,
+          0.0012865420000025551
+        ]
+      }
+    }
+  },
+  "fallback_control": {
+    "custom_metric_callbacks": 16,
+    "byte_identical": true,
+    "fast_calls": 0
+  },
+  "inputs_unchanged": true
+}

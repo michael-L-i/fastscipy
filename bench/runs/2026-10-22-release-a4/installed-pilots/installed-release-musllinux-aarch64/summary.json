@@ -1,0 +1,101 @@
+{
+  "purpose": "clean PyPI wheel installation and application pilots; separate from release certification",
+  "version": "0.1.0a4",
+  "python": "3.13.17 (main, Oct 21 2026, 23:23:55) [GCC 15.2.0]",
+  "platform": "Linux-6.17.0-1022-azure-aarch64-with",
+  "machine": "aarch64",
+  "source_sha": "1a3eb809c0cd29be421b6f0ea38c247ac3a24d19",
+  "native_threads": 2,
+  "blas_threads": 1,
+  "runs": {
+    "create_environment": {
+      "command": [
+        "/usr/local/bin/python",
+        "-I",
+        "-m",
+        "venv",
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env"
+      ],
+      "returncode": 0,
+      "seconds": 2.612931599000003,
+      "peak_rss_bytes": 78323712,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "install_pypi": {
+      "command": [
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env/bin/python",
+        "-I",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--no-cache-dir",
+        "--only-binary=:all:",
+        "--report",
+        "/work/artifacts/installed-release/pip-install.json",
+        "fastscipy==0.1.0a4",
+        "packaging"
+      ],
+      "returncode": 0,
+      "seconds": 8.029849058,
+      "peak_rss_bytes": 87126016,
+      "memory_limit_mb": 1024,
+      "stopped": null
+    },
+    "components": {
+      "command": [
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env/bin/python",
+        "-I",
+        "/work/tools/check_release.py",
+        "--installed"
+      ],
+      "returncode": 0,
+      "seconds": 1.4063850040000005,
+      "peak_rss_bytes": 124628992,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "image_signal": {
+      "command": [
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env/bin/python",
+        "-I",
+        "/work/tools/pilot_image_signal.py"
+      ],
+      "returncode": 0,
+      "seconds": 1.6068577630000007,
+      "peak_rss_bytes": 122019840,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "sensor_statistics": {
+      "command": [
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env/bin/python",
+        "-I",
+        "/work/tools/pilot_stats.py"
+      ],
+      "returncode": 0,
+      "seconds": 2.2144121900000044,
+      "peak_rss_bytes": 119570432,
+      "memory_limit_mb": 512,
+      "stopped": null
+    },
+    "dependencies": {
+      "command": [
+        "/tmp/fastscipy-pypi-pilot-07ydn0_r/env/bin/python",
+        "-I",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0,
+      "seconds": 0.402289562,
+      "peak_rss_bytes": 33685504,
+      "memory_limit_mb": 512,
+      "stopped": null
+    }
+  },
+  "passed": true
+}

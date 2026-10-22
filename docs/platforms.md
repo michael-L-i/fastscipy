@@ -1,38 +1,41 @@
 # Platform validation
 
-The published `0.1.0a1` release supports macOS 14+ on Apple Silicon, SciPy 1.18,
-and Python 3.12–3.14. Broader support is being evaluated for `0.1.0a4`.
-The candidate release has not completed validation or been published.
+Published `0.1.0a4` supports SciPy 1.18 and Python 3.12–3.15 across all eight platform variants below. The full release passed 32 wheel jobs and the source-distribution gate before PyPI publication. All 33 published files independently matched the approved artifacts by filename, size, and SHA256. Clean binary-only CP313 installations then passed component checks, two application pilots, and `pip check` on all eight variants.
 
-| Platform | Published `0.1.0a1` | `0.1.0a4` candidate |
+| Platform variant | Published `0.1.0a4` | Clean CP313 application pilots |
 |---|---|---|
-| macOS arm64 | Experimental support | Revalidation pending |
-| macOS x86_64 | Unsupported | Validation pending |
-| Linux aarch64 | Unsupported | Validation pending |
-| Linux x86_64 | Unsupported | Validation pending |
-| Windows arm64 | Unsupported | Validation pending |
-| Windows x86_64 | Unsupported | Validation pending |
+| macOS 14+ arm64 | Validated, Python 3.12–3.15 | Passed |
+| macOS 14+ x86_64 | Validated, Python 3.12–3.15 | Passed |
+| Linux glibc 2.28+ aarch64 | Validated, Python 3.12–3.15 | Passed |
+| Linux glibc 2.28+ x86_64 | Validated, Python 3.12–3.15 | Passed |
+| Linux musl 1.2+ aarch64 | Validated, Python 3.12–3.15 | Passed |
+| Linux musl 1.2+ x86_64 | Validated, Python 3.12–3.15 | Passed |
+| Windows arm64 | Validated, Python 3.12–3.15 | Passed |
+| Windows x86_64 | Validated, Python 3.12–3.15 | Passed |
 
-Linux wheel builds also distinguish glibc and musl. A result from a glibc
-runner does not validate a musl wheel, another Python version, or a custom
-SciPy build. The candidate release matrix targets eight platform variants
-and Python 3.12–3.15, for 32 planned wheels; that matrix is broader than the
-Python 3.13 development checks below.
+```sh
+python -m pip install --only-binary=:all: fastscipy==0.1.0a4
+```
+
+Minimal Alpine images also need the runtime C++ library (`apk add --no-cache libstdc++`). A custom SciPy build or different dependency version requires its own validation. Intel Accelerate numerical compatibility and Windows ARM upstream coverage exceptions are documented below; numerical compatibility does not imply byte identity.
 
 ## Evidence
+
+The [a4 release](https://github.com/michael-L-i/fastscipy/actions/runs/39738398406) validated source `46b33f2882f0b10a126169bed0a088705cf402a0`, tag `v0.1.0a4`, and published the complete set. [Publication evidence](../bench/runs/2026-10-22-release-a4/publication/README.md) retains the run, approved manifest and independent hash comparison. [Installed pilot evidence](../bench/runs/2026-10-22-release-a4/installed-pilots/README.md) retains all eight clean installation and application reports from [run 39793298085](https://github.com/michael-L-i/fastscipy/actions/runs/39793298085).
+
+The following development checkpoints and failed attempts retain their original source provenance. Their timings are historical measurements rather than new measurements of a4.
 
 The [32-wheel `0.1.0a3` attempt](https://github.com/michael-L-i/fastscipy/actions/runs/39680660563)
 passed 31 wheel jobs and failed the Intel Mac CP313 least-squares cost
 comparison. Publication was skipped. The [a3 archive](../bench/runs/2026-10-22-release-a3/README.md)
-retains the original result. The a4 candidate applies the existing explicit
+retains the original result. The validated a4 release applies the existing explicit
 Intel numerical policy to that cost check while preserving byte comparisons
 for every other result field and the independent residual-cost bound.
 
 The [32-wheel `0.1.0a2` attempt](https://github.com/michael-L-i/fastscipy/actions/runs/39464216282)
 passed 28 wheel jobs and failed four Mac jobs; publication was skipped.
 The [failure archive](../bench/runs/2026-10-21-release-fixes/README.md)
-retains the original evidence. The `0.1.0a3` candidate includes fixes for
-those failures and requires a fresh complete release validation.
+retains the original evidence. The later a3 attempt included fixes for those failures; its separate outcome is recorded above.
 
 The [eight-wheel CP313 preflight](https://github.com/michael-L-i/fastscipy/actions/runs/39377562130)
 finished at source `80dec52`: seven wheel jobs passed and Mac Intel failed
@@ -98,8 +101,8 @@ The [native postcheck](../bench/runs/2026-10-20-portability/windows-arm64/b471/q
 confirmed 416 cases on each side: 408 passed, eight visibly skipped, and
 zero changed outcomes, using a reused wheel rather than a new release build.
 
-These checkpoints do not certify the final `0.1.0a2` wheel. The latest source
-must complete its own project, benchmark, and paired upstream checks.
+These historical checkpoints did not certify a release wheel. The a4 release
+completed its own project, benchmark, and paired upstream checks.
 Reports retain their original revisions and metadata; a passing earlier
 checkpoint does not validate subsequent native changes or other targets.
 
@@ -183,7 +186,7 @@ shaped histories, successful termination, final residuals, and a solution
 error bound. A separate deterministic single-callback fixture requires exact
 solution and callback bytes without a numerical exception. This
 retains exact callback coverage without claiming identical trajectories for
-the unstable fixture; the revised checks still need candidate validation.
+the unstable fixture; the revised checks subsequently passed the full a4 release validation.
 
 Both policies retain reference/result fingerprints in `reference-variance.jsonl`.
 Platform summaries distinguish `reference_variance` and
@@ -191,7 +194,7 @@ Platform summaries distinguish `reference_variance` and
 `identical: false`, report numerical validation separately, and are excluded
 from headline geometric means. These records are not byte-identity passes. Production numerical kernels are not changed by this
 test policy. The earlier failed preflight remains archived unchanged; the
-new policy and selector fix still require full candidate validation.
+new policy and selector fix subsequently passed the full a4 release validation.
 
 The later Intel Python-overlay checks provide separate, source-specific
 checkpoints: the [first diagnostic](../bench/runs/2026-10-20-portability/mac-x86_64/python-source-1f48/README.md)
@@ -204,8 +207,7 @@ test-validator checks failed. After the validator revisions, the
 passed all 830 tests in the five selected files, retaining explicit numerical
 reference-variation records. These runs reused an unchanged native wheel
 and used different Python revisions; they are not one passing full-project
-or final-wheel run. Fresh final-source validation of all 32 release wheels
-remains required.
+or final-wheel run. The separate a4 release subsequently passed final-source validation of all 32 wheels.
 
 ## Why each build is checked
 

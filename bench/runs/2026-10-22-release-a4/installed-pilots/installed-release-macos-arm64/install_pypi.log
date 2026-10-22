@@ -1,0 +1,21 @@
+Collecting fastscipy==0.1.0a4
+  Downloading fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl.metadata (4.5 kB)
+Collecting packaging
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting numpy<2.6,>=2.5 (from fastscipy==0.1.0a4)
+  Downloading numpy-2.5.4-cp313-cp313-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting scipy<1.19,>=1.18 (from fastscipy==0.1.0a4)
+  Downloading scipy-1.18.1-cp313-cp313-macosx_14_0_arm64.whl.metadata (62 kB)
+Downloading fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl (4.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.1/4.1 MB 88.2 MB/s  0:00:00
+Downloading numpy-2.5.4-cp313-cp313-macosx_14_0_arm64.whl (5.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.4/5.4 MB 114.1 MB/s  0:00:00
+Downloading scipy-1.18.1-cp313-cp313-macosx_14_0_arm64.whl (20.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 100.9 MB/s  0:00:00
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: packaging, numpy, scipy, fastscipy
+
+Successfully installed fastscipy-0.1.0a4 numpy-2.5.4 packaging-26.3 scipy-1.18.1
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/fastscipy-pypi-pilot-01gug365/env/bin/python -m pip install --upgrade pip

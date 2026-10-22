@@ -4,4 +4,4 @@ Release [39738398406](https://github.com/michael-L-i/fastscipy/actions/runs/3973
 
 The retained verifier downloaded all 33 approved release distribution artifacts and independently compared their filenames, sizes, and SHA256 hashes with PyPI version metadata. All matched, with no yanked files. The raw run, PyPI metadata, manifest and result are retained here. This check used no local builds, numerical suites, or benchmarks.
 
-Eight clean installed CP313 platform application pilots and main promotion remain pending. Numerical compatibility does not imply byte identity; earlier benchmark archives retain their own source provenance.
+All [eight clean installed CP313 application pilots](../installed-pilots/README.md) subsequently passed. Main promotion carries this validated release history and evidence. Numerical compatibility does not imply byte identity; earlier benchmark archives retain their own source provenance.

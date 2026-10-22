@@ -1,0 +1,21 @@
+Collecting fastscipy==0.1.0a4
+  Downloading fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl.metadata (4.5 kB)
+Collecting packaging
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting numpy<2.6,>=2.5 (from fastscipy==0.1.0a4)
+  Downloading numpy-2.5.4-cp313-cp313-win_arm64.whl.metadata (6.6 kB)
+Collecting scipy<1.19,>=1.18 (from fastscipy==0.1.0a4)
+  Downloading scipy-1.18.1-cp313-cp313-win_arm64.whl.metadata (61 kB)
+Downloading fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl (4.2 MB)
+   ---------------------------------------- 4.2/4.2 MB 90.5 MB/s  0:00:00
+Downloading numpy-2.5.4-cp313-cp313-win_arm64.whl (10.5 MB)
+   ---------------------------------------- 10.5/10.5 MB 121.9 MB/s  0:00:00
+Downloading scipy-1.18.1-cp313-cp313-win_arm64.whl (24.4 MB)
+   ---------------------------------------- 24.4/24.4 MB 120.6 MB/s  0:00:00
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: packaging, numpy, scipy, fastscipy
+
+Successfully installed fastscipy-0.1.0a4 numpy-2.5.4 packaging-26.3 scipy-1.18.1
+
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: C:\Users\RUNNER~1\AppData\Local\Temp\fastscipy-pypi-pilot-wyzokv0j\env\Scripts\python.exe -m pip install --upgrade pip

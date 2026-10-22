@@ -24,11 +24,10 @@ ruff check python tests bench tools examples && ruff format --check python tests
 cargo fmt --check && cargo clippy --profile dev-release --all-targets -- -D warnings
 ```
 
-The published `0.1.0a1` support baseline is macOS arm64. The
-[Platforms workflow](.github/workflows/linux.yml) is collecting correctness,
-all-area timings, and memory reports for the `0.1.0a2` candidates on Linux,
-Windows, and both Mac architectures. Candidate support remains pending;
-see [platform status and methodology](docs/platforms.md).
+The published `0.1.0a4` wheels support all eight Linux, Windows, and Mac
+platform variants on Python 3.12–3.15. See [platform support and measured
+limitations](docs/platforms.md). The Release workflow validates distribution
+wheels; the Platforms workflow collects development reports.
 
 Use `python tools/platform_suite.py --output artifacts/platform-local` for a
 serial project-suite and all-area benchmark report. The output directory must
@@ -81,22 +80,23 @@ BSD-3-Clause license of this project.
 
 ## Releases
 
-The published `0.1.0a1` wheels target macOS 14+ arm64 and Python 3.12–3.14.
-The `0.1.0a4` candidate `Release` workflow targets eight platforms and
-Python 3.12–3.15: 32 wheels in total. Its configured targets are not a
-completed support claim. It installs built wheels and runs project checks
-plus paired upstream SciPy comparisons.
+The `0.1.0a4` release passed all 32 wheel jobs, source-distribution and
+complete artifact gates, PyPI publication, independent published-file hash
+verification, and eight clean installed CP313 application pilots.
+See [release evidence](docs/platforms.md#evidence). Every wheel runs installed
+package and project checks; CP313 also runs benchmarks and paired upstream
+comparisons. Publish only the complete validated set.
+
 Builds use one Cargo job and bounded numerical thread and memory budgets.
 The preflight runs two wheel jobs concurrently on separate GitHub runner VMs;
 the full release runs eight. Each VM retains its own 6 GiB build limit,
 4 GiB test limit, and two numerical threads; this adds no local RAM load.
 Publish a target only after its wheel validation finishes successfully.
 
-For an initial build-only preflight, dispatch the candidate branch containing
-the validation-only input (currently `portability`):
+For a build-only preflight, dispatch the source branch to validate:
 
 ```sh
-gh workflow run release.yml --ref portability -f publish=none -f validation_only=true
+gh workflow run release.yml --ref main -f publish=none -f validation_only=true
 ```
 
 This builds and validates eight Python 3.13 wheels plus one source archive,
@@ -127,3 +127,11 @@ A pending publisher does not reserve the package name until the first upload.
 Update the README's installation instructions in the release commit before
 creating and pushing the version tag: PyPI renders the README from that archive.
 Push the tag only when ready to publish.
+
+After publication, independently verify published file hashes against approved
+artifacts, then run `Installed release pilots` at the matching source/version
+for clean binary-only PyPI application checks on eight platform variants.
+Preserve install manifests, process reports, and numerical compatibility
+records. Application children use a 512 MiB process-tree limit; installation
+and Linux containers use 1 GiB. Minimal Alpine images need runtime
+`libstdc++`, without a compiler.

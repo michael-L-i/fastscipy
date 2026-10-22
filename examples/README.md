@@ -1,10 +1,24 @@
-# Eight everyday SciPy tasks, faster
+# Examples
+
+## Interactive notebooks
+
+Five standalone notebooks, with separate SciPy and fastscipy cells followed by actual input/output plots.
+Each targets roughly five seconds of ordinary computation, uses one native thread, and checks acceleration.
+
+| Notebook | SciPy area | Task |
+|---|---|---|
+| [Image cleanup](median_filter.ipynb) | `ndimage` | Remove salt-and-pepper noise from grayscale frames |
+| [Sensor recordings](signal_denoising.ipynb) | `signal` | Low-pass filter noisy recording epochs |
+| [Temperature maps](interpolate_temperature.ipynb) | `interpolate` | Resample a coarse grid with PCHIP |
+| [Point-cloud calibration](linalg_calibration.ipynb) | `linalg` | Solve per-point triangular calibration systems |
+| [Measurement uncertainty](stats_uncertainty.ipynb) | `stats` | Estimate standard errors across repeated trials |
+
+Open a notebook in Jupyter and choose **Run → Run All Cells**. Installation instructions are included;
+no data downloads or local helper files are needed. Batch caps and hardware affect timing.
+
+## Eight everyday SciPy tasks, faster
 
 Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
-
-**Try it yourself:** [Image-cleanup notebook](median_filter.ipynb) — a memory-bounded
-batch targeting about five seconds of ordinary SciPy filtering, with live progress,
-fast-path checks, and byte-identical outputs.
 
 *Run on a MacBook Pro with M5 Pro, using two fastscipy threads.*
 

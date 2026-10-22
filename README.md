@@ -23,9 +23,9 @@ clean = ndimage.median_filter(image, size=3)
 
 *Demo recorded on a MacBook Pro with M5 Pro.*
 
-[Explore eight more examples →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md)
+[Explore eight more examples →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md#eight-everyday-scipy-tasks-faster)
 
-[Try the image-cleanup notebook →](https://github.com/michael-L-i/fastscipy/blob/main/examples/median_filter.ipynb)
+[Try five interactive notebooks →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md#interactive-notebooks)
 
 ## Install and use
 

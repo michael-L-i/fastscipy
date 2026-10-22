@@ -25,6 +25,8 @@ clean = ndimage.median_filter(image, size=3)
 
 [Explore eight more examples →](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md)
 
+[Try the image-cleanup notebook →](https://github.com/michael-L-i/fastscipy/blob/main/examples/median_filter.ipynb)
+
 ## Install and use
 
 Published **0.1.0a4** wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust required.

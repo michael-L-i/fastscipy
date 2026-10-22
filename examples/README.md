@@ -2,6 +2,10 @@
 
 Same SciPy calls. Less waiting. Realistic tasks on reproducible synthetic data.
 
+**Try it yourself:** [Image-cleanup notebook](median_filter.ipynb) — a memory-bounded
+batch targeting about five seconds of ordinary SciPy filtering, with live progress,
+fast-path checks, and byte-identical outputs.
+
 *Run on a MacBook Pro with M5 Pro, using two fastscipy threads.*
 
 | Task | SciPy area | Speedup |

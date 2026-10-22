@@ -1,0 +1,876 @@
+{
+  "info": {
+    "author": "Michael Li",
+    "author_email": null,
+    "bugtrack_url": null,
+    "classifiers": [
+      "Development Status :: 3 - Alpha",
+      "Intended Audience :: Science/Research",
+      "License :: OSI Approved :: BSD License",
+      "Operating System :: MacOS",
+      "Operating System :: Microsoft :: Windows",
+      "Operating System :: POSIX :: Linux",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+      "Programming Language :: Python :: 3.14",
+      "Programming Language :: Python :: 3.15",
+      "Programming Language :: Rust",
+      "Topic :: Scientific/Engineering"
+    ],
+    "description": "# fastscipy\n\n**Faster SciPy calls. SciPy-compatible results.**\n\nPortable Rust kernels and shared thread pools accelerate supported calls.\nEverything else stays with SciPy.\n\n```sh\npip install --pre fastscipy\n```\n\n```python\nimport fastscipy\n\nfastscipy.patch()\n\nfrom scipy import ndimage\n\nclean = ndimage.median_filter(image, size=3)\n```\n\n![Image cleanup with SciPy and fastscipy](https://raw.githubusercontent.com/michael-L-i/fastscipy/main/docs/median-filter-demo.gif)\n\n*Demo recorded on a MacBook Pro with M5 Pro.*\n\n[Explore eight more examples \u2192](https://github.com/michael-L-i/fastscipy/blob/main/examples/README.md)\n\n## Install and use\n\nPrebuilt wheels for **Python 3.12\u20133.15 \u00b7 SciPy 1.18**; no Rust required.\nSupports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,\nand Windows. [Platform details and measurements \u2192](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)\n\nCall `patch()` before importing libraries that use SciPy.\nUse `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,\nand `unpatch()` to restore SciPy.\n\n## Performance across platforms\n\nGeometric-mean speedups at **two threads**, with BLAS limited to one.\nThese portability checkpoints use Python 3.13, NumPy 2.5.4, and SciPy 1.18.1;\neach comparison uses the same machine and inputs.\n\n| Platform | ndimage | stats | linalg |\n|---|---:|---:|---:|\n| Linux x86_64 \u00b7 glibc | 15.1\u00d7 | 5.9\u00d7 | 3.9\u00d7 |\n| Linux ARM64 \u00b7 glibc | 13.2\u00d7 | 6.5\u00d7 | 4.0\u00d7 |\n| Linux x86_64 \u00b7 musl | 12.3\u00d7 | 6.0\u00d7 | 5.1\u00d7 |\n| Linux ARM64 \u00b7 musl | 11.8\u00d7 | 6.4\u00d7 | 4.0\u00d7 |\n| macOS Apple Silicon | 16.9\u00d7 | 5.9\u00d7 | 4.8\u00d7 |\n| macOS Intel | 13.0\u00d7 | 5.7\u00d7 | 6.5\u00d7 |\n| Windows x86_64 | 11.7\u00d7 | 5.9\u00d7 | 4.7\u00d7 |\n| Windows ARM64 | 11.7\u00d7 | 6.4\u00d7 | 4.2\u00d7 |\n\nThe suite covers **407 cases across 13 areas**; a case is one function and\ninput combination. The three columns summarize 43 image-processing,\n58 statistics, and 49 linear-algebra cases. Results vary by workload,\nhardware, and SciPy build.\n[Platform measurements and limitations](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md) \u00b7 [Original M5 Pro benchmarks](https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.md)\n\n## More\n\n[Coverage](https://github.com/michael-L-i/fastscipy/blob/main/docs/coverage.md) \u00b7 [How it works](https://github.com/michael-L-i/fastscipy/blob/main/docs/design.md) \u00b7\n[Demo source](https://github.com/michael-L-i/fastscipy/blob/main/examples/median_filter.py) \u00b7 [Contributing](https://github.com/michael-L-i/fastscipy/blob/main/CONTRIBUTING.md)\n\nBSD-3-Clause. SciPy ports retain [SciPy's license](https://github.com/michael-L-i/fastscipy/blob/main/LICENSES/scipy-LICENSE.txt).\nIndependent of the SciPy project.\n\n",
+    "description_content_type": "text/markdown; charset=UTF-8; variant=GFM",
+    "docs_url": null,
+    "download_url": null,
+    "downloads": {
+      "last_day": -1,
+      "last_month": -1,
+      "last_week": -1
+    },
+    "dynamic": null,
+    "home_page": null,
+    "keywords": "scipy, performance, rust, multithreading, drop-in, ndimage",
+    "license": null,
+    "license_expression": "BSD-3-Clause",
+    "license_files": [
+      "LICENSE",
+      "LICENSES/scipy-LICENSE.txt"
+    ],
+    "maintainer": null,
+    "maintainer_email": null,
+    "name": "fastscipy",
+    "package_url": "https://pypi.org/project/fastscipy/",
+    "platform": null,
+    "project_url": "https://pypi.org/project/fastscipy/",
+    "project_urls": {
+      "Benchmarks": "https://github.com/michael-L-i/fastscipy/blob/main/bench/RESULTS.md",
+      "Homepage": "https://github.com/michael-L-i/fastscipy",
+      "Issues": "https://github.com/michael-L-i/fastscipy/issues",
+      "Source": "https://github.com/michael-L-i/fastscipy"
+    },
+    "provides_extra": [
+      "bench",
+      "gallery",
+      "test"
+    ],
+    "release_url": "https://pypi.org/project/fastscipy/0.1.0a4/",
+    "requires_dist": [
+      "numpy<2.6,>=2.5",
+      "scipy<1.19,>=1.18",
+      "pillow>=10.1; extra == \"bench\"",
+      "pillow>=10.1; extra == \"gallery\"",
+      "matplotlib>=3.8; extra == \"gallery\"",
+      "pytest; extra == \"test\"",
+      "pytest-xdist; extra == \"test\"",
+      "hypothesis; extra == \"test\""
+    ],
+    "requires_python": "<3.16,>=3.12",
+    "summary": "Portable acceleration for SciPy with compatible results and shared thread pools",
+    "version": "0.1.0a4",
+    "yanked": false,
+    "yanked_reason": null
+  },
+  "last_serial": 42593576,
+  "ownership": {
+    "organization": null,
+    "roles": [
+      {
+        "role": "Owner",
+        "user": "mli5"
+      }
+    ]
+  },
+  "urls": [
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "5092a27ed5ff681f8eebda8b6b1de9c7fe74d6871fa1995ca878c89362f69924",
+        "md5": "3170dfc1d749cc3c75076045b279b724",
+        "sha256": "61fcbd045b3ff493c2777e53961d45b853b0dabfda4271176e5b911ab893b682"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "3170dfc1d749cc3c75076045b279b724",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4078151,
+      "upload_time": "2026-10-22T12:52:02",
+      "upload_time_iso_8601": "2026-10-22T12:52:02.602525Z",
+      "url": "https://files.pythonhosted.org/packages/50/92/a27ed5ff681f8eebda8b6b1de9c7fe74d6871fa1995ca878c89362f69924/fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "5fe22e6066b266eb3af06fbb057e036cd155358caac013a06ae628d0e51c39a8",
+        "md5": "4d4cdc5b8118fb8efe4d453e68d2afcc",
+        "sha256": "b3773f418a73882ac8aa429496ed5a7334e7a4b638fd0a7750cf90389539a779"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "4d4cdc5b8118fb8efe4d453e68d2afcc",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 9097886,
+      "upload_time": "2026-10-22T12:52:04",
+      "upload_time_iso_8601": "2026-10-22T12:52:04.422220Z",
+      "url": "https://files.pythonhosted.org/packages/5f/e2/2e6066b266eb3af06fbb057e036cd155358caac013a06ae628d0e51c39a8/fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "94b787b1a679e6400bf1131e4e20ed1a4440fdc717024087b767204d548e8231",
+        "md5": "fc49154de70460c6bce459c6f91748d2",
+        "sha256": "cecc387e0efa21eda3950332d3d1f8327b403b96f96e8ba29da11e9814441844"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "fc49154de70460c6bce459c6f91748d2",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4752282,
+      "upload_time": "2026-10-22T12:52:06",
+      "upload_time_iso_8601": "2026-10-22T12:52:06.790006Z",
+      "url": "https://files.pythonhosted.org/packages/94/b7/87b1a679e6400bf1131e4e20ed1a4440fdc717024087b767204d548e8231/fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "c4bfd0b25bf7fb344f1e4a98dec4216988c49884bfdf4240d4a38ac78bf4b409",
+        "md5": "a6fc2d9a8d5c163530de3271d4c9656d",
+        "sha256": "b4864a72741e1f98acc34bd45044bdaf7c9cf1c8ff5c14305c8f0f922303b223"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "a6fc2d9a8d5c163530de3271d4c9656d",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11936100,
+      "upload_time": "2026-10-22T12:52:08",
+      "upload_time_iso_8601": "2026-10-22T12:52:08.656335Z",
+      "url": "https://files.pythonhosted.org/packages/c4/bf/d0b25bf7fb344f1e4a98dec4216988c49884bfdf4240d4a38ac78bf4b409/fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "a627e3f555cd9d9cbc95e76fe67e12f06bef757cd88dae5fba7486fe9adcd73c",
+        "md5": "be0fe1d77e43be3856271f05e724b35d",
+        "sha256": "6e2e8f40c1ed71a4f9a2b314d9a17aa2390c0d297eaa7d3938bccad14371b4ab"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "be0fe1d77e43be3856271f05e724b35d",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4818069,
+      "upload_time": "2026-10-22T12:52:10",
+      "upload_time_iso_8601": "2026-10-22T12:52:10.781979Z",
+      "url": "https://files.pythonhosted.org/packages/a6/27/e3f555cd9d9cbc95e76fe67e12f06bef757cd88dae5fba7486fe9adcd73c/fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "65e5be1684610be82262efc22bb820ed9e74c294e0c3e4e1dd17af3fdfdbb6be",
+        "md5": "c1ca4c12718e46063e68ffdf054ce101",
+        "sha256": "c9d9e90f527f2acfad27bdf31867e84287bb5b89a250562b8b1d279976dc33a5"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "c1ca4c12718e46063e68ffdf054ce101",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 12024220,
+      "upload_time": "2026-10-22T12:52:12",
+      "upload_time_iso_8601": "2026-10-22T12:52:12.668077Z",
+      "url": "https://files.pythonhosted.org/packages/65/e5/be1684610be82262efc22bb820ed9e74c294e0c3e4e1dd17af3fdfdbb6be/fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "3da5ce40e246c8b4153812f0ee385d5b5433d4aaa34d0e386c9ae22661576c91",
+        "md5": "f960c78a67ec8e52c04dc26157666d36",
+        "sha256": "6497ce8dbddc52efd5f2248b67a192f67aee85cd9c65ad855b4560666a2964fb"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-win_amd64.whl",
+      "has_sig": false,
+      "md5_digest": "f960c78a67ec8e52c04dc26157666d36",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11551447,
+      "upload_time": "2026-10-22T12:52:15",
+      "upload_time_iso_8601": "2026-10-22T12:52:15.087602Z",
+      "url": "https://files.pythonhosted.org/packages/3d/a5/ce40e246c8b4153812f0ee385d5b5433d4aaa34d0e386c9ae22661576c91/fastscipy-0.1.0a4-cp312-cp312-win_amd64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "4252acfb1269ade7d731dae3742abb9c615111e030684c94131943e3f2b81f04",
+        "md5": "9ade759faefed55ead752bf66c632f14",
+        "sha256": "254b9cffe2fe64f598fd0642385bd3e333cb4b5d7ddfdf868564cb58a3df2070"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp312-cp312-win_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "9ade759faefed55ead752bf66c632f14",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp312",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4229101,
+      "upload_time": "2026-10-22T12:52:17",
+      "upload_time_iso_8601": "2026-10-22T12:52:17.431486Z",
+      "url": "https://files.pythonhosted.org/packages/42/52/acfb1269ade7d731dae3742abb9c615111e030684c94131943e3f2b81f04/fastscipy-0.1.0a4-cp312-cp312-win_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "5d27ffab4a381203cb6765cb7d834cb1a701c622418059a91d15ec89db170770",
+        "md5": "4413e94e19b5de25f649cf24371c008a",
+        "sha256": "05dc27763f64b5e461aee1be13cec557b249c1e50a768f4cb3e2681cbc44c97c"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "4413e94e19b5de25f649cf24371c008a",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4076743,
+      "upload_time": "2026-10-22T12:52:19",
+      "upload_time_iso_8601": "2026-10-22T12:52:19.155896Z",
+      "url": "https://files.pythonhosted.org/packages/5d/27/ffab4a381203cb6765cb7d834cb1a701c622418059a91d15ec89db170770/fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "3835e816637ba3da599661d6135d62916e3a80e667e35a9ce5d408cdf7354dd0",
+        "md5": "98a45b5c149585a96d467714bf55bbad",
+        "sha256": "0642e8f8f21706cfcd48529b8e001c526dfcc4e99904fc92fb860fd290c2becb"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "98a45b5c149585a96d467714bf55bbad",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 9097696,
+      "upload_time": "2026-10-22T12:52:20",
+      "upload_time_iso_8601": "2026-10-22T12:52:20.975762Z",
+      "url": "https://files.pythonhosted.org/packages/38/35/e816637ba3da599661d6135d62916e3a80e667e35a9ce5d408cdf7354dd0/fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "5a1203072ecfcec96bafc92ea0d9c0aacb402a0f283b07a89bb58383c03c9b81",
+        "md5": "03c246c4a40f9d02dd8ec35b34f667c1",
+        "sha256": "a79481422e97189054e40eae7e87616077cdec2dbb53ec52754428ffc42e547b"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "03c246c4a40f9d02dd8ec35b34f667c1",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4750050,
+      "upload_time": "2026-10-22T12:52:23",
+      "upload_time_iso_8601": "2026-10-22T12:52:23.031127Z",
+      "url": "https://files.pythonhosted.org/packages/5a/12/03072ecfcec96bafc92ea0d9c0aacb402a0f283b07a89bb58383c03c9b81/fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "1450c658922fc7728bd783f9f70d7466dcdd338872b539314639f7bbab3dd0e8",
+        "md5": "a89ace2761e171112f23662197762113",
+        "sha256": "a664dbefd458bf795ca80b0357b836e1ecccbfdf8c70ddcd7575cd35f922c3ec"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "a89ace2761e171112f23662197762113",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11932793,
+      "upload_time": "2026-10-22T12:52:25",
+      "upload_time_iso_8601": "2026-10-22T12:52:25.104590Z",
+      "url": "https://files.pythonhosted.org/packages/14/50/c658922fc7728bd783f9f70d7466dcdd338872b539314639f7bbab3dd0e8/fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "72c223fabba380165a21d5cd354a2a2ec7f8de044a936a368018af85d942f7b4",
+        "md5": "a5bd0f73edcc69f0423e9bddded63e74",
+        "sha256": "f94cea3f704b46fd50aae5755f8eafd2fb7f81076e4587a6438154e7769ba310"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "a5bd0f73edcc69f0423e9bddded63e74",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4815381,
+      "upload_time": "2026-10-22T12:52:28",
+      "upload_time_iso_8601": "2026-10-22T12:52:28.154150Z",
+      "url": "https://files.pythonhosted.org/packages/72/c2/23fabba380165a21d5cd354a2a2ec7f8de044a936a368018af85d942f7b4/fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "f4826f30a0e935902233191e7bf0e2d2b01531a6b9225aa1790f8c277eb4e31e",
+        "md5": "c7ff651ed9f5e68ce3ddaff79dc612e1",
+        "sha256": "4076437d6cc3b63180c3fe6ae7f7e1655ede365020a2a8fcb09e696c62594981"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "c7ff651ed9f5e68ce3ddaff79dc612e1",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 12021236,
+      "upload_time": "2026-10-22T12:52:29",
+      "upload_time_iso_8601": "2026-10-22T12:52:29.942605Z",
+      "url": "https://files.pythonhosted.org/packages/f4/82/6f30a0e935902233191e7bf0e2d2b01531a6b9225aa1790f8c277eb4e31e/fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "730a5067399a50dbcb40ac9999a5d5978382caf53b02370a62dc874ff8e11595",
+        "md5": "ef42e680a23ac77873d86e4c6d0b209d",
+        "sha256": "13259ddab758ff6fd2237c26774e5196cf75a6295267c099d7bbc5e0b16a6ffa"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-win_amd64.whl",
+      "has_sig": false,
+      "md5_digest": "ef42e680a23ac77873d86e4c6d0b209d",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11552513,
+      "upload_time": "2026-10-22T12:52:32",
+      "upload_time_iso_8601": "2026-10-22T12:52:32.694126Z",
+      "url": "https://files.pythonhosted.org/packages/73/0a/5067399a50dbcb40ac9999a5d5978382caf53b02370a62dc874ff8e11595/fastscipy-0.1.0a4-cp313-cp313-win_amd64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "7e81c32bfe9329a6eb7510a55dbefde0457316a334c424996134e73f289971f0",
+        "md5": "07d0d2dc2626438bc119026da24a0e2d",
+        "sha256": "3db88a3dc48731b0e474baab43fb8085294d21132de134ededd0d4d96665429a"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "07d0d2dc2626438bc119026da24a0e2d",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp313",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4229079,
+      "upload_time": "2026-10-22T12:52:34",
+      "upload_time_iso_8601": "2026-10-22T12:52:34.713851Z",
+      "url": "https://files.pythonhosted.org/packages/7e/81/c32bfe9329a6eb7510a55dbefde0457316a334c424996134e73f289971f0/fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "1824c2f4dab177d51ffbbde580270b0b7737aa6798c52980c924f81b8512ee07",
+        "md5": "99ff1209bddcc1e54d5b9dd1a7e429e7",
+        "sha256": "011e68ad611ef8159d5578f19af25d1453a8c444397e59d50f8c6c1653a625d2"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "99ff1209bddcc1e54d5b9dd1a7e429e7",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4097006,
+      "upload_time": "2026-10-22T12:52:36",
+      "upload_time_iso_8601": "2026-10-22T12:52:36.909928Z",
+      "url": "https://files.pythonhosted.org/packages/18/24/c2f4dab177d51ffbbde580270b0b7737aa6798c52980c924f81b8512ee07/fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "032f26ed9e9f86e73a934999d9a09f3d6dd1e86fdaa61165164a2f1c22527642",
+        "md5": "6f026cd2ef62a9e9e8314472e425673b",
+        "sha256": "d132fa97372831808c3f45d633a20171d584320b81a7bb6493463b6de2a28df5"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "6f026cd2ef62a9e9e8314472e425673b",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 9089203,
+      "upload_time": "2026-10-22T12:52:38",
+      "upload_time_iso_8601": "2026-10-22T12:52:38.769404Z",
+      "url": "https://files.pythonhosted.org/packages/03/2f/26ed9e9f86e73a934999d9a09f3d6dd1e86fdaa61165164a2f1c22527642/fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "aac8165b12ea94006a595834fed9823987b8ea3b163646116e77cc2669b0b35c",
+        "md5": "47b2c9a46e16a0e936c139a8257978d5",
+        "sha256": "638275e4a3fd1299017e268aa87b5654bc1541b90934f54d7a285977a23a57ed"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "47b2c9a46e16a0e936c139a8257978d5",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4744594,
+      "upload_time": "2026-10-22T12:52:40",
+      "upload_time_iso_8601": "2026-10-22T12:52:40.936173Z",
+      "url": "https://files.pythonhosted.org/packages/aa/c8/165b12ea94006a595834fed9823987b8ea3b163646116e77cc2669b0b35c/fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "09dfdaec82610cf22ab54c9f59788cd7deb9cbfe099a05616de0e88e33f93ea7",
+        "md5": "547ad589e71460c898a992f252fbe5eb",
+        "sha256": "9592131c3be3e8c33bf41bc115a168dec3cba41cd55aa47548217e1c67d9e98f"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "547ad589e71460c898a992f252fbe5eb",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11923797,
+      "upload_time": "2026-10-22T12:52:42",
+      "upload_time_iso_8601": "2026-10-22T12:52:42.658199Z",
+      "url": "https://files.pythonhosted.org/packages/09/df/daec82610cf22ab54c9f59788cd7deb9cbfe099a05616de0e88e33f93ea7/fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "704af755654a25d8aaebaad255b1a0df5f0334d70f0ba080080c17289adaa935",
+        "md5": "85498fc08163b0b3b8c66ce5b80ea1e2",
+        "sha256": "f7b5bfd6a01bbf40b2f02f447967a927dc039686c0a9460fce4a581b3a6ec2df"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "85498fc08163b0b3b8c66ce5b80ea1e2",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4810461,
+      "upload_time": "2026-10-22T12:52:45",
+      "upload_time_iso_8601": "2026-10-22T12:52:45.090319Z",
+      "url": "https://files.pythonhosted.org/packages/70/4a/f755654a25d8aaebaad255b1a0df5f0334d70f0ba080080c17289adaa935/fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "95847881df4d03cb47153049a2b7c48b730f9895a5207bbee9576141d09aa864",
+        "md5": "045748b6db162acb67622ac7ba003ecb",
+        "sha256": "cb949808b885eba7e1579ba46424beca492f0f79b67b66effecb085003a2c634"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "045748b6db162acb67622ac7ba003ecb",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 12011085,
+      "upload_time": "2026-10-22T12:52:46",
+      "upload_time_iso_8601": "2026-10-22T12:52:46.753368Z",
+      "url": "https://files.pythonhosted.org/packages/95/84/7881df4d03cb47153049a2b7c48b730f9895a5207bbee9576141d09aa864/fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "c6099fb138752043ad18fb3d21773c03fa905ec170e26bfedea9d171abe4b6ce",
+        "md5": "4618d3f70305223a8c5f8c7090c2a736",
+        "sha256": "1b2dda420fc8c368bbd7d443854cd02bb217091865417d5c3cbe52c1b6b87c49"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-win_amd64.whl",
+      "has_sig": false,
+      "md5_digest": "4618d3f70305223a8c5f8c7090c2a736",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11528353,
+      "upload_time": "2026-10-22T12:52:49",
+      "upload_time_iso_8601": "2026-10-22T12:52:49.037425Z",
+      "url": "https://files.pythonhosted.org/packages/c6/09/9fb138752043ad18fb3d21773c03fa905ec170e26bfedea9d171abe4b6ce/fastscipy-0.1.0a4-cp314-cp314-win_amd64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "45037222b5fcceb74a6fb890be00c3b527bcb6965ebd5203406b7ebb990e8bc7",
+        "md5": "93cd43458e305e02ec94d955f4c7be2b",
+        "sha256": "3400ba4fcef88db38a43f991490a4c9c57b9e867fd488c2ee99824587d9dc790"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp314-cp314-win_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "93cd43458e305e02ec94d955f4c7be2b",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp314",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4199651,
+      "upload_time": "2026-10-22T12:52:51",
+      "upload_time_iso_8601": "2026-10-22T12:52:51.531994Z",
+      "url": "https://files.pythonhosted.org/packages/45/03/7222b5fcceb74a6fb890be00c3b527bcb6965ebd5203406b7ebb990e8bc7/fastscipy-0.1.0a4-cp314-cp314-win_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "806c0dfa569c6c98799f9a6ad36af35467837e37618b4901db1c9bbbc8177ebc",
+        "md5": "21d0717d76127a96d10a787a857f68e6",
+        "sha256": "c663cd87235d782dd46e8dea9f46ff086603430e5e0296f504d506f5a4129e0e"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "21d0717d76127a96d10a787a857f68e6",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4097992,
+      "upload_time": "2026-10-22T12:52:53",
+      "upload_time_iso_8601": "2026-10-22T12:52:53.284362Z",
+      "url": "https://files.pythonhosted.org/packages/80/6c/0dfa569c6c98799f9a6ad36af35467837e37618b4901db1c9bbbc8177ebc/fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "4ab59c93ef93be7755ad15c15e399b8b04337d6a5c06c587983877d403b80739",
+        "md5": "1abf098fc9e65680faa04eb580cb6de5",
+        "sha256": "78c8946397cbec6e158ae5d7a91cc000a372f41cb52a3e34a851c77fd905b6b0"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "1abf098fc9e65680faa04eb580cb6de5",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 9089527,
+      "upload_time": "2026-10-22T12:52:54",
+      "upload_time_iso_8601": "2026-10-22T12:52:54.910111Z",
+      "url": "https://files.pythonhosted.org/packages/4a/b5/9c93ef93be7755ad15c15e399b8b04337d6a5c06c587983877d403b80739/fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "34cc4b6571af882512ad6ad40e836bf7117bacf2fc692c2cec57f25e1d176e16",
+        "md5": "b72989bd548ed3675c399174729bcfd3",
+        "sha256": "2fbe1df847b7a42fcd2516999723a6043eb6f9feb9b26a756fcc9c018e80a4ba"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "b72989bd548ed3675c399174729bcfd3",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4744108,
+      "upload_time": "2026-10-22T12:52:57",
+      "upload_time_iso_8601": "2026-10-22T12:52:57.088258Z",
+      "url": "https://files.pythonhosted.org/packages/34/cc/4b6571af882512ad6ad40e836bf7117bacf2fc692c2cec57f25e1d176e16/fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "a1495fabbb4ffdf49affca93cd1794782734a98b6694a6349c736e7147fbe6c9",
+        "md5": "fbcff56aa99ffd7e37e1ba479e7882c0",
+        "sha256": "06b7ebb903a0a2b9efc13663aeeb3f6482e2d521773f1e67fafd5ce8f394d6fd"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "fbcff56aa99ffd7e37e1ba479e7882c0",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11924641,
+      "upload_time": "2026-10-22T12:52:59",
+      "upload_time_iso_8601": "2026-10-22T12:52:59.429941Z",
+      "url": "https://files.pythonhosted.org/packages/a1/49/5fabbb4ffdf49affca93cd1794782734a98b6694a6349c736e7147fbe6c9/fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "609dfafeb11bd8030bebe80c1c7b5adf761a5171cfe3cecc9ba110cd129f1f4f",
+        "md5": "a3ae56673ca714b4f4f086f472ef9f3e",
+        "sha256": "5e9b28ac6ddccfb62e8e1c4674307aa97037cd4cbb4a09e45e564e76497ee4f4"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_aarch64.whl",
+      "has_sig": false,
+      "md5_digest": "a3ae56673ca714b4f4f086f472ef9f3e",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4811070,
+      "upload_time": "2026-10-22T12:53:01",
+      "upload_time_iso_8601": "2026-10-22T12:53:01.592775Z",
+      "url": "https://files.pythonhosted.org/packages/60/9d/fafeb11bd8030bebe80c1c7b5adf761a5171cfe3cecc9ba110cd129f1f4f/fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_aarch64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "764e58a61f97e31cc5fb6bfdc38b3dff37a5b2f4d936eaa686a6de0ffeaa5330"
+      },
+      "digests": {
+        "blake2b_256": "0bad74e783ee36c06fca2f6855d9a5a5babcc22eaf95a28f4a2cdfa056b5145b",
+        "md5": "01559876256d1206bd74c9f5e9c7ea78",
+        "sha256": "cc1a4e1a4006807b6c0f3065234e72526a4c2891be0aedf1c159d2c44b2f587c"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_x86_64.whl",
+      "has_sig": false,
+      "md5_digest": "01559876256d1206bd74c9f5e9c7ea78",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 12011602,
+      "upload_time": "2026-10-22T12:53:03",
+      "upload_time_iso_8601": "2026-10-22T12:53:03.379011Z",
+      "url": "https://files.pythonhosted.org/packages/0b/ad/74e783ee36c06fca2f6855d9a5a5babcc22eaf95a28f4a2cdfa056b5145b/fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_x86_64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "b7363955cb40af279c4f724ae972544804cfd02fc9234cf4498f1df552e90902",
+        "md5": "87b0284531789c63dcd8c02bb63a2b97",
+        "sha256": "1cf44aeb9d6073e1e828147ebcc80725d6d6854a201083109694b1f84c931223"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-win_amd64.whl",
+      "has_sig": false,
+      "md5_digest": "87b0284531789c63dcd8c02bb63a2b97",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 11527351,
+      "upload_time": "2026-10-22T12:53:05",
+      "upload_time_iso_8601": "2026-10-22T12:53:05.833709Z",
+      "url": "https://files.pythonhosted.org/packages/b7/36/3955cb40af279c4f724ae972544804cfd02fc9234cf4498f1df552e90902/fastscipy-0.1.0a4-cp315-cp315-win_amd64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": {
+        "sha256": "497068a882f7bc74f249d7579b270ee6a38a1f42da63b5ad65bc4c3bdde3f60b"
+      },
+      "digests": {
+        "blake2b_256": "f98c47cb2ae4fce661bc43d51c3efe1e10e94fe35478cb66c9d519fc70f05b09",
+        "md5": "be299a60d61c6d8301f1c1376799fc03",
+        "sha256": "24ef4e9c88f243cc3c67568adf8ea382e08a476bddcb453df09d82a6f8895056"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4-cp315-cp315-win_arm64.whl",
+      "has_sig": false,
+      "md5_digest": "be299a60d61c6d8301f1c1376799fc03",
+      "packagetype": "bdist_wheel",
+      "python_version": "cp315",
+      "requires_python": "<3.16,>=3.12",
+      "size": 4199696,
+      "upload_time": "2026-10-22T12:53:08",
+      "upload_time_iso_8601": "2026-10-22T12:53:08.119495Z",
+      "url": "https://files.pythonhosted.org/packages/f9/8c/47cb2ae4fce661bc43d51c3efe1e10e94fe35478cb66c9d519fc70f05b09/fastscipy-0.1.0a4-cp315-cp315-win_arm64.whl",
+      "yanked": false,
+      "yanked_reason": null
+    },
+    {
+      "comment_text": null,
+      "core-metadata": false,
+      "digests": {
+        "blake2b_256": "f9206389fcfd5113e3b111ebc6ad7f8d3dc5857e8bfbdfd53c60e90a4a373fd3",
+        "md5": "e7fd66e42fbb1c2e3e188d0e9bcbe0dc",
+        "sha256": "72a05d4a50d13209918260eb8e7cb7c17f35fd3786b53493bc7cf7e8ca88dfae"
+      },
+      "downloads": -1,
+      "filename": "fastscipy-0.1.0a4.tar.gz",
+      "has_sig": false,
+      "md5_digest": "e7fd66e42fbb1c2e3e188d0e9bcbe0dc",
+      "packagetype": "sdist",
+      "python_version": "source",
+      "requires_python": "<3.16,>=3.12",
+      "size": 489135,
+      "upload_time": "2026-10-22T12:53:09",
+      "upload_time_iso_8601": "2026-10-22T12:53:09.870358Z",
+      "url": "https://files.pythonhosted.org/packages/f9/20/6389fcfd5113e3b111ebc6ad7f8d3dc5857e8bfbdfd53c60e90a4a373fd3/fastscipy-0.1.0a4.tar.gz",
+      "yanked": false,
+      "yanked_reason": null
+    }
+  ],
+  "vulnerabilities": []
+}

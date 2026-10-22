@@ -1,0 +1,4829 @@
+{
+  "conclusion": "success",
+  "event": "push",
+  "headBranch": "v0.1.0a4",
+  "headSha": "46b33f2882f0b10a126169bed0a088705cf402a0",
+  "jobs": [
+    {
+      "completedAt": "2026-10-22T07:08:25Z",
+      "conclusion": "success",
+      "databaseId": 119689446691,
+      "name": "Source distribution and version guards",
+      "startedAt": "2026-10-22T07:08:00Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:03Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:05Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:05Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:12Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:19Z",
+          "conclusion": "success",
+          "name": "Install source packaging tools",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:19Z",
+          "conclusion": "success",
+          "name": "Check source versions and publication tag",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:20Z",
+          "conclusion": "success",
+          "name": "Build and validate the single source distribution",
+          "number": 7,
+          "startedAt": "2026-10-22T07:08:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:22Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 8,
+          "startedAt": "2026-10-22T07:08:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:22Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 15,
+          "startedAt": "2026-10-22T07:08:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:22Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 16,
+          "startedAt": "2026-10-22T07:08:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:22Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-10-22T07:08:22Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689446691"
+    },
+    {
+      "completedAt": "2026-10-22T07:26:58Z",
+      "conclusion": "success",
+      "databaseId": 119689607936,
+      "name": "Wheel / macos-arm64 / cp312",
+      "startedAt": "2026-10-22T07:08:29Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:36Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:36Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:47Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:49Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:03Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:03Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:09:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:04Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:09:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:33Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:09:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:34Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T07:26:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:36Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T07:26:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:38Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T07:26:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:41Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T07:26:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:48Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T07:26:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:49Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T07:26:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:50Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T07:26:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:26:56Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T07:26:50Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607936"
+    },
+    {
+      "completedAt": "2026-10-22T08:04:54Z",
+      "conclusion": "success",
+      "databaseId": 119689607942,
+      "name": "Wheel / manylinux-x86_64 / cp312",
+      "startedAt": "2026-10-22T07:08:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:49Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:50Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T08:04:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:50Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T08:04:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:50Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T08:04:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:52Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T08:04:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:52Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T08:04:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:52Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T08:04:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:04:52Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T08:04:52Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607942"
+    },
+    {
+      "completedAt": "2026-10-22T08:17:49Z",
+      "conclusion": "success",
+      "databaseId": 119689607945,
+      "name": "Wheel / manylinux-aarch64 / cp313",
+      "startedAt": "2026-10-22T07:27:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:27:05Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:27:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:06Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:27:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:06Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:27:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:06Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:27:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:06Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:27:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:20Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:27:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:20Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:27:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:21Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:27:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:43Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:27:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:44Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T08:17:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:45Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T08:17:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:45Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T08:17:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T08:17:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:47Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T08:17:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:47Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T08:17:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:17:47Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T08:17:47Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607945"
+    },
+    {
+      "completedAt": "2026-10-22T07:29:59Z",
+      "conclusion": "success",
+      "databaseId": 119689607962,
+      "name": "Wheel / musllinux-aarch64 / cp312",
+      "startedAt": "2026-10-22T07:08:30Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:47Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:47Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:08:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:53Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:08:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:54Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T07:29:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:55Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T07:29:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:55Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T07:29:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:56Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T07:29:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T07:29:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:57Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T07:29:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:29:57Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T07:29:57Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607962"
+    },
+    {
+      "completedAt": "2026-10-22T08:20:20Z",
+      "conclusion": "success",
+      "databaseId": 119689607967,
+      "name": "Wheel / manylinux-x86_64 / cp313",
+      "startedAt": "2026-10-22T07:23:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:23:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:23:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:08Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:23:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:08Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:23:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:08Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:23:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:08Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:23:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:18Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:23:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:18Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:23:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:23:18Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:23:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:14Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:23:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:14Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T08:20:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:16Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T08:20:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:16Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T08:20:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:18Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T08:20:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T08:20:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T08:20:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:18Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T08:20:18Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607967"
+    },
+    {
+      "completedAt": "2026-10-22T07:23:01Z",
+      "conclusion": "success",
+      "databaseId": 119689607971,
+      "name": "Wheel / manylinux-aarch64 / cp312",
+      "startedAt": "2026-10-22T07:08:30Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:33Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:44Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:44Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:08:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:44Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:08:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:57Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:08:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:57Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T07:22:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:58Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T07:22:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:58Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T07:22:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:59Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T07:22:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:59Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T07:22:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:59Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T07:22:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:22:59Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T07:22:59Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689607971"
+    },
+    {
+      "completedAt": "2026-10-22T08:31:01Z",
+      "conclusion": "success",
+      "databaseId": 119689608021,
+      "name": "Wheel / musllinux-aarch64 / cp313",
+      "startedAt": "2026-10-22T07:30:03Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:30:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:30:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:07Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:30:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:07Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:30:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:07Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:30:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:07Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:30:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:31Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:30:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:31Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:30:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:30:31Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:30:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:54Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:30:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:55Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T08:30:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:57Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T08:30:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:57Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T08:30:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:58Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T08:30:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:59Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T08:30:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:59Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T08:30:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:30:59Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T08:30:59Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608021"
+    },
+    {
+      "completedAt": "2026-10-22T10:12:07Z",
+      "conclusion": "success",
+      "databaseId": 119689608023,
+      "name": "Wheel / musllinux-x86_64 / cp313",
+      "startedAt": "2026-10-22T07:28:01Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:28:03Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:28:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:05Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:28:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:05Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:05Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:05Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:20Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:28:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:20Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:28:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:28:20Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:28:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:11:59Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:28:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:11:59Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:11:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:02Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:11:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:02Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:12:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:04Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:12:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:04Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:12:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:05Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:12:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:05Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:12:05Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608023"
+    },
+    {
+      "completedAt": "2026-10-22T08:48:49Z",
+      "conclusion": "success",
+      "databaseId": 119689608025,
+      "name": "Wheel / macos-arm64 / cp313",
+      "startedAt": "2026-10-22T08:04:57Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T08:04:59Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T08:04:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:01Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T08:04:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:01Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T08:05:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:09Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T08:05:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:10Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T08:05:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:23Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T08:05:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:23Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T08:05:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:05:23Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T08:05:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:21Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T08:05:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:22Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T08:48:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:26Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T08:48:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:28Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T08:48:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:30Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T08:48:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:35Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T08:48:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:36Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T08:48:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:37Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T08:48:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:48Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T08:48:37Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608025"
+    },
+    {
+      "completedAt": "2026-10-22T10:17:59Z",
+      "conclusion": "success",
+      "databaseId": 119689608046,
+      "name": "Wheel / windows-amd64 / cp313",
+      "startedAt": "2026-10-22T08:20:23Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T08:20:24Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T08:20:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:30Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T08:20:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:30Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T08:20:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:41Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T08:20:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:20:45Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T08:20:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:21:10Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T08:20:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:21:10Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T08:21:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:21:10Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T08:21:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:47Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T08:21:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:48Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:17:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:49Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:17:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:51Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:17:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:53Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:17:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:56Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T10:17:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:17:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:58Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:17:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:17:58Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:17:58Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608046"
+    },
+    {
+      "completedAt": "2026-10-22T09:11:38Z",
+      "conclusion": "success",
+      "databaseId": 119689608051,
+      "name": "Wheel / macos-x86_64 / cp312",
+      "startedAt": "2026-10-22T07:08:32Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:38Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:49Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:49Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:52Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:54Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:09:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:10:32Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:09:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:10:33Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:10:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:10:33Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:10:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:10:42Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:10:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:10:45Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:10:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:10:48Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:10:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:10:52Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:10:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:10:55Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:10:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:31Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T09:10:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:32Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:11:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:33Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:11:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:35Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:11:34Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608051"
+    },
+    {
+      "completedAt": "2026-10-22T11:16:45Z",
+      "conclusion": "success",
+      "databaseId": 119689608067,
+      "name": "Wheel / macos-x86_64 / cp313",
+      "startedAt": "2026-10-22T08:17:54Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T08:17:59Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T08:17:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:03Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T08:17:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:04Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T08:18:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:21Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T08:18:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:22Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T08:18:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:41Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T08:18:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:41Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T08:18:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:18:41Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T08:18:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:15:48Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T08:18:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:15:51Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T11:15:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:15:55Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T11:15:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:15:57Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T11:15:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:15:58Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T11:15:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:16:41Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T11:15:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:16:42Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T11:16:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:16:42Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T11:16:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:16:43Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T11:16:43Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608067"
+    },
+    {
+      "completedAt": "2026-10-22T07:27:58Z",
+      "conclusion": "success",
+      "databaseId": 119689608081,
+      "name": "Wheel / windows-arm64 / cp312",
+      "startedAt": "2026-10-22T07:08:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:31Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:47Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:06Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:12Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:09:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:45Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:09:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:46Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:09:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:46Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:09:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:45Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:09:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:46Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T07:27:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T07:27:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:48Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T07:27:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:49Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T07:27:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:52Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T07:27:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:52Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T07:27:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T07:27:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:27:56Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T07:27:56Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608081"
+    },
+    {
+      "completedAt": "2026-10-22T09:25:15Z",
+      "conclusion": "success",
+      "databaseId": 119689608109,
+      "name": "Wheel / windows-amd64 / cp312",
+      "startedAt": "2026-10-22T07:08:29Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:40Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:40Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:53Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:59Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:33Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:33Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:09:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:09:33Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:09:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:24:57Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:09:33Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:24:58Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:24:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:24:59Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:24:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:02Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:24:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:06Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:25:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:10Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T09:25:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:25:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:13Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:25:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:13Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:25:13Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608109"
+    },
+    {
+      "completedAt": "2026-10-22T09:02:20Z",
+      "conclusion": "success",
+      "databaseId": 119689608142,
+      "name": "Wheel / musllinux-x86_64 / cp312",
+      "startedAt": "2026-10-22T07:08:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T07:08:30Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T07:08:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T07:08:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:32Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T07:08:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T07:08:46Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:14Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T07:08:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:15Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:02:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:16Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:02:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:16Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:02:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:18Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:02:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:02:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:02:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:18Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:02:18Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608142"
+    },
+    {
+      "completedAt": "2026-10-22T09:30:24Z",
+      "conclusion": "success",
+      "databaseId": 119689608166,
+      "name": "Wheel / windows-arm64 / cp313",
+      "startedAt": "2026-10-22T08:31:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T08:31:11Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T08:31:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:31:26Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T08:31:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:31:26Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T08:31:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:31:43Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T08:31:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:31:51Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T08:31:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:32:17Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T08:31:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:32:18Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T08:32:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:32:18Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T08:32:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:09Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T08:32:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:10Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:30:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:11Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:30:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:13Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:30:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:14Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:30:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:17Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T09:30:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:30:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:23Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:30:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:23Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:30:23Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608166"
+    },
+    {
+      "completedAt": "2026-10-22T09:17:43Z",
+      "conclusion": "success",
+      "databaseId": 119689608178,
+      "name": "Wheel / manylinux-aarch64 / cp314",
+      "startedAt": "2026-10-22T09:02:25Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:02:27Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:02:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:28Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:02:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:28Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:02:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:28Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:02:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:28Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:02:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:42Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:02:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:42Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:02:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:02:42Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:02:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:38Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:02:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:38Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:17:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:39Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:17:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:39Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:17:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:41Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:17:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:41Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:17:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:41Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:17:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:41Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:17:41Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608178"
+    },
+    {
+      "completedAt": "2026-10-22T09:43:12Z",
+      "conclusion": "success",
+      "databaseId": 119689608351,
+      "name": "Wheel / manylinux-x86_64 / cp314",
+      "startedAt": "2026-10-22T08:48:52Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T08:48:55Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T08:48:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:56Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T08:48:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:56Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T08:48:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:56Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T08:48:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:48:56Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T08:48:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:49:08Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T08:48:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:49:08Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T08:49:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T08:49:08Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T08:49:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:06Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T08:49:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:07Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:43:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:08Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:43:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:08Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:43:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:10Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:43:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:43:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:10Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:43:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:10Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:43:10Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689608351"
+    },
+    {
+      "completedAt": "2026-10-22T09:39:25Z",
+      "conclusion": "success",
+      "databaseId": 119689609771,
+      "name": "Wheel / musllinux-aarch64 / cp314",
+      "startedAt": "2026-10-22T09:17:48Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:17:50Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:17:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:51Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:17:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:51Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:17:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:51Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:17:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:17:51Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:17:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:18:04Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:17:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:18:04Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:18:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:18:04Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:18:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:19Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:18:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:20Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:39:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:22Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:39:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:22Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:39:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:23Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:39:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:23Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:39:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:23Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:39:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:23Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:39:23Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689609771"
+    },
+    {
+      "completedAt": "2026-10-22T09:43:38Z",
+      "conclusion": "success",
+      "databaseId": 119689609773,
+      "name": "Wheel / macos-arm64 / cp314",
+      "startedAt": "2026-10-22T09:25:19Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:25:21Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:25:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:24Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:25:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:24Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:25:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:34Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:25:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:36Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:25:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:48Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:25:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:48Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:25:48Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:18Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:25:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:19Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T09:43:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:21Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T09:43:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:24Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T09:43:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:26Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T09:43:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:31Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T09:43:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:31Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T09:43:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:32Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T09:43:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:35Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T09:43:32Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689609773"
+    },
+    {
+      "completedAt": "2026-10-22T10:52:21Z",
+      "conclusion": "success",
+      "databaseId": 119689609822,
+      "name": "Wheel / musllinux-x86_64 / cp314",
+      "startedAt": "2026-10-22T09:11:41Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:11:44Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:11:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:11:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:46Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:11:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:46Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:11:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:46Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:11:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:58Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:11:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:58Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:11:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:11:58Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:11:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:14Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:11:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:15Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:52:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:16Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:52:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:16Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:52:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:18Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:52:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:52:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:19Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:52:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:52:19Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:52:19Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689609822"
+    },
+    {
+      "completedAt": "2026-10-22T11:41:22Z",
+      "conclusion": "success",
+      "databaseId": 119689609824,
+      "name": "Wheel / macos-x86_64 / cp314",
+      "startedAt": "2026-10-22T09:30:30Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:30:34Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:30:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:41Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:30:34Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:30:41Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:30:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:31:02Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:30:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:31:04Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:31:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:31:31Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:31:04Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:31:32Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:31:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:31:32Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:31:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:40:26Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:31:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:40:29Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T11:40:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:40:31Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T11:40:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:40:35Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T11:40:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:40:38Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T11:40:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:41:16Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T11:40:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:41:17Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T11:41:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:41:18Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T11:41:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:41:19Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T11:41:18Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689609824"
+    },
+    {
+      "completedAt": "2026-10-22T11:57:59Z",
+      "conclusion": "success",
+      "databaseId": 119689609927,
+      "name": "Wheel / windows-amd64 / cp314",
+      "startedAt": "2026-10-22T09:39:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:39:31Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:39:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:38Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:39:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:38Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:39:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:51Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:39:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:39:55Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:39:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:40:27Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:39:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:40:27Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:40:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:40:27Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:40:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:37Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:40:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:39Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T11:57:37Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:41Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T11:57:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:44Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T11:57:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T11:57:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:54Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T11:57:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:54Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T11:57:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:57Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T11:57:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:57Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T11:57:57Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689609927"
+    },
+    {
+      "completedAt": "2026-10-22T10:33:33Z",
+      "conclusion": "success",
+      "databaseId": 119689610027,
+      "name": "Wheel / manylinux-x86_64 / cp315",
+      "startedAt": "2026-10-22T09:43:40Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:43:43Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:43:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:45Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:43:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:45Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:43:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:45Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:43:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:45Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:43:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:59Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:43:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:59Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:43:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:59Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:43:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:28Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:43:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:28Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:33:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:29Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:33:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:29Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:33:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:31Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:33:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:31Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:33:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:31Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:33:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:31Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:33:31Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689610027"
+    },
+    {
+      "completedAt": "2026-10-22T10:03:13Z",
+      "conclusion": "success",
+      "databaseId": 119689610125,
+      "name": "Wheel / windows-arm64 / cp314",
+      "startedAt": "2026-10-22T09:43:15Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T09:43:18Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T09:43:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:31Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T09:43:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:31Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T09:43:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:44Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T09:43:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:43:50Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T09:43:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:44:21Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T09:43:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:44:21Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T09:44:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T09:44:21Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T09:44:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:02:58Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T09:44:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:02:59Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:02:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:00Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:02:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:02Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:03:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:03Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:03:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:06Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T10:03:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:06Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:03:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:11Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:03:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:11Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:03:11Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689610125"
+    },
+    {
+      "completedAt": "2026-10-22T10:18:49Z",
+      "conclusion": "success",
+      "databaseId": 119689610214,
+      "name": "Wheel / manylinux-aarch64 / cp315",
+      "startedAt": "2026-10-22T10:03:17Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:03:20Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:03:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:21Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:03:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:21Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:03:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:21Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:03:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:21Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:03:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:48Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:03:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:48Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:03:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:03:48Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:03:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:44Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:03:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:46Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:18:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:18:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:47Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:18:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:48Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:18:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:18:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:18:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:48Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:18:48Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689610214"
+    },
+    {
+      "completedAt": "2026-10-22T11:57:46Z",
+      "conclusion": "success",
+      "databaseId": 119689610319,
+      "name": "Wheel / musllinux-x86_64 / cp315",
+      "startedAt": "2026-10-22T10:12:10Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:12:12Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:12:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:14Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:12:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:14Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:12:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:14Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:12:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:14Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:12:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:30Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:12:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:30Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:12:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:12:30Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:12:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:39Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:12:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:40Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T11:57:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:41Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T11:57:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:41Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T11:57:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:43Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T11:57:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:43Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T11:57:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:43Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T11:57:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T11:57:43Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T11:57:43Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689610319"
+    },
+    {
+      "completedAt": "2026-10-22T10:39:17Z",
+      "conclusion": "success",
+      "databaseId": 119689610650,
+      "name": "Wheel / musllinux-aarch64 / cp315",
+      "startedAt": "2026-10-22T10:18:04Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:18:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:18:05Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:08Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:18:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:08Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:18:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:08Z",
+          "conclusion": "skipped",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:18:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:08Z",
+          "conclusion": "skipped",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:18:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:22Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:18:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:22Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:18:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:22Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:18:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:10Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:18:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:10Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:39:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:12Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:39:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:12Z",
+          "conclusion": "skipped",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:39:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:14Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:39:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:14Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:39:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:14Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:39:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:14Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:39:14Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689610650"
+    },
+    {
+      "completedAt": "2026-10-22T12:45:24Z",
+      "conclusion": "success",
+      "databaseId": 119689611385,
+      "name": "Wheel / macos-x86_64 / cp315",
+      "startedAt": "2026-10-22T10:33:39Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:33:47Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:33:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:51Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:33:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:33:51Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:33:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:34:12Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:33:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:34:14Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:34:12Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:34:41Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:34:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:34:43Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:34:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:34:43Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:34:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:43:57Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:34:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:44:03Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T12:43:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:44:07Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T12:44:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:44:10Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T12:44:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:44:14Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T12:44:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:18Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T12:44:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:19Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T12:45:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:20Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T12:45:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:21Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T12:45:20Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689611385"
+    },
+    {
+      "completedAt": "2026-10-22T10:39:04Z",
+      "conclusion": "success",
+      "databaseId": 119689611394,
+      "name": "Wheel / macos-arm64 / cp315",
+      "startedAt": "2026-10-22T10:18:53Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:18:56Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:18:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:59Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:18:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:18:59Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:18:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:19:10Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:18:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:19:11Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:19:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:19:24Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:19:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:19:24Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:19:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:19:24Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:19:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:39Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:19:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:40Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:38:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:42Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:38:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:45Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:38:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:47Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:38:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:54Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T10:38:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:55Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:38:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:38:57Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:38:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:02Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:38:57Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689611394"
+    },
+    {
+      "completedAt": "2026-10-22T10:58:54Z",
+      "conclusion": "success",
+      "databaseId": 119689611489,
+      "name": "Wheel / windows-arm64 / cp315",
+      "startedAt": "2026-10-22T10:39:19Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:39:22Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:39:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:35Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:39:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:36Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:39:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:51Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:39:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:57Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:39:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:40:39Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:39:57Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:40:39Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:40:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:40:40Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:40:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:41Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:40:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:42Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T10:58:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:43Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T10:58:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:44Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T10:58:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:45Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T10:58:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:48Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T10:58:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T10:58:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:53Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T10:58:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:58:53Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T10:58:53Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689611489"
+    },
+    {
+      "completedAt": "2026-10-22T12:20:36Z",
+      "conclusion": "success",
+      "databaseId": 119689611614,
+      "name": "Wheel / windows-amd64 / cp315",
+      "startedAt": "2026-10-22T10:39:06Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T10:39:08Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T10:39:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:15Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T10:39:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:15Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T10:39:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:25Z",
+          "conclusion": "success",
+          "name": "Run dtolnay/rust-toolchain@1.97.1",
+          "number": 4,
+          "startedAt": "2026-10-22T10:39:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:30Z",
+          "conclusion": "success",
+          "name": "Run Swatinem/rust-cache@v2",
+          "number": 5,
+          "startedAt": "2026-10-22T10:39:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:55Z",
+          "conclusion": "success",
+          "name": "Install wheel tooling",
+          "number": 6,
+          "startedAt": "2026-10-22T10:39:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:55Z",
+          "conclusion": "success",
+          "name": "Validate source versions",
+          "number": 7,
+          "startedAt": "2026-10-22T10:39:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T10:39:56Z",
+          "conclusion": "success",
+          "name": "Prepare wheel test reports",
+          "number": 8,
+          "startedAt": "2026-10-22T10:39:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:22Z",
+          "conclusion": "success",
+          "name": "Build, repair, and test installed wheels",
+          "number": 9,
+          "startedAt": "2026-10-22T10:39:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:23Z",
+          "conclusion": "success",
+          "name": "Validate repaired wheel archives",
+          "number": 10,
+          "startedAt": "2026-10-22T12:20:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:25Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 11,
+          "startedAt": "2026-10-22T12:20:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:27Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 12,
+          "startedAt": "2026-10-22T12:20:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:29Z",
+          "conclusion": "success",
+          "name": "Run actions/upload-artifact@v4",
+          "number": 13,
+          "startedAt": "2026-10-22T12:20:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:32Z",
+          "conclusion": "success",
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "number": 24,
+          "startedAt": "2026-10-22T12:20:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:32Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 25,
+          "startedAt": "2026-10-22T12:20:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:34Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 26,
+          "startedAt": "2026-10-22T12:20:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:20:34Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 27,
+          "startedAt": "2026-10-22T12:20:34Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119689611614"
+    },
+    {
+      "completedAt": "2026-10-22T12:45:47Z",
+      "conclusion": "success",
+      "databaseId": 119831830559,
+      "name": "Verify complete release artifact set",
+      "startedAt": "2026-10-22T12:45:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T12:45:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T12:45:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:31Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v5",
+          "number": 2,
+          "startedAt": "2026-10-22T12:45:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:31Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-10-22T12:45:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:35Z",
+          "conclusion": "success",
+          "name": "Run actions/download-artifact@v4",
+          "number": 4,
+          "startedAt": "2026-10-22T12:45:31Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:43Z",
+          "conclusion": "success",
+          "name": "Run python -m pip install packaging twine",
+          "number": 5,
+          "startedAt": "2026-10-22T12:45:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:45Z",
+          "conclusion": "success",
+          "name": "Require the complete selected wheel set and one source distribution",
+          "number": 6,
+          "startedAt": "2026-10-22T12:45:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:45Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 11,
+          "startedAt": "2026-10-22T12:45:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:45Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v5",
+          "number": 12,
+          "startedAt": "2026-10-22T12:45:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:45Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 13,
+          "startedAt": "2026-10-22T12:45:45Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119831830559"
+    },
+    {
+      "completedAt": "2026-10-22T12:53:13Z",
+      "conclusion": "success",
+      "databaseId": 119832019339,
+      "name": "pypi",
+      "startedAt": "2026-10-22T12:45:50Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-22T12:45:52Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-22T12:45:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:45:55Z",
+          "conclusion": "success",
+          "name": "Run actions/download-artifact@v4",
+          "number": 2,
+          "startedAt": "2026-10-22T12:45:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:53:11Z",
+          "conclusion": "success",
+          "name": "Run pypa/gh-action-pypi-publish@release/v1",
+          "number": 3,
+          "startedAt": "2026-10-22T12:45:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:53:11Z",
+          "conclusion": "success",
+          "name": "Post Run pypa/gh-action-pypi-publish@release/v1",
+          "number": 6,
+          "startedAt": "2026-10-22T12:53:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-22T12:53:11Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 7,
+          "startedAt": "2026-10-22T12:53:11Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119832019339"
+    },
+    {
+      "completedAt": "2026-10-22T12:45:47Z",
+      "conclusion": "skipped",
+      "databaseId": 119832021364,
+      "name": "testpypi",
+      "startedAt": "2026-10-22T12:45:48Z",
+      "status": "completed",
+      "steps": [],
+      "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406/job/119832021364"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/michael-L-i/fastscipy/actions/runs/39738398406"
+}

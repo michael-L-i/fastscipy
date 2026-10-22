@@ -1,0 +1,134 @@
+{
+  "fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_x86_64.whl": {
+    "size": 11936100,
+    "sha256": "b4864a72741e1f98acc34bd45044bdaf7c9cf1c8ff5c14305c8f0f922303b223"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_x86_64.whl": {
+    "size": 11924641,
+    "sha256": "06b7ebb903a0a2b9efc13663aeeb3f6482e2d521773f1e67fafd5ce8f394d6fd"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_x86_64.whl": {
+    "size": 9097886,
+    "sha256": "b3773f418a73882ac8aa429496ed5a7334e7a4b638fd0a7750cf90389539a779"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_x86_64.whl": {
+    "size": 9089527,
+    "sha256": "78c8946397cbec6e158ae5d7a91cc000a372f41cb52a3e34a851c77fd905b6b0"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_x86_64.whl": {
+    "size": 12011602,
+    "sha256": "cc1a4e1a4006807b6c0f3065234e72526a4c2891be0aedf1c159d2c44b2f587c"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_x86_64.whl": {
+    "size": 12024220,
+    "sha256": "c9d9e90f527f2acfad27bdf31867e84287bb5b89a250562b8b1d279976dc33a5"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_x86_64.whl": {
+    "size": 11923797,
+    "sha256": "9592131c3be3e8c33bf41bc115a168dec3cba41cd55aa47548217e1c67d9e98f"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_x86_64.whl": {
+    "size": 11932793,
+    "sha256": "a664dbefd458bf795ca80b0357b836e1ecccbfdf8c70ddcd7575cd35f922c3ec"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_x86_64.whl": {
+    "size": 12021236,
+    "sha256": "4076437d6cc3b63180c3fe6ae7f7e1655ede365020a2a8fcb09e696c62594981"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_x86_64.whl": {
+    "size": 12011085,
+    "sha256": "cb949808b885eba7e1579ba46424beca492f0f79b67b66effecb085003a2c634"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_x86_64.whl": {
+    "size": 9089203,
+    "sha256": "d132fa97372831808c3f45d633a20171d584320b81a7bb6493463b6de2a28df5"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_x86_64.whl": {
+    "size": 9097696,
+    "sha256": "0642e8f8f21706cfcd48529b8e001c526dfcc4e99904fc92fb860fd290c2becb"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-manylinux_2_28_aarch64.whl": {
+    "size": 4752282,
+    "sha256": "cecc387e0efa21eda3950332d3d1f8327b403b96f96e8ba29da11e9814441844"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-manylinux_2_28_aarch64.whl": {
+    "size": 4744108,
+    "sha256": "2fbe1df847b7a42fcd2516999723a6043eb6f9feb9b26a756fcc9c018e80a4ba"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-win_arm64.whl": {
+    "size": 4199696,
+    "sha256": "24ef4e9c88f243cc3c67568adf8ea382e08a476bddcb453df09d82a6f8895056"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-win_arm64.whl": {
+    "size": 4229101,
+    "sha256": "254b9cffe2fe64f598fd0642385bd3e333cb4b5d7ddfdf868564cb58a3df2070"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-manylinux_2_28_aarch64.whl": {
+    "size": 4744594,
+    "sha256": "638275e4a3fd1299017e268aa87b5654bc1541b90934f54d7a285977a23a57ed"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-manylinux_2_28_aarch64.whl": {
+    "size": 4750050,
+    "sha256": "a79481422e97189054e40eae7e87616077cdec2dbb53ec52754428ffc42e547b"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-win_arm64.whl": {
+    "size": 4229079,
+    "sha256": "3db88a3dc48731b0e474baab43fb8085294d21132de134ededd0d4d96665429a"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-win_arm64.whl": {
+    "size": 4199651,
+    "sha256": "3400ba4fcef88db38a43f991490a4c9c57b9e867fd488c2ee99824587d9dc790"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-win_amd64.whl": {
+    "size": 11527351,
+    "sha256": "1cf44aeb9d6073e1e828147ebcc80725d6d6854a201083109694b1f84c931223"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-win_amd64.whl": {
+    "size": 11551447,
+    "sha256": "6497ce8dbddc52efd5f2248b67a192f67aee85cd9c65ad855b4560666a2964fb"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-win_amd64.whl": {
+    "size": 11552513,
+    "sha256": "13259ddab758ff6fd2237c26774e5196cf75a6295267c099d7bbc5e0b16a6ffa"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-win_amd64.whl": {
+    "size": 11528353,
+    "sha256": "1b2dda420fc8c368bbd7d443854cd02bb217091865417d5c3cbe52c1b6b87c49"
+  },
+  "fastscipy-0.1.0a4.tar.gz": {
+    "size": 489135,
+    "sha256": "72a05d4a50d13209918260eb8e7cb7c17f35fd3786b53493bc7cf7e8ca88dfae"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-macosx_14_0_arm64.whl": {
+    "size": 4097992,
+    "sha256": "c663cd87235d782dd46e8dea9f46ff086603430e5e0296f504d506f5a4129e0e"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-macosx_14_0_arm64.whl": {
+    "size": 4078151,
+    "sha256": "61fcbd045b3ff493c2777e53961d45b853b0dabfda4271176e5b911ab893b682"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-macosx_14_0_arm64.whl": {
+    "size": 4076743,
+    "sha256": "05dc27763f64b5e461aee1be13cec557b249c1e50a768f4cb3e2681cbc44c97c"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-macosx_14_0_arm64.whl": {
+    "size": 4097006,
+    "sha256": "011e68ad611ef8159d5578f19af25d1453a8c444397e59d50f8c6c1653a625d2"
+  },
+  "fastscipy-0.1.0a4-cp312-cp312-musllinux_1_2_aarch64.whl": {
+    "size": 4818069,
+    "sha256": "6e2e8f40c1ed71a4f9a2b314d9a17aa2390c0d297eaa7d3938bccad14371b4ab"
+  },
+  "fastscipy-0.1.0a4-cp315-cp315-musllinux_1_2_aarch64.whl": {
+    "size": 4811070,
+    "sha256": "5e9b28ac6ddccfb62e8e1c4674307aa97037cd4cbb4a09e45e564e76497ee4f4"
+  },
+  "fastscipy-0.1.0a4-cp314-cp314-musllinux_1_2_aarch64.whl": {
+    "size": 4810461,
+    "sha256": "f7b5bfd6a01bbf40b2f02f447967a927dc039686c0a9460fce4a581b3a6ec2df"
+  },
+  "fastscipy-0.1.0a4-cp313-cp313-musllinux_1_2_aarch64.whl": {
+    "size": 4815381,
+    "sha256": "f94cea3f704b46fd50aae5755f8eafd2fb7f81076e4587a6438154e7769ba310"
+  }
+}

@@ -1,5 +1,8 @@
 name: Installed release pilots
 
+# Run after publication hashes match the approved 32-wheel and sdist artifacts.
+# These application pilots install PyPI binaries; they do not build this checkout.
+
 on:
   push:
     branches: [release-ops]

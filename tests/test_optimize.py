@@ -61,7 +61,7 @@ def test_lsq_linear_dense_unbounded(shape, threads):
             for method in ("trf", "bvls"):
                 check(
                     lambda: optimize.lsq_linear(matrix, rhs, method=method),
-                    reference_validation=_validate_lsq_cost,
+                    numerical_validation=_validate_lsq_cost,
                 )
             assert (matrix.tobytes(), rhs.tobytes()) == before
     A = np.ones(shape)
@@ -69,8 +69,9 @@ def test_lsq_linear_dense_unbounded(shape, threads):
 
 
 def _validate_lsq_cost(expected, actual):
-    # Only the observed alignment-sensitive dot-product cost may vary. The
-    # solution, residual, singular values, status and every other field stay exact.
+    # Explicit Intel numerical compatibility permits only the alignment-sensitive
+    # dot-product cost to vary. Solution, residual, singular values, status and
+    # every other field stay exact; no per-call variance observation is claimed.
     assert type(expected) is type(actual) is optimize.OptimizeResult
     assert expected.keys() == actual.keys()
     assert_identical(
@@ -95,6 +96,36 @@ def test_lsq_reference_validator_rejects_other_changes():
     ):
         with pytest.raises(AssertionError):
             _validate_lsq_cost(result, bad)
+
+
+def test_lsq_cost_validator_checks_shared_wrong_cost_independently():
+    # Agreement between two wrong results cannot substitute for the residual
+    # oracle, even when every other field is exactly identical.
+    wrong = optimize.OptimizeResult(fun=np.array([1.0, 2.0]), cost=np.float64(2.51), x=np.ones(1))
+    with pytest.raises(AssertionError):
+        _validate_lsq_cost(wrong, wrong)
+
+
+@pytest.mark.parametrize("cost", [np.float32(2.5), np.array(2.5), np.float64(np.inf), np.float64(-2.5)])
+def test_lsq_cost_validator_rejects_bad_cost_contract(cost):
+    expected = optimize.OptimizeResult(fun=np.array([1.0, 2.0]), cost=np.float64(2.5), x=np.ones(1))
+    with pytest.raises(AssertionError):
+        _validate_lsq_cost(expected, optimize.OptimizeResult(expected, cost=cost))
+
+
+@pytest.mark.parametrize("method", ["trf", "bvls"])
+def test_lsq_linear_exact_nonzero_residual(method, threads):
+    # Orthogonal coordinate columns and powers-of-two values make the solution,
+    # residual and nonzero objective exact regardless of BLAS buffer alignment.
+    matrix = np.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.0]])
+    rhs = np.array([2.0, 4.0, 1.0, -1.0])
+    before = matrix.tobytes(), rhs.tobytes()
+    result = check(lambda: optimize.lsq_linear(matrix, rhs, method=method))
+    assert_identical(result.x, np.array([2.0, 4.0]))
+    assert_identical(result.fun, np.array([0.0, 0.0, -1.0, 1.0]))
+    assert_identical(result.cost, np.float64(1.0))
+    assert result.success and result.status == 3 and result.nit == 0
+    assert before == (matrix.tobytes(), rhs.tobytes())
 
 
 @pytest.mark.parametrize(

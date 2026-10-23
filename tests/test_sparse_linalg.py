@@ -720,6 +720,8 @@ def test_composed_preconditioned_solver_history_and_residual(solver, maxiter):
         )
         assert history
         assert result[1] == (0 if maxiter is None else 1)
+        if maxiter == 1:
+            assert len(history) == 1
         if result[1] == 0:
             # Evaluate the original equation, avoiding the composed operator.
             with fastscipy.disabled():
@@ -727,5 +729,10 @@ def test_composed_preconditioned_solver_history_and_residual(solver, maxiter):
                 assert np.linalg.norm(residual) <= 1e-10 * np.linalg.norm(b)
         return result, history
 
-    check(run)
+    # Use the existing Intel Accelerate numerical contract for this solver
+    # trajectory, without claiming observed reference variance or byte identity.
+    # Assemble the equation independently of the composed LinearOperator.
+    equation = a + sparse.diags_array(diagonal, format="csr")
+    validation = _iteration_reference_validation(equation, b, 1e-10, scalar_history=solver is sl.gmres)
+    check(run, numerical_validation=validation)
     assert before == (a.data.tobytes(), b.tobytes(), diagonal.tobytes(), inverse.tobytes())

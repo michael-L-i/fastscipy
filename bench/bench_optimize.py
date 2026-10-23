@@ -44,3 +44,32 @@ def cases():
         True,
         _bfgs_reference_validation,
     )
+
+    from scipy.optimize import _numdiff
+    from scipy.sparse import eye_array
+
+    for n in (1000, 10000):
+        point = np.linspace(0.5, 1.0, n)
+        vector = np.ones(n)
+        pattern = eye_array(n, format="csc")
+        groups = np.zeros(n, dtype=int)
+        yield (
+            f"approx_derivative matrix-free action n={n}",
+            lambda point=point, vector=vector: _numdiff.approx_derivative(
+                lambda z: np.sin(z) + z * z, point, as_linear_operator=True
+            ).matvec(vector),
+        )
+        yield (
+            f"approx_derivative colored diagonal n={n}",
+            lambda point=point, pattern=pattern, groups=groups: _numdiff.approx_derivative(
+                lambda z: np.sin(z) + z * z, point, sparsity=(pattern, groups)
+            ),
+        )
+        identity = pattern.tocsr()
+        initial = np.full(n, 0.5)
+        yield (
+            f"least_squares scalar bounds sparse analytic n={n}",
+            lambda initial=initial, identity=identity: optimize.least_squares(
+                lambda z: z - 1.0, initial, jac=lambda z: identity
+            ),
+        )

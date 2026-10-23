@@ -342,3 +342,225 @@ def test_minimize_with_accelerated_hessian_product(method, threads):
         return result, history
 
     check(run)
+
+
+@pytest.mark.parametrize("n", [0, 1, 17, 1001])
+@pytest.mark.parametrize("bounds", [(-np.inf, np.inf), (-2, 3), (-0.0, 0.0), (np.float64(np.nan), 1.0)])
+def test_scalar_bounds_fill_identity_and_independence(n, bounds, threads):
+    from scipy.optimize import _numdiff
+    from scipy.optimize._lsq.least_squares import prepare_bounds
+
+    point = np.zeros(n, dtype=np.float32)
+    for call in (lambda: _numdiff._prepare_bounds(bounds, point), lambda: prepare_bounds(bounds, n)):
+        lower, upper = check(call)
+        for result, value in zip((lower, upper), bounds):
+            assert result.shape == (n,) and result.dtype == np.float64
+            assert result.flags.writeable and result.flags.owndata == (n == 0)
+            if n:
+                assert result.base.shape == (n,) and result.base.flags.owndata
+            assert_identical(result, np.full(n, value, dtype=np.float64))
+        assert not np.shares_memory(lower, upper)
+        assert not np.shares_memory(lower, point)
+        if n:
+            before = upper.tobytes()
+            lower[0] = 123.0
+            assert upper.tobytes() == before
+            assert np.all(point == 0)
+            assert_identical(call()[0], np.full(n, bounds[0], dtype=np.float64))
+
+
+@pytest.mark.parametrize(
+    "bounds",
+    [
+        [-np.inf, np.inf],
+        (np.array(-1.0), 2.0),
+        (np.float32(-1), 2),
+        (0,),
+        (0, 1, 2),
+        (0, 10**400),
+        (np.zeros(3), np.ones(3)),
+    ],
+)
+def test_scalar_bounds_fill_declines(bounds):
+    from scipy.optimize import _numdiff
+    from scipy.optimize._lsq.least_squares import prepare_bounds
+    from fastscipy._optimize import _prepare_bounds_fast, _least_squares_bounds_fast
+
+    point = np.ones(3)
+    assert _prepare_bounds_fast(bounds, point) is NotImplemented
+    assert _least_squares_bounds_fast(bounds, 3) is NotImplemented
+    check(lambda: _numdiff._prepare_bounds(bounds, point), fast=False)
+    check(lambda: prepare_bounds(bounds, 3), fast=False)
+
+
+@pytest.mark.parametrize("method", ["2-point", "3-point", "cs"])
+@pytest.mark.parametrize("bounds", [(-np.inf, np.inf), (0.0, 2.0)])
+def test_scalar_bounds_sparse_jacobian_callbacks(method, bounds, threads):
+    from scipy.optimize import _numdiff
+    from scipy.sparse import eye_array
+
+    point = np.full(1000, 0.5)
+    pattern = eye_array(point.size, format="csc")
+    groups = np.zeros(point.size, dtype=int)
+
+    def run():
+        calls = []
+
+        def residual(z):
+            calls.append(z.copy())
+            return 2 * z - 1
+
+        jac, info = _numdiff.approx_derivative(
+            residual, point, method=method, bounds=bounds, sparsity=(pattern, groups), full_output=True
+        )
+        return jac, info, calls
+
+    jac, info, calls = check(run)
+    assert jac.shape == (1000, 1000) and jac.nnz == 1000
+    np.testing.assert_allclose(jac.data, 2.0, rtol=1e-10, atol=0)
+    assert info["nfev"] == len(calls) == (3 if method == "3-point" else 2)
+    assert np.all(point == 0.5)
+
+
+@pytest.mark.parametrize("method", ["2-point", "3-point", "cs"])
+def test_scalar_bounds_matrix_free_action(method, threads):
+    from scipy.optimize import _numdiff
+
+    point = np.full(1000, 0.5)
+    vector = np.ones(point.size)
+
+    def run():
+        calls = []
+
+        def residual(z):
+            calls.append(z.copy())
+            return 2 * z - 1
+
+        jac = _numdiff.approx_derivative(residual, point, method=method, as_linear_operator=True)
+        return jac.matvec(vector), calls
+
+    result, calls = check(run)
+    np.testing.assert_allclose(result, 2.0, rtol=2e-7, atol=0)
+    assert len(calls) == (3 if method == "3-point" else 2)
+    assert np.all(point == 0.5)
+
+
+@pytest.mark.parametrize("bounds", [(-np.inf, np.inf), (0.0, 2.0)])
+def test_least_squares_scalar_bounds_public(bounds, threads):
+    from scipy.sparse import eye_array
+
+    point = np.full(32, 0.5)
+    pattern = eye_array(point.size, format="csr")
+
+    def run():
+        calls = []
+
+        def residual(z):
+            calls.append(z.copy())
+            return z - 1
+
+        result = optimize.least_squares(residual, point, bounds=bounds, jac_sparsity=pattern)
+        return result, calls
+
+    result, calls = check(run)
+    np.testing.assert_allclose(result.x, 1.0, rtol=1e-7, atol=0)
+    assert result.success and result.cost < 1e-14 and len(calls) >= 4
+    assert np.all(point == 0.5)
+
+
+def test_scalar_bounds_patch_lifecycle():
+    from scipy.optimize import _numdiff
+    import importlib
+    import inspect
+
+    least_squares = importlib.import_module("scipy.optimize._lsq.least_squares")
+
+    original_numdiff = _numdiff._prepare_bounds.__wrapped__
+    original_lsq = least_squares.prepare_bounds.__wrapped__
+    for wrapped, original in (
+        (_numdiff._prepare_bounds, original_numdiff),
+        (least_squares.prepare_bounds, original_lsq),
+    ):
+        assert wrapped.__name__ == original.__name__
+        assert inspect.signature(wrapped) == inspect.signature(original)
+    fastscipy.unpatch(["optimize"])
+    try:
+        assert _numdiff._prepare_bounds is original_numdiff
+        assert least_squares.prepare_bounds is original_lsq
+    finally:
+        fastscipy.patch(["optimize"])
+    before = fastscipy.stats().get(("_prepare_bounds", "fast"), 0)
+    with fastscipy.disabled():
+        _numdiff._prepare_bounds((-np.inf, np.inf), np.ones(3))
+    assert fastscipy.stats().get(("_prepare_bounds", "fast"), 0) == before
+
+
+@pytest.mark.parametrize(
+    "bounds",
+    [
+        None,
+        1,
+        (False, True),
+        (1, 0),
+        (0, 0),
+        (np.nan, np.inf),
+        (-np.inf, np.nan),
+        (0, 10**400),
+        (np.array(-1.0), np.array(2.0)),
+        (np.zeros(3), np.ones(3)),
+    ],
+)
+def test_public_scalar_bound_validation_and_callback_errors(bounds):
+    point = np.full(3, 0.5)
+
+    def run():
+        calls = []
+
+        def residual(z):
+            calls.append(z.copy())
+            raise RuntimeError("residual sentinel")
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            try:
+                optimize.least_squares(residual, point, bounds=bounds)
+            except Exception as error:
+                result = type(error), str(error)
+            else:
+                raise AssertionError("expected validation or callback error")
+        return result, calls, [(w.category, str(w.message)) for w in caught]
+
+    check(run, fast=False)
+    assert np.all(point == 0.5)
+
+
+def test_scalar_bound_array_subclasses_and_shape_fallbacks():
+    from fastscipy._optimize import _prepare_bounds_fast, _least_squares_bounds_fast
+    from scipy.optimize import _numdiff
+
+    class Array(np.ndarray):
+        pass
+
+    point = np.ones(3).view(Array)
+    assert _prepare_bounds_fast((-np.inf, np.inf), point) is NotImplemented
+    assert _prepare_bounds_fast((-np.inf, np.inf), np.ones((1, 3))) is NotImplemented
+    assert _least_squares_bounds_fast((-np.inf, np.inf), True) is NotImplemented
+    assert _least_squares_bounds_fast((-np.inf, np.inf), -1) is NotImplemented
+    bounds = (np.zeros(3).view(Array), np.ones(3).view(Array))
+    assert _prepare_bounds_fast(bounds, np.ones(3)) is NotImplemented
+    lower, upper = check(lambda: _numdiff._prepare_bounds(bounds, np.ones(3)), fast=False)
+    assert np.shares_memory(lower, bounds[0]) and np.shares_memory(upper, bounds[1])
+
+
+def test_scalar_bounds_random_values_and_nan_payloads(threads):
+    from scipy.optimize import _numdiff
+    from scipy.optimize._lsq.least_squares import prepare_bounds
+
+    local = np.random.default_rng(988)
+    values = list(local.standard_normal(12)) + [-(2**63), 2**64 - 1]
+    values += list(np.array([0x7FF8000000000042, 0xFFF8000000000031], dtype=np.uint64).view(np.float64))
+    point = np.ones(37)
+    for lower, upper in zip(values, reversed(values)):
+        bounds = (lower, upper)
+        check(lambda: _numdiff._prepare_bounds(bounds, point))
+        check(lambda: prepare_bounds(bounds, point.size))

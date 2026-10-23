@@ -2,6 +2,8 @@
 
 The dense least-squares path uses SciPy's exact NumPy solve and result packing.
 Rosenbrock Hessians allocate their three diagonals directly in one output matrix.
+Scalar bounds are filled directly for least_squares and numerical differentiation,
+avoiding one concatenation operand per parameter in NumPy's resize implementation.
 
 Finite-difference gradients (``approx_fprime``, and the numerical Jacobians of
 ``minimize``, ``least_squares``...) call the user function through ``_Fun_Wrapper``,
@@ -14,6 +16,7 @@ import functools
 import numpy as np
 import scipy.optimize as optimize
 from scipy.optimize import _numdiff
+from scipy.optimize._lsq.least_squares import prepare_bounds as _least_squares_prepare_bounds
 from scipy.optimize._lsq.lsq_linear import TERMINATION_MESSAGES, OptimizeResult
 
 from . import _patch
@@ -21,6 +24,32 @@ from . import _patch
 
 def _dense(a, ndim):
     return type(a) is np.ndarray and a.dtype == np.float64 and a.ndim == ndim
+
+
+def _scalar_bounds_fast(bounds, n):
+    """Fill scalar bounds directly instead of concatenating one scalar per entry."""
+    if not (
+        type(bounds) is tuple
+        and len(bounds) == 2
+        and all(type(b) in (float, int, np.float64) for b in bounds)
+        and all(type(b) is not int or -(2**63) <= b < 2**64 for b in bounds)
+    ):
+        return NotImplemented
+    lb, ub = np.full(n, bounds[0], dtype=float), np.full(n, bounds[1], dtype=float)
+    # np.resize returns a view of an independent allocation when n > 0.
+    return (lb.view(), ub.view()) if n else (lb, ub)
+
+
+def _prepare_bounds_fast(bounds, x0):
+    if type(x0) is not np.ndarray or x0.ndim != 1:
+        return NotImplemented
+    return _scalar_bounds_fast(bounds, x0.size)
+
+
+def _least_squares_bounds_fast(bounds, n):
+    if type(n) is not int or n < 0:
+        return NotImplemented
+    return _scalar_bounds_fast(bounds, n)
 
 
 def _rosen_hess_fast(x):
@@ -149,6 +178,10 @@ def _lsq_linear_fast(
 
 def patch():
     _patch.require_validated("1.18.")
+    old = _numdiff._prepare_bounds
+    _patch.rebind(old, _patch.wrap(old, _prepare_bounds_fast))
+    old = _least_squares_prepare_bounds
+    _patch.rebind(old, _patch.wrap(old, _least_squares_bounds_fast))
     original = _numdiff._Fun_Wrapper.__call__
 
     # Not _patch.wrap: a RuntimeError from the user's function must not trigger a second call.
@@ -191,3 +224,5 @@ def smoke():
     b = np.array([1.0, 2.0, 1.0])
     optimize.rosen_hess(b), optimize.lsq_linear(A, b)
     optimize.rosen_der(b), optimize.rosen_hess_prod(b, b)
+    _numdiff.approx_derivative(np.sin, b, as_linear_operator=True).matvec(b)
+    optimize.least_squares(lambda z: z - 1.0, np.ones(2))

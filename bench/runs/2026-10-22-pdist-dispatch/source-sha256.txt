@@ -1,0 +1,4 @@
+6a171c00a85f1dc3fbf6747cda53d2d2b83b9f49bdf5ea59395282066222b2ee  python/fastscipy/_spatial.py
+fd5e5e4f1aee778b1ba297be298bb0607cb64c78ba1227fc3506311f643746d0  tests/test_spatial_dispatch.py
+6dd715d723008f20407ac2aa92b187fb8114f7b11a100ee27423e2fe0d641479  bench/bench_spatial.py
+2fc1ca84915d8c6de2ad942bfd784a4fa1c84bcada9d86f29c2ff7194b83576d  bench/runs/2026-10-22-pdist-dispatch/compare.py

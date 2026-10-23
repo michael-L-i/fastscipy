@@ -1,10 +1,12 @@
-"""Threaded scipy.spatial: cdist/pdist by row blocks, and KDTree queries.
+"""SciPy distance dispatch, threaded row blocks, and KDTree queries.
 
 ``cdist`` and ``pdist`` run SciPy's own GIL-releasing kernel on blocks of rows;
 every output element comes from the same per-pair loop, so bytes are identical
 (checked per metric; mahalanobis and seuclidean estimate statistics once from
 the whole input, and pdist/dice differs, so it is left to SciPy). KDTree
 queries pass ``workers`` when the caller left the default.
+Small plain float64 ``pdist`` calls go straight to SciPy's registered compiled
+metric, bypassing array-namespace dispatch that is redundant for exact ndarrays.
 """
 
 import numpy as np
@@ -37,6 +39,9 @@ _CDIST = {
     "mahalanobis",
 }
 _PDIST = _CDIST - {"dice"}
+# These entries are SciPy's pybind kernels, without Python statistics or
+# preprocessing. Keep the same kernel (including pdist/dice's own arithmetic).
+_DIRECT_PDIST = _CDIST - {"cosine", "correlation", "jensenshannon", "seuclidean", "mahalanobis"}
 _STATISTICS = {"seuclidean": "V", "mahalanobis": "VI"}
 _WEIGHTED = _CDIST - {"cosine", "correlation", "jensenshannon", *_STATISTICS}
 _OPTIONS = {
@@ -127,7 +132,20 @@ def _cdist_fast(original):
 
 
 def _pdist_fast(cdist):
+    direct = {name: dist._METRIC_ALIAS[name].pdist_func for name in _DIRECT_PDIST}
+
     def fast(X, *args, **kw):
+        if (
+            len(args) <= 1
+            and (not kw or (not args and len(kw) == 1 and "metric" in kw))
+            and type(X) is np.ndarray
+            and X.ndim == 2
+            and X.dtype == np.float64
+            and X.shape[0] * X.size < 2 * _WORK
+        ):
+            metric = args[0] if args else kw.get("metric", "euclidean")
+            if type(metric) is str and metric in direct:
+                return direct[metric](X, out=None)
         metric = _metric(args, kw, _PDIST, X)
         if not metric:
             return NotImplemented

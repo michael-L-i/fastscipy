@@ -35,6 +35,7 @@ COMPONENTS = (
     "cluster",
     "integrate",
     "optimize",
+    "fft",
 )
 _status = {}
 _disabled_lock = threading.Lock()

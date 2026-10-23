@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 AREAS = {
     "cluster",
     "csgraph",
+    "fft",
     "integrate",
     "interpolate",
     "linalg",
@@ -211,7 +212,7 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     benchmark_files = sorted((ROOT / "bench").glob("bench_*.py"))
     if not args.tests_only and {path.stem.removeprefix("bench_") for path in benchmark_files} != AREAS:
-        parser.error("Run from a complete source checkout containing benchmarks for all 13 areas")
+        parser.error(f"Run from a complete source checkout containing benchmarks for all {len(AREAS)} areas")
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
     os.environ.setdefault("SCIPY_AVAILABLE_MEM", f"{max(1, args.max_rss_mb // 2)}Mib")

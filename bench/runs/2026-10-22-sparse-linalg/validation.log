@@ -1,0 +1,120 @@
+RUN ['/private/tmp/fastscipy-portability-a2-mac/bin/python', '-m', 'pytest', 'tests/test_sparse_linalg.py', '-q']
+........................................................................ [ 30%]
+........................................................................ [ 60%]
+........................................................................ [ 90%]
+........................                                                 [100%]
+240 passed in 0.77s
+RUN ['/private/tmp/fastscipy-portability-a2-mac/bin/python', 'bench/run.py', 'sparse_linalg', '--budget', '0.03', '--check', '--output-dir', 'bench/runs/2026-10-22-sparse-linalg/benchmark']
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| sparse_linalg: LinearOperator CSR rmatvec float64 n=32 x100 calls | 0.263 | 0.134 | 0.137 | 2.0 | 1.9 | yes |
+| sparse_linalg: lsqr tridiagonal float64 n=32 | 0.414 | 0.313 | 0.312 | 1.3 | 1.3 | yes |
+| sparse_linalg: lsmr tridiagonal float64 n=32 | 0.406 | 0.318 | 0.308 | 1.3 | 1.3 | yes |
+| sparse_linalg: LinearOperator CSR rmatvec float64 n=128 x100 calls | 0.283 | 0.156 | 0.158 | 1.8 | 1.8 | yes |
+| sparse_linalg: lsqr tridiagonal float64 n=128 | 1.995 | 1.542 | 1.525 | 1.3 | 1.3 | yes |
+| sparse_linalg: lsmr tridiagonal float64 n=128 | 1.643 | 1.288 | 1.264 | 1.3 | 1.3 | yes |
+| sparse_linalg: LinearOperator CSR rmatvec complex128 n=32 x100 calls | 0.261 | 0.136 | 0.137 | 1.9 | 1.9 | yes |
+| sparse_linalg: lsqr tridiagonal complex128 n=32 | 0.479 | 0.372 | 0.375 | 1.3 | 1.3 | yes |
+| sparse_linalg: lsmr tridiagonal complex128 n=32 | 0.467 | 0.367 | 0.371 | 1.3 | 1.3 | yes |
+| sparse_linalg: LinearOperator CSR rmatvec complex128 n=128 x100 calls | 0.280 | 0.155 | 0.156 | 1.8 | 1.8 | yes |
+| sparse_linalg: lsqr tridiagonal complex128 n=128 | 2.295 | 1.824 | 1.817 | 1.3 | 1.3 | yes |
+| sparse_linalg: lsmr tridiagonal complex128 n=128 | 1.868 | 1.496 | 1.484 | 1.2 | 1.3 | yes |
+| sparse_linalg: LinearOperator CSR matvec n=32 x100 calls | 0.244 | 0.126 | 0.125 | 1.9 | 2.0 | yes |
+| sparse_linalg: cg tridiagonal n=32 | 0.171 | 0.112 | 0.114 | 1.5 | 1.5 | yes |
+| sparse_linalg: bicgstab tridiagonal n=32 | 0.249 | 0.165 | 0.164 | 1.5 | 1.5 | yes |
+| sparse_linalg: gmres tridiagonal n=32 | 1.097 | 0.991 | 0.995 | 1.1 | 1.1 | yes |
+| sparse_linalg: LinearOperator CSR matvec n=256 x100 calls | 0.275 | 0.148 | 0.147 | 1.9 | 1.9 | yes |
+| sparse_linalg: cg tridiagonal n=256 | 0.558 | 0.362 | 0.360 | 1.5 | 1.5 | yes |
+| sparse_linalg: bicgstab tridiagonal n=256 | 0.800 | 0.542 | 0.536 | 1.5 | 1.5 | yes |
+| sparse_linalg: gmres tridiagonal n=256 | 4.733 | 4.330 | 4.318 | 1.1 | 1.1 | yes |
+| sparse_linalg: LinearOperator composed regularization n=32 x100 calls | 0.509 | 0.241 | 0.242 | 2.1 | 2.1 | yes |
+| sparse_linalg: cg regularized Jacobi n=32 | 0.134 | 0.080 | 0.080 | 1.7 | 1.7 | yes |
+| sparse_linalg: gmres regularized Jacobi n=32 | 0.467 | 0.403 | 0.397 | 1.2 | 1.2 | yes |
+| sparse_linalg: LinearOperator composed regularization n=256 x100 calls | 0.544 | 0.274 | 0.272 | 2.0 | 2.0 | yes |
+| sparse_linalg: cg regularized Jacobi n=256 | 0.164 | 0.099 | 0.098 | 1.7 | 1.7 | yes |
+| sparse_linalg: gmres regularized Jacobi n=256 | 0.658 | 0.578 | 0.577 | 1.1 | 1.1 | yes |
+| sparse_linalg: LinearOperator composed regularization n=4096 x100 calls | 1.139 | 0.840 | 0.824 | 1.4 | 1.4 | yes |
+| sparse_linalg: cg regularized Jacobi n=4096 | 0.476 | 0.397 | 0.392 | 1.2 | 1.2 | yes |
+| sparse_linalg: gmres regularized Jacobi n=4096 | 1.396 | 1.313 | 1.303 | 1.1 | 1.1 | yes |
+| sparse_linalg: LinearOperator integer fallback control x100 calls | 0.135 | 0.142 | 0.142 | 1.0 | 1.0 | yes |
+| sparse_linalg: LinearOperator batched fallback control x100 calls | 0.165 | 0.175 | 0.178 | 0.9 | 0.9 | yes |
+| **sparse_linalg geomean (byte-identical cases)** | | | | **1.4** | **1.4** | |
+RUN ['/private/tmp/fastscipy-portability-a2-mac/bin/python', 'tools/scipy_suite.py', '--output-dir', 'bench/runs/2026-10-22-sparse-linalg/upstream', '--pyargs', 'scipy.sparse.linalg.tests.test_interface', 'scipy.sparse.linalg._isolve.tests.test_iterative', '-q']
+$ /private/tmp/fastscipy-portability-a2-mac/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=/private/tmp/fastscipy-next/sparse/bench/runs/2026-10-22-sparse-linalg/upstream/0-False.quarantine.json --junitxml=/private/tmp/fastscipy-next/sparse/bench/runs/2026-10-22-sparse-linalg/upstream/0-False.xml --pyargs scipy.sparse.linalg.tests.test_interface scipy.sparse.linalg._isolve.tests.test_iterative -q
+........................................................................ [  4%]
+..........................ss........ss........ss........ss........ss.... [  9%]
+....ss........ss........ss........ss........ss........ss........ss...... [ 14%]
+..ss........ss........ss........ss........ss........ss.................. [ 18%]
+...................s.......s...s...s...s...s...s...s...s...s...s...s...s [ 23%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s................ [ 28%]
+...............s.......s...s...s...s...s...s...s...s.sss...s...s...s...s [ 32%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 37%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 42%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 46%]
+...s...s...s...s...s...s...s..ss...s...s...s...s...s...s...s...s...s...s [ 51%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 56%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 61%]
+...s...s...s..ss...s...s...s...s...s...s...s...s...s...s...s...s...ss.ss [ 65%]
+s.sss.ss...s...s...s...ss.sss.ss..s.........s.........s.........s....... [ 70%]
+..s.........x.........x.......s.s...sss...x.......s.s........s.s.s.s.s.s [ 75%]
+.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s [ 79%]
+.s.ss..s.s.s.s.s.s.s.sss.s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s [ 84%]
+.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.s [ 89%]
+.ss..s.s.sss.s.s.s.sss.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s [ 93%]
+.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.sss.s.s.s.sssss.s.s.s.s.s.s.s.s.s.s [ 98%]
+.s.s.s.s.ss..........                                                    [100%]
+=============================== warnings summary ===============================
+../../fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+::test_maxiter_worsening[gmres-numpy]
+::test_maxiter_worsening[lgmres-numpy]
+::test_maxiter_worsening[qmr-numpy]
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/_external/array_api_compat/numpy/_aliases.py:94: ComplexWarning: Casting complex values to real discards the imaginary part
+    return np.array(obj, copy=copy, dtype=dtype, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+$ /private/tmp/fastscipy-portability-a2-mac/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=/private/tmp/fastscipy-next/sparse/bench/runs/2026-10-22-sparse-linalg/upstream/0-True.quarantine.json --junitxml=/private/tmp/fastscipy-next/sparse/bench/runs/2026-10-22-sparse-linalg/upstream/0-True.xml --pyargs scipy.sparse.linalg.tests.test_interface scipy.sparse.linalg._isolve.tests.test_iterative -q
+........................................................................ [  4%]
+..........................ss........ss........ss........ss........ss.... [  9%]
+....ss........ss........ss........ss........ss........ss........ss...... [ 14%]
+..ss........ss........ss........ss........ss........ss.................. [ 18%]
+...................s.......s...s...s...s...s...s...s...s...s...s...s...s [ 23%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s................ [ 28%]
+...............s.......s...s...s...s...s...s...s...s.sss...s...s...s...s [ 32%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 37%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 42%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 46%]
+...s...s...s...s...s...s...s..ss...s...s...s...s...s...s...s...s...s...s [ 51%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 56%]
+...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s [ 61%]
+...s...s...s..ss...s...s...s...s...s...s...s...s...s...s...s...s...ss.ss [ 65%]
+s.sss.ss...s...s...s...ss.sss.ss..s.........s.........s.........s....... [ 70%]
+..s.........x.........x.......s.s...sss...x.......s.s........s.s.s.s.s.s [ 75%]
+.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s [ 79%]
+.s.ss..s.s.s.s.s.s.s.sss.s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s [ 84%]
+.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.s [ 89%]
+.ss..s.s.sss.s.s.s.sss.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s [ 93%]
+.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.sss.s.s.s.sssss.s.s.s.s.s.s.s.s.s.s [ 98%]
+.s.s.s.s.ss..........                                                    [100%]
+=============================== warnings summary ===============================
+../../fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+::test_maxiter_worsening[gmres-numpy]
+::test_maxiter_worsening[lgmres-numpy]
+::test_maxiter_worsening[qmr-numpy]
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/_external/array_api_compat/numpy/_aliases.py:94: ComplexWarning: Casting complex values to real discards the imaginary part
+    return np.array(obj, copy=copy, dtype=dtype, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on'}
+fastscipy: 147502 fast-path calls, 0 fast-path errors
+
+1533 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

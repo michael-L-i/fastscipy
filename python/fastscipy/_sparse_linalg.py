@@ -46,6 +46,10 @@ def patch():
             return original(self, x, adjoint)
         _patch.counts["LinearOperator._shared_matvec", "fast"] += 1
         y = self._rmatvec(x) if adjoint else self._matvec(x)
+        # NumPy's array-api wrapper ultimately calls this same method. Keep
+        # subclass/array-like dispatch, and still return the reshaped view.
+        if type(y) is np.ndarray:
+            return y.reshape((outer,))
         return _NP.reshape(y, (outer,))
 
     _patch.replace(LinearOperator, "_shared_matvec", matvec)

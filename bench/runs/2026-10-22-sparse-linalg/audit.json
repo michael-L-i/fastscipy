@@ -1,0 +1,60 @@
+{
+  "scope": "Sparse linear algebra dispatch audit; no claim of a 3x solver speedup or universal SciPy optimality.",
+  "base_revision": "f60dca00fc03bde702a2ee24e17b1c7c68b276c0",
+  "environment": {
+    "platform": "macOS arm64",
+    "python": "3.13.12",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "native_threads": [
+      1,
+      2
+    ],
+    "blas_threads": 1,
+    "source": "Worktree Python source with unchanged published a4 native symlink. The upstream manifest distribution metadata says a2 for the reused interpreter, not the source imported through PYTHONPATH."
+  },
+  "retained": {
+    "candidate": "Direct ndarray.reshape for exact ndarray LinearOperator callback outputs",
+    "reason": "The NumPy array-api wrapper delegates to np.reshape, which delegates to this same ndarray method. Preserve reshaped view creation, dtype, shape, strides, ownership/writeability, subclass dispatch, callback order and exceptions. Solver arithmetic remains SciPy.",
+    "incremental_vs_old_fastscipy": {
+      "small_csr_matvec_n32_n256": "1.22–1.28x",
+      "small_custom_matvec_n32_n256": "1.39–1.46x",
+      "small_composed_matvec_n32_n256": "1.30–1.34x",
+      "cg_composed_n32_n256": "1.22–1.25x",
+      "cg_n4096": "1.05x",
+      "gmres_n32_n256_n4096": "1.02–1.06x"
+    },
+    "plain_scipy_comparison": "See benchmark/sparse_linalg.json; standard area benchmark records plain-SciPy ratios, not incremental ratios. New regularized Jacobi CG is about 1.67x/1.66x/1.20x at n=32/256/4096; GMRES about 1.16x/1.14x/1.06x."
+  },
+  "rejected": [
+    {
+      "candidate": "Direct same-dtype CSR/CSC _sparsetools dispatch inside MatrixLinearOperator",
+      "reason": "No material improvement beyond direct reshape; added guards erase the Python dispatch savings. One measured GMRES case regressed versus old fastscipy. Would also require additional class/instance override-contract coverage. Not included in production."
+    },
+    {
+      "candidate": "Replacement CG/GMRES loops or a new SpMV implementation",
+      "reason": "Source audit found existing solver arithmetic already uses NumPy/BLAS and SciPy native SpMV. Changing reduction order or iteration policy is outside the exact contract; no numerical-policy exemption or new native kernel proposed."
+    },
+    {
+      "candidate": "Sparse stacking and diagonal constructors",
+      "reason": "Prior 2026-10-19 candidate-audit records major-axis/small-block regressions and marginal diagonal wins; not reintroduced."
+    }
+  ],
+  "measurement": {
+    "probe": "probe-results.json",
+    "method": "Median of five repeated timings, 100 calls per solver repeat and 2000 calls per isolated operator repeat. Identical inputs and native=1/BLAS=1 for plain SciPy, pinned old fastscipy, reshape candidate and rejected native candidate. Modes ran in fixed order, so these are exploratory local timings, not cross-platform performance guarantees.",
+    "correctness": "Probe compared exact CG/GMRES full results and callback histories against genuinely unpatched SciPy and checked independent equation residuals. No new tolerance or iteration exemptions."
+  },
+  "validation": {
+    "project": "240 passed in tests/test_sparse_linalg.py, including native thread settings 1 and 2.",
+    "benchmark": "31 cases byte-identical; all expected fast paths and --check thresholds pass, including two declined controls.",
+    "upstream": "1533 outcomes matched in paired test_interface and test_iterative runs; 0 changed outcomes, 0 incomplete pairs, 147502 fast-path calls, 0 fast-path errors. Array API backend skips and existing xfails matched; no quarantine activated.",
+    "resources": "Probe: 8.46s / 56.0MiB. Validation: 10.57s / 246.4MiB. Each serialized by heavy.lock and tools/platform_suite.run with 512MiB cap and timeout 120s / 180s; native 1/2, BLAS 1; no build.",
+    "lint": "ruff check and format checks plus git diff --check.",
+    "limits": "Targeted sparse operator and iterative upstream modules, not all scipy.sparse.linalg. No new architecture test run; implementation is portable Python using the identical NumPy ndarray method."
+  },
+  "reproduce": [
+    "Under the coordination lock/resource monitor, run python bench/runs/2026-10-22-sparse-linalg/probe.py from the repository root. It reconstructs the old implementation from the pinned git commit.",
+    "Run python bench/runs/2026-10-22-sparse-linalg/validate.py with PYTHONPATH=python, native threads=2, BLAS threads=1, SCIPY_AVAILABLE_MEM=256Mib, and a process-tree cap. The script executes tests, benchmark, and paired upstream sequentially."
+  ]
+}

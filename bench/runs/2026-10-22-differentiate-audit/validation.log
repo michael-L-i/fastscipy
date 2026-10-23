@@ -1,0 +1,360 @@
+...................................                                      [100%]
+35 passed in 0.60s
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python": "3.13.12",
+  "scipy": "1.18.1",
+  "numpy": "2.5.4",
+  "fastscipy": "0.1.0a4",
+  "threads": 1,
+  "thread_environment": {
+    "FASTSCIPY_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "scipy_source": "/private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/differentiate/_differentiate.py",
+  "scipy_source_sha256": "0ea78f4e88f000a330b5af615a401239b23fb63c7e027c414a665b7cdea58c97",
+  "number": 20,
+  "repeat": 5,
+  "cases": {
+    "derivative_scalar": {
+      "plain": {
+        "seconds_per_call": [
+          0.0002005979506066069,
+          0.00018307499994989483,
+          0.00019076669996138663,
+          0.0001770625007338822,
+          0.00018082709866575896
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "previous": {
+        "seconds_per_call": [
+          0.00018390209879726171,
+          0.00019178334914613516,
+          0.0001813208480598405,
+          0.00017870414885692298,
+          0.00018201664788648487
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "updates": {
+        "seconds_per_call": [
+          0.00017141664866358042,
+          0.0001651770988246426,
+          0.00016650834877509623,
+          0.00016906249802559615,
+          0.00016674580110702663
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_alias": {
+        "seconds_per_call": [
+          0.00019388959917705507,
+          0.00018544789927545934,
+          0.00017683125042822212,
+          0.00018810415058396758,
+          0.0001817666518036276
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_and_updates": {
+        "seconds_per_call": [
+          0.00016559584764763713,
+          0.00016400000022258608,
+          0.00016975624894257634,
+          0.00017648539796937256,
+          0.00016876044974196703
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_subclass": {
+        "seconds_per_call": [
+          0.0001846667000791058,
+          0.00018060834845528005,
+          0.00017969165055546908,
+          0.00018227079999633133,
+          0.00017867499846033753
+        ],
+        "result_and_callback_trace_identical": true
+      }
+    },
+    "derivative_32": {
+      "plain": {
+        "seconds_per_call": [
+          0.00020722500048577785,
+          0.00019237295200582593,
+          0.00019261045090388507,
+          0.00020549164910335093,
+          0.0002036520978435874
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "previous": {
+        "seconds_per_call": [
+          0.000192304200027138,
+          0.00019709790067281573,
+          0.00019456040172372013,
+          0.00019526039832271636,
+          0.0001994458492845297
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "updates": {
+        "seconds_per_call": [
+          0.0001792541501345113,
+          0.00018320209928788245,
+          0.00017704585043247788,
+          0.0001778978999936953,
+          0.00018623335054144264
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_alias": {
+        "seconds_per_call": [
+          0.00019874375138897448,
+          0.0002051937481155619,
+          0.00019617915095295757,
+          0.00019827289797831328,
+          0.00019685834995470942
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_and_updates": {
+        "seconds_per_call": [
+          0.00018248124979436398,
+          0.00018613124848343432,
+          0.00017813125159591437,
+          0.00017825835093390196,
+          0.00018158750026486814
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_subclass": {
+        "seconds_per_call": [
+          0.0001911416504299268,
+          0.00019744790042750538,
+          0.00019130204746033996,
+          0.00019583954999689013,
+          0.00019471045234240592
+        ],
+        "result_and_callback_trace_identical": true
+      }
+    },
+    "derivative_4096": {
+      "plain": {
+        "seconds_per_call": [
+          0.0008888645999832079,
+          0.0009047062514582649,
+          0.0008772896020673215,
+          0.0008886020979844034,
+          0.000885839550755918
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "previous": {
+        "seconds_per_call": [
+          0.0008708291512448341,
+          0.000867820848361589,
+          0.0008572583494242281,
+          0.0008630917000118643,
+          0.0008602583489846438
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "updates": {
+        "seconds_per_call": [
+          0.0008428125001955777,
+          0.0008485124999424443,
+          0.000835960399126634,
+          0.0008722895989194512,
+          0.0008409520494751632
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_alias": {
+        "seconds_per_call": [
+          0.0008671249990584329,
+          0.0008839562506182119,
+          0.0008776020986260846,
+          0.0008749104483285919,
+          0.0008886250026989729
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_and_updates": {
+        "seconds_per_call": [
+          0.0008868250006344169,
+          0.0008610562508692965,
+          0.0008704749983735382,
+          0.0008879041997715831,
+          0.0008808854006929323
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_subclass": {
+        "seconds_per_call": [
+          0.000858310449984856,
+          0.0008539437490981072,
+          0.0008473895519273356,
+          0.0008456499985186383,
+          0.000845100000151433
+        ],
+        "result_and_callback_trace_identical": true
+      }
+    },
+    "jacobian_8": {
+      "plain": {
+        "seconds_per_call": [
+          0.00024610414984636007,
+          0.0002398916520178318,
+          0.00024943334865383803,
+          0.00023529999889433385,
+          0.0002445396006805822
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "previous": {
+        "seconds_per_call": [
+          0.0002434687514323741,
+          0.0002352228999370709,
+          0.00025121459912043066,
+          0.00023713750124443322,
+          0.00023775625159032642
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "updates": {
+        "seconds_per_call": [
+          0.0002304187510162592,
+          0.00021980000019539148,
+          0.0002312062482815236,
+          0.00022049375111237167,
+          0.0002194041997427121
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_alias": {
+        "seconds_per_call": [
+          0.00023882710083853454,
+          0.00025211044994648545,
+          0.00023616874823346735,
+          0.00025484584912192074,
+          0.0002373082999838516
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_and_updates": {
+        "seconds_per_call": [
+          0.000221352101652883,
+          0.0002207291516242549,
+          0.0002170207997551188,
+          0.00022428335214499384,
+          0.0002235812513390556
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_subclass": {
+        "seconds_per_call": [
+          0.00024048540217336267,
+          0.00023086040164344013,
+          0.00022979165078140795,
+          0.0002296687482157722,
+          0.00023251665115822106
+        ],
+        "result_and_callback_trace_identical": true
+      }
+    },
+    "hessian_3": {
+      "plain": {
+        "seconds_per_call": [
+          0.0036274646001402287,
+          0.0033695521007757632,
+          0.00327736874751281,
+          0.003276022951467894,
+          0.0032938979507889598
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "previous": {
+        "seconds_per_call": [
+          0.0033832312474260107,
+          0.003349208351573907,
+          0.0033743187494110318,
+          0.003324156248709187,
+          0.0033428354508941993
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "updates": {
+        "seconds_per_call": [
+          0.0030932958004996182,
+          0.0030842291482258586,
+          0.003090143750887364,
+          0.003076470849919133,
+          0.0030452125007286667
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_alias": {
+        "seconds_per_call": [
+          0.0035459145496133716,
+          0.0032534416997805236,
+          0.003261162500712089,
+          0.0032295916491420938,
+          0.0032461458002217116
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_and_updates": {
+        "seconds_per_call": [
+          0.0031376583501696587,
+          0.003342729149153456,
+          0.003012568751000799,
+          0.0030021896003745497,
+          0.0029633041500346734
+        ],
+        "result_and_callback_trace_identical": true
+      },
+      "state_subclass": {
+        "seconds_per_call": [
+          0.0032958978990791366,
+          0.0032842208485817535,
+          0.0032955937524093313,
+          0.0032926667015999557,
+          0.0032750437501817943
+        ],
+        "result_and_callback_trace_identical": true
+      }
+    }
+  }
+}
+$ /private/tmp/fastscipy-portability-a2-mac/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=/private/tmp/fastscipy-next/differentiate-upstream/0-False.quarantine.json --junitxml=/private/tmp/fastscipy-next/differentiate-upstream/0-False.xml --pyargs scipy.differentiate
+........................................................................ [ 35%]
+........................................................................ [ 71%]
+........xx................................................               [100%]
+=============================== warnings summary ===============================
+../../fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+200 passed, 2 xfailed, 1 warning in 0.75s
+$ /private/tmp/fastscipy-portability-a2-mac/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=/private/tmp/fastscipy-next/differentiate-upstream/0-True.quarantine.json --junitxml=/private/tmp/fastscipy-next/differentiate-upstream/0-True.xml --pyargs scipy.differentiate
+........................................................................ [ 35%]
+........................................................................ [ 71%]
+........xx................................................               [100%]
+=============================== warnings summary ===============================
+../../fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182
+  /private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on'}
+fastscipy: 951 fast-path calls, 0 fast-path errors
+200 passed, 2 xfailed, 1 warning in 0.40s
+
+202 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

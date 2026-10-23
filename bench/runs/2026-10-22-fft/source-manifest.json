@@ -1,0 +1,22 @@
+{
+  "base_revision": "f60dca0",
+  "source_sha256": {
+    "python/fastscipy/_fft.py": "74e6bbb94da6009f65dad435c6b64e0a86d7e9e5af16cab1ac8cc61b2e47d4c0",
+    "python/fastscipy/__init__.py": "584c1ce9ee1dffce790b5c2e347f7dbf407771f8486dec7955c8d38e770acd81",
+    "tools/platform_suite.py": "6bd625c2b2257f34dd9423e370475ada8727d81950f39c968d8d8c277a94906c",
+    "tests/test_fft.py": "7fd6bfd2c3fec50e000a24ad3a37aea67d50410f069b9784100eb1acbe9c0ab7",
+    "bench/bench_fft.py": "87a412cfb0cc7da1c49c175d555536388cff25e05d59159013c6ef7a07d4775c",
+    "bench/audit_fft.py": "311dda386e909883799615d664e873268b42787baafc203a38006ec9e29cde06"
+  },
+  "evidence_sha256": {
+    "README.md": "5b50134f61953f3fc92e14b8679022df829dafb5b1aa7f1aea712ecac251a389",
+    "benchmark.json": "1a003a1beb8a75759f4ea380db078e57538cb446caa53c53da4b8286943f98b2",
+    "initial-true-baseline.json": "2d976a0eb65a8ad57cd431ceb904eb3e530ef6b5b6bc314b8b2e9038378dfe34",
+    "true-baseline.json": "3f02cc994b6ab8e0e8de6167ba0e187fd78736e8f1d00dbd46adf536e81fdd92",
+    "upstream-and-initial-audit.log": "d12b5eefb2ebd1fcf0901068243a0fe7ae1285b01425cffd1fedefe51775e94b",
+    "upstream-partitions.json": "8e0836893641c1524fad31ca3b9ffc845d5337897dc1539c6a96df64956d6cfb",
+    "upstream-resources.json": "dbd1d8bd3d43590450067e50c271075a04fd545578fd31a5fdb22dc36ce1d02d",
+    "validation-resources.json": "4a2e0e65efba9c1f9a9af7565d53c02fc2b407dc935c5bed833d42ccf78212f3",
+    "validation.log": "39dcd85c8142f22502b0feaff3a9a615c7e0062eb8d653dca2d404935fd701b9"
+  }
+}

@@ -1,0 +1,731 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python": "3.13.12",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "threads": 2,
+  "previous": "base f60dca0 Python components, with fft absent; unchanged published 0.1.0a4 native",
+  "method": "best of 3 x 100 calls per phase; phase order scipy/previous/candidate/candidate/previous/scipy",
+  "cases": {
+    "scipy.fft.fftn (8, 8)": {
+      "scipy_us": [
+        2.8858298901468515,
+        2.686660154722631
+      ],
+      "previous_us": [
+        2.7775001944974065,
+        2.6591704227030277
+      ],
+      "candidate_us": [
+        1.7924996791407466,
+        1.8058298155665398
+      ],
+      "scipy_best_us": 2.686660154722631,
+      "previous_best_us": 2.6591704227030277,
+      "candidate_best_us": 1.7924996791407466,
+      "scipy_speedup": 1.4988343852928943,
+      "previous_speedup": 1.4834984093150458,
+      "byte_identical": true
+    },
+    "scipy.fft.dctn (8, 8)": {
+      "scipy_us": [
+        3.2233400270342827,
+        3.0874996446073055
+      ],
+      "previous_us": [
+        3.370830090716481,
+        3.1637499341741204
+      ],
+      "candidate_us": [
+        1.901250216178596,
+        1.8395797815173864
+      ],
+      "scipy_best_us": 3.0874996446073055,
+      "previous_best_us": 3.1637499341741204,
+      "candidate_best_us": 1.8395797815173864,
+      "scipy_speedup": 1.6783722432851302,
+      "previous_speedup": 1.7198220843482448,
+      "byte_identical": true
+    },
+    "scipy.fft.idctn (8, 8)": {
+      "scipy_us": [
+        3.232919843867421,
+        3.36292025167495
+      ],
+      "previous_us": [
+        3.2116600777953863,
+        3.160419873893261
+      ],
+      "candidate_us": [
+        1.9162497483193874,
+        1.9116699695587156
+      ],
+      "scipy_best_us": 3.232919843867421,
+      "previous_best_us": 3.160419873893261,
+      "candidate_best_us": 1.9116699695587156,
+      "scipy_speedup": 1.6911495683607454,
+      "previous_speedup": 1.653224627796399,
+      "byte_identical": true
+    },
+    "scipy.fft.dstn (8, 8)": {
+      "scipy_us": [
+        3.2079097582027316,
+        3.2695900881662965
+      ],
+      "previous_us": [
+        3.1895801657810807,
+        3.127909731119871
+      ],
+      "candidate_us": [
+        1.9600003724917772,
+        1.8395902588963509
+      ],
+      "scipy_best_us": 3.2079097582027316,
+      "previous_best_us": 3.127909731119871,
+      "candidate_best_us": 1.8395902588963509,
+      "scipy_speedup": 1.7438175390900876,
+      "previous_speedup": 1.7003295793686353,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn (32, 32)": {
+      "scipy_us": [
+        4.358750302344561,
+        4.365419736132026
+      ],
+      "previous_us": [
+        4.343749606050551,
+        4.264999879524112
+      ],
+      "candidate_us": [
+        3.5745801869779825,
+        3.4870801027864218
+      ],
+      "scipy_best_us": 4.358750302344561,
+      "previous_best_us": 4.264999879524112,
+      "candidate_best_us": 3.4870801027864218,
+      "scipy_speedup": 1.2499713725708834,
+      "previous_speedup": 1.2230862939214036,
+      "byte_identical": true
+    },
+    "scipy.fft.dctn (32, 32)": {
+      "scipy_us": [
+        5.164159811101854,
+        5.1662500482052565
+      ],
+      "previous_us": [
+        5.232500261627138,
+        4.982919781468809
+      ],
+      "candidate_us": [
+        3.9020803524181242,
+        3.921670140698552
+      ],
+      "scipy_best_us": 5.164159811101854,
+      "previous_best_us": 4.982919781468809,
+      "candidate_best_us": 3.9020803524181242,
+      "scipy_speedup": 1.3234375883371077,
+      "previous_speedup": 1.276990561811698,
+      "byte_identical": true
+    },
+    "scipy.fft.idctn (32, 32)": {
+      "scipy_us": [
+        5.354169989004731,
+        5.662080366164446
+      ],
+      "previous_us": [
+        5.383340176194906,
+        5.289589753374457
+      ],
+      "candidate_us": [
+        4.273749655112624,
+        4.276250256225467
+      ],
+      "scipy_best_us": 5.354169989004731,
+      "previous_best_us": 5.289589753374457,
+      "candidate_best_us": 4.273749655112624,
+      "scipy_speedup": 1.2528038423120118,
+      "previous_speedup": 1.2376929348322026,
+      "byte_identical": true
+    },
+    "scipy.fft.dstn (32, 32)": {
+      "scipy_us": [
+        5.277909804135561,
+        5.270830006338656
+      ],
+      "previous_us": [
+        5.191669915802777,
+        5.144579918123782
+      ],
+      "candidate_us": [
+        4.092500312253833,
+        4.079589853063226
+      ],
+      "scipy_best_us": 5.270830006338656,
+      "previous_best_us": 5.144579918123782,
+      "candidate_best_us": 4.079589853063226,
+      "scipy_speedup": 1.2919999794540542,
+      "previous_speedup": 1.2610532194212836,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn (256, 256)": {
+      "scipy_us": [
+        123.32916958257556,
+        123.75084043014795
+      ],
+      "previous_us": [
+        121.1745897307992,
+        124.64999977964908
+      ],
+      "candidate_us": [
+        131.30625011399388,
+        127.9591699130833
+      ],
+      "scipy_best_us": 123.32916958257556,
+      "previous_best_us": 121.1745897307992,
+      "candidate_best_us": 127.9591699130833,
+      "scipy_speedup": 0.9638165804478672,
+      "previous_speedup": 0.9469785542771765,
+      "byte_identical": true
+    },
+    "scipy.fft.dctn (256, 256)": {
+      "scipy_us": [
+        195.3200000571087,
+        189.40125009976327
+      ],
+      "previous_us": [
+        189.96166007127613,
+        189.79124957695603
+      ],
+      "candidate_us": [
+        192.51082965638489,
+        194.4587501930073
+      ],
+      "scipy_best_us": 189.40125009976327,
+      "previous_best_us": 189.79124957695603,
+      "candidate_best_us": 192.51082965638489,
+      "scipy_speedup": 0.9838472486863625,
+      "previous_speedup": 0.9858731060258632,
+      "byte_identical": true
+    },
+    "scipy.fft.idctn (256, 256)": {
+      "scipy_us": [
+        204.2795898159966,
+        198.78750026691705
+      ],
+      "previous_us": [
+        199.9304094351828,
+        200.58333000633866
+      ],
+      "candidate_us": [
+        204.48041963391006,
+        203.88374978210777
+      ],
+      "scipy_best_us": 198.78750026691705,
+      "previous_best_us": 199.9304094351828,
+      "candidate_best_us": 203.88374978210777,
+      "scipy_speedup": 0.975004140738842,
+      "previous_speedup": 0.980609831086833,
+      "byte_identical": true
+    },
+    "scipy.fft.dstn (256, 256)": {
+      "scipy_us": [
+        213.05207978002727,
+        207.36334030516446
+      ],
+      "previous_us": [
+        210.19874955527484,
+        211.67624974623322
+      ],
+      "candidate_us": [
+        211.62749966606498,
+        223.6516703851521
+      ],
+      "scipy_best_us": 207.36334030516446,
+      "previous_best_us": 210.19874955527484,
+      "candidate_best_us": 211.62749966606498,
+      "scipy_speedup": 0.9798506367668233,
+      "previous_speedup": 0.9932487502189242,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn list control": {
+      "scipy_us": [
+        4.317080019973218,
+        4.5241700718179345
+      ],
+      "previous_us": [
+        4.662920255213976,
+        4.104999825358391
+      ],
+      "candidate_us": [
+        4.582090186886489,
+        4.660830018110573
+      ],
+      "scipy_best_us": 4.317080019973218,
+      "previous_best_us": 4.104999825358391,
+      "candidate_best_us": 4.582090186886489,
+      "scipy_speedup": 0.942163912951407,
+      "previous_speedup": 0.8958793166285801,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn resize control": {
+      "scipy_us": [
+        4.113750183023512,
+        4.604999558068812
+      ],
+      "previous_us": [
+        4.1204196168109775,
+        3.917079884558916
+      ],
+      "candidate_us": [
+        4.392910050228238,
+        4.478750051930547
+      ],
+      "scipy_best_us": 4.113750183023512,
+      "previous_best_us": 3.917079884558916,
+      "candidate_best_us": 4.392910050228238,
+      "scipy_speedup": 0.9364521777107133,
+      "previous_speedup": 0.8916822424705464,
+      "byte_identical": true
+    },
+    "scipy.fft.fft 1D unchanged control": {
+      "scipy_us": [
+        1.6179197700694203,
+        1.6774999676272273
+      ],
+      "previous_us": [
+        1.5908299246802926,
+        1.5104201156646013
+      ],
+      "candidate_us": [
+        1.6437500016763806,
+        1.6500003403052688
+      ],
+      "scipy_best_us": 1.6179197700694203,
+      "previous_best_us": 1.5104201156646013,
+      "candidate_best_us": 1.6437500016763806,
+      "scipy_speedup": 0.9842857906733887,
+      "previous_speedup": 0.9188867614443786,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fftn (8, 8)": {
+      "scipy_us": [
+        2.4454196682199836,
+        2.6066595455631614
+      ],
+      "previous_us": [
+        2.430419554002583,
+        2.335410099476576
+      ],
+      "candidate_us": [
+        1.5716598136350513,
+        1.740420120768249
+      ],
+      "scipy_best_us": 2.4454196682199836,
+      "previous_best_us": 2.335410099476576,
+      "candidate_best_us": 1.5716598136350513,
+      "scipy_speedup": 1.5559471884466116,
+      "previous_speedup": 1.4859513994157976,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dctn (8, 8)": {
+      "scipy_us": [
+        2.536670072004199,
+        2.6954099303111434
+      ],
+      "previous_us": [
+        2.5350000942125916,
+        2.4737499188631773
+      ],
+      "candidate_us": [
+        1.616250374354422,
+        1.6395904822275043
+      ],
+      "scipy_best_us": 2.536670072004199,
+      "previous_best_us": 2.4737499188631773,
+      "candidate_best_us": 1.616250374354422,
+      "scipy_speedup": 1.5694784126607981,
+      "previous_speedup": 1.5305487058904879,
+      "byte_identical": true
+    },
+    "scipy.fftpack.idctn (8, 8)": {
+      "scipy_us": [
+        2.496250090189278,
+        2.6962498668581247
+      ],
+      "previous_us": [
+        2.537500113248825,
+        2.4212501011788845
+      ],
+      "candidate_us": [
+        1.610000035725534,
+        1.6641599358990788
+      ],
+      "scipy_best_us": 2.496250090189278,
+      "previous_best_us": 2.4212501011788845,
+      "candidate_best_us": 1.610000035725534,
+      "scipy_speedup": 1.550465860123017,
+      "previous_speedup": 1.5038820170508673,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dstn (8, 8)": {
+      "scipy_us": [
+        2.5170802837237716,
+        2.732500433921814
+      ],
+      "previous_us": [
+        2.5629199808463454,
+        2.454170025885105
+      ],
+      "candidate_us": [
+        1.6158301150426269,
+        1.6733398661017418
+      ],
+      "scipy_best_us": 2.5170802837237716,
+      "previous_best_us": 2.454170025885105,
+      "candidate_best_us": 1.6158301150426269,
+      "scipy_speedup": 1.5577629481533515,
+      "previous_speedup": 1.5188292401768748,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fftn (32, 32)": {
+      "scipy_us": [
+        3.9741600630804896,
+        4.318749997764826
+      ],
+      "previous_us": [
+        4.033339791931212,
+        3.896669950336218
+      ],
+      "candidate_us": [
+        3.136250306852162,
+        3.3595901913940907
+      ],
+      "scipy_best_us": 3.9741600630804896,
+      "previous_best_us": 3.896669950336218,
+      "candidate_best_us": 3.136250306852162,
+      "scipy_speedup": 1.267169286328212,
+      "previous_speedup": 1.242461401063133,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dctn (32, 32)": {
+      "scipy_us": [
+        4.5645801583305,
+        4.755409900099039
+      ],
+      "previous_us": [
+        4.422910278663039,
+        4.391669644974172
+      ],
+      "candidate_us": [
+        3.5799999022856355,
+        3.6887498572468758
+      ],
+      "scipy_best_us": 4.5645801583305,
+      "previous_best_us": 4.391669644974172,
+      "candidate_best_us": 3.5799999022856355,
+      "scipy_speedup": 1.2750224253962308,
+      "previous_speedup": 1.2267233980007457,
+      "byte_identical": true
+    },
+    "scipy.fftpack.idctn (32, 32)": {
+      "scipy_us": [
+        4.878750187344849,
+        5.085839657112956
+      ],
+      "previous_us": [
+        4.722499870695174,
+        4.742910386994481
+      ],
+      "candidate_us": [
+        3.8470799336209893,
+        3.8974999915808435
+      ],
+      "scipy_best_us": 4.878750187344849,
+      "previous_best_us": 4.722499870695174,
+      "candidate_best_us": 3.8470799336209893,
+      "scipy_speedup": 1.2681696953337853,
+      "previous_speedup": 1.2275543924688386,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dstn (32, 32)": {
+      "scipy_us": [
+        4.752080421894789,
+        4.979579825885594
+      ],
+      "previous_us": [
+        4.722090088762343,
+        4.474170273169875
+      ],
+      "candidate_us": [
+        3.8391700945794582,
+        3.885419573634863
+      ],
+      "scipy_best_us": 4.752080421894789,
+      "previous_best_us": 4.474170273169875,
+      "candidate_best_us": 3.8391700945794582,
+      "scipy_speedup": 1.2377884555321663,
+      "previous_speedup": 1.1654003763696161,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fftn (256, 256)": {
+      "scipy_us": [
+        120.71458040736616,
+        134.6887502586469
+      ],
+      "previous_us": [
+        124.09916962496936,
+        122.67917045392096
+      ],
+      "candidate_us": [
+        125.88459008838981,
+        130.51291985902935
+      ],
+      "scipy_best_us": 120.71458040736616,
+      "previous_best_us": 122.67917045392096,
+      "candidate_best_us": 125.88459008838981,
+      "scipy_speedup": 0.9589305595117438,
+      "previous_speedup": 0.9745368386057565,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dctn (256, 256)": {
+      "scipy_us": [
+        188.2804196793586,
+        201.05875039007515
+      ],
+      "previous_us": [
+        187.0091602904722,
+        188.11166984960437
+      ],
+      "candidate_us": [
+        191.2287500454113,
+        199.67040978372097
+      ],
+      "scipy_best_us": 188.2804196793586,
+      "previous_best_us": 187.0091602904722,
+      "candidate_best_us": 191.2287500454113,
+      "scipy_speedup": 0.9845821804234325,
+      "previous_speedup": 0.9779343338596469,
+      "byte_identical": true
+    },
+    "scipy.fftpack.idctn (256, 256)": {
+      "scipy_us": [
+        203.826249926351,
+        209.2662500217557
+      ],
+      "previous_us": [
+        194.5941598387435,
+        196.99917000252753
+      ],
+      "candidate_us": [
+        193.88209038879722,
+        193.19374987389892
+      ],
+      "scipy_best_us": 203.826249926351,
+      "previous_best_us": 194.5941598387435,
+      "candidate_best_us": 193.19374987389892,
+      "scipy_speedup": 1.0550354245900404,
+      "previous_speedup": 1.007248733283342,
+      "byte_identical": true
+    },
+    "scipy.fftpack.dstn (256, 256)": {
+      "scipy_us": [
+        202.2604097146541,
+        205.32833004835993
+      ],
+      "previous_us": [
+        203.47083976957947,
+        203.57583998702466
+      ],
+      "candidate_us": [
+        203.14291992690414,
+        197.27333972696215
+      ],
+      "scipy_best_us": 202.2604097146541,
+      "previous_best_us": 203.47083976957947,
+      "candidate_best_us": 197.27333972696215,
+      "scipy_speedup": 1.0252799997941655,
+      "previous_speedup": 1.0314158012998362,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fftn list control": {
+      "scipy_us": [
+        4.110840382054448,
+        3.8658402627334003
+      ],
+      "previous_us": [
+        4.259580164216459,
+        3.7687504664063454
+      ],
+      "candidate_us": [
+        4.171669716015458,
+        4.451670101843774
+      ],
+      "scipy_best_us": 3.8658402627334003,
+      "previous_best_us": 3.7687504664063454,
+      "candidate_best_us": 4.171669716015458,
+      "scipy_speedup": 0.9266889581147932,
+      "previous_speedup": 0.9034153523558528,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fftn resize control": {
+      "scipy_us": [
+        4.02499979827553,
+        4.004169604741037
+      ],
+      "previous_us": [
+        4.047920228913426,
+        3.8066599518060684
+      ],
+      "candidate_us": [
+        4.222919815219939,
+        4.368749796412885
+      ],
+      "scipy_best_us": 4.004169604741037,
+      "previous_best_us": 3.8066599518060684,
+      "candidate_best_us": 4.222919815219939,
+      "scipy_speedup": 0.9481992981040042,
+      "previous_speedup": 0.9014284235486506,
+      "byte_identical": true
+    },
+    "scipy.fftpack.fft 1D unchanged control": {
+      "scipy_us": [
+        1.3354094699025154,
+        1.2400001287460327
+      ],
+      "previous_us": [
+        1.3650004984810948,
+        1.1408398859202862
+      ],
+      "candidate_us": [
+        1.1512503260746598,
+        1.2704101391136646
+      ],
+      "scipy_best_us": 1.2400001287460327,
+      "previous_best_us": 1.1408398859202862,
+      "candidate_best_us": 1.1512503260746598,
+      "scipy_speedup": 1.0770899261970046,
+      "previous_speedup": 0.9909572749569857,
+      "byte_identical": true
+    },
+    "scipy.fft.fft2 default axes": {
+      "scipy_us": [
+        3.3479195553809404,
+        3.400410059839487
+      ],
+      "previous_us": [
+        3.374170046299696,
+        3.106250078417361
+      ],
+      "candidate_us": [
+        2.3679097648710012,
+        2.4633301654830575
+      ],
+      "scipy_best_us": 3.3479195553809404,
+      "previous_best_us": 3.106250078417361,
+      "candidate_best_us": 2.3679097648710012,
+      "scipy_speedup": 1.4138712568564993,
+      "previous_speedup": 1.3118110007821953,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn ortho": {
+      "scipy_us": [
+        2.911669434979558,
+        2.9137503588572145
+      ],
+      "previous_us": [
+        2.9829097911715508,
+        2.709580003283918
+      ],
+      "candidate_us": [
+        1.8075003754347563,
+        1.9262498244643211
+      ],
+      "scipy_best_us": 2.911669434979558,
+      "previous_best_us": 2.709580003283918,
+      "candidate_best_us": 1.8075003754347563,
+      "scipy_speedup": 1.610881787108463,
+      "previous_speedup": 1.4990757623672335,
+      "byte_identical": true
+    },
+    "scipy.fft.fftn transposed readonly": {
+      "scipy_us": [
+        2.8645899146795273,
+        2.8912501875311136
+      ],
+      "previous_us": [
+        2.888329909183085,
+        2.691249828785658
+      ],
+      "candidate_us": [
+        1.7062498955056071,
+        1.8141698092222214
+      ],
+      "scipy_best_us": 2.8645899146795273,
+      "previous_best_us": 2.691249828785658,
+      "candidate_best_us": 1.7062498955056071,
+      "scipy_speedup": 1.6788806388941482,
+      "previous_speedup": 1.577289373540544,
+      "byte_identical": true
+    },
+    "scipy.fft.dctn integer control": {
+      "scipy_us": [
+        3.1712499912828207,
+        3.227500128559768
+      ],
+      "previous_us": [
+        3.2295897835865617,
+        2.9516598442569375
+      ],
+      "candidate_us": [
+        3.511660033836961,
+        3.5624997690320015
+      ],
+      "scipy_best_us": 3.1712499912828207,
+      "previous_best_us": 2.9516598442569375,
+      "candidate_best_us": 3.511660033836961,
+      "scipy_speedup": 0.903062927711087,
+      "previous_speedup": 0.8405312062716539,
+      "byte_identical": true
+    },
+    "scipy.fft.rfft 1D unchanged control": {
+      "scipy_us": [
+        1.7516600200906396,
+        1.7070898320525885
+      ],
+      "previous_us": [
+        1.7445802222937346,
+        1.6499997582286596
+      ],
+      "candidate_us": [
+        1.6374996630474925,
+        1.6383297042921185
+      ],
+      "scipy_best_us": 1.7070898320525885,
+      "previous_best_us": 1.6499997582286596,
+      "candidate_best_us": 1.6374996630474925,
+      "scipy_speedup": 1.0424978218777672,
+      "previous_speedup": 1.0076336474829581,
+      "byte_identical": true
+    },
+    "scipy.fft.dctn 64 image tiles batched": {
+      "scipy_us": [
+        17.55792007315904,
+        17.472089966759086
+      ],
+      "previous_us": [
+        17.440419760532677,
+        17.11708027869463
+      ],
+      "candidate_us": [
+        16.562920063734055,
+        15.721670351922512
+      ],
+      "scipy_best_us": 17.472089966759086,
+      "previous_best_us": 17.11708027869463,
+      "candidate_best_us": 15.721670351922512,
+      "scipy_speedup": 1.1113380178857728,
+      "previous_speedup": 1.088757103764199,
+      "byte_identical": true
+    }
+  }
+}

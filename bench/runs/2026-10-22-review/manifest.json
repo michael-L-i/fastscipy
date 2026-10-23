@@ -26,5 +26,12 @@
   "candidate_total_cases": 472,
   "headline_control_policy": "Exclude expected_fast_path=false and nonidentical cases; paired sample uses matching names with unchanged inputs",
   "ci_note": "Cross-platform checks are separate; this archive contains local macOS measurements only",
-  "benchmark_revision": "1cbe7c2f6fea4cf051abb5c40417c1d015b22669"
+  "benchmark_revision": "1cbe7c2f6fea4cf051abb5c40417c1d015b22669",
+  "post_merge_validation_repair": {
+    "base_revision": "1c7ae6b2a44f0455dcf6b728521ba2d7fa278d24",
+    "scope": "Test-only spatial statistics fallback fixtures and guard/delegation coverage; production unchanged",
+    "focused_tests_passed": 26,
+    "peak_rss_mib": 157,
+    "ci_note": "Final main is validated separately after this repair; no new benchmark measurements."
+  }
 }

@@ -1,0 +1,18 @@
+SciPy release tag: v1.18.1
+Python installed source inspected:
+/Users/michaelli/Notebooks/fastscipy-demo/.venv/lib/python3.13/site-packages/scipy/spatial/distance.py
+_validate_mahalanobis_kwargs lines 226-244 converts VI with _convert_to_double but performs no dimensionality/shape validation for a supplied VI.
+
+Pinned upstream C source:
+https://github.com/scipy/scipy/blob/v1.18.1/scipy/spatial/src/distance_wrap.c#L180-L210
+cdist_mahalanobis_double_wrap obtains covinv from PyArray_DATA(covinv_) and n from XA.shape[1]; it does not check VI's shape/size before passing to cdist_mahalanobis.
+https://github.com/scipy/scipy/blob/v1.18.1/scipy/spatial/src/distance_impl.h#L153-L169
+mahalanobis_distance loops i=0..n-1 and dot-products n entries from covinv+i*n. For n=7 this accesses 49 double entries; VI converted from a list of 7 values or float32 vector of 7 values has only 7 doubles, so those test inputs permit an out-of-bounds native read.
+https://github.com/scipy/scipy/blob/v1.18.1/scipy/spatial/src/distance_impl.h#L706-L731
+cdist_mahalanobis forwards its num_cols dimension and unchanged covinv to mahalanobis_distance.
+
+Observed Windows ARM64 evidence:
+/tmp/fastscipy-next/coordination/final-windows-arm-artifacts.zip :: artifacts/platform/tests.log
+Fatal access violation stack: distance.py:1606 (__call__), distance.py:2929 (cdist), fastscipy/_patch.py:118 (original fallback), tests/test_spatial.py:196, fastscipy/testing.py:176 (disabled baseline comparison). This is consistent with the independently identified unsafe reference inputs. No deliberate native-crash reproduction was run locally.
+
+Repair scope: tests only. Valid-shape list and float32 VI matrices continue exercising real SciPy fallback equality. Original malformed values are tested through the real fast-path factories with a forbidden-kernel spy, followed by _patch.wrap delegation identity checks. No malformed VI enters SciPy C; no skip/quarantine/retry or production guard behavior change.

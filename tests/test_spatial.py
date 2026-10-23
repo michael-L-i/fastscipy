@@ -7,7 +7,7 @@ import scipy.spatial as sp
 import scipy.spatial.distance as dist
 
 import fastscipy
-from fastscipy import _spatial
+from fastscipy import _patch, _spatial
 from fastscipy.testing import assert_identical, check
 
 RNG = np.random.default_rng(0)
@@ -192,9 +192,15 @@ def test_distance_statistics_declined(threads):
     rng = np.random.default_rng(813)
     a, b = rng.random((850, 7)), rng.random((650, 7))
     for metric, key in (("seuclidean", "V"), ("mahalanobis", "VI")):
-        for value in ([1.0] * 7, np.ones((7, 7, 1)), np.ones(7, dtype=np.float32)):
+        supplied = np.ones(7) if key == "V" else np.eye(7)
+        for value in (supplied.tolist(), supplied.astype(np.float32)):
+            assert dist.cdist.fast(a, b, metric, **{key: value}) is NotImplemented
+            assert dist.pdist.fast(a, metric, **{key: value}) is NotImplemented
             check(lambda: dist.cdist(a, b, metric, **{key: value}), fast=False)
+            check(lambda: dist.pdist(a, metric, **{key: value}), fast=False)
         check(lambda: dist.cdist(a, b, metric, unexpected=True), fast=False)
+    # SciPy validates V's shape, but does not validate VI before its native loop.
+    check(lambda: dist.cdist(a, b, "seuclidean", V=np.ones((7, 7, 1))), fast=False)
     singular = np.ones((850, 7))
     check(lambda: dist.pdist(singular, "mahalanobis"), fast=False)
     for bad in (np.nan, np.inf, 1e308):
@@ -203,6 +209,41 @@ def test_distance_statistics_declined(threads):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             check(lambda: dist.cdist(aa, b, "seuclidean"), fast=False)
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("metric,key", [("seuclidean", "V"), ("mahalanobis", "VI")])
+@pytest.mark.parametrize("kind", ["list", "float32", "rank3"])
+@pytest.mark.parametrize("name", ["cdist", "pdist"])
+def test_distance_statistics_decline_delegation(metric, key, kind, name, threads):
+    # SciPy 1.18.1 reads n*n entries from VI without checking its shape
+    # (spatial/src/distance_impl.h::mahalanobis_distance). A short VI is
+    # unsafe even in check()'s unpatched reference call. Test our guards and
+    # untouched delegation with spies, never passing malformed VI to native C.
+    a, b = np.ones((850, 7)), np.zeros((650, 7))
+    value = {"list": [1.0] * 7, "float32": np.ones(7, dtype=np.float32), "rank3": np.ones((7, 7, 1))}[kind]
+    arrays = (a, b) if name == "cdist" else (a,)
+    args, kw = (*arrays, metric), {key: value}
+
+    def forbidden_kernel(*args, **kw):
+        pytest.fail("unsupported statistics reached the distance kernel")
+
+    factory = _spatial._cdist_fast if name == "cdist" else _spatial._pdist_fast
+    fast = factory(forbidden_kernel)
+    assert fast(*args, **kw) is NotImplemented
+    sentinel, calls = object(), []
+
+    def original_spy(*args, **kw):
+        calls.append((args, kw))
+        return sentinel
+
+    wrapper = _patch.wrap(original_spy, fast, "statistics_decline_spy")
+    assert wrapper(*args, **kw) is sentinel
+    assert len(calls) == 1
+    received_args, received_kw = calls[0]
+    assert len(received_args) == len(args)
+    assert all(received is original for received, original in zip(received_args, args))
+    assert received_kw.keys() == kw.keys() and received_kw[key] is value
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)

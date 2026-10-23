@@ -1,0 +1,24 @@
+{
+  "returncode": 0,
+  "seconds": 1.7683058750117198,
+  "peak_rss_bytes": 164872192,
+  "stopped": null,
+  "rss_scope": "sampled_readable_process_tree",
+  "rss_complete": true,
+  "peak_rss_is_lower_bound": false,
+  "inaccessible_pids": [],
+  "inaccessible_processes": [],
+  "cleanup_errors": [],
+  "command": [
+    "/private/tmp/fastscipy-portability-a2-mac/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_spatial.py",
+    "-k",
+    "distance_statistics_declined or distance_statistics_decline_delegation"
+  ],
+  "worktree": "/private/tmp/fastscipy-next/spatial-statistics-fix",
+  "native_source": "/Users/michaelli/Notebooks/fastscipy-demo/.venv/lib/python3.13/site-packages/fastscipy/_native.cpython-313-darwin.so",
+  "note": "Python source checkout plus unchanged published a4 native; new Rust code requires a separately approved build"
+}

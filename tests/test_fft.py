@@ -78,7 +78,6 @@ def test_fallbacks_errors_and_mutation(namespace, name):
     inputs = [
         x.astype(np.int64),
         x.astype(np.float16),
-        x.astype(np.longdouble),
         x.astype(x.dtype.newbyteorder("S")),
         unaligned,
         x.view(ArraySubclass),
@@ -123,6 +122,58 @@ def test_fallbacks_errors_and_mutation(namespace, name):
         assert_identical(expected, _outcome(lambda: getattr(namespace, name)(actual, **kwargs)))
         assert_identical(reference, actual)
         assert fast_calls() == before
+
+
+@pytest.mark.parametrize("namespace", [fft, fftpack], ids=["fft", "fftpack"])
+@pytest.mark.parametrize(
+    "name,dtype",
+    [(name, np.longdouble) for name in NAMES] + [(name, np.clongdouble) for name in ("fftn", "ifftn")],
+)
+def test_extended_dtype_delegation(namespace, name, dtype, monkeypatch, fft_threads):
+    from scipy.fft import _duccfft
+
+    # Extended-precision storage can contain padding bytes. Verify that the
+    # public call returns SciPy's actual object, rather than comparing padding
+    # in two independently allocated outputs.
+    target = name[1:] if namespace is fftpack and name in ("idctn", "idstn") else name
+    original = getattr(_duccfft, target)
+    calls = []
+
+    def record(*args, **kwargs):
+        result = original(*args, **kwargs)
+        calls.append((args, kwargs, result))
+        return result
+
+    monkeypatch.setattr(_duccfft, target, record)
+    x = np.arange(20).astype(dtype).reshape(4, 5)
+    if x.dtype.kind == "c":
+        x += 1j
+    before_input = x.tobytes()
+    options = {"axes": (1, 0)}
+    if namespace is fft or name not in ("fftn", "ifftn"):
+        options["norm"] = "ortho"
+    if name not in ("fftn", "ifftn"):
+        options["type"] = 3
+    if namespace is fft:
+        options["workers"] = fft_threads
+        if name not in ("fftn", "ifftn"):
+            options["orthogonalize"] = False
+    for kwargs in ({}, options):
+        calls.clear()
+        with fastscipy.disabled():
+            expected = _outcome(lambda: getattr(namespace, name)(x, **kwargs))
+        before = fast_calls()
+        actual = _outcome(lambda: getattr(namespace, name)(x, **kwargs))
+        assert fast_calls() == before
+        assert len(calls) == 2
+        assert expected[0] is calls[0][2]
+        assert actual[0] is calls[1][2]
+        assert calls[0][0][0] is x and calls[1][0][0] is x
+        assert calls[0][0][1:] == calls[1][0][1:]
+        assert calls[0][1] == calls[1][1]
+        assert expected[1] == actual[1]
+        assert x.dtype == dtype
+        assert x.tobytes() == before_input
 
 
 @pytest.mark.parametrize("namespace", [fft, fftpack], ids=["fft", "fftpack"])

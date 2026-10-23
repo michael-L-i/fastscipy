@@ -9,8 +9,9 @@ rng = np.random.default_rng(0)
 def cases():
     # Local neighborhoods: repeated small condensed distances in clustering,
     # point-cloud descriptors, and nearest-neighbor candidate reranking.
+    local_rng = np.random.default_rng(842)
     for rows, dims in ((4, 3), (16, 3), (32, 16), (100, 16)):
-        local = rng.random((rows, dims))
+        local = local_rng.random((rows, dims))
         for metric in ("euclidean", "cityblock", "sqeuclidean"):
             yield (
                 f"small pdist {metric} {rows}x{dims}",

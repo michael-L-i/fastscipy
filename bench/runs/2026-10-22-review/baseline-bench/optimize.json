@@ -1,0 +1,163 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 18,
+  "platform": "darwin"
+ },
+ "cases": {
+  "rosen_der n=10": {
+   "scipy_ms": 0.004582980182021856,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.0029579969123005867,
+   "x1t": 1.549352591601401,
+   "nt_ms": 0.0030410010367631912,
+   "xnt": 1.507063012020519,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_hess_prod n=10": {
+   "scipy_ms": 0.005500041879713535,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003792054485529661,
+   "x1t": 1.4504121448416658,
+   "nt_ms": 0.0037910067476332188,
+   "xnt": 1.4508130018885597,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_der n=1000": {
+   "scipy_ms": 0.006540969479829073,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.004582980182021856,
+   "x1t": 1.427230583603226,
+   "nt_ms": 0.004542001988738775,
+   "xnt": 1.4401071369071266,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_hess_prod n=1000": {
+   "scipy_ms": 0.007292022928595543,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005165988113731146,
+   "x1t": 1.4115446586517335,
+   "nt_ms": 0.005084031727164984,
+   "xnt": 1.4342992569524746,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "minimize Newton-CG rosen analytic jac+hessp n=3": {
+   "scipy_ms": 6.661958992481232,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 5.397000000812113,
+   "x1t": 1.2343818772426856,
+   "nt_ms": 5.525792017579079,
+   "xnt": 1.2056116066778646,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsq_linear unbounded 12x4": {
+   "scipy_ms": 0.013209006283432245,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.009749957825988531,
+   "x1t": 1.3547757353599637,
+   "nt_ms": 0.009707990102469921,
+   "xnt": 1.360632442349894,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsq_linear unbounded 40x10": {
+   "scipy_ms": 0.02141698496416211,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.017457990907132626,
+   "x1t": 1.2267726039089641,
+   "nt_ms": 0.017416023183614016,
+   "xnt": 1.2297287812703666,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "lsq_linear unbounded 100x20": {
+   "scipy_ms": 0.059125013649463654,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.056165968999266624,
+   "x1t": 1.0526839419477596,
+   "nt_ms": 0.055374985095113516,
+   "xnt": 1.0677206241755008,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_hess n=10": {
+   "scipy_ms": 0.009666022378951311,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.003374996595084667,
+   "x1t": 2.864009520195923,
+   "nt_ms": 0.003374996595084667,
+   "xnt": 2.864009520195923,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_hess n=100": {
+   "scipy_ms": 0.017332960851490498,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.005041016265749931,
+   "x1t": 3.4383862177266638,
+   "nt_ms": 0.005082983989268541,
+   "xnt": 3.4099971371314055,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rosen_hess n=500": {
+   "scipy_ms": 0.11716701555997133,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.017167010810226202,
+   "x1t": 6.825126217674204,
+   "nt_ms": 0.016790989320725203,
+   "xnt": 6.977969750439391,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "approx_fprime rosen n=1000": {
+   "scipy_ms": 8.74300004215911,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.86912499461323,
+   "x1t": 1.11105110773359,
+   "nt_ms": 8.010291960090399,
+   "xnt": 1.0914708334876277,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "approx_fprime cheap sum-of-squares n=1000": {
+   "scipy_ms": 3.6652080016210675,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 2.822083013597876,
+   "x1t": 1.298759811090139,
+   "nt_ms": 2.780832990538329,
+   "xnt": 1.3180252154990209,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "minimize BFGS rosen n=10 (numerical gradient)": {
+   "scipy_ms": 12.269624974578619,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 12.0400830055587,
+   "x1t": 1.019064816157326,
+   "nt_ms": 11.471415986306965,
+   "xnt": 1.069582428989102,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  }
+ }
+}

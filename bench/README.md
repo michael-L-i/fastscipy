@@ -1,11 +1,13 @@
 # Benchmarks
 
-Speedups compare fastscipy with unpatched SciPy on the same inputs.
+The suite compares calls with fastscipy enabled and disabled on the same inputs.
+Detailed dispatch audits also measure fully unpatched SciPy.
 Measured on a MacBook Pro with M5 Pro; results vary by workload and hardware.
 
 | Results | Thread budget | Details |
 |---|---|---|
-| Published benchmarks | 1 and 18 | [Full table](RESULTS.md) |
+| Latest source improvements (unreleased) | 1 and 2 | [Review and before/after tables](runs/2026-10-22-review/README.md) |
+| Original broad run | 1 and 18 | [Full table](RESULTS.md) |
 | Additional workloads | 1 and 2 | [Results](runs/2026-10-19-sweep/summary.json) |
 
 [Eight visual examples](../examples/README.md) · [Raw benchmark data](results/)

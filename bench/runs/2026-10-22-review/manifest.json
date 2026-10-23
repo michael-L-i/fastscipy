@@ -1,0 +1,30 @@
+{
+  "baseline_revision": "f60dca00fc03bde702a2ee24e17b1c7c68b276c0",
+  "candidate_revision": "91345fdca511b676c1018df385e5c374e89e06f8",
+  "project_test_revision": "7f25b39383b510b46c166f2fb84ee623884c21a7",
+  "post_test_diff": "Spatial benchmark RNG isolation, test-only extended-precision FFT delegation coverage, and composed-solver Intel numerical validation using the existing strict contract; production code unchanged. 190 focused FFT tests and 240 sparse-linear-algebra tests passed after their respective repairs.",
+  "reviewed_pr_heads": {
+    "1": "e5e29d4e9f9bdbb1ad469edd2a8e3f125ac773fd",
+    "2": "c4449425ae7e0e5113d3dc9616a4073d04661805",
+    "3": "a69a69f6bf7fb345bfc71faf4291404cb3fddcb7",
+    "4": "146fc95fc4adaa669aa80f1bcca5f672a4abfbf0",
+    "5": "a0af9edadc5ae311233fe3d976e0ab8eab87e38a"
+  },
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "machine": "Apple M5 Pro, 18 cores, 48 GB, macOS arm64",
+  "thread_budgets": [
+    1,
+    2
+  ],
+  "blas_threads": 1,
+  "timing_budget_seconds": 0.03,
+  "native_sha256": "3bdfaff7d9d886abbb473758c566b508d4c26c6083b28adff2de27862daa572c",
+  "native_note": "Unchanged published 0.1.0a4 native binary with source Python; not a newly built wheel",
+  "baseline_total_cases": 407,
+  "candidate_total_cases": 472,
+  "headline_control_policy": "Exclude expected_fast_path=false and nonidentical cases; paired sample uses matching names with unchanged inputs",
+  "ci_note": "Cross-platform checks are separate; this archive contains local macOS measurements only",
+  "benchmark_revision": "1cbe7c2f6fea4cf051abb5c40417c1d015b22669"
+}

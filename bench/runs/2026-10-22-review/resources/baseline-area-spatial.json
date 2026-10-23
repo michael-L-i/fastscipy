@@ -1,0 +1,25 @@
+{
+  "returncode": 0,
+  "seconds": 15.540299666987266,
+  "peak_rss_bytes": 592789504,
+  "stopped": null,
+  "rss_scope": "sampled_readable_process_tree",
+  "rss_complete": true,
+  "peak_rss_is_lower_bound": false,
+  "inaccessible_pids": [],
+  "inaccessible_processes": [],
+  "cleanup_errors": [],
+  "command": [
+    "/private/tmp/fastscipy-portability-a2-mac/bin/python",
+    "bench/run.py",
+    "spatial",
+    "--budget",
+    "0.03",
+    "--check",
+    "--output-dir",
+    "/tmp/fastscipy-next/coordination/baseline-bench"
+  ],
+  "worktree": "/private/tmp/fastscipy-next/review",
+  "native_source": "/Users/michaelli/Notebooks/fastscipy-demo/.venv/lib/python3.13/site-packages/fastscipy/_native.cpython-313-darwin.so",
+  "note": "Python source checkout plus unchanged published a4 native; new Rust code requires a separately approved build"
+}

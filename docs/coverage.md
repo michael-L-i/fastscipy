@@ -1,5 +1,10 @@
 # What fastscipy accelerates
 
+This page describes the main source branch. The
+[latest development improvements](../bench/runs/2026-10-22-review/README.md),
+including ND FFT dispatch, small `pdist` calls and scalar optimization bounds,
+are not yet in published 0.1.0a4.
+
 Fast paths are checked against SciPy 1.18, byte for byte where its reference
 is reproducible. Intel Mac's Accelerate reductions can vary even in plain
 SciPy; [platform details](platforms.md) describe that measured limitation and
@@ -96,6 +101,18 @@ use SciPy.
 `welch`, `csd`, `coherence` and `stft` are never threaded: on a build with
 the GIL that is slower.
 
+## FFT / FFTPACK
+
+`fftn`, `ifftn`, `dctn`, `idctn`, `dstn`, `idstn`, and the corresponding
+2-D FFT aliases skip redundant Python preparation for unresized NumPy
+arrays. Complex FFTs accept native float32/float64 and complex64/complex128;
+real transforms accept float32/float64. They call the same SciPy DUCC kernels.
+This mainly helps small transforms; large transforms are approximately unchanged.
+
+Resizing, in-place requests, unsupported layouts/dtypes/options and alternate
+backends retain SciPy's dispatch. SciPy's explicit `workers` and worker
+contexts are preserved; changing fastscipy's thread budget does not override them.
+
 ## interpolate
 
 | Functions | How |
@@ -137,6 +154,10 @@ run the numerical algorithms, stopping criteria, and callbacks. Intel
 Accelerate can vary its reductions even in plain SciPy; see the
 [reference reproducibility details](platforms.md#intel-accelerate-reference-reproducibility).
 
+Exact ndarray operator outputs are reshaped directly, retaining view ownership
+and writeability; array subclasses retain NumPy dispatch. This also reduces
+overhead in composed operators and preconditioned iterative solves.
+
 Custom operator subclasses, non-NumPy backends, batched vectors, and
 deprecated column-vector inputs use SciPy's original dispatch.
 
@@ -160,16 +181,20 @@ unused float64 weight buffers, including the reverse graph's weights.
 
 ## spatial
 
-`cdist` (19 metrics) and `pdist` (18) split rows across threads (*threads
+Large `cdist` (19 metrics) and `pdist` (18) calls split rows across threads (*threads
 only*; custom callables go to SciPy). `mahalanobis` and `seuclidean` use
 SciPy's own whole-input covariance or variance calculation once, before
 splitting. Explicit float64 NumPy `VI` matrices and `V` vectors are supported;
 exceptional statistics and unsupported options keep SciPy's own path.
 Large float32/float64 Fortran-order and strided inputs are converted once to
-contiguous float64 storage before splitting; small inputs keep SciPy's own
-path. Compiled weighted metrics accept float64 NumPy weights; Minkowski also
+contiguous float64 storage before splitting. Compiled weighted metrics accept
+float64 NumPy weights; Minkowski also
 accepts positive scalar `p`. Python-based weighted cosine/correlation keep
 SciPy's own path.
+Small native float64 `pdist` calls with a plain supported metric name use
+SciPy's own condensed-distance kernel directly. This saves dispatch overhead
+on one thread too. Weighted calls, custom metrics, other dtypes and metrics
+requiring Python preprocessing retain SciPy's path.
 `KDTree`/`cKDTree` `query` and `query_ball_point` use several workers when
 the caller left `workers` at its default and there are at least 2000
 queries; SciPy's results do not depend on the worker count.
@@ -225,11 +250,19 @@ This also reduces overhead in Newton workflows using these functions.
 per-call namespace lookup and copy. Numerical differentiation still spends
 most of its time in the user's own Python function.
 
+Scalar bounds for `least_squares` and numerical differentiation are filled
+directly instead of repeating scalars through `np.resize`. This helps large
+sparse and matrix-free parameter vectors; arrays and unusual bound types
+retain SciPy's preparation. Solver arithmetic, stopping criteria and callback
+ordering are preserved. Small problems may see little benefit or slight overhead.
+
 ## Not accelerated
 
-Large dense linear algebra and FFT already run in tuned libraries
-(Accelerate or OpenBLAS, and DUCC). `linprog`/HiGHS, scientific `io`, and
-most other functions still use SciPy. Callback-heavy `minimize`, `solve_ivp`,
+Large dense linear algebra and the numerical FFT kernels already run in
+tuned libraries (Accelerate or OpenBLAS, and DUCC). `linprog`/HiGHS, scientific
+`io`, `differentiate`, and most other functions still use SciPy. Differentiation
+prototypes with small gains were measured and rejected. Callback-heavy
+`minimize`, `solve_ivp`,
 `quad` and `root` workloads often spend their time in the user's function;
 the helper shortcuts above do not accelerate arbitrary user callbacks.
 

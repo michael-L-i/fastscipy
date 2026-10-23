@@ -234,7 +234,7 @@ python tools/platform_suite.py --output artifacts/platform-local --max-rss-mb 40
 ```
 
 The output directory must be empty. The runner executes project tests
-serially and benchmarks each of the 13 areas in its own process. Optional
+serially and benchmarks each area in its own process. Optional
 upstream comparisons run unpatched and patched SciPy in module partitions.
 Process-tree RSS and elapsed-time budgets stop runs that exceed their
 configured limits. RSS is sampled and summed across processes, so shared

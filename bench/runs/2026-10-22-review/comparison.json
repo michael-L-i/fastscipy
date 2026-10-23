@@ -1,0 +1,161 @@
+{
+  "cluster": {
+    "cases": 12,
+    "averaged_cases": 12,
+    "matched_cases": 12,
+    "expanded_1t": 1.689483052362589,
+    "expanded_2t": 1.682798271400057,
+    "before_1t": 1.6888766202399754,
+    "before_2t": 1.700820748938151,
+    "after_1t": 1.689483052362589,
+    "after_2t": 1.682798271400057
+  },
+  "csgraph": {
+    "cases": 16,
+    "averaged_cases": 16,
+    "matched_cases": 16,
+    "expanded_1t": 3.6400884308878667,
+    "expanded_2t": 4.293584682728805,
+    "before_1t": 3.6796555952366656,
+    "before_2t": 4.321213253432931,
+    "after_1t": 3.6400884308878667,
+    "after_2t": 4.293584682728805
+  },
+  "fft": {
+    "cases": 36,
+    "averaged_cases": 28,
+    "matched_cases": 0,
+    "expanded_1t": 1.3368368493814362,
+    "expanded_2t": 1.3235804002429314
+  },
+  "integrate": {
+    "cases": 35,
+    "averaged_cases": 35,
+    "matched_cases": 35,
+    "expanded_1t": 1.7299845081917344,
+    "expanded_2t": 1.7282085595333403,
+    "before_1t": 1.7146515919526468,
+    "before_2t": 1.7195895963955161,
+    "after_1t": 1.7299845081917344,
+    "after_2t": 1.7282085595333403
+  },
+  "interpolate": {
+    "cases": 31,
+    "averaged_cases": 27,
+    "matched_cases": 27,
+    "expanded_1t": 3.903334742612483,
+    "expanded_2t": 4.684792783082187,
+    "before_1t": 3.8587643894440107,
+    "before_2t": 4.628070832704138,
+    "after_1t": 3.903334742612483,
+    "after_2t": 4.684792783082187
+  },
+  "linalg": {
+    "cases": 49,
+    "averaged_cases": 49,
+    "matched_cases": 49,
+    "expanded_1t": 4.175807614924604,
+    "expanded_2t": 5.1587993008940725,
+    "before_1t": 4.168374264968635,
+    "before_2t": 5.164970122691502,
+    "after_1t": 4.175807614924604,
+    "after_2t": 5.1587993008940725
+  },
+  "ndimage": {
+    "cases": 43,
+    "averaged_cases": 43,
+    "matched_cases": 43,
+    "expanded_1t": 12.451459604975634,
+    "expanded_2t": 20.833907967274044,
+    "before_1t": 12.638573896880192,
+    "before_2t": 20.970131460520744,
+    "after_1t": 12.451459604975634,
+    "after_2t": 20.833907967274044
+  },
+  "optimize": {
+    "cases": 20,
+    "averaged_cases": 20,
+    "matched_cases": 14,
+    "expanded_1t": 1.8775606642274032,
+    "expanded_2t": 1.8790200208707768,
+    "before_1t": 1.633888535850626,
+    "before_2t": 1.640212139310786,
+    "after_1t": 1.638961906036239,
+    "after_2t": 1.6376575806357887
+  },
+  "signal": {
+    "cases": 41,
+    "averaged_cases": 41,
+    "matched_cases": 41,
+    "expanded_1t": 3.3048097646668717,
+    "expanded_2t": 3.920459703674108,
+    "before_1t": 3.283416276855031,
+    "before_2t": 3.8782503043395566,
+    "after_1t": 3.3048097646668717,
+    "after_2t": 3.920459703674108
+  },
+  "sparse": {
+    "cases": 27,
+    "averaged_cases": 27,
+    "matched_cases": 27,
+    "expanded_1t": 3.8559184201360033,
+    "expanded_2t": 4.487065450414705,
+    "before_1t": 3.8801061842272033,
+    "before_2t": 4.519233969450666,
+    "after_1t": 3.8559184201360033,
+    "after_2t": 4.487065450414705
+  },
+  "sparse_linalg": {
+    "cases": 31,
+    "averaged_cases": 29,
+    "matched_cases": 20,
+    "expanded_1t": 1.4420675233574427,
+    "expanded_2t": 1.4454985150432387,
+    "before_1t": 1.294856497915073,
+    "before_2t": 1.294205465574254,
+    "after_1t": 1.4446828425519667,
+    "after_2t": 1.44615324970003
+  },
+  "spatial": {
+    "cases": 36,
+    "averaged_cases": 33,
+    "matched_cases": 21,
+    "expanded_1t": 1.4936471543714316,
+    "expanded_2t": 2.082982834263597,
+    "before_1t": 1.0055371804817181,
+    "before_2t": 1.6925355468867314,
+    "after_1t": 1.0009418165795279,
+    "after_2t": 1.6984500727272618
+  },
+  "special": {
+    "cases": 37,
+    "averaged_cases": 35,
+    "matched_cases": 35,
+    "expanded_1t": 1.0046790004647375,
+    "expanded_2t": 1.8389969086459372,
+    "before_1t": 1.002267701214248,
+    "before_2t": 1.8186394502054546,
+    "after_1t": 1.0046790004647375,
+    "after_2t": 1.8389969086459372
+  },
+  "stats": {
+    "cases": 58,
+    "averaged_cases": 58,
+    "matched_cases": 58,
+    "expanded_1t": 6.145737649585688,
+    "expanded_2t": 6.277843244150006,
+    "before_1t": 6.120223532999768,
+    "before_2t": 6.260073580271458,
+    "after_1t": 6.145737649585688,
+    "after_2t": 6.277843244150006
+  },
+  "_overall": {
+    "matched_cases": 398,
+    "total_cases": 472,
+    "averaged_cases": 453,
+    "before_1t": 3.209846120936064,
+    "before_2t": 3.9643843867215107,
+    "after_1t": 3.2297372364054313,
+    "after_2t": 3.994491968547311
+  }
+}

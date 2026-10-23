@@ -643,3 +643,89 @@ def test_adjoint_explicit_namespace_and_subclass_decline():
         before = fast_calls()
         assert_identical(operator.matvec(np.arange(3.0)), np.arange(3.0))
         assert fast_calls() == before
+
+
+@pytest.mark.parametrize("output", ["vector", "column", "reversed", "readonly", "empty", "subclass"])
+def test_operator_reshape_result_contract(output):
+    class Array(np.ndarray):
+        pass
+
+    n = 0 if output == "empty" else 7
+    values = np.arange(n, dtype=np.float64)
+    if output == "column":
+        values = values[:, None]
+    elif output == "reversed":
+        values = values[::-1]
+    elif output == "readonly":
+        values.flags.writeable = False
+    elif output == "subclass":
+        values = values.view(Array)
+    operator = sl.LinearOperator((n, n), matvec=lambda x: values, dtype=np.float64)
+    x = np.zeros(n)
+    check(lambda: operator.matvec(x))
+    with fastscipy.disabled():
+        expected = operator.matvec(x)
+    actual = operator.matvec(x)
+    assert actual is not values
+    assert actual.flags.writeable == expected.flags.writeable
+    assert actual.flags.owndata == expected.flags.owndata
+    if n:
+        assert np.shares_memory(actual, values)
+
+
+def test_operator_reshape_preserves_subclass_array_function():
+    calls = []
+
+    class Array(np.ndarray):
+        def __array_function__(self, func, types, args, kwargs):
+            if func is np.reshape:
+                calls.append(func)
+            return super().__array_function__(func, types, args, kwargs)
+
+    values = np.arange(5.0).view(Array)
+    operator = sl.LinearOperator((5, 5), matvec=lambda x: values, dtype=np.float64)
+    for enabled in (False, True):
+        calls.clear()
+        if enabled:
+            result = operator.matvec(np.ones(5))
+        else:
+            with fastscipy.disabled():
+                result = operator.matvec(np.ones(5))
+        assert type(result) is Array and calls == [np.reshape]
+
+
+@pytest.mark.parametrize("solver", [sl.cg, sl.gmres])
+@pytest.mark.parametrize("maxiter", [1, None])
+def test_composed_preconditioned_solver_history_and_residual(solver, maxiter):
+    n = 64
+    a = sparse.diags_array([-np.ones(n - 1), np.linspace(3, 6, n), -np.ones(n - 1)], offsets=[-1, 0, 1], format="csr")
+    diagonal = np.linspace(0.5, 1.5, n)
+    op = sl.aslinearoperator(a) + sl.LinearOperator(a.shape, matvec=lambda x: diagonal * x, dtype=a.dtype)
+    inverse = 1 / (a.diagonal() + diagonal)
+    preconditioner = sl.LinearOperator(a.shape, matvec=lambda x: inverse * x, dtype=a.dtype)
+    b = np.random.default_rng(784).standard_normal(n)
+    before = a.data.tobytes(), b.tobytes(), diagonal.tobytes(), inverse.tobytes()
+
+    def run():
+        history = []
+        kwargs = {"callback_type": "legacy"} if solver is sl.gmres else {}
+        result = solver(
+            op,
+            b,
+            M=preconditioner,
+            maxiter=maxiter,
+            rtol=1e-10,
+            callback=lambda x: history.append(np.array(x, copy=True)),
+            **kwargs,
+        )
+        assert history
+        assert result[1] == (0 if maxiter is None else 1)
+        if result[1] == 0:
+            # Evaluate the original equation, avoiding the composed operator.
+            with fastscipy.disabled():
+                residual = b - (a @ result[0] + diagonal * result[0])
+                assert np.linalg.norm(residual) <= 1e-10 * np.linalg.norm(b)
+        return result, history
+
+    check(run)
+    assert before == (a.data.tobytes(), b.tobytes(), diagonal.tobytes(), inverse.tobytes())

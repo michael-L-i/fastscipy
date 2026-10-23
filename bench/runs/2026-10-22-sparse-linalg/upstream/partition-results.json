@@ -1,0 +1,82 @@
+[
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy.sparse.linalg.tests.test_interface",
+      "scipy.sparse.linalg._isolve.tests.test_iterative",
+      "-q"
+    ],
+    "patched": false,
+    "junit": "0-False.xml",
+    "quarantine": "0-False.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1533,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "darwin",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "macosx-26.0-arm64",
+        "python": [
+          3,
+          13,
+          12
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy.sparse.linalg.tests.test_interface",
+      "scipy.sparse.linalg._isolve.tests.test_iterative",
+      "-q"
+    ],
+    "patched": true,
+    "junit": "0-True.xml",
+    "quarantine": "0-True.quarantine.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1533,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "darwin",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "macosx-26.0-arm64",
+        "python": [
+          3,
+          13,
+          12
+        ],
+        "numpy": "2.5.4",
+        "scipy": "1.18.1",
+        "test_source": "/private/tmp/fastscipy-portability-a2-mac/lib/python3.13/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "d2183d600ae2851e490c8477cfbb1326d20db4af831fcfc9a074a1eb0d5c36b2"
+      },
+      "active": false,
+      "selected": []
+    }
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "executable": "/private/tmp/fastscipy-portability-a2-mac/bin/python",
+  "revision": "f60dca00fc03bde702a2ee24e17b1c7c68b276c0",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "fastscipy": "0.1.0a2"
+  },
+  "scipy_available_memory": "256Mib",
+  "batches": [
+    [
+      "--pyargs",
+      "scipy.sparse.linalg.tests.test_interface",
+      "scipy.sparse.linalg._isolve.tests.test_iterative",
+      "-q"
+    ]
+  ],
+  "paired_quarantine": {
+    "plugin": "scipy_upstream_quarantine",
+    "source_sha256": "ead990fbe13a21611634e37e50f4fdab5006c504e8847e3204a43fca0ebb3051",
+    "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+    "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs"
+  }
+}

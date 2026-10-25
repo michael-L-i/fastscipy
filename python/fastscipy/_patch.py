@@ -5,14 +5,25 @@ every fast path goes through ``wrap`` (or checks ``enabled``) so
 ``fastscipy.disabled()`` and the fallback counters work everywhere.
 """
 
-import collections
 import functools
 import os
 import sys
 
+
+class _CallCounts(dict):
+    """Dictionary increments with zero for unseen paths, without inserting on reads.
+
+    Call accounting needs neither Counter's multiset operations nor its numeric
+    protocols. A plain dict subclass keeps the per-call update inexpensive.
+    """
+
+    def __missing__(self, key):
+        return 0
+
+
 enabled = True  # False inside fastscipy.disabled()
 current = None  # component being patched; set by fastscipy.patch()
-counts = collections.Counter()  # (function, "fast" | "scipy" | "error") -> calls
+counts = _CallCounts()  # (function, "fast" | "scipy" | "error") -> calls
 STRICT = os.environ.get("FASTSCIPY_STRICT", "") not in ("", "0")  # re-raise fast-path errors
 _records = []  # (component, owner, attr, old value)
 _identity_records = []  # (component, table, key, old value)

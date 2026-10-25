@@ -53,6 +53,7 @@ _OPTIONS = {
 }
 _WORK = 1_000_000  # pair-coordinates below which a block split loses to hand-off cost
 _BLOCK = 200_000  # about 100 us per block
+_PDIST_TILE = 131_072  # distance entries per tile (1 MiB), or one full row if larger
 _QUERIES = 2000  # KDTree queries below which threads cost more than they save
 
 
@@ -169,9 +170,14 @@ def _pdist_fast(cdist):
 
         def block(ab):
             a, b = ab
-            D = cdist(X[a:b], X[a:], metric, **params)
-            # One masked copy, not a Python loop over rows: a loop holds the GIL and serialises the blocks.
-            res[starts[a] : starts[b]] = D[np.arange(D.shape[1]) > np.arange(b - a)[:, None]]
+            while a < b:
+                end = min(b, a + max(1, _PDIST_TILE // (m - a)))
+                D = cdist(X[a:end], X[a:], metric, **params)
+                # Vectorized copies release the GIL. Bound each tile instead of
+                # retaining a worker's entire rectangular block and selection.
+                res[starts[a] : starts[end]] = D[np.arange(m - a) > np.arange(end - a)[:, None]]
+                del D
+                a = end
 
         parallel_map(block, list(zip(bounds, bounds[1:])))
         return res

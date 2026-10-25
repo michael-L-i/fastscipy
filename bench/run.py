@@ -17,11 +17,13 @@ regression. Numerical validation never excuses a deterministic mismatch.
 """
 
 import argparse
-import importlib
+import contextlib
+import importlib.util
 import json
 import math
 import os
 import pathlib
+import statistics
 import sys
 import time
 
@@ -31,21 +33,93 @@ from fastscipy.testing import fast_calls, identical, reference_variance
 HERE = pathlib.Path(__file__).parent
 
 
+@contextlib.contextmanager
+def unpatched():
+    """Restore actual SciPy bindings, then reinstall the active components.
+
+    This is a serial benchmark operation, not a thread-local runtime API.
+    Disabling dispatch alone would still time wrappers and their counters.
+    """
+    active = [name for name, state in fastscipy.status().items() if state == "on"]
+    fastscipy.unpatch()
+    try:
+        with fastscipy.disabled():
+            yield
+    finally:
+        if active:
+            fastscipy.patch(active)
+
+
+def load_cases(area, label):
+    """Load independent module state, including module-level seeded RNGs."""
+    spec = importlib.util.spec_from_file_location(f"bench_{area}_{label}", HERE / f"bench_{area}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return iter(module.cases()), "threads" if getattr(module, "THREADED_ONLY", False) else True
+
+
+def paired_cases(area):
+    """Construct each side's fixtures in its own patch state, one pair at a time.
+
+    Captured functions and objects such as cKDTree retain their implementation
+    after unpatch(), so the reference needs its own independently built cases.
+    """
+    with unpatched():
+        references, reference_default = load_cases(area, "reference")
+    candidates, default = load_cases(area, "candidate")
+    if reference_default != default:
+        raise ValueError(f"{area}: inconsistent default fast-path expectation")
+    sentinel = object()
+    while True:
+        with unpatched():
+            reference = next(references, sentinel)
+        candidate = next(candidates, sentinel)
+        if reference is sentinel and candidate is sentinel:
+            return
+        if reference is sentinel or candidate is sentinel or reference[0] != candidate[0]:
+            raise ValueError(f"{area}: reference and candidate cases do not match")
+        name, call, *options = candidate
+        expected = options[0] if options else default
+        reference_expected = reference[2] if len(reference) > 2 else reference_default
+        if expected != reference_expected or len(reference) != len(candidate):
+            raise ValueError(f"{area}: inconsistent options for {name}")
+        yield name, call, reference[1], expected, options[1] if len(options) > 1 else None
+
+
 def timeit(call, budget):
-    """Best of repeated calls within ``budget`` seconds (at least 3 calls)."""
-    best, total, n = math.inf, 0.0, 0
-    while n < 3 or (total < budget and n < 10_000):
-        t = time.perf_counter()
-        call()
-        dt = time.perf_counter() - t
-        best, total, n = min(best, dt), total + dt, n + 1
-    return best
+    """Median per-call time from at least five calibrated batches.
+
+    Batch tiny calls to amortize timer overhead. Calibration and warmup are
+    excluded; the budget is a sampling target, not a hard timeout.
+    """
+    batch = 1
+    target = min(0.001, max(0.00001, budget / 10))
+    while True:
+        start = time.perf_counter()
+        for _ in range(batch):
+            call()
+        elapsed = time.perf_counter() - start
+        if elapsed >= target or batch >= 10_000:
+            break
+        batch = min(10_000, batch * 10)
+    samples, total = [], 0.0
+    while len(samples) < 5 or (total < budget and len(samples) < 100):
+        start = time.perf_counter()
+        for _ in range(batch):
+            call()
+        elapsed = time.perf_counter() - start
+        samples.append(elapsed / batch)
+        total += elapsed
+    return statistics.median(samples)
 
 
-def run_case(call, budget, threads, expect=True, reference_validation=None):
-    with fastscipy.disabled():
-        ref = call()
-        t_scipy = timeit(call, budget)
+def run_case(call, budget, threads, expect=True, reference_validation=None, *, reference_call):
+    with unpatched():
+        before_reference = fastscipy.stats()
+        ref = reference_call()
+        t_scipy = timeit(reference_call, budget)
+        if fastscipy.stats() != before_reference:
+            raise RuntimeError("reference reached a fastscipy wrapper; construct its fixture while unpatched")
     row = {"scipy_ms": t_scipy * 1e3, "identical": True, "fast_path": True}
     exceptions = {}
     unexplained = False
@@ -58,7 +132,8 @@ def run_case(call, budget, threads, expect=True, reference_validation=None):
         same = identical(ref, out)
         row["identical"] &= same
         if not same:
-            exception = reference_variance(call, ref, out, reference_validation)
+            with unpatched():
+                exception = reference_variance(reference_call, ref, out, reference_validation)
             if exception is None:
                 unexplained = True
             else:
@@ -84,6 +159,8 @@ def main():
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--output-dir", type=pathlib.Path, default=HERE / "results")
     args = ap.parse_args()
+    if not math.isfinite(args.budget) or args.budget < 0:
+        ap.error("--budget must be finite and nonnegative")
     areas = args.areas or sorted(p.stem[6:] for p in HERE.glob("bench_*.py"))
     threads = fastscipy.get_num_threads()
     print(fastscipy.patch())
@@ -94,14 +171,10 @@ def main():
     print("|---|---:|---:|---:|---:|---:|---|")
     for area in areas:
         rows = {}
-        mod = importlib.import_module(f"bench_{area}")
-        default = "threads" if getattr(mod, "THREADED_ONLY", False) else True
-        for name, call, *expect in mod.cases():
+        for name, call, reference_call, expected, validation in paired_cases(area):
             if args.only not in name:
                 continue
-            expected = expect[0] if expect else default
-            validation = expect[1] if len(expect) > 1 else None
-            r = rows[name] = run_case(call, args.budget, threads, expected, validation)
+            r = rows[name] = run_case(call, args.budget, threads, expected, validation, reference_call=reference_call)
             r["expected_fast_path"] = expected
             flag = "yes" if r["identical"] else "**NO**"
             if r["validation"] == "reference_variance":
@@ -117,12 +190,21 @@ def main():
                 bad.append(f"{area}: {name}")
         fastscipy.set_num_threads(threads)
         if rows:
-            stable = [r for r in rows.values() if r["identical"]]
+            stable = [r for r in rows.values() if r["identical"] and r["expected_fast_path"] is not False]
             print(
-                f"| **{area} geomean (byte-identical cases)** | | | | **{geomean([r['x1t'] for r in stable]):.1f}** "
+                f"| **{area} geomean (byte-identical non-controls)** | | | | "
+                f"**{geomean([r['x1t'] for r in stable]):.1f}** "
                 f"| **{geomean([r['xnt'] for r in stable]):.1f}** | |"
             )
-            meta = {"threads": threads, "cpu": os.cpu_count(), "platform": sys.platform}
+            meta = {
+                "threads": threads,
+                "cpu": os.cpu_count(),
+                "platform": sys.platform,
+                "reference": "unpatched_scipy",
+                "timing": "median_calibrated_batches",
+                "budget_seconds": args.budget,
+                "headline_cases": len(stable),
+            }
             (args.output_dir / f"{area}.json").write_text(json.dumps({"meta": meta, "cases": rows}, indent=1))
     if bad:
         print("\nNot identical, no fast path, or slower than SciPy on 1 thread:\n  " + "\n  ".join(bad))

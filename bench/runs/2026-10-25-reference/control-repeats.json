@@ -1,0 +1,66 @@
+{
+  "scipy.fft.dctn integer control": [
+    {
+      "scipy_ms": 0.003394438070245087,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.003711208002641797,
+      "x1t": 0.9146450610768193,
+      "nt_ms": 0.0035906879929825664,
+      "xnt": 0.9453447575726383,
+      "validation": "byte_identical"
+    },
+    {
+      "scipy_ms": 0.0033261874923482537,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.0037850000662729144,
+      "x1t": 0.878781356435628,
+      "nt_ms": 0.003776917001232505,
+      "xnt": 0.8806620561857286,
+      "validation": "byte_identical"
+    },
+    {
+      "scipy_ms": 0.003438604471739381,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.003710165969096124,
+      "x1t": 0.9268061052743414,
+      "nt_ms": 0.003731542034074664,
+      "xnt": 0.921496914771342,
+      "validation": "byte_identical"
+    }
+  ],
+  "LinearOperator batched fallback control x100 calls": [
+    {
+      "scipy_ms": 0.1835959032177925,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.2024687477387488,
+      "x1t": 0.9067863819392589,
+      "nt_ms": 0.1981582958251238,
+      "xnt": 0.9265113148723145,
+      "validation": "byte_identical"
+    },
+    {
+      "scipy_ms": 0.18637499306350946,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.19890209659934044,
+      "x1t": 0.9370187456542249,
+      "nt_ms": 0.1968582975678146,
+      "xnt": 0.9467469513156093,
+      "validation": "byte_identical"
+    },
+    {
+      "scipy_ms": 0.1809062552638352,
+      "identical": true,
+      "fast_path": true,
+      "1t_ms": 0.2028458460699767,
+      "x1t": 0.8918410643786469,
+      "nt_ms": 0.20283960620872676,
+      "xnt": 0.8918684996739659,
+      "validation": "byte_identical"
+    }
+  ]
+}

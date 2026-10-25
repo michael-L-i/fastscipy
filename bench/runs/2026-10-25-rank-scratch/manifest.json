@@ -1,0 +1,24 @@
+{
+  "base_commit": "8ea95b2",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "build_profile": "dev-release",
+  "cargo_build_jobs": 1,
+  "numerical_threads": [
+    1,
+    2
+  ],
+  "blas_openmp_threads": 1,
+  "memory_limit_mib": 512,
+  "native_sha256": {
+    "baseline": "9c1b963ebc4d20c08baf91cbd839ca6c96f45a21d82cbb3515fe888a9dd798cd",
+    "dynamic_histogram": "4ef4e1ea7c037ead549f758d7e3f905f11bb192382ce3c180a0634763797bb3a",
+    "fixed_histogram": "c6b0c9108bd63d85b9676ed8cf2625609b1061f36dd52d915b33cfbecb82d696",
+    "first_use": "47209cc8c73e7bee49070b1817a0a5517dd8d5bb880ce5a956adcfc3aa8130b8"
+  },
+  "patch_sha256": {
+    "rejected-fixed-histogram.patch": "b1ce42dd960afa359cb3a56ee727d78af12cf2fcca0fe9bbbd153223c2bbeda4",
+    "rejected-dynamic-histogram.patch": "4f857ccbe0fec4a92f2a117d4693f1a666c48cd1c6212b3370f91f5a6311b0ce",
+    "rejected-first-use.patch": "42b16ab939e836b0c825cdfb0c431cc34505d487cae92f86381008936a4bbdab"
+  }
+}

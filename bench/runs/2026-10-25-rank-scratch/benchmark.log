@@ -1,0 +1,10 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| stats: rankdata 1e6 | 72.720 | 8.506 | 11.651 | 8.5 | 6.2 | yes |
+| stats: rankdata 1e6 ties | 46.804 | 7.212 | 11.835 | 6.5 | 4.0 | yes |
+| stats: rankdata 3000x300 axis=1 | 24.929 | 8.377 | 4.485 | 3.0 | 5.6 | yes |
+| stats: rankdata 512x2048 random axis=1 | 39.882 | 10.477 | 5.624 | 3.8 | 7.1 | yes |
+| stats: rankdata 512x2048 ties axis=1 | 25.305 | 7.223 | 3.866 | 3.5 | 6.5 | yes |
+| **stats geomean (byte-identical cases)** | | | | **4.7** | **5.8** | |

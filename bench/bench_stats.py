@@ -62,6 +62,15 @@ def cases():
     yield "rankdata 1e6", lambda: st.rankdata(x)
     yield "rankdata 1e6 ties", lambda: st.rankdata(ties)
     yield "rankdata 3000x300 axis=1", lambda: st.rankdata(x[:900_000].reshape(3000, 300), axis=1)
+    # Separate RNG keeps existing benchmark fixtures unchanged.
+    rank_rng = np.random.default_rng(752)
+    for kind in ("random", "ties"):
+        batch = (
+            rank_rng.standard_normal((512, 2048))
+            if kind == "random"
+            else rank_rng.integers(0, 16, (512, 2048)).astype(float)
+        )
+        yield f"rankdata 512x2048 {kind} axis=1", lambda a=batch: st.rankdata(a, axis=1)
     yield "spearmanr 1e6", lambda: st.spearmanr(x, y)
     yield "mannwhitneyu 1e6", lambda: st.mannwhitneyu(x[:500_000], y[:500_000], method="asymptotic")
     yield "wilcoxon 1e6", lambda: st.wilcoxon(x, method="approx")

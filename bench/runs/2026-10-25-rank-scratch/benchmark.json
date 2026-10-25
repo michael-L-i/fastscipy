@@ -1,0 +1,64 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 18,
+  "platform": "darwin"
+ },
+ "cases": {
+  "rankdata 1e6": {
+   "scipy_ms": 72.7195420768112,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 8.506165933795273,
+   "x1t": 8.549038737640197,
+   "nt_ms": 11.651042033918202,
+   "xnt": 6.241462511688827,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rankdata 1e6 ties": {
+   "scipy_ms": 46.80354206357151,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.211791002191603,
+   "x1t": 6.4898638977957495,
+   "nt_ms": 11.834625038318336,
+   "xnt": 3.9547972083636163,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rankdata 3000x300 axis=1": {
+   "scipy_ms": 24.92908400017768,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 8.377291029319167,
+   "x1t": 2.975792999542443,
+   "nt_ms": 4.484624951146543,
+   "xnt": 5.558789034031551,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rankdata 512x2048 random axis=1": {
+   "scipy_ms": 39.881750009953976,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 10.477167088538408,
+   "x1t": 3.8065394655758595,
+   "nt_ms": 5.623749922960997,
+   "xnt": 7.091664913320964,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "rankdata 512x2048 ties axis=1": {
+   "scipy_ms": 25.305084069259465,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 7.222707965411246,
+   "x1t": 3.503545234064942,
+   "nt_ms": 3.8661659928038716,
+   "xnt": 6.5452658050275225,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  }
+ }
+}

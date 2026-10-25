@@ -1,0 +1,100 @@
+--- a/src/stats/rank.rs
++++ b/src/stats/rank.rs
+@@ -33,16 +33,25 @@
+     }
+ }
+ 
++/// Per-task storage, reused for successive rows and released after the call.
++/// Radix-only buffers stay empty for rows handled by comparison sorting.
++#[derive(Default)]
++struct Scratch {
++    pairs: Vec<Pair>,
++    radix_pairs: Vec<Pair>,
++    hist: Option<Box<[[u32; 2048]; 6]>>,
++}
++
+ /// Stable LSD radix sort by the key (11-bit digits, constant digits skipped).
+-fn radix(a: &mut Vec<Pair>) {
++fn radix(a: &mut Vec<Pair>, b: &mut Vec<Pair>, hist: &mut [[u32; 2048]; 6]) {
+     let n = a.len();
+-    let mut hist = vec![[0u32; 2048]; 6];
++    hist.fill([0; 2048]);
+     for &(k, _) in a.iter() {
+         for (p, h) in hist.iter_mut().enumerate() {
+             h[((k >> (11 * p)) & 2047) as usize] += 1;
+         }
+     }
+-    let mut b = vec![(0u64, 0u32); n];
++    b.resize(n, (0, 0));
+     for (p, h) in hist.iter_mut().enumerate() {
+         if h.iter().any(|&c| c as usize == n) {
+             continue;
+@@ -56,7 +65,7 @@
+             b[*d as usize] = (k, i);
+             *d += 1;
+         }
+-        std::mem::swap(a, &mut b);
++        std::mem::swap(a, b);
+     }
+ }
+ 
+@@ -69,25 +78,29 @@
+     bits: &[u64],
+     o: &Opts,
+     parallel: bool,
++    scratch: &mut Scratch,
+     ranks: &mut [f64],
+     mut ties: Option<&mut [f64]>,
+     sorted: Option<&mut [u64]>,
+ ) {
+     let n = bits.len();
+-    let mut a: Vec<Pair> = bits
+-        .iter()
+-        .enumerate()
+-        .map(|(i, &b)| (key(b, o.kind), i as u32))
+-        .collect();
++    let a = &mut scratch.pairs;
++    a.clear();
++    a.extend(
++        bits.iter()
++            .enumerate()
++            .map(|(i, &b)| (key(b, o.kind), i as u32)),
++    );
+     if parallel {
+         a.par_sort_unstable();
+     } else if n <= SMALL {
+         a.sort_unstable();
+     } else {
+-        radix(&mut a);
++        let hist = scratch.hist.get_or_insert_with(|| Box::new([[0; 2048]; 6]));
++        radix(a, &mut scratch.radix_pairs, hist);
+     }
+     if let Some(s) = sorted {
+-        for (s, &(_, i)) in s.iter_mut().zip(&a) {
++        for (s, &(_, i)) in s.iter_mut().zip(a.iter()) {
+             *s = bits[i as usize];
+         }
+     }
+@@ -171,14 +184,20 @@
+             .collect();
+         if threads > 1 && rows > 1 && rows * n >= PARALLEL_ELEMS {
+             pool::pool().install(|| {
++                // Keep enough rows in each task to amortize its scratch buffers,
++                // while leaving several tasks per worker for load balancing.
+                 jobs.into_par_iter()
+-                    .for_each(|(((b, r), t), s)| rank_row(b, &o, false, r, t, s));
++                    .with_min_len((rows / (4 * threads)).max(1))
++                    .for_each_init(Scratch::default, |scratch, (((b, r), t), s)| {
++                        rank_row(b, &o, false, scratch, r, t, s);
++                    });
+             });
+         } else {
+             let big = threads > 1 && n >= PARALLEL_ROW;
+             let run = || {
++                let mut scratch = Scratch::default();
+                 jobs.into_iter()
+-                    .for_each(|(((b, r), t), s)| rank_row(b, &o, big, r, t, s))
++                    .for_each(|(((b, r), t), s)| rank_row(b, &o, big, &mut scratch, r, t, s))
+             };
+             if big {
+                 pool::pool().install(run)

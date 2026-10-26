@@ -111,6 +111,65 @@ def test_coo_sum_duplicates(dtype, index, fmt):
         check(run)
 
 
+@pytest.mark.parametrize("dtype", VALUE_DTYPES)
+@pytest.mark.parametrize("index", [np.int32, np.int64])
+@pytest.mark.parametrize("fmt", [sp.coo_array, sp.coo_matrix])
+@pytest.mark.parametrize("order", ["sorted", "column descent", "row descent"])
+def test_coo_sorted_duplicate_segments(dtype, index, fmt, order):
+    # Exercise reduceat's singleton, short, eight-lane and recursive pairwise sums.
+    lengths = np.array([1, 2, 7, 8, 9, 127, 128, 129, 257, 1025])
+    row = np.repeat(np.arange(len(lengths)) // 4, lengths).astype(index)
+    col = np.repeat(np.arange(len(lengths)) % 4, lengths).astype(index)
+    rng = np.random.default_rng(243)
+    data = rng.integers(-(2**30), 2**30, row.size).astype(dtype)
+    if np.dtype(dtype).kind == "f":
+        data *= np.resize(np.array([1e-10, 1, 1e10], dtype=dtype), data.size)
+        data[0] = -0.0
+        data[1:3] = -0.0
+        data[3:10] = np.nan
+        data[10:18] = np.resize(np.array([np.inf, -np.inf], dtype=dtype), 8)
+    else:
+        data[:3] = np.iinfo(dtype).max
+    if order == "column descent":
+        col[-1] = 0
+    elif order == "row descent":
+        row[-1] = 0
+
+    def run():
+        matrix = fmt((data.copy(), (row.copy(), col.copy())), shape=(4, 4))
+        # Matrix constructors may narrow index types; keep both supported widths.
+        matrix.coords = (row.copy(), col.copy())
+        matrix.sum_duplicates()
+        return matrix
+
+    with np.errstate(invalid="ignore"):
+        check(run)
+
+
+@pytest.mark.parametrize("dtype", VALUE_DTYPES)
+@pytest.mark.parametrize("duplicates", [False, True])
+def test_coo_sorted_unique_and_explicit_zero(dtype, duplicates):
+    row = np.repeat(np.arange(50, dtype=np.int64), 4)
+    col = np.tile(np.arange(4, dtype=np.int64), 50)
+    if duplicates:
+        col //= 2
+    data = np.zeros(row.size, dtype=dtype)
+    if np.dtype(dtype).kind == "f":
+        data[::2] = -0.0
+
+    def run():
+        matrix = sp.coo_array((data.copy(), (row.copy(), col.copy())), shape=(50, 4))
+        original = tuple(a.copy() for a in (*matrix.coords, matrix.data))
+        inputs = (*matrix.coords, matrix.data)
+        matrix.sum_duplicates()
+        for before, source, result in zip(original, inputs, (*matrix.coords, matrix.data)):
+            assert_identical(before, source)
+            assert not np.shares_memory(source, result)
+        return matrix
+
+    check(run)
+
+
 def test_coo_sum_duplicates_declines():
     rng = np.random.default_rng(4)
     row, col = rng.integers(0, 9, 100), rng.integers(0, 9, 100)

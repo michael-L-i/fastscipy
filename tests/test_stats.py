@@ -957,3 +957,45 @@ def test_binned_extrema_reduction_fallback(monkeypatch, disabled):
     values = np.arange(1, 6001, dtype=float)[::-1]
     for statistic in ("min", "max"):
         assert not same(lambda: st.binned_statistic(sample, values, statistic, bins=8, range=(-1, 1)))
+
+
+@pytest.mark.parametrize("statistic", ["min", "max"])
+@pytest.mark.parametrize("mutation", ["nan", "zero"])
+@pytest.mark.parametrize("disable", [False, True])
+def test_binned_extrema_bin_conversion_mutates_values(statistic, mutation, disable):
+    from fastscipy import _patch
+
+    values = np.ones(4096)
+    sample = np.arange(4096, dtype=float)[:, None]
+
+    class Bins:
+        def __index__(self):
+            values[0] = np.nan if mutation == "nan" else -0.0
+            if mutation == "zero":
+                values[1::2] = 0.0
+            if disable:
+                _patch.enabled = False
+            return 10
+
+    def call():
+        values.fill(1)
+        return st.binned_statistic_dd(sample, values, statistic, bins=Bins())
+
+    try:
+        assert not same(call)
+    finally:
+        _patch.enabled = True
+
+
+def test_binned_extrema_conversion_error_not_retried():
+    values = np.ones(4096)
+    calls = []
+
+    class Bins:
+        def __index__(self):
+            calls.append("index")
+            values[0] = np.nan
+            raise ValueError("bin conversion failed")
+
+    assert not same(lambda: st.binned_statistic(np.arange(4096), values, "max", bins=Bins()))
+    assert calls == ["index", "index"]  # Once per reference/candidate call.

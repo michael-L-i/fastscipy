@@ -1,0 +1,123 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 18,
+  "platform": "darwin",
+  "reference": "unpatched_scipy",
+  "timing": "median_calibrated_batches",
+  "budget_seconds": 0.1,
+  "headline_cases": 8
+ },
+ "cases": {
+  "binned min n=4096 d=1 rows=1": {
+   "scipy_ms": 0.10324795148335397,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.06738584022969007,
+   "x1t": 1.5321906075731193,
+   "nt_ms": 0.06653167074546218,
+   "xnt": 1.5518616972413255,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned max n=4096 d=1 rows=1": {
+   "scipy_ms": 0.09909579530358315,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.06486374943051487,
+   "x1t": 1.5277531159332574,
+   "nt_ms": 0.06480270996689796,
+   "xnt": 1.5291921488191236,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned min n=100000 d=1 rows=1": {
+   "scipy_ms": 6.708479020744562,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.8041040166281164,
+   "x1t": 3.718454678285545,
+   "nt_ms": 1.784500083886087,
+   "xnt": 3.759304402012455,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned max n=100000 d=1 rows=1": {
+   "scipy_ms": 6.681125028990209,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.8099170411005616,
+   "x1t": 3.691398488036555,
+   "nt_ms": 1.7561250133439898,
+   "xnt": 3.8044700566436895,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned min n=100000 d=2 rows=3": {
+   "scipy_ms": 19.700583477970213,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 4.672416485846043,
+   "x1t": 4.216358609650568,
+   "nt_ms": 4.65268746484071,
+   "xnt": 4.234237443809195,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned max n=100000 d=2 rows=3": {
+   "scipy_ms": 19.93079192470759,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 4.846209078095853,
+   "x1t": 4.112656223354419,
+   "nt_ms": 4.772666492499411,
+   "xnt": 4.176028632218544,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned min n=1000000 d=3 rows=1": {
+   "scipy_ms": 123.04912495892495,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 60.9048749320209,
+   "x1t": 2.020349357851346,
+   "nt_ms": 60.642333002761006,
+   "xnt": 2.0290961588387866,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned max n=1000000 d=3 rows=1": {
+   "scipy_ms": 123.16491699311882,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 62.395457993261516,
+   "x1t": 1.9739404269846081,
+   "nt_ms": 61.18016701657325,
+   "xnt": 2.0131510422283476,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "binned min zeros fallback": {
+   "scipy_ms": 1.4533745124936104,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 1.4708334929309785,
+   "x1t": 0.988129872945321,
+   "nt_ms": 1.4793750597164035,
+   "xnt": 0.9824246413700002,
+   "validation": "byte_identical",
+   "expected_fast_path": false
+  },
+  "binned min small fallback": {
+   "scipy_ms": 0.026631249929778278,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.026790415286086496,
+   "x1t": 0.9940588693900956,
+   "nt_ms": 0.026781874476000667,
+   "xnt": 0.9943758773734317,
+   "validation": "byte_identical",
+   "expected_fast_path": false
+  }
+ }
+}

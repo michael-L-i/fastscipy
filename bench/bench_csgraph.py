@@ -18,6 +18,28 @@ def random_graph(n, m, seed=0, weights=True):
 
 
 def cases():
+    # Permuted wide levels make ordering work visible; distance-only BFS does
+    # not need the predecessor tie order. Reverse chains stress explicit BF.
+    rng = np.random.default_rng(392)
+    width = 50000
+    columns = rng.permutation(np.arange(1, width + 1))
+    wide = sp.csr_array(
+        (np.ones(2 * width), (np.r_[np.zeros(width, dtype=int), columns], np.r_[columns, width + columns])),
+        shape=(2 * width + 1, 2 * width + 1),
+    )
+    wide.has_sorted_indices = False
+    wide.indices[:width] = columns
+    for predecessors in (False, True):
+        yield (
+            f"dijkstra unweighted wide frontier, 100k nodes, predecessors={predecessors}",
+            lambda p=predecessors: cg.dijkstra(wide, indices=0, unweighted=True, return_predecessors=p),
+        )
+    chain = sp.csr_array((np.ones(4999), (np.arange(1, 5000), np.arange(4999))), shape=(5000, 5000))
+    yield "dijkstra unweighted reverse chain, 5k nodes", lambda: cg.dijkstra(chain, indices=4999, unweighted=True)
+    yield (
+        "bellman_ford unweighted reverse chain, 5k nodes",
+        lambda: cg.bellman_ford(chain, indices=4999, unweighted=True),
+    )
     unit_rng = np.random.default_rng(332)
     unit_rows, unit_cols = unit_rng.integers(0, 10000, (2, 100000), dtype=np.int32)
     for dtype in (np.uint8, np.int32):

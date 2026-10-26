@@ -1,0 +1,42 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| special: erf Fortran 512x1024 float64 | 3.806 | 3.720 | 2.007 | 1.0 | 1.9 | yes |
+| special: gammaln Fortran 512x1024 float64 | 5.589 | 5.577 | 2.989 | 1.0 | 1.9 | yes |
+| special: airy Fortran 512x1024 float64 | 32.063 | 31.895 | 16.591 | 1.0 | 1.9 | yes |
+| special: erf 1e+05 float64 | 0.571 | 0.573 | 0.382 | 1.0 | 1.5 | yes |
+| special: gammaln 1e+05 float64 | 1.220 | 1.210 | 0.747 | 1.0 | 1.6 | yes |
+| special: i0 1e+05 float64 | 1.095 | 1.106 | 0.688 | 1.0 | 1.6 | yes |
+| special: expit 1e+05 float64 | 0.210 | 0.209 | 0.193 | 1.0 | 1.1 | yes |
+| special: jv 1e+05 float64 | 23.565 | 23.018 | 11.974 | 1.0 | 2.0 | yes |
+| special: betainc 1e+05 float64 | 9.491 | 9.445 | 4.839 | 1.0 | 2.0 | yes |
+| special: erf 1e+05 float32 | 0.630 | 0.622 | 0.406 | 1.0 | 1.6 | yes |
+| special: gammaln 1e+05 float32 | 1.351 | 1.338 | 0.770 | 1.0 | 1.8 | yes |
+| special: i0 1e+05 float32 | 1.127 | 1.128 | 0.715 | 1.0 | 1.6 | yes |
+| special: expit 1e+05 float32 | 0.141 | 0.140 | 0.145 | 1.0 | 1.0 | yes |
+| special: jv 1e+05 float32 | 22.911 | 22.935 | 12.017 | 1.0 | 1.9 | yes |
+| special: betainc 1e+05 float32 | 6.043 | 6.045 | 3.146 | 1.0 | 1.9 | yes |
+| special: erf 1e+06 float64 | 5.787 | 5.680 | 2.969 | 1.0 | 1.9 | yes |
+| special: gammaln 1e+06 float64 | 12.961 | 12.936 | 6.935 | 1.0 | 1.9 | yes |
+| special: i0 1e+06 float64 | 11.198 | 10.894 | 5.592 | 1.0 | 2.0 | yes |
+| special: expit 1e+06 float64 | 2.089 | 2.094 | 1.133 | 1.0 | 1.8 | yes |
+| special: jv 1e+06 float64 | 230.347 | 230.795 | 117.765 | 1.0 | 2.0 | yes |
+| special: betainc 1e+06 float64 | 93.624 | 93.740 | 47.330 | 1.0 | 2.0 | yes |
+| special: erf 1e+06 float32 | 6.310 | 6.076 | 3.289 | 1.0 | 1.9 | yes |
+| special: gammaln 1e+06 float32 | 13.605 | 13.806 | 7.171 | 1.0 | 1.9 | yes |
+| special: i0 1e+06 float32 | 11.250 | 11.413 | 5.845 | 1.0 | 1.9 | yes |
+| special: expit 1e+06 float32 | 1.394 | 1.392 | 0.785 | 1.0 | 1.8 | yes |
+| special: jv 1e+06 float32 | 229.891 | 229.933 | 117.688 | 1.0 | 2.0 | yes |
+| special: betainc 1e+06 float32 | 60.454 | 60.082 | 30.360 | 1.0 | 2.0 | yes |
+| special: erf 1e+07 float64 | 57.638 | 57.176 | 29.515 | 1.0 | 2.0 | yes |
+| special: gammaln 1e+07 float64 | 129.180 | 129.826 | 66.977 | 1.0 | 1.9 | yes |
+| special: jv 1e+07 float64 | 2292.859 | 2294.714 | 1171.271 | 1.0 | 2.0 | yes |
+| special: betainc 1e+07 float64 | 934.130 | 933.688 | 471.303 | 1.0 | 2.0 | yes |
+| special: erf 1e+07 float32 | 60.990 | 61.045 | 31.012 | 1.0 | 2.0 | yes |
+| special: gammaln 1e+07 float32 | 135.664 | 135.710 | 69.904 | 1.0 | 1.9 | yes |
+| special: jv 1e+07 float32 | 2289.531 | 2282.792 | 1173.769 | 1.0 | 2.0 | yes |
+| special: betainc 1e+07 float32 | 599.128 | 600.645 | 302.505 | 1.0 | 2.0 | yes |
+| special: erf 1e3 (control) | 0.006 | 0.006 | 0.006 | 1.0 | 1.0 | yes |
+| special: jv 1e3 (control) | 0.235 | 0.237 | 0.237 | 1.0 | 1.0 | yes |
+| **special geomean (byte-identical non-controls)** | | | | **1.0** | **1.8** | |

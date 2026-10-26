@@ -1,0 +1,40 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| integrate: simpson 100 irregular points | 0.061 | 0.014 | 0.014 | 4.4 | 4.4 | yes |
+| integrate: simpson 101 irregular points | 0.030 | 0.008 | 0.008 | 3.7 | 3.7 | yes |
+| integrate: simpson 100 uniform float32 points | 0.028 | 0.007 | 0.007 | 3.9 | 3.9 | yes |
+| integrate: simpson 101 uniform float32 points | 0.005 | 0.004 | 0.004 | 1.5 | 1.5 | yes |
+| integrate: simpson 100 uniform complex64 points | 0.028 | 0.007 | 0.007 | 3.8 | 3.8 | yes |
+| integrate: simpson 101 uniform complex64 points | 0.005 | 0.004 | 0.004 | 1.4 | 1.4 | yes |
+| integrate: simpson 100 uniform complex128 points | 0.027 | 0.007 | 0.007 | 3.7 | 3.9 | yes |
+| integrate: simpson 101 uniform complex128 points | 0.005 | 0.004 | 0.004 | 1.4 | 1.4 | yes |
+| integrate: cumulative_simpson 100 irregular points | 0.020 | 0.020 | 0.020 | 1.0 | 1.0 | yes |
+| integrate: cumulative_simpson 100001 irregular points | 0.848 | 0.590 | 0.581 | 1.4 | 1.5 | yes |
+| integrate: cumulative_simpson (32, 1000) irregular points | 0.397 | 0.178 | 0.178 | 2.2 | 2.2 | yes |
+| integrate: cumulative_simpson 101 uniform points | 0.017 | 0.011 | 0.011 | 1.6 | 1.6 | yes |
+| integrate: simpson 100 uniform even points | 0.027 | 0.007 | 0.007 | 4.0 | 4.0 | yes |
+| integrate: simpson 2 uniform points | 0.003 | 0.002 | 0.002 | 1.7 | 1.6 | yes |
+| integrate: romb 257 float32 points | 0.017 | 0.013 | 0.013 | 1.3 | 1.3 | yes |
+| integrate: romb 257 complex128 points | 0.017 | 0.013 | 0.013 | 1.3 | 1.3 | yes |
+| integrate: cumulative_simpson 100 uniform points | 0.017 | 0.013 | 0.013 | 1.3 | 1.3 | yes |
+| integrate: cumulative_simpson 100000 uniform points | 0.522 | 0.382 | 0.380 | 1.4 | 1.4 | yes |
+| integrate: cumulative_simpson (64, 1000) uniform | 0.380 | 0.285 | 0.283 | 1.3 | 1.3 | yes |
+| integrate: romb 17 points | 0.008 | 0.007 | 0.006 | 1.3 | 1.3 | yes |
+| integrate: romb 257 points | 0.017 | 0.013 | 0.013 | 1.3 | 1.3 | yes |
+| integrate: romb 4097 points | 0.029 | 0.021 | 0.021 | 1.4 | 1.4 | yes |
+| integrate: cumulative_trapezoid float32 100 points | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| integrate: cumulative_trapezoid (1000, 30) axis=0 | 0.106 | 0.105 | 0.104 | 1.0 | 1.0 | yes |
+| integrate: cumulative_trapezoid (16, 30) axis=0 | 0.004 | 0.003 | 0.003 | 1.3 | 1.3 | yes |
+| integrate: simpson 101 uniform points | 0.005 | 0.003 | 0.003 | 1.5 | 1.5 | yes |
+| integrate: simpson (101, 30) uniform axis=0 | 0.008 | 0.006 | 0.006 | 1.3 | 1.3 | yes |
+| integrate: fixed_quad cosine 5 nodes | 0.006 | 0.004 | 0.003 | 1.8 | 1.8 | yes |
+| integrate: fixed_quad vector 16 nodes | 0.009 | 0.006 | 0.006 | 1.5 | 1.6 | yes |
+| integrate: trapezoid 100 points with x, x100 calls | 0.302 | 0.166 | 0.163 | 1.8 | 1.8 | yes |
+| integrate: trapezoid 100 points dx, x100 calls | 0.260 | 0.141 | 0.141 | 1.8 | 1.8 | yes |
+| integrate: trapezoid (1000, 30) axis=0 x100 calls | 2.123 | 2.138 | 2.109 | 1.0 | 1.0 | yes |
+| integrate: cumulative_trapezoid 100 points dx | 0.003 | 0.002 | 0.002 | 1.5 | 1.6 | yes |
+| integrate: cumulative_trapezoid 100 points with x | 0.005 | 0.002 | 0.002 | 2.1 | 2.1 | yes |
+| integrate: cumulative_trapezoid 100 points initial=0 | 0.004 | 0.003 | 0.003 | 1.6 | 1.6 | yes |
+| **integrate geomean (byte-identical non-controls)** | | | | **1.7** | **1.7** | |

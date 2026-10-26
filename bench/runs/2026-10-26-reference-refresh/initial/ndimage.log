@@ -1,0 +1,17 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| ndimage: center_of_mass int16 64x64, 29 labels | 0.063 | 0.021 | 0.021 | 3.0 | 3.0 | yes |
+| ndimage: center_of_mass uint16 64x64, 29 labels | 0.062 | 0.021 | 0.021 | 3.0 | 3.0 | yes |
+| ndimage: gaussian_filter f64 2048^2 s=2 | 55.042 | 8.242 | 4.354 | 6.7 | 12.6 | yes |
+| ndimage: gaussian_filter f32 2048^2 s=2 | 50.265 | 7.147 | 3.751 | 7.0 | 13.4 | yes |
+| ndimage: gaussian_filter u8 2048^2 s=2 | 41.364 | 8.168 | 4.223 | 5.1 | 9.8 | yes |
+| ndimage: gaussian_filter f32 256^3 s=1 | 269.219 | 28.078 | 16.563 | 9.6 | 16.3 | yes |
+| ndimage: uniform_filter f64 2048^2 k=5 | 38.223 | 4.668 | 2.782 | 8.2 | 13.7 | yes |
+| ndimage: sobel f32 2048^2 | 31.227 | 2.693 | 1.523 | 11.6 | 20.5 | yes |
+| ndimage: convolve f64 2048^2 5x5 | 39.022 | 7.122 | 3.521 | 5.5 | 11.1 | yes |
+| ndimage: correlate f32 256^3 3x3x3 | 179.813 | 33.072 | 17.885 | 5.4 | 10.1 | yes |
+| ndimage: median_filter f32 1024^2 5x5 | 232.540 | 2.282 | 1.245 | 101.9 | 186.8 | yes |
+| ndimage: median_filter u8 2048^2 3x3 | 260.310 | 0.559 | 0.344 | 465.8 | 757.6 | yes |
+| ndimage: rank_filter f64 1024^2 5x5 | 214.937 | 4.375 | 2.332 | 49.1 | 92.2 | yes |

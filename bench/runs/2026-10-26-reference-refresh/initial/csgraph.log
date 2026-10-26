@@ -1,0 +1,21 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| csgraph: dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=True | 0.126 | 0.088 | 0.090 | 1.4 | 1.4 | yes |
+| csgraph: dijkstra unweighted uint8 CSR, 10k nodes, radius 1, directed=False | 0.308 | 0.279 | 0.284 | 1.1 | 1.1 | yes |
+| csgraph: dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=True | 0.123 | 0.098 | 0.094 | 1.3 | 1.3 | yes |
+| csgraph: dijkstra unweighted int32 CSR, 10k nodes, radius 1, directed=False | 0.306 | 0.314 | 0.306 | 1.0 | 1.0 | yes |
+| csgraph: dijkstra int32 CSR, scalar source, 200 nodes x100 calls | 1.205 | 0.625 | 0.655 | 1.9 | 1.8 | yes |
+| csgraph: connected_components int32 CSR, 200 nodes x100 calls | 1.797 | 0.224 | 0.225 | 8.0 | 8.0 | yes |
+| csgraph: dijkstra unweighted undirected, grid 100^2, scalar source | 0.480 | 0.118 | 0.118 | 4.1 | 4.1 | yes |
+| csgraph: shortest_path unweighted BFS, grid 600^2, 1 source | 17.300 | 2.575 | 2.546 | 6.7 | 6.8 | yes |
+| csgraph: dijkstra unweighted + predecessors, grid 600^2 | 18.009 | 2.522 | 2.545 | 7.1 | 7.1 | yes |
+| csgraph: dijkstra weighted, 18 sources, grid 300^2 | 71.884 | 48.824 | 26.175 | 1.5 | 2.7 | yes |
+| csgraph: dijkstra weighted + predecessors, 12 sources, undirected | 105.271 | 66.796 | 34.505 | 1.6 | 3.1 | yes |
+| csgraph: bellman_ford 2000 nodes, 40k edges, 20 sources | 1422.835 | 4.579 | 2.303 | 310.7 | 617.8 | yes |
+| csgraph: johnson 2000 nodes, 40k edges, 100 sources | 104.639 | 28.885 | 14.893 | 3.6 | 7.0 | yes |
+| csgraph: connected_components weak, 1M nodes | 113.433 | 14.535 | 14.364 | 7.8 | 7.9 | yes |
+| csgraph: connected_components strong, 1M nodes | 83.281 | 50.607 | 50.036 | 1.6 | 1.7 | yes |
+| csgraph: connected_components, 200 nodes x100 calls | 1.723 | 0.308 | 0.311 | 5.6 | 5.5 | yes |
+| **csgraph geomean (byte-identical non-controls)** | | | | **3.7** | **4.3** | |

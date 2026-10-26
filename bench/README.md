@@ -1,7 +1,26 @@
 # Benchmarks
 
-The suite compares calls with fastscipy enabled and disabled on the same inputs.
-Detailed dispatch audits also measure fully unpatched SciPy.
+The runner compares fully unpatched SciPy with fastscipy on deterministic,
+equivalent inputs. Each side loads an independent benchmark module and advances
+its case generator in the appropriate patch state. This matters for functions
+captured in closures and objects such as `cKDTree`: disabling dispatch or
+unpatching their module bindings does not undo captured implementations.
+
+Fixtures must use explicit random seeds and be repeatable. Two sets of fixtures
+are live at once; run one area per process when memory is limited. The runner
+keeps only the current pair of cases and their generators, rather than collecting
+all cases or outputs. Fixture construction and patch transitions are outside
+timing. Do not run the runner alongside application threads using SciPy.
+
+Timings are medians of at least five calibrated batches. Tiny calls share a
+batch to reduce timer overhead; calibration is excluded. `--budget` is a sampling
+target per implementation, not a timeout. JSON retains the existing timing and
+validation fields and adds reference/timing methodology metadata. Historical
+reports below used disabled-wrapper references and minimum single-call timings;
+their speedups are not directly comparable to new measurements.
+
+Controls remain in the output and regression checks, but are excluded from
+headline geometric means, as are nonidentical results.
 Measured on a MacBook Pro with M5 Pro; results vary by workload and hardware.
 
 | Results | Thread budget | Details |

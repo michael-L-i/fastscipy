@@ -1,0 +1,12 @@
+{
+  "source_commit": "d353b3fb8f55e083dd901e278a809808fbad3179",
+  "fallback_commit": "d3fc22988043ab337e61d64e4321dd4f62392a01",
+  "native_sha256": "9c1b963ebc4d20c08baf91cbd839ca6c96f45a21d82cbb3515fe888a9dd798cd",
+  "areas": 14,
+  "cases": 475,
+  "validation": "All selected final rows byte-identical, expected paths satisfied, x1t >= 0.9",
+  "initial_memory_cap_mib": 1024,
+  "recheck_memory_cap_mib": 2048,
+  "numerical_threads": 2,
+  "blas_threads": 1
+}

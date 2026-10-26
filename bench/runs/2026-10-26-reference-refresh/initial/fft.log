@@ -1,0 +1,44 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| fft: scipy.fft.fftn (8, 8) | 0.003 | 0.002 | 0.002 | 1.6 | 1.6 | yes |
+| fft: scipy.fft.dctn (8, 8) | 0.004 | 0.002 | 0.002 | 1.7 | 1.7 | yes |
+| fft: scipy.fft.idctn (8, 8) | 0.004 | 0.002 | 0.002 | 1.7 | 1.7 | yes |
+| fft: scipy.fft.dstn (8, 8) | 0.004 | 0.002 | 0.002 | 1.7 | 1.8 | yes |
+| fft: scipy.fft.fftn (32, 32) | 0.005 | 0.004 | 0.004 | 1.3 | 1.3 | yes |
+| fft: scipy.fft.dctn (32, 32) | 0.006 | 0.004 | 0.004 | 1.4 | 1.4 | yes |
+| fft: scipy.fft.idctn (32, 32) | 0.006 | 0.004 | 0.004 | 1.4 | 1.3 | yes |
+| fft: scipy.fft.dstn (32, 32) | 0.006 | 0.004 | 0.004 | 1.4 | 1.4 | yes |
+| fft: scipy.fft.fftn (256, 256) | 0.128 | 0.127 | 0.127 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.dctn (256, 256) | 0.204 | 0.197 | 0.197 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.idctn (256, 256) | 0.217 | 0.210 | 0.209 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.dstn (256, 256) | 0.214 | 0.207 | 0.206 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.fftn list control | 0.005 | 0.005 | 0.005 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.fftn resize control | 0.004 | 0.005 | 0.005 | 0.9 | 0.9 | yes |
+| fft: scipy.fft.fft 1D unchanged control | 0.002 | 0.002 | 0.002 | 1.0 | 1.0 | yes |
+| fft: scipy.fftpack.fftn (8, 8) | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| fft: scipy.fftpack.dctn (8, 8) | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| fft: scipy.fftpack.idctn (8, 8) | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| fft: scipy.fftpack.dstn (8, 8) | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| fft: scipy.fftpack.fftn (32, 32) | 0.004 | 0.003 | 0.003 | 1.2 | 1.3 | yes |
+| fft: scipy.fftpack.dctn (32, 32) | 0.005 | 0.004 | 0.004 | 1.2 | 1.3 | yes |
+| fft: scipy.fftpack.idctn (32, 32) | 0.005 | 0.004 | 0.004 | 1.2 | 1.2 | yes |
+| fft: scipy.fftpack.dstn (32, 32) | 0.005 | 0.004 | 0.004 | 1.2 | 1.2 | yes |
+| fft: scipy.fftpack.fftn (256, 256) | 0.128 | 0.127 | 0.127 | 1.0 | 1.0 | yes |
+| fft: scipy.fftpack.dctn (256, 256) | 0.199 | 0.195 | 0.196 | 1.0 | 1.0 | yes |
+| fft: scipy.fftpack.idctn (256, 256) | 0.203 | 0.198 | 0.201 | 1.0 | 1.0 | yes |
+| fft: scipy.fftpack.dstn (256, 256) | 0.213 | 0.205 | 0.205 | 1.0 | 1.0 | yes |
+| fft: scipy.fftpack.fftn list control | 0.004 | 0.005 | 0.005 | 0.9 | 0.9 | yes |
+| fft: scipy.fftpack.fftn resize control | 0.004 | 0.005 | 0.005 | 0.9 | 0.9 | yes |
+| fft: scipy.fftpack.fft 1D unchanged control | 0.001 | 0.001 | 0.001 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.fft2 default axes | 0.004 | 0.003 | 0.003 | 1.4 | 1.4 | yes |
+| fft: scipy.fft.fftn ortho | 0.003 | 0.002 | 0.002 | 1.5 | 1.5 | yes |
+| fft: scipy.fft.fftn transposed readonly | 0.003 | 0.002 | 0.002 | 1.6 | 1.6 | yes |
+| fft: scipy.fft.dctn integer control | 0.003 | 0.004 | 0.004 | 0.9 | 0.9 | yes |
+| fft: scipy.fft.rfft 1D unchanged control | 0.002 | 0.002 | 0.002 | 1.0 | 1.0 | yes |
+| fft: scipy.fft.dctn 64 image tiles batched | 0.018 | 0.017 | 0.017 | 1.1 | 1.1 | yes |
+| **fft geomean (byte-identical non-controls)** | | | | **1.3** | **1.3** | |
+
+Not identical, no fast path, or slower than SciPy on 1 thread:
+  fft: scipy.fftpack.fftn resize control

@@ -1,0 +1,46 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| signal: lfilter IIR float32, 200 samples | 0.003 | 0.002 | 0.002 | 1.2 | 1.2 | yes |
+| signal: sosfilt float32, 200 samples | 0.009 | 0.003 | 0.003 | 2.5 | 2.5 | yes |
+| signal: detrend float32, 200 samples | 0.027 | 0.009 | 0.009 | 3.1 | 3.1 | yes |
+| signal: lfilter IIR complex64, 200 samples | 0.003 | 0.003 | 0.003 | 1.1 | 1.1 | yes |
+| signal: sosfilt complex64, 200 samples | 0.009 | 0.004 | 0.004 | 2.4 | 2.3 | yes |
+| signal: detrend complex64, 200 samples | 0.030 | 0.012 | 0.012 | 2.5 | 2.5 | yes |
+| signal: lfilter IIR complex128, 200 samples | 0.004 | 0.003 | 0.003 | 1.1 | 1.1 | yes |
+| signal: sosfilt complex128, 200 samples | 0.010 | 0.004 | 0.004 | 2.3 | 2.3 | yes |
+| signal: detrend complex128, 200 samples | 0.032 | 0.014 | 0.014 | 2.3 | 2.3 | yes |
+| signal: sosfilt one section with readonly zi, 3x80 | 0.011 | 0.006 | 0.006 | 2.0 | 2.0 | yes |
+| signal: welch float32, 1000 samples | 0.095 | 0.045 | 0.045 | 2.1 | 2.1 | yes |
+| signal: csd float32, 1000 samples | 0.151 | 0.076 | 0.077 | 2.0 | 2.0 | yes |
+| signal: sosfiltfilt float32, 1000 samples | 0.083 | 0.013 | 0.012 | 6.6 | 6.7 | yes |
+| signal: sosfiltfilt complex64, 1000 samples | 0.086 | 0.017 | 0.017 | 5.1 | 5.1 | yes |
+| signal: sosfiltfilt complex128, 1000 samples | 0.089 | 0.020 | 0.020 | 4.5 | 4.5 | yes |
+| signal: butter + sosfiltfilt, 200 samples | 0.347 | 0.011 | 0.011 | 31.5 | 31.8 | yes |
+| signal: filtfilt, 1000 samples | 0.041 | 0.019 | 0.018 | 2.2 | 2.3 | yes |
+| signal: sosfiltfilt, 1000 samples | 0.081 | 0.012 | 0.012 | 6.5 | 6.6 | yes |
+| signal: detrend, 1000 samples | 0.050 | 0.024 | 0.024 | 2.1 | 2.1 | yes |
+| signal: decimate q=4, 1000 samples | 0.350 | 0.019 | 0.019 | 18.0 | 18.1 | yes |
+| signal: hilbert, 1000 samples | 0.017 | 0.014 | 0.014 | 1.2 | 1.2 | yes |
+| signal: hilbert float32, 200 samples | 0.013 | 0.010 | 0.010 | 1.3 | 1.3 | yes |
+| signal: hilbert N=256, 200 samples | 0.014 | 0.011 | 0.011 | 1.3 | 1.3 | yes |
+| signal: lfilter FIR 7 taps, 200 samples | 0.006 | 0.002 | 0.002 | 2.3 | 2.3 | yes |
+| signal: lfilter FIR 7 taps with zi, 200 samples | 0.007 | 0.003 | 0.003 | 2.2 | 2.2 | yes |
+| signal: welch, 1000 samples | 0.093 | 0.042 | 0.043 | 2.2 | 2.2 | yes |
+| signal: per-voxel loop, 1000 x sosfiltfilt(150) | 77.351 | 7.403 | 7.343 | 10.4 | 10.5 | yes |
+| signal: per-epoch loop, 200 x (detrend, welch) | 27.807 | 12.637 | 12.689 | 2.2 | 2.2 | yes |
+| signal: sosfilt 64 x 250k (butter 8) | 71.779 | 71.272 | 38.739 | 1.0 | 1.9 | yes |
+| signal: lfilter 64 x 250k (butter 8) | 97.122 | 96.840 | 51.441 | 1.0 | 1.9 | yes |
+| signal: filtfilt 64 x 250k (butter 8) | 193.797 | 192.871 | 102.719 | 1.0 | 1.9 | yes |
+| signal: sosfiltfilt 64 x 250k (butter 8) | 147.066 | 144.854 | 77.560 | 1.0 | 1.9 | yes |
+| signal: decimate q=8, 64 x 250k | 147.574 | 145.071 | 76.781 | 1.0 | 1.9 | yes |
+| signal: peak_prominences, random walk 1e6 | 197.976 | 15.531 | 8.665 | 12.7 | 22.8 | yes |
+| signal: find_peaks(prominence, width), random walk 1e6 | 210.878 | 23.351 | 15.469 | 9.0 | 13.6 | yes |
+| signal: find_peaks(prominence, width), noise 1e6 | 24.979 | 23.279 | 17.187 | 1.1 | 1.5 | yes |
+| signal: dlsim, 4 states, 100k steps | 172.587 | 1.795 | 1.788 | 96.2 | 96.5 | yes |
+| signal: convolve direct 2-D, 1024^2 * 5x5 | 155.457 | 3.006 | 1.698 | 51.7 | 91.5 | yes |
+| signal: correlate direct 2-D same, 1024^2 * 5x5 | 153.655 | 2.916 | 1.628 | 52.7 | 94.4 | yes |
+| signal: convolve2d same symm, 1024^2 * 5x5 | 21.735 | 6.619 | 3.380 | 3.3 | 6.4 | yes |
+| signal: correlate2d full fill, 512^2 * 7x7 | 9.599 | 2.699 | 1.406 | 3.6 | 6.8 | yes |
+| **signal geomean (byte-identical non-controls)** | | | | **3.3** | **3.9** | |

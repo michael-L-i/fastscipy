@@ -1,0 +1,50 @@
+{
+  "fft": {
+    "returncode": 0,
+    "seconds": 26.291850792011246,
+    "peak_rss_bytes": 113573888,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "ndimage": {
+    "returncode": 0,
+    "seconds": 68.21688658301719,
+    "peak_rss_bytes": 1221230592,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "signal": {
+    "returncode": 0,
+    "seconds": 40.784097374998964,
+    "peak_rss_bytes": 1792016384,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "sparse": {
+    "returncode": 0,
+    "seconds": 31.154249000013806,
+    "peak_rss_bytes": 1473789952,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  }
+}

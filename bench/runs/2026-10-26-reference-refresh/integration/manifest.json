@@ -1,0 +1,15 @@
+{
+  "base": "a5961a5",
+  "cherry_picks": [
+    "122532d",
+    "07526a1",
+    "d3fc229",
+    "2bf6417",
+    "6b25a06"
+  ],
+  "project_tests_passed": 8508,
+  "spatial_benchmark_cases": 39,
+  "native_sha256": "954aa1f8513058831b05f055b74d62ae9374e0392f64e2b8921c3c3755d59011",
+  "native_source_sha256": "5f9095417fd0f5fa4bfdd5ef4364c8ee926d6379342c5b9edfd7aa630023fdc4",
+  "note": "Combined integration includes PRs11-14 and PR7; no numerical source changes beyond metadata export."
+}

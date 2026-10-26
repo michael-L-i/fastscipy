@@ -1,0 +1,65 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| stats: sem float32 (10,) | 0.065 | 0.006 | 0.006 | 10.9 | 10.9 | yes |
+| stats: sem float64 (30, 8) | 0.091 | 0.006 | 0.006 | 15.0 | 15.3 | yes |
+| stats: sem float32 (30, 8) | 0.093 | 0.007 | 0.007 | 13.3 | 13.2 | yes |
+| stats: sem complex128 (30, 8) | 0.095 | 0.008 | 0.008 | 12.4 | 12.5 | yes |
+| stats: sem float64 (1000, 30) | 0.124 | 0.034 | 0.034 | 3.6 | 3.6 | yes |
+| stats: sem float64 (10000, 100) | 0.987 | 0.794 | 0.802 | 1.2 | 1.2 | yes |
+| stats: ttest_1samp n=10 | 0.130 | 0.012 | 0.012 | 10.8 | 10.8 | yes |
+| stats: ttest_ind n=10 | 0.199 | 0.019 | 0.019 | 10.4 | 10.4 | yes |
+| stats: ttest_rel n=10 | 0.111 | 0.014 | 0.014 | 7.8 | 7.9 | yes |
+| stats: pearsonr n=10 | 0.066 | 0.019 | 0.019 | 3.5 | 3.6 | yes |
+| stats: linregress n=10 | 0.114 | 0.013 | 0.013 | 8.6 | 8.5 | yes |
+| stats: zscore n=10 | 0.039 | 0.006 | 0.006 | 6.1 | 6.1 | yes |
+| stats: skew n=10 | 0.098 | 0.009 | 0.009 | 10.7 | 11.0 | yes |
+| stats: kurtosis n=10 | 0.102 | 0.009 | 0.009 | 11.3 | 11.4 | yes |
+| stats: sem n=10 | 0.063 | 0.005 | 0.005 | 12.7 | 13.0 | yes |
+| stats: entropy n=10 | 0.047 | 0.004 | 0.003 | 13.3 | 13.4 | yes |
+| stats: describe n=10 | 0.237 | 0.015 | 0.015 | 16.0 | 15.9 | yes |
+| stats: mannwhitneyu n=10 | 0.133 | 0.007 | 0.007 | 20.1 | 20.1 | yes |
+| stats: ttest_1samp n=1000 | 0.131 | 0.014 | 0.014 | 9.3 | 9.4 | yes |
+| stats: ttest_ind n=1000 | 0.195 | 0.023 | 0.022 | 8.3 | 8.7 | yes |
+| stats: ttest_rel n=1000 | 0.115 | 0.016 | 0.016 | 7.1 | 7.1 | yes |
+| stats: pearsonr n=1000 | 0.080 | 0.027 | 0.027 | 2.9 | 3.0 | yes |
+| stats: linregress n=1000 | 0.125 | 0.018 | 0.018 | 6.8 | 7.0 | yes |
+| stats: zscore n=1000 | 0.042 | 0.008 | 0.007 | 5.4 | 5.7 | yes |
+| stats: skew n=1000 | 0.104 | 0.015 | 0.015 | 7.0 | 6.9 | yes |
+| stats: kurtosis n=1000 | 0.109 | 0.015 | 0.015 | 7.2 | 7.2 | yes |
+| stats: sem n=1000 | 0.063 | 0.005 | 0.005 | 11.6 | 11.5 | yes |
+| stats: entropy n=1000 | 0.048 | 0.006 | 0.006 | 7.7 | 7.7 | yes |
+| stats: describe n=1000 | 0.255 | 0.026 | 0.026 | 9.9 | 9.9 | yes |
+| stats: mannwhitneyu n=1000 | 0.173 | 0.032 | 0.032 | 5.4 | 5.4 | yes |
+| stats: zscore n=100000 | 0.197 | 0.088 | 0.089 | 2.2 | 2.2 | yes |
+| stats: describe n=100000 | 2.266 | 1.629 | 1.615 | 1.4 | 1.4 | yes |
+| stats: describe n=100000 bias=False | 2.271 | 1.625 | 1.600 | 1.4 | 1.4 | yes |
+| stats: zscore n=1000000 | 1.584 | 0.865 | 0.864 | 1.8 | 1.8 | yes |
+| stats: describe n=1000000 | 21.013 | 16.705 | 16.584 | 1.3 | 1.3 | yes |
+| stats: describe n=1000000 bias=False | 21.180 | 16.718 | 16.698 | 1.3 | 1.3 | yes |
+| stats: loop: 1000 ttest_ind + pearsonr n=20 | 266.552 | 39.615 | 39.414 | 6.7 | 6.8 | yes |
+| stats: norm.cdf scalar | 0.012 | 0.002 | 0.002 | 8.2 | 8.2 | yes |
+| stats: norm.ppf scalar | 0.017 | 0.003 | 0.003 | 6.3 | 6.5 | yes |
+| stats: t.sf scalar | 0.013 | 0.002 | 0.002 | 5.8 | 5.8 | yes |
+| stats: poisson.pmf scalar | 0.013 | 0.004 | 0.004 | 3.0 | 2.9 | yes |
+| stats: frozen norm(1, 2) + cdf | 0.143 | 0.009 | 0.009 | 16.6 | 15.8 | yes |
+| stats: loop: 1000 frozen t(5).cdf | 130.966 | 10.874 | 10.806 | 12.0 | 12.1 | yes |
+| stats: norm.cdf 1e6 | 11.582 | 8.565 | 4.744 | 1.4 | 2.4 | yes |
+| stats: norm.ppf 1e6 | 10.685 | 7.171 | 4.060 | 1.5 | 2.6 | yes |
+| stats: t.cdf 1e6 (df=7) | 95.054 | 89.980 | 45.591 | 1.1 | 2.1 | yes |
+| stats: poisson.ppf 3e5 | 195.094 | 7.357 | 7.362 | 26.5 | 26.5 | yes |
+| stats: poisson.pmf 1e6 ints | 15.971 | 0.685 | 0.684 | 23.3 | 23.3 | yes |
+| stats: zipf.cdf 1e5 ints | 289.551 | 0.626 | 0.615 | 462.3 | 470.6 | yes |
+| stats: rankdata 1e6 | 73.926 | 8.861 | 11.984 | 8.3 | 6.2 | yes |
+| stats: rankdata 1e6 ties | 47.635 | 7.370 | 12.086 | 6.5 | 3.9 | yes |
+| stats: rankdata 3000x300 axis=1 | 27.382 | 8.827 | 4.629 | 3.1 | 5.9 | yes |
+| stats: rankdata 512x2048 random axis=1 | 41.611 | 10.711 | 5.789 | 3.9 | 7.2 | yes |
+| stats: rankdata 512x2048 ties axis=1 | 25.909 | 7.525 | 4.059 | 3.4 | 6.4 | yes |
+| stats: spearmanr 1e6 | 160.759 | 29.040 | 35.600 | 5.5 | 4.5 | yes |
+| stats: mannwhitneyu 1e6 | 78.563 | 10.913 | 13.970 | 7.2 | 5.6 | yes |
+| stats: wilcoxon 1e6 | 78.461 | 13.161 | 16.476 | 6.0 | 4.8 | yes |
+| stats: kruskal 3 x 1e5 | 18.087 | 3.483 | 4.208 | 5.2 | 4.3 | yes |
+| stats: mode 1e7 ints | 45.737 | 12.432 | 12.391 | 3.7 | 3.7 | yes |
+| stats: gaussian_kde 2-D 2000 x 20000 | 87.768 | 89.717 | 51.742 | 1.0 | 1.7 | yes |
+| **stats geomean (byte-identical non-controls)** | | | | **6.1** | **6.4** | |

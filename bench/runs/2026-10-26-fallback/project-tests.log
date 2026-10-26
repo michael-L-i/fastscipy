@@ -1,0 +1,16 @@
+........................................................................ [ 24%]
+........................................................................ [ 48%]
+........................................................................ [ 72%]
+........................................................................ [ 96%]
+.........                                                                [100%]
+=============================== warnings summary ===============================
+tests/test_core.py::test_forked_child_does_not_hang
+  /private/tmp/fastscipy-round2/fallback/tests/test_core.py:261: DeprecationWarning: This process (pid=57915) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    pid = os.fork()
+
+tests/test_core.py::test_ndimage_calibration_lock_reset_after_fork
+  /private/tmp/fastscipy-round2/fallback/tests/test_core.py:361: DeprecationWarning: This process (pid=57915) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+297 passed, 2 warnings in 2.30s

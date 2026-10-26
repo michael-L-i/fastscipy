@@ -90,6 +90,23 @@ The rules that keep results compatible:
 Before opening a pull request, run SciPy's suite for the area with
 `tools/scipy_suite.py`; no test may change outcome.
 
+## Portable performance
+
+Prefer algorithmic improvements and reusable kernels that benefit the supported
+Linux, Windows and macOS targets on x86_64 and ARM64. Keep portable fallbacks
+for architecture-specific SIMD; do not compile distribution wheels for the
+developer's host CPU or assume its BLAS, floating-point contraction, alignment
+or byte order applies elsewhere.
+
+A benchmark on one machine establishes a local result, not a portable speedup.
+Treat new thresholds and architecture-specific paths as provisional until the
+platform matrix has checked correctness, fallback behavior and representative
+performance. Require development platform checks to pass before merging new
+fast paths. Do not tune general dispatch to one host's timing noise. Run normal
+platform validation without `FASTSCIPY_ANY_PLATFORM` or `FASTSCIPY_ANY_VERSION`;
+those overrides are only for explicit porting diagnostics. Published support
+requires the complete release validation matrix, including Linux musl targets.
+
 ## License
 
 By contributing you agree that your contributions are licensed under the

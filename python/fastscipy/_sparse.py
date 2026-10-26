@@ -26,7 +26,11 @@ def _threads(work, key):
 
 
 def _contig(*arrs):
-    return all(a.__class__ is np.ndarray and a.ndim == 1 and a.flags.c_contiguous for a in arrs)
+    # Native kernels construct typed slices rather than NumPy buffer iterators.
+    return all(
+        a.__class__ is np.ndarray and a.ndim == 1 and a.flags.c_contiguous and a.flags.aligned and a.dtype.isnative
+        for a in arrs
+    )
 
 
 # ---- small calls --------------------------------------------------------------------------------
@@ -169,6 +173,10 @@ def _dense(arg1, shape, dtype, csc):
         or dtype is not None
         or arg1.size < _DENSE_MIN
         or arg1.dtype.char not in _VALS
+        or not arg1.dtype.isnative
+        or not arg1.flags.aligned
+        # Native offsets are expressed in elements, not arbitrary byte strides.
+        or any(s % arg1.itemsize for s in arg1.strides)
         or max(arg1.shape) > _I32MAX
     ):
         return None

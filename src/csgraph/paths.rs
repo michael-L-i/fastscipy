@@ -76,9 +76,14 @@ fn heap_search(srcs: &[i32], gs: &[&Csr], out: &mut Out, limit: f64) {
 
 /// The same result for unit weights: Dijkstra pops one distance level at a time,
 /// highest node first, so a level-by-level search in that order sets the same predecessors.
-fn level_search(srcs: &[i32], gs: &[&Csr], out: &mut Out, limit: f64) {
-    let mut level: Vec<u32> = srcs.iter().map(|&s| s as u32).collect();
+fn level_search<const ORDERED: bool>(srcs: &[i32], gs: &[&Csr], out: &mut Out, limit: f64) {
+    let mut level = Vec::with_capacity(srcs.len());
     for &s in srcs {
+        // Mark sources when enqueuing, just like later levels: min_only may
+        // contain duplicates, but every vertex needs expanding only once.
+        if out.dist[s as usize] != 0.0 {
+            level.push(s as u32);
+        }
         out.dist[s as usize] = 0.0;
         if !out.src.is_empty() {
             out.src[s as usize] = s;
@@ -87,8 +92,11 @@ fn level_search(srcs: &[i32], gs: &[&Csr], out: &mut Out, limit: f64) {
     let mut next_level = Vec::new();
     let mut next = 0.0;
     while !level.is_empty() {
-        level.sort_unstable_by(|a, b| b.cmp(a));
-        level.dedup();
+        // Distances are independent of ties; only predecessor/source outputs
+        // need Dijkstra's descending order within each distance level.
+        if ORDERED {
+            level.sort_unstable_by(|a, b| b.cmp(a));
+        }
         next += 1.0;
         if next > limit {
             break;
@@ -181,7 +189,11 @@ pub fn dijkstra(
         };
         let s = if min_only { srcs } else { &srcs[i..i + 1] };
         if unit {
-            level_search(s, &gs, &mut out, limit)
+            if out.pred.is_empty() && out.src.is_empty() {
+                level_search::<false>(s, &gs, &mut out, limit)
+            } else {
+                level_search::<true>(s, &gs, &mut out, limit)
+            }
         } else {
             heap_search(s, &gs, &mut out, limit)
         }

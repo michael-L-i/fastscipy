@@ -138,6 +138,17 @@ def _bellman_ford(csgraph, directed=True, indices=None, return_predecessors=Fals
     if ix is None or src is None:
         return NotImplemented
     srcs, shape = src
+    if unweighted and not return_predecessors:
+        # Keep Bellman-Ford's validation (including ignored negative weights),
+        # but unit distances need only BFS. Predecessor ties still use BF.
+        t = _transposed(g) if not directed else (_EMPTY_I, _EMPTY_I, _EMPTY_F)
+        if t is None:
+            return NotImplemented
+        dist = np.full((len(srcs), n), np.inf)
+        _k.dijkstra(
+            srcs, ip, ix, _EMPTY_F, *t, dist.reshape(-1), np.empty(0, I32), np.empty(0, I32), np.inf, False, True
+        )
+        return dist.reshape(shape + (n,))
     dist = np.full((len(srcs), n), np.inf)
     dist[np.arange(len(srcs)), srcs] = 0
     pred = np.full((len(srcs), n), NULL_IDX, I32) if return_predecessors else np.empty(0, I32)

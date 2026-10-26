@@ -146,6 +146,58 @@ def test_unweighted_grid():
     check(lambda: cg.shortest_path(g, directed=False, unweighted=True, indices=[7, 1000, 7], return_predecessors=True))
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("directed", [True, False])
+def test_unweighted_distance_levels(directed):
+    # Unsorted, repeated edges, self loops, disconnected vertices and many ties.
+    g = sp.csr_array(
+        (
+            np.array([0, 7, 2, 1, 8, 3, 4, 5, 6.0]),
+            np.array([3, 2, 2, 0, 4, 4, 5, 5, 1], np.int32),
+            np.array([0, 4, 5, 6, 7, 8, 9, 9, 9], np.int32),
+        ),
+        shape=(8, 8),
+    )
+    before = tuple(a.tobytes() for a in (g.data, g.indices, g.indptr))
+    for sources in (0, [0, 0, 3], [[0, 3], [0, 7]], []):
+        check(lambda: cg.bellman_ford(g, directed=directed, indices=sources, unweighted=True))
+        for min_only in (True, False):
+            for limit in (0, 1, 2.5, np.inf):
+                for predecessors in (True, False):
+                    check(
+                        lambda: cg.dijkstra(
+                            g,
+                            directed=directed,
+                            indices=sources,
+                            unweighted=True,
+                            min_only=min_only,
+                            limit=limit,
+                            return_predecessors=predecessors,
+                        )
+                    )
+    assert tuple(a.tobytes() for a in (g.data, g.indices, g.indptr)) == before
+
+
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("directed", [True, False])
+def test_unweighted_bellman_ford_distances(directed):
+    g = graph(391, n=23, sort=False)
+    g.data[::3], g.data[1::7], g.data[2::11] = -7, np.nan, np.inf
+    before = tuple(a.tobytes() for a in (g.data, g.indices, g.indptr))
+    for sources in (None, 0, -1, [0, 0, 7], [[0, 3], [7, 9]], []):
+        check(lambda: cg.bellman_ford(g, directed=directed, indices=sources, unweighted=True))
+        check(lambda: cg.shortest_path(g, method="BF", directed=directed, indices=sources, unweighted=True))
+        check(lambda: cg.bellman_ford(g, directed=directed, indices=sources, unweighted=True, return_predecessors=True))
+    for invalid in (23, -24):
+        with pytest.raises(ValueError) as actual:
+            cg.bellman_ford(g, indices=invalid, unweighted=True)
+        with fastscipy.disabled(), pytest.raises(ValueError) as expected:
+            cg.bellman_ford(g, indices=invalid, unweighted=True)
+        assert str(actual.value) == str(expected.value)
+    check(lambda: cg.bellman_ford(sp.csr_array((0, 0)), unweighted=True), fast=False)
+    assert tuple(a.tobytes() for a in (g.data, g.indices, g.indptr)) == before
+
+
 @pytest.mark.parametrize("seed", range(8))
 def test_connected_components(seed):
     g = graph(seed, n=200, density=0.004 + 0.002 * seed, sort=seed % 2 == 0)

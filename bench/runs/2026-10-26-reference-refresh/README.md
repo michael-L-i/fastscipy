@@ -52,3 +52,14 @@ python bench/run.py fft --budget 0.1 --check --output-dir /tmp/reference-fft
 The sampling budget is not a timeout: each timing series collects at least five
 batches, including for slow calls. Allow up to 2 GiB for the large fixture areas
 and retain process-tree monitoring when reproducing the full sweep.
+
+## Combined integration check
+
+A separate checkout combining PRs #11–#14 and this runner passed **8,508 project
+tests** and all **39 spatial benchmark checks**, including the newly declined
+two-thread low-dimensional cases. This used the fresh provenance-enabled native
+extension; its embedded source fingerprint matched the combined checkout. The
+full suite peaked at 603 MiB under a 1 GiB cap; the spatial check peaked at
+558 MiB under a 768 MiB cap. [Logs, resource records and exact source/artifact
+identities](integration/). These checks are additional integration evidence;
+the 475-case sweep above used this PR's own dependency configuration.

@@ -191,6 +191,83 @@ def test_dense_declines(fmt):
         assert_identical(e, call())  # (CSR/CSC may still use the COO fast path inside SciPy's own conversion)
 
 
+def unusual_buffer(values, layout):
+    """Valid NumPy arrays that cannot be read as native aligned element slices."""
+    if layout == "byteswapped":
+        return values.astype(values.dtype.newbyteorder("S"))
+    strides = [values.itemsize + (layout == "byte_strides")]
+    for length in reversed(values.shape[1:]):
+        strides.insert(0, strides[0] * length)
+    offset = int(layout == "unaligned")
+    size = offset + values.itemsize + sum((n - 1) * s for n, s in zip(values.shape, strides))
+    result = np.ndarray(values.shape, dtype=values.dtype, buffer=bytearray(size), offset=offset, strides=strides)
+    result[...] = values
+    return result
+
+
+def forbidden_native(*args):
+    pytest.fail("unsupported buffer reached a native sparse kernel")
+
+
+@pytest.mark.parametrize("fmt", FORMATS)
+@pytest.mark.parametrize("dtype", VALUE_DTYPES)
+@pytest.mark.parametrize("layout", ["unaligned", "byteswapped", "byte_strides"])
+def test_dense_buffer_layouts_decline(fmt, dtype, layout, monkeypatch):
+    values = (np.arange(64 * 64).reshape(64, 64) % 11 - 5).astype(dtype)
+    data = unusual_buffer(values, layout)
+    before = data.tobytes()
+    # Intercept the boundary so a missing guard fails without executing unsafe Rust.
+    with monkeypatch.context() as guard:
+        guard.setattr(_sparse._native.sparse, "dense_to_compressed", forbidden_native)
+        assert _sparse._dense(data, None, None, False) is None
+        assert _sparse._dense(data, None, None, True) is None
+    check(lambda: fmt(data), fast=False)
+    assert data.tobytes() == before
+
+
+@pytest.mark.parametrize("fmt", [sp.coo_array, sp.coo_matrix])
+@pytest.mark.parametrize("operand", ["row", "col", "data"])
+@pytest.mark.parametrize("layout", ["unaligned", "byteswapped", "byte_strides"])
+def test_coo_buffer_layouts_decline(fmt, operand, layout, monkeypatch):
+    def make():
+        matrix = fmt((np.array([1.5, -2.0, 4.0]), ([0, 1, 0], [1, 0, 1])), shape=(2, 2))
+        row, col = matrix.coords
+        if operand == "data":
+            matrix.data = unusual_buffer(matrix.data, layout)
+        else:
+            matrix.coords = (
+                unusual_buffer(row, layout) if operand == "row" else row,
+                unusual_buffer(col, layout) if operand == "col" else col,
+            )
+        return matrix
+
+    matrix = make()
+    with monkeypatch.context() as guard:
+        guard.setattr(_sparse._native.sparse, "sum_duplicates", forbidden_native)
+        assert _sparse._sum_duplicates(matrix, matrix.coords, matrix.data) is NotImplemented
+
+    def run():
+        matrix = make()
+        matrix.sum_duplicates()
+        return matrix
+
+    check(run, fast=False)
+
+
+@pytest.mark.parametrize("fmt,axis", [(sp.csr_array, 1), (sp.csc_array, 0)])
+@pytest.mark.parametrize("operand", ["indptr", "indices", "data"])
+@pytest.mark.parametrize("layout", ["unaligned", "byteswapped", "byte_strides"])
+def test_argminmax_buffer_layouts_decline(fmt, axis, operand, layout, monkeypatch):
+    matrix = fmt(np.array([[0.0, 2.0, 1.0], [3.0, 0.0, 4.0]]))
+    matrix.sum_duplicates()
+    setattr(matrix, operand, unusual_buffer(getattr(matrix, operand), layout))
+    for function, compare, method in ((np.argmax, np.greater, "argmax"), (np.argmin, np.less, "argmin")):
+        with monkeypatch.context() as guard:
+            guard.setattr(_sparse._native.sparse, "argminmax", forbidden_native)
+            assert _sparse._argminmax_axis(matrix, axis, function, compare, False) is NotImplemented
+        check(lambda: getattr(matrix, method)(axis=axis), fast=False)
+
+
 @pytest.mark.parametrize("fmt", [sp.csr_array, sp.csc_array, sp.coo_array, sp.csr_matrix, sp.coo_matrix, sp.lil_array])
 @pytest.mark.parametrize("dtype", [np.float64, np.int64, np.complex128])
 @pytest.mark.parametrize("index", [np.int32, np.int64])

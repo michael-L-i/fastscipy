@@ -87,6 +87,13 @@ def cases():
             else rank_rng.integers(0, 16, (512, 2048)).astype(float)
         )
         yield f"rankdata 512x2048 {kind} axis=1", lambda a=batch: st.rankdata(a, axis=1)
+    for n in (32, 3000, 1_000_000):
+        single = rank_rng.standard_normal(n).astype(np.float32)
+        yield f"rankdata float32 n={n}", lambda a=single: st.rankdata(a)
+    strided = rank_rng.integers(0, 64, (128, 2048)).astype(np.float32)[:, ::-2]
+    yield "rankdata float32 ties strided axis=1", lambda: st.rankdata(strided, axis=1)
+    nonfinite = np.array([0, 1, np.inf], dtype=np.float32)
+    yield "rankdata float32 nonfinite fallback", lambda: st.rankdata(nonfinite), False
     yield "spearmanr 1e6", lambda: st.spearmanr(x, y)
     yield "mannwhitneyu 1e6", lambda: st.mannwhitneyu(x[:500_000], y[:500_000], method="asymptotic")
     yield "wilcoxon 1e6", lambda: st.wilcoxon(x, method="approx")

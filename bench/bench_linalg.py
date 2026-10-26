@@ -83,5 +83,21 @@ def cases():
             lambda a=control_band: sl.cholesky_banded(a, lower=True),
             False,
         )
+    for B, n, rows in ((4, 8, 2), (1000, 32, 2), (1000, 128, 4)):
+        ab = rng.uniform(-0.2, 0.2, (B, rows, n))
+        ab[:, 0, :] = 2 * rows
+        bb = rng.standard_normal((B, n, 2))
+        for broadcast in (False, True):
+            aa = ab[0] if broadcast else ab
+            tag = f"{B}x{rows}x{n} broadcast={broadcast}"
+            yield f"solveh_banded {tag}", lambda a=aa, b=bb: sl.solveh_banded(a, b, lower=True)
+        for kl, ku in ((1, 1), (2, 1)):
+            ab = rng.uniform(-0.2, 0.2, (B, kl + ku + 1, n))
+            ab[:, ku, :] = 8
+            yield (
+                f"solve_banded {B}x{n} bandwidth={kl},{ku}",
+                lambda a=ab, b=bb, lu=(kl, ku): sl.solve_banded(lu, a, b),
+            )
+    yield "solve_banded fallback float32", lambda: sl.solve_banded((2, 1), ab.astype(np.float32), bb), False
     tall = rng.standard_normal((2000, 500))
     yield "null_space 2000x500", lambda: sl.null_space(tall)

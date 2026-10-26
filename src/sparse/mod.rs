@@ -235,13 +235,47 @@ fn sumdup_k<'py, I: Idx, T: Val>(
 ) -> Option<Triple<'py, I, T>> {
     let (r, c, x) = unsafe { (slice::<I>(r), slice::<I>(c), slice::<T>(x)) };
     let n = x.len();
+    // Check actual coordinates, not the caller's mutable canonical-format flag.
+    // Share row validation/counting with the fallback so late disorder does not
+    // add another full pass. Stop comparing coordinates at the first descent.
     let mut start = vec![0usize; m + 1];
-    for &ri in r {
+    let (mut sorted, mut unique) = (true, usize::from(n != 0));
+    for (k, &ri) in r.iter().enumerate() {
         let ri = ri.get();
         if ri < 0 || ri as usize >= m {
             return None;
         }
         start[ri as usize + 1] += 1;
+        if sorted && k != 0 {
+            sorted = (r[k], c[k]) >= (r[k - 1], c[k - 1]);
+            unique += usize::from((r[k], c[k]) != (r[k - 1], c[k - 1]));
+        }
+    }
+    if sorted {
+        let (orow, ocol, oval) = py.detach(|| {
+            let (mut orow, mut ocol, mut oval) = (
+                Vec::with_capacity(unique),
+                Vec::with_capacity(unique),
+                Vec::with_capacity(unique),
+            );
+            let mut s = 0;
+            while s < n {
+                let mut e = s + 1;
+                while e < n && (r[e], c[e]) == (r[s], c[s]) {
+                    e += 1;
+                }
+                orow.push(r[s]);
+                ocol.push(c[s]);
+                oval.push(T::seg_sum(&x[s..e]));
+                s = e;
+            }
+            (orow, ocol, oval)
+        });
+        return Some((
+            PyArray1::from_vec(py, orow),
+            PyArray1::from_vec(py, ocol),
+            PyArray1::from_vec(py, oval),
+        ));
     }
     for i in 0..m {
         start[i + 1] += start[i];

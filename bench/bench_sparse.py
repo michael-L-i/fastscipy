@@ -64,6 +64,27 @@ def cases():
     yield "csc 1e7 nnz argmax(axis=0)", lambda big=big: big.tocsc().argmax(axis=0)
     del big
 
+    # Already ordered assembly, plus late disorder to measure the full scan fallback.
+    for n in (32, 500_000):
+        for order in ("sorted unique", "sorted duplicates", "late disorder", "random"):
+            row = np.arange(n, dtype=np.int64) // 16
+            col = np.arange(n, dtype=np.int64) % 16
+            if order != "sorted unique":
+                col //= 4
+            if order == "late disorder":
+                row[-1] = 0
+            elif order == "random":
+                perm = rng.permutation(n)
+                row, col = row[perm], col[perm]
+            val = rng.standard_normal(n)
+
+            def ordered_sumdup(row=row, col=col, val=val):
+                matrix = sp.coo_array((val, (row, col)), shape=((len(val) + 15) // 16, 16))
+                matrix.sum_duplicates()
+                return matrix
+
+            yield f"coo {n} entries {order} sum_duplicates", ordered_sumdup
+
     # coo.sum_duplicates: 2e6 entries (SciPy needs 9 s at 1e7)
     n = 2_000_000
     row, col, val = rng.integers(0, 20_000, n), rng.integers(0, 20_000, n), rng.standard_normal(n)

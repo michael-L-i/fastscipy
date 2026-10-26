@@ -336,19 +336,24 @@ def _block_diag(mats, format=None, dtype=None):
     if nnz == 0:
         return constructor(shape, dtype=np.result_type(*(b.dtype for b in mats)))
     idx_dtype = np.int64 if any(b.indices.dtype == np.int64 for b in mats) else np.int32
-    indices, pointers = [], []
-    offset = used = 0
+    # Offset directly into the final buffers instead of allocating one
+    # temporary per block and copying those again during concatenation.
+    indices = np.empty(nnz, dtype=idx_dtype)
+    pointers = np.empty(shape[major] + 1, dtype=idx_dtype)
+    offset = used = position = 0
     for block in mats:
-        indices.append(block.indices + offset)
-        pointers.append(block.indptr[:-1] + used)
+        end = used + len(block.data)
+        stop = position + block.shape[major]
+        np.add(block.indices, offset, out=indices[used:end])
+        np.add(block.indptr[:-1], used, out=pointers[position:stop])
         offset += block.shape[minor]
-        used += len(block.data)
-    pointers.append(np.array([used], dtype=idx_dtype))
+        used, position = end, stop
+    pointers[-1] = used
     result = constructor(
         (
             np.concatenate([b.data for b in mats]),
-            np.concatenate(indices, dtype=idx_dtype),
-            np.concatenate(pointers, dtype=idx_dtype),
+            indices,
+            pointers,
         ),
         shape=shape,
     )

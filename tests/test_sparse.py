@@ -407,6 +407,21 @@ def test_block_diag_compressed(fmt, kind, dtype):
     check(lambda: sp.block_diag(empty, format=fmt))
 
 
+@pytest.mark.parametrize("fmt", ["csr", "csc"])
+def test_block_diag_large_offsets_with_mixed_index_widths(fmt):
+    cls = getattr(sp, fmt + "_array")
+    limit = np.iinfo(np.int32).max
+    empty_shape = (1, limit - 3) if fmt == "csr" else (limit - 3, 1)
+    tail_shape = (1, 3) if fmt == "csr" else (3, 1)
+    empty = cls(empty_shape)
+    empty.indices = empty.indices.astype(np.int64)
+    empty.indptr = empty.indptr.astype(np.int64)
+    tail = cls((np.array([2.0]), np.array([2], np.int32), np.array([0, 1], np.int32)), shape=tail_shape)
+    result = check(lambda: sp.block_diag([empty, tail], format=fmt))
+    assert result.indices.tolist() == [limit - 1]
+    assert result.indices.dtype == np.int64
+
+
 def test_block_diag_fallbacks():
     a = sp.csr_array([[1.0, 0], [0, 2.0]])
     for call in (

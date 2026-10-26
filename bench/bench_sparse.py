@@ -30,6 +30,20 @@ def cases():
             f"block_diag 5 medium {fmt.upper()} arrays",
             lambda blocks=medium, fmt=fmt: sp.block_diag(blocks, format=fmt),
         )
+        # Index-heavy assembly exposes copies hidden by tiny constructor calls.
+        major = 100_000
+        large = cls(
+            (
+                np.ones(4 * major, dtype=np.bool_),
+                np.tile(np.arange(4, dtype=np.int32), major),
+                np.arange(0, 4 * major + 1, 4, dtype=np.int32),
+            ),
+            shape=(major, 64) if fmt == "csr" else (64, major),
+        )
+        yield (
+            f"block_diag 4 large {fmt.upper()} bool arrays",
+            lambda large=large, fmt=fmt: sp.block_diag([large] * 4, format=fmt),
+        )
     rng = np.random.default_rng(0)
     # many small matrices
     data, ind, ptr = (

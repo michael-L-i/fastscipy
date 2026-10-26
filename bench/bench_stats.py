@@ -76,6 +76,15 @@ def cases():
     yield "wilcoxon 1e6", lambda: st.wilcoxon(x, method="approx")
     yield "kruskal 3 x 1e5", lambda: st.kruskal(x[:100_000], y[:100_000], ties[:100_000])
     yield "mode 1e7 ints", lambda: st.mode(_modes)
+    mode_rng = np.random.default_rng(349)
+    for shape in ((512, 2048), (2048, 512)):
+        batch = mode_rng.integers(-32, 32, shape, dtype=np.int32)
+        yield f"mode {shape} ints axis=1", lambda a=batch: st.mode(a, axis=1)
+        yield f"mode {shape} ints axis=0", lambda a=batch: st.mode(a, axis=0)
+    wide = mode_rng.integers(0, 1 << 30, (64, 512), dtype=np.int64)
+    yield "mode wide-range fallback", lambda: st.mode(wide, axis=1), False
+    floats = mode_rng.standard_normal((64, 512))
+    yield "mode float fallback", lambda: st.mode(floats, axis=1), False
     kde = st.gaussian_kde(rng.standard_normal((2, 2000)))
     pts = rng.standard_normal((2, 20_000))
     yield "gaussian_kde 2-D 2000 x 20000", lambda: kde(pts)

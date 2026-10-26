@@ -1,0 +1,36 @@
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmp67hcijlq/0-False.quarantine.json --junitxml=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmp67hcijlq/0-False.xml --pyargs scipy.spatial.tests.test_distance
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+...................ss.............ss.................................... [ 45%]
+......................ss................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+......................................                                   [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+464 passed, 6 skipped, 1 warning in 4.70s
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmp67hcijlq/0-True.quarantine.json --junitxml=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmp67hcijlq/0-True.xml --pyargs scipy.spatial.tests.test_distance
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+...................ss.............ss.................................... [ 45%]
+......................ss................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+......................................                                   [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+fastscipy: 110 fast-path calls, 0 fast-path errors
+464 passed, 6 skipped, 1 warning in 4.51s
+
+470 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

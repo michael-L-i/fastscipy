@@ -1,0 +1,44 @@
+diff --git a/python/fastscipy/_spatial.py b/python/fastscipy/_spatial.py
+index 12930e0..7b975d1 100644
+--- a/python/fastscipy/_spatial.py
++++ b/python/fastscipy/_spatial.py
+@@ -5,7 +5,7 @@ every output element comes from the same per-pair loop, so bytes are identical
+ (checked per metric; mahalanobis and seuclidean estimate statistics once from
+ the whole input, and pdist/dice differs, so it is left to SciPy). KDTree
+ queries pass ``workers`` when the caller left the default.
+-Small plain float64 ``pdist`` calls go straight to SciPy's registered compiled
++Small plain float64 ``cdist`` and ``pdist`` calls go straight to SciPy's registered compiled
+ metric, bypassing array-namespace dispatch that is redundant for exact ndarrays.
+ """
+ 
+@@ -42,6 +42,7 @@ _PDIST = _CDIST - {"dice"}
+ # These entries are SciPy's pybind kernels, without Python statistics or
+ # preprocessing. Keep the same kernel (including pdist/dice's own arithmetic).
+ _DIRECT_PDIST = _CDIST - {"cosine", "correlation", "jensenshannon", "seuclidean", "mahalanobis"}
++_DIRECT_CDIST = _DIRECT_PDIST
+ _STATISTICS = {"seuclidean": "V", "mahalanobis": "VI"}
+ _WEIGHTED = _CDIST - {"cosine", "correlation", "jensenshannon", *_STATISTICS}
+ _OPTIONS = {
+@@ -107,7 +108,22 @@ def _parameters(metric, kw, *arrays):
+ 
+ 
+ def _cdist_fast(original):
++    direct = {name: dist._METRIC_ALIAS[name].cdist_func for name in _DIRECT_CDIST}
++
+     def fast(XA, XB, *args, **kw):
++        if (
++            len(args) <= 1
++            and (not kw or (not args and len(kw) == 1 and "metric" in kw))
++            and type(XA) is np.ndarray
++            and type(XB) is np.ndarray
++            and XA.ndim == XB.ndim == 2
++            and XA.dtype == XB.dtype == np.float64
++            and XA.shape[1] == XB.shape[1]
++            and XA.size * XB.shape[0] < _WORK
++        ):
++            metric = args[0] if args else kw.get("metric", "euclidean")
++            if type(metric) is str and metric in direct:
++                return direct[metric](XA, XB, out=None)
+         metric = _metric(args, kw, _CDIST, XA, XB)
+         if not metric or XA.shape[1] != XB.shape[1]:
+             return NotImplemented

@@ -577,7 +577,11 @@ def _csd(x, y, fs, window, nperseg, noverlap, nfft, detrend, return_onesided, sc
         with np.errstate(**_RAISE):
             Sy = _frames(e, yc, nperseg, p1, detr)
             if same:
-                P = Sy.real**2 + Sy.imag**2
+                # Square private spectrum components in place, then retain a
+                # contiguous real sum for NumPy's original reduction order.
+                np.square(Sy.real, out=Sy.real)
+                np.square(Sy.imag, out=Sy.imag)
+                P = Sy.real + Sy.imag
             else:
                 P = Sy * _frames(e, xc, nperseg, p1, detr).conj()
             P = np.moveaxis(P, P.ndim - 2, -1)

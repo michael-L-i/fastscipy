@@ -517,6 +517,18 @@ def test_hilbert_sizes_and_dtypes(dtype):
             cmp("hilbert", data, N=size, fast=None)
 
 
+def test_welch_private_spectrum_with_readonly_input():
+    x = np.random.default_rng(300).standard_normal((3, 2049))[:, ::-1]
+    x.flags.writeable = False
+    for name, args in (("welch", (x,)), ("csd", (x, x))):
+        fn = getattr(sg, name)
+        with fastscipy.disabled():
+            expected = fn(*args, nperseg=257, noverlap=256)
+        before = fastscipy.stats().get((name, "fast"), 0)
+        assert identical(fn(*args, nperseg=257, noverlap=256), expected)
+        assert fastscipy.stats()[name, "fast"] > before
+
+
 def test_welch_csd_coherence():
     before = fastscipy.stats()
     rng = np.random.default_rng(3)

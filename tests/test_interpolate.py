@@ -315,12 +315,70 @@ def test_rgi_pchip(ndim, uniform):
     check(lambda: si.RegularGridInterpolator(grid, v, method="cubic")(inside), fast=False)
 
 
+@pytest.mark.parametrize("ndim", [1, 2, 3])
+@pytest.mark.parametrize("channels", [(3,), (2, 3), (2, 0)])
+@pytest.mark.parametrize("layout", ["C", "F", "strided"])
+def test_rgi_pchip_channels(ndim, channels, layout):
+    r = rng(170 + ndim)
+    shape = (7, 6, 5)[:ndim]
+    grid = tuple(np.sort(r.uniform(-2, 3, n)) for n in shape)
+    values = r.standard_normal(shape + channels)
+    if layout == "F":
+        values = np.asfortranarray(values)
+    elif layout == "strided":
+        storage = np.empty(tuple(2 * n for n in values.shape))
+        view = storage[tuple(slice(None, None, 2) for _ in values.shape)]
+        view[...] = values
+        values = view
+    before = values.copy()
+    lo, hi = np.array([g[0] for g in grid]), np.array([g[-1] for g in grid])
+    q = r.uniform(lo, hi, (69, ndim))
+    q[:2] = [lo, hi]
+    q[2:4] = [lo - 0.01, hi + 0.01]
+    for fill in (None, -7.0):
+        f = si.RegularGridInterpolator(grid, values, method="pchip", bounds_error=False, fill_value=fill)
+        check(lambda: f(q))
+        check(lambda: f(q.reshape(3, 23, ndim)))
+        check(lambda: f(q[0]), fast=False)
+        check(lambda: f(q[:0]), fast=False)
+    assert_identical(values.copy(), before)
+    # RGI reads mutable values at evaluation time, including a reversed grid.
+    values[...] = 0.25
+    descending = tuple(g[::-1] for g in grid)
+    reversed_values = values[tuple(slice(None, None, -1) for _ in grid)]
+    f = si.RegularGridInterpolator(descending, reversed_values, method="pchip", bounds_error=False, fill_value=None)
+    reversed_values.flags.writeable = False
+    check(lambda: f(q))
+
+
+@pytest.mark.parametrize("ndim", [1, 2, 3])
+def test_rgi_pchip_channel_nonfinite(ndim):
+    grid = (np.linspace(0, 1, 5),) * ndim
+    values = np.ones((5,) * ndim + (2, 3))
+    q = rng(182).random((31, ndim))
+    for invalid in (np.nan, np.inf):
+        values.flat[-1] = invalid
+        f = si.RegularGridInterpolator(grid, values, method="pchip")
+        check(lambda: f(q), fast=False)
+    values.flat[-1] = 1.0
+    f = si.RegularGridInterpolator(grid, values, method="pchip", bounds_error=False, fill_value=None)
+    q[-1, 0] = np.nan
+    check(lambda: f(q), fast=False)
+
+
+def test_pchip_native_shape_guards():
+    from fastscipy import _interpolate
+
+    grid = [np.linspace(0, 1, 4)]
+    values = np.arange(4, dtype=np.float64)
+    assert _interpolate._k.pchip_eval(grid, values, 1, np.empty((2, 2))) is None
+    assert _interpolate._k.pchip_eval(grid, values, np.iinfo(np.uintp).max, np.empty((2, 1))) is None
+
+
 def test_rgi_pchip_declined():
     r = rng(11)
     g = (np.linspace(0, 1, 10), np.linspace(0, 1, 9))
     q = r.random((50, 2))
-    trailing = si.RegularGridInterpolator(g, r.random((10, 9, 3)), method="pchip")
-    check(lambda: trailing(q), fast=False)
     gs = (np.linspace(0, 1, 4),) * 4
     four, q4 = si.RegularGridInterpolator(gs, r.random((4,) * 4), method="pchip"), r.random((50, 4))
     check(lambda: four(q4), fast=False)

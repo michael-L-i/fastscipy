@@ -4,7 +4,7 @@
 //! axis. Each axis is reduced last to first with the slope, Hermite-coefficient
 //! and polynomial arithmetic of `PchipInterpolator` (plain mul/add, no FMA).
 
-use numpy::{PyArray1, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2};
+use numpy::{PyArray1, PyArrayMethods, PyReadonlyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
 use pyo3::prelude::*;
 
 fn sign(v: f64) -> i8 {
@@ -76,7 +76,8 @@ fn cell(x: &[f64], q: f64) -> usize {
     lo
 }
 
-/// `v` is the C-contiguous values array with `grids.len()` (1 to 3) axes, `q` is (m, ndim).
+/// `v` has `grids.len()` (1 to 3) grid axes followed by `channels` values per node.
+/// Both `v` and `q` (m, ndim) are C-contiguous.
 /// Returns `None` unless every grid has 4 or more nodes and all values and queries are finite,
 /// and no intermediate result is not (SciPy refits `PchipInterpolator` on those and may raise).
 #[pyfunction]
@@ -84,19 +85,26 @@ pub fn pchip_eval<'py>(
     py: Python<'py>,
     grids: Vec<PyReadonlyArray1<'py, f64>>,
     v: PyReadonlyArray1<'py, f64>,
+    channels: usize,
     q: PyReadonlyArray2<'py, f64>,
 ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
     let g: Vec<&[f64]> = grids
         .iter()
         .map(|a| a.as_slice())
         .collect::<Result<_, _>>()?;
-    let (v, q) = (v.as_slice()?, q.as_slice()?);
     let nd = g.len();
-    let m = q.len() / nd.max(1);
+    if q.shape()[1] != nd {
+        return Ok(None);
+    }
+    let m = q.shape()[0];
+    let Some(output_len) = m.checked_mul(channels) else {
+        return Ok(None);
+    };
+    let (v, q) = (v.as_slice()?, q.as_slice()?);
     let size: usize = g.iter().map(|x| x.len()).product();
     if !(1..=3).contains(&nd)
         || g.iter().any(|x| x.len() < 4)
-        || v.len() != size
+        || size.checked_mul(channels) != Some(v.len())
         || !v.iter().all(|v| v.is_finite())
         || !q.iter().all(|v| v.is_finite())
     {
@@ -106,12 +114,15 @@ pub fn pchip_eval<'py>(
     for d in (0..nd.saturating_sub(1)).rev() {
         stride[d] = stride[d + 1] * g[d + 1].len();
     }
-    let out = PyArray1::<f64>::zeros(py, m, false);
+    let out = PyArray1::<f64>::zeros(py, output_len, false);
     // SAFETY: freshly created, contiguous, and only written inside this call.
     let o = unsafe { out.as_slice_mut()? };
+    if channels == 0 {
+        return Ok(Some(out));
+    }
     py.detach(|| {
-        super::fill(o, 1, 64, |i0, o| {
-            for (r, o) in o.iter_mut().enumerate() {
+        super::fill(o, channels, 64, |i0, o| {
+            for (r, row) in o.chunks_mut(channels).enumerate() {
                 let q = &q[(i0 + r) * nd..][..nd];
                 let (mut cl, mut lo, mut w) = ([0; 3], [0; 3], [0; 3]);
                 for d in 0..nd {
@@ -120,30 +131,33 @@ pub fn pchip_eval<'py>(
                     lo[d] = cl[d].saturating_sub(1);
                     w[d] = (cl[d] + 2).min(n - 1) - lo[d] + 1;
                 }
-                // Gather the window (row-major in the window extents), then fold the last axis away repeatedly.
-                let mut buf = [0.0f64; 64];
-                let mut len = 0;
-                for a in 0..w[0] {
-                    for b in 0..if nd > 1 { w[1] } else { 1 } {
-                        for c in 0..if nd > 2 { w[2] } else { 1 } {
-                            let idx = (lo[0] + a) * stride[0]
-                                + if nd > 1 { (lo[1] + b) * stride[1] } else { 0 }
-                                + if nd > 2 { lo[2] + c } else { 0 };
-                            buf[len] = v[idx];
-                            len += 1;
+                for (channel, value) in row.iter_mut().enumerate() {
+                    // Gather the window (row-major in the window extents), then fold the last axis away repeatedly.
+                    let mut buf = [0.0f64; 64];
+                    let mut len = 0;
+                    for a in 0..w[0] {
+                        for b in 0..if nd > 1 { w[1] } else { 1 } {
+                            for c in 0..if nd > 2 { w[2] } else { 1 } {
+                                let idx = (lo[0] + a) * stride[0]
+                                    + if nd > 1 { (lo[1] + b) * stride[1] } else { 0 }
+                                    + if nd > 2 { lo[2] + c } else { 0 };
+                                buf[len] = v[idx * channels + channel];
+                                len += 1;
+                            }
                         }
                     }
-                }
-                for d in (0..nd).rev() {
-                    for p in 0..len / w[d] {
-                        buf[p] = hermite(g[d], cl[d], lo[d], &buf[p * w[d]..(p + 1) * w[d]], q[d]);
+                    for d in (0..nd).rev() {
+                        for p in 0..len / w[d] {
+                            buf[p] =
+                                hermite(g[d], cl[d], lo[d], &buf[p * w[d]..(p + 1) * w[d]], q[d]);
+                        }
+                        len /= w[d];
+                        if d > 0 && !buf[..len].iter().all(|v| v.is_finite()) {
+                            break;
+                        }
                     }
-                    len /= w[d];
-                    if d > 0 && !buf[..len].iter().all(|v| v.is_finite()) {
-                        break;
-                    }
+                    *value = if len == 1 { buf[0] } else { f64::NAN };
                 }
-                *o = if len == 1 { buf[0] } else { f64::NAN };
             }
         })
     });

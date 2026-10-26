@@ -56,6 +56,13 @@ def cases():
     many_rng = np.random.default_rng(32)
     many_pts = many_rng.random((6000, 2))
     many_q = many_rng.random((24001, 2))
+    for channels in (2, 8, 32):
+        field_rng = np.random.default_rng(320 + channels)
+        field = si.CloughTocher2DInterpolator(many_pts, field_rng.standard_normal((6000, channels)))
+        yield (
+            f"CloughTocher2DInterpolator {channels} outputs, 24001 queries",
+            lambda f=field: f(many_q),
+        )
     many = si.CloughTocher2DInterpolator(many_pts, many_rng.standard_normal((6000, 128)))
     yield "CloughTocher2DInterpolator 128 outputs, 24001 queries", lambda: many(many_q)
 

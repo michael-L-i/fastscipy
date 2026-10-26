@@ -7,6 +7,7 @@ use rayon::prelude::*;
 use crate::pool;
 
 mod bspline;
+mod clough;
 mod pchip;
 mod simplex;
 
@@ -45,5 +46,6 @@ pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(simplex::tie_flags, m)?)?;
     m.add_function(wrap_pyfunction!(simplex::replay_intervals, m)?)?;
     m.add_function(wrap_pyfunction!(simplex::linear_eval, m)?)?;
+    m.add_function(wrap_pyfunction!(clough::clough_eval, m)?)?;
     Ok(())
 }

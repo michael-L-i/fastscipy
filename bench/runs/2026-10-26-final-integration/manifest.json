@@ -1,0 +1,16 @@
+{
+  "base": "95c4304c3e997b0875d2b4c0623b9ef2d66f5a45",
+  "pull_requests": {
+    "15": "69a77b90b8404695b430b264657d1c50d4b0325e",
+    "16": "a470e71a01938d98de30442e41ae4824970ab294",
+    "17": "8493e2f0f4e5c80de0ad9743543e5eea1d232ea0"
+  },
+  "combined_commit": "5b4924e32b2ff1c8e2a812cb42a3a7d46b2798ca",
+  "project_tests": {
+    "passed": 8766,
+    "warnings": 58
+  },
+  "ruff": "check and format passed (178 files)",
+  "platform": "macOS ARM64, CPython 3.13.6",
+  "ci": "platform jobs still queued/running at local validation; not claimed passed"
+}

@@ -1,0 +1,79 @@
+{
+ "meta": {
+  "threads": 2,
+  "cpu": 18,
+  "platform": "darwin",
+  "reference": "unpatched_scipy",
+  "timing": "median_calibrated_batches",
+  "budget_seconds": 0.08,
+  "headline_cases": 6
+ },
+ "cases": {
+  "medfilt2d uint8, 512^2, kernel=3": {
+   "scipy_ms": 12.064583017490804,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.03457645478192717,
+   "x1t": 348.924812956731,
+   "nt_ms": 0.03464625449851155,
+   "xnt": 348.22185520830584,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "medfilt2d uint8, 512^2, kernel=5": {
+   "scipy_ms": 44.1928330110386,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.14082499546930194,
+   "x1t": 313.81384294574383,
+   "nt_ms": 0.14039590023458004,
+   "xnt": 314.7729594468154,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "medfilt2d uint8, 512^2, kernel=7": {
+   "scipy_ms": 81.14550006575882,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.36418954841792583,
+   "x1t": 222.81117186987552,
+   "nt_ms": 0.3642145951744169,
+   "xnt": 222.79584931762403,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "medfilt2d uint8, 512^2, kernel=15": {
+   "scipy_ms": 328.34612496662885,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 4.664729058276862,
+   "x1t": 70.38910960627561,
+   "nt_ms": 2.463207929395139,
+   "xnt": 133.30020622629974,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "medfilt2d uint8, 512^2, kernel=(3, 5)": {
+   "scipy_ms": 27.228833991102874,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.2980958088301122,
+   "x1t": 91.34255895097425,
+   "nt_ms": 0.2972209011204541,
+   "xnt": 91.61143744755657,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  },
+  "medfilt2d uint8 strided, 256^2, kernel=5": {
+   "scipy_ms": 11.000042024534196,
+   "identical": true,
+   "fast_path": true,
+   "1t_ms": 0.05570500041358173,
+   "x1t": 197.4695618501821,
+   "nt_ms": 0.0561337498947978,
+   "xnt": 195.96128969024437,
+   "validation": "byte_identical",
+   "expected_fast_path": true
+  }
+ }
+}

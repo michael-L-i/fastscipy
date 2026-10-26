@@ -79,6 +79,7 @@ axes and `axis=None`, with SciPy's same standard-deviation arithmetic.
 |---|---|
 | `sosfilt`, `sosfiltfilt`, `lfilter`, `filtfilt`, `detrend` (linear), `hilbert`, `welch`, `csd` (and `coherence`, `periodogram` through them) | small-call paths that skip SciPy's Python layers; cached `lfilter_zi`, `sosfilt_zi` and `iirfilter` (so `butter`, `cheby1`, ...) |
 | `lfilter`, `sosfilt`, `filtfilt`, `sosfiltfilt`, `decimate`, `resample_poly`, `upfirdn`, `medfilt2d` on many channels | channels split across threads (threads only) |
+| `medfilt2d` on uint8 images (at least 4096 pixels and 32 per axis, nontrivial odd windows up to 31 per axis) | shared ndimage rank kernels, with zero padding; float inputs retain signal selection |
 | `find_peaks`, `peak_prominences`, `peak_widths` | Rust kernels |
 | `dlsim` | Rust kernel; checked at run time against SciPy's BLAS summation order and used only where it matches |
 | `convolve`, `correlate` (direct 2-D float64), `convolve2d`, `correlate2d` | Rust kernels |

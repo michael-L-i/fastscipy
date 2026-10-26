@@ -3,8 +3,8 @@
 * ``_signal_small``: same kernels and arithmetic as SciPy minus the Python layers,
   plus caches of filter designs and initial conditions (identical by construction).
 * ``_signal_threads``: independent channels on several threads (identical by construction).
-* ``_signal_algo``: Rust kernels for peak finding, ``dlsim`` and direct 2-D correlation
-  (faithful ports, checked bit for bit).
+* ``_signal_algo``: Rust kernels for peak finding, ``dlsim``, direct 2-D correlation
+  and uint8 median filtering (checked bit for bit).
 """
 
 import importlib
@@ -49,6 +49,7 @@ def _first(*paths):
 
 def patch():
     _patch.require_validated("1.18.")
+    from . import _signal_algo as algo
     from . import _signal_small as small
     from . import _signal_threads as threads
 
@@ -57,7 +58,7 @@ def patch():
         owner = importlib.import_module(f"scipy.signal.{mod}")
         for name in names:
             old = small.orig[name] = getattr(owner, name)
-            fast = _first(threads.make(name, old), getattr(small, name, None))
+            fast = _first(getattr(algo, name, None), threads.make(name, old), getattr(small, name, None))
             _patch.rebind(old, _patch.wrap(old, fast))
     _patch_algo()
 
@@ -101,6 +102,7 @@ def smoke():
     sg.resample_poly(big, 3, 2, axis=-1)
     sg.upfirdn(np.ones(16), big, 2)
     sg.medfilt2d(rng.random((512, 512)), 5)
+    sg.medfilt2d(rng.integers(0, 256, (64, 64), dtype=np.uint8), 5)
     sg.find_peaks(np.cumsum(rng.standard_normal(100_000)), prominence=0, width=0)
     sg.find_peaks(rng.standard_normal(100_000), prominence=0, width=0)
     sg.dlsim((np.diag([0.5, 0.2]), np.ones((2, 1)), np.ones((1, 2)), np.zeros((1, 1)), 1.0), rng.standard_normal(3000))

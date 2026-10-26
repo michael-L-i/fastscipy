@@ -1,0 +1,111 @@
+{
+  "case": "segmentation",
+  "mode": "patched",
+  "samples_seconds": [
+    0.004004582995548844,
+    0.0035882090451195836,
+    0.003430499928072095,
+    0.003438167041167617,
+    0.0034411250380799174,
+    0.003408582997508347,
+    0.0033831249456852674,
+    0.0035177909303456545,
+    0.0034790419740602374
+  ],
+  "median_seconds": 0.0034411250380799174,
+  "warnings": [],
+  "inputs_unchanged": true,
+  "structure": {
+    "clean": {
+      "dtype": "float64",
+      "shape": [
+        512,
+        512
+      ],
+      "strides": [
+        4096,
+        8
+      ]
+    },
+    "smooth": {
+      "dtype": "float64",
+      "shape": [
+        512,
+        512
+      ],
+      "strides": [
+        4096,
+        8
+      ]
+    },
+    "labels": {
+      "dtype": "int32",
+      "shape": [
+        512,
+        512
+      ],
+      "strides": [
+        2048,
+        4
+      ]
+    },
+    "label": {
+      "dtype": "int64",
+      "shape": [
+        3
+      ],
+      "strides": [
+        8
+      ]
+    },
+    "area": {
+      "dtype": "float64",
+      "shape": [
+        3
+      ],
+      "strides": [
+        8
+      ]
+    },
+    "centroid-0": {
+      "dtype": "float64",
+      "shape": [
+        3
+      ],
+      "strides": [
+        16
+      ]
+    },
+    "centroid-1": {
+      "dtype": "float64",
+      "shape": [
+        3
+      ],
+      "strides": [
+        16
+      ]
+    },
+    "intensity_mean": {
+      "dtype": "float64",
+      "shape": [
+        3
+      ],
+      "strides": [
+        8
+      ]
+    }
+  },
+  "counts": {
+    "rank_filter:fast": 10,
+    "correlate1d:fast": 20,
+    "label:fast": 10,
+    "find_objects:fast": 10
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-image": "0.26.0",
+    "scikit-learn": "1.9.1",
+    "statsmodels": "0.15.0"
+  }
+}

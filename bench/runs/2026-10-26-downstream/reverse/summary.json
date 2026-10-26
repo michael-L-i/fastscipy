@@ -1,0 +1,54 @@
+{
+  "provenance": {
+    "extension": "/private/tmp/fastscipy-round2/provenance-native.so",
+    "binary_sha256": "954aa1f8513058831b05f055b74d62ae9374e0392f64e2b8921c3c3755d59011",
+    "source_root": "/private/tmp/fastscipy-final/ecosystem",
+    "build": {
+      "crate_version": "0.1.0-alpha.4",
+      "opt_level": "3",
+      "profile": "release",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_schema": "1",
+      "source_sha256": "5f9095417fd0f5fa4bfdd5ef4364c8ee926d6379342c5b9edfd7aa630023fdc4",
+      "target": "aarch64-apple-darwin"
+    },
+    "expected_source_sha256": "5f9095417fd0f5fa4bfdd5ef4364c8ee926d6379342c5b9edfd7aa630023fdc4",
+    "status": "match"
+  },
+  "cases": [
+    {
+      "case": "segmentation",
+      "exact": true,
+      "speedup": 29.822155504303108,
+      "baseline_seconds": 0.10909937496762723,
+      "patched_seconds": 0.003658332978375256,
+      "counts": {
+        "rank_filter:fast": 127,
+        "correlate1d:fast": 254,
+        "label:fast": 127,
+        "find_objects:fast": 127
+      }
+    },
+    {
+      "case": "gaussian_process",
+      "exact": true,
+      "speedup": 1.0782431174498284,
+      "baseline_seconds": 0.00046508293598890305,
+      "patched_seconds": 0.0004313340177759528,
+      "counts": {
+        "pdist:fast": 650,
+        "cho_solve:fast": 650,
+        "cdist:scipy": 325,
+        "solve_triangular:fast": 325
+      }
+    },
+    {
+      "case": "seasonal",
+      "exact": true,
+      "speedup": 1.0264992906822044,
+      "baseline_seconds": 0.0005988340126350522,
+      "patched_seconds": 0.0005833749892190099,
+      "counts": {}
+    }
+  ]
+}

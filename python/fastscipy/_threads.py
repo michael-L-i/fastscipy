@@ -15,6 +15,7 @@ from . import _native
 
 _pool = None
 _busy = threading.Lock()
+_pool_lock = threading.Lock()
 
 
 def get_num_threads():
@@ -24,15 +25,20 @@ def get_num_threads():
 def set_num_threads(threads):
     """Set the thread budget for every component (1 = single-threaded)."""
     global _pool
-    _native.set_num_threads(int(threads))
-    if _pool is not None:
-        _pool.shutdown(wait=False)
-        _pool = None
+    threads = int(threads)
+    with _pool_lock:
+        previous = get_num_threads()
+        _native.set_num_threads(threads)
+        if threads != previous and _pool is not None:
+            # Submission holds this same lock. Already submitted work finishes
+            # on its original executor; no worker needs to join itself.
+            _pool.shutdown(wait=False)
+            _pool = None
 
 
 def _after_fork():
-    global _pool, _busy
-    _pool, _busy = None, threading.Lock()
+    global _pool, _busy, _pool_lock
+    _pool, _busy, _pool_lock = None, threading.Lock(), threading.Lock()
 
 
 if hasattr(os, "register_at_fork"):
@@ -55,13 +61,21 @@ def parallel_map(fn, items):
     if threads <= 1 or len(items) <= 1 or not _busy.acquire(blocking=False):
         return [fn(x) for x in items]
     try:
-        if _pool is None:
-            _pool = ThreadPoolExecutor(threads, thread_name_prefix="fastscipy")
         futures = []
         completed = False
         try:
-            for item in items:
-                futures.append(_pool.submit(fn, item))
+            # Serialize only executor creation/submission and reconfiguration,
+            # never callbacks or waiting for results. Workers may change the
+            # budget themselves without deadlocking the caller.
+            with _pool_lock:
+                threads = get_num_threads()
+                if threads > 1:
+                    if _pool is None:
+                        _pool = ThreadPoolExecutor(threads, thread_name_prefix="fastscipy")
+                    for item in items:
+                        futures.append(_pool.submit(fn, item))
+            if threads <= 1:
+                return [fn(x) for x in items]
             results = [future.result() for future in futures]
             completed = True
             return results

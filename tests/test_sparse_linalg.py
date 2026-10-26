@@ -736,3 +736,74 @@ def test_composed_preconditioned_solver_history_and_residual(solver, maxiter):
     validation = _iteration_reference_validation(equation, b, 1e-10, scalar_history=solver is sl.gmres)
     check(run, numerical_validation=validation)
     assert before == (a.data.tobytes(), b.tobytes(), diagonal.tobytes(), inverse.tobytes())
+
+
+@pytest.mark.parametrize("kind", ["batched", "integer", "column"])
+@pytest.mark.parametrize("adjoint", [False, True])
+@pytest.mark.parametrize("fails", [False, True])
+def test_declined_vector_calls_preserve_callback_contract(kind, adjoint, fails):
+    # Early rejection must still let SciPy own shape preparation, warnings,
+    # callback errors, and the returned array's shape/dtype.
+    calls = []
+    error = RuntimeError("declined callback failed")
+
+    def callback(x):
+        calls.append((x.shape, x.dtype, x.copy()))
+        warnings.warn("declined callback warning", UserWarning, stacklevel=2)
+        if fails:
+            raise error
+        return x * 2
+
+    op = sl.LinearOperator((4, 4), matvec=callback, rmatvec=callback, dtype=np.float64)
+    x = {"batched": np.arange(8.0).reshape(2, 4), "integer": np.arange(4), "column": np.arange(4.0)[:, None]}[kind]
+    before = x.tobytes()
+    call = op.rmatvec if adjoint else op.matvec
+
+    def invoke():
+        with warnings.catch_warnings(record=True) as emitted:
+            warnings.simplefilter("always")
+            if fails:
+                with pytest.raises(RuntimeError) as raised:
+                    call(x)
+                assert raised.value is error
+                out = None
+            else:
+                out = call(x)
+        return out, [(type(w.message), str(w.message)) for w in emitted]
+
+    with fastscipy.disabled():
+        expected, expected_warnings = invoke()
+    reference_calls = calls[:]
+    calls.clear()
+    before_fast = fast_calls()
+    actual, actual_warnings = invoke()
+    assert_identical(expected, actual)
+    assert_identical(reference_calls, calls)
+    assert len(calls) == 1
+    assert actual_warnings == expected_warnings
+    assert actual_warnings.count((UserWarning, "declined callback warning")) == 1
+    assert x.tobytes() == before
+    assert fast_calls() == before_fast
+
+
+def test_nonboolean_adjoint_delegates_without_extra_truth_evaluation():
+    evaluations = []
+
+    class Adjoint:
+        def __bool__(self):
+            evaluations.append(True)
+            return True
+
+    op = sl.LinearOperator((4, 4), matvec=lambda x: x * 2, rmatvec=lambda x: x * 3, dtype=np.float64)
+    x = np.arange(4.0)
+    for adjoint in (np.bool_(True), 1, Adjoint()):
+        evaluations.clear()
+        with fastscipy.disabled():
+            expected = op._shared_matvec(x, adjoint)
+        reference_evaluations = evaluations[:]
+        evaluations.clear()
+        before = fast_calls()
+        actual = op._shared_matvec(x, adjoint)
+        assert_identical(expected, actual)
+        assert evaluations == reference_evaluations
+        assert fast_calls() == before

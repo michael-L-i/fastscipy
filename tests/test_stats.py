@@ -671,6 +671,30 @@ def test_rankdata(kind, n, method, threads):
         check(lambda: st.rankdata(x2.transpose(2, 0, 1), axis=None, method=method))
 
 
+@pytest.mark.parametrize("threads", [1, 2], indirect=True)
+@pytest.mark.parametrize("n", [33, 1025, 4097])
+@pytest.mark.parametrize("kind", ["float64", "int64", "uint64"])
+@pytest.mark.parametrize("method", ["average", "min", "max", "dense", "ordinal"])
+def test_rankdata_batched_row_independence(n, kind, method, threads):
+    from scipy.stats import _stats_py
+
+    # Adjacent rows exercise different histograms, constant radix digits, and
+    # ties. Enough rows cross the parallel threshold for both radix sizes.
+    rng = np.random.default_rng(219)
+    x = rng.integers(0, 32, size=(65, n)).astype(kind)
+    x[::3] = 0
+    x[1::3] = np.arange(n, dtype=kind)[::-1]
+    if kind == "float64":
+        x[2::3, :7] = [-np.inf, -0.0, 0.0, np.inf, np.nan, 5e-324, -5e-324]
+    elif kind == "int64":
+        x[2::3, :3] = [np.iinfo(np.int64).min, -1, np.iinfo(np.int64).max]
+    else:
+        x[2::3, :2] = [2**63, np.iinfo(np.uint64).max]
+    before = x.tobytes()
+    check(lambda: _stats_py._rankdata(x, method, return_sorted=True, return_ties=True))
+    assert x.tobytes() == before
+
+
 def test_rankdata_nan_policies_and_declines():
     x = rng.standard_normal(50)
     x[3] = np.nan

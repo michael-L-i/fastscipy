@@ -1,0 +1,80 @@
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmpok3d68bn/0-False.quarantine.json --junitxml=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmpok3d68bn/0-False.xml --pyargs scipy.sparse.linalg.tests.test_interface scipy.sparse.linalg._isolve
+........................................................................ [  4%]
+..........................ss........ss........ss........ss........ss.... [  9%]
+....ss........ss........ss........ss........ss........ss........ss...... [ 13%]
+..ss........ss........ss........ss........ss........ss.................. [ 18%]
+..........................s.......s...s...s...s...s...s...s...s...s...s. [ 22%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s......... [ 27%]
+......................s.......s...s...s...s...s...s...s...s.sss...s...s. [ 31%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 36%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 40%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 45%]
+..s...s...s...s...s...s...s...s...s..ss...s...s...s...s...s...s...s...s. [ 49%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 54%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 58%]
+..s...s...s...s...s..ss...s...s...s...s...s...s...s...s...s...s...s...s. [ 63%]
+..ss.sss.sss.ss...s...s...s...ss.sss.ss..s.........s.........s.........s [ 68%]
+.........s.........x.........x.......s.s...sss...x.......s.s........s.s. [ 72%]
+s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s. [ 77%]
+s.s.s.s.s.ss..s.s.s.s.s.s.s.sss.s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s. [ 81%]
+s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s. [ 86%]
+s.s.s.s.ss..s.s.sss.s.s.s.sss.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s. [ 90%]
+s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.sss.s.s.s.sssss.s.s.s.s.s.s. [ 95%]
+s.s.s.s.s.s.s.s.ss...................................................... [ 99%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+tests/test_iterative.py::test_maxiter_worsening[gmres-numpy]
+tests/test_iterative.py::test_maxiter_worsening[lgmres-numpy]
+tests/test_iterative.py::test_maxiter_worsening[qmr-numpy]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/_external/array_api_compat/numpy/_aliases.py:94: ComplexWarning: Casting complex values to real discards the imaginary part
+    return np.array(obj, copy=copy, dtype=dtype, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1149 passed, 435 skipped, 3 xfailed, 4 warnings in 3.09s
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmpok3d68bn/0-True.quarantine.json --junitxml=/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/tmpok3d68bn/0-True.xml --pyargs scipy.sparse.linalg.tests.test_interface scipy.sparse.linalg._isolve
+........................................................................ [  4%]
+..........................ss........ss........ss........ss........ss.... [  9%]
+....ss........ss........ss........ss........ss........ss........ss...... [ 13%]
+..ss........ss........ss........ss........ss........ss.................. [ 18%]
+..........................s.......s...s...s...s...s...s...s...s...s...s. [ 22%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s......... [ 27%]
+......................s.......s...s...s...s...s...s...s...s.sss...s...s. [ 31%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 36%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 40%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 45%]
+..s...s...s...s...s...s...s...s...s..ss...s...s...s...s...s...s...s...s. [ 49%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 54%]
+..s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s...s. [ 58%]
+..s...s...s...s...s..ss...s...s...s...s...s...s...s...s...s...s...s...s. [ 63%]
+..ss.sss.sss.ss...s...s...s...ss.sss.ss..s.........s.........s.........s [ 68%]
+.........s.........x.........x.......s.s...sss...x.......s.s........s.s. [ 72%]
+s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s. [ 77%]
+s.s.s.s.s.ss..s.s.s.s.s.s.s.sss.s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s. [ 81%]
+s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.s.s. [ 86%]
+s.s.s.s.ss..s.s.sss.s.s.s.sss.s.s.s.s.s.s.ss..s.s.s.s.s.s.ss..s.s.s.s.s. [ 90%]
+s.ss..s.s.s.s.s.s.ss..s.s.s.s.s.s.s.ss..s.s.sss.s.s.s.sssss.s.s.s.s.s.s. [ 95%]
+s.s.s.s.s.s.s.s.ss...................................................... [ 99%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+tests/test_iterative.py::test_maxiter_worsening[gmres-numpy]
+tests/test_iterative.py::test_maxiter_worsening[lgmres-numpy]
+tests/test_iterative.py::test_maxiter_worsening[qmr-numpy]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/_external/array_api_compat/numpy/_aliases.py:94: ComplexWarning: Casting complex values to real discards the imaginary part
+    return np.array(obj, copy=copy, dtype=dtype, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+fastscipy: 154118 fast-path calls, 0 fast-path errors
+1149 passed, 435 skipped, 3 xfailed, 4 warnings in 2.86s
+
+1587 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

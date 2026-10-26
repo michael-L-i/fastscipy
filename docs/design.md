@@ -80,6 +80,12 @@ default all cores) and two pools that share it:
   at a time. A second caller, such as another user thread or a nested call,
   runs serially instead of oversubscribing the machine.
 
+Repeating `set_num_threads()` with the current budget keeps the Python pool
+warm. Changing the budget is serialized with task submission; already submitted
+chunks finish on their original executor, and the next parallel call creates
+a pool with the new budget. Workers can change the budget without waiting for
+themselves to finish.
+
 Work is split only above measured size thresholds, so small calls never pay
 for threads. Thread-local state that SciPy depends on, such as
 `scipy.special` error handling, is either copied into workers or makes the

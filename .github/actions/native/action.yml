@@ -1,0 +1,30 @@
+name: Native development cache
+description: Reuse exact native build inputs while testing current checkout Python
+inputs:
+  profile:
+    description: Cargo build profile
+    default: dev-release
+runs:
+  using: composite
+  steps:
+    - id: identity
+      shell: bash
+      env:
+        BUILD_PROFILE: ${{ inputs.profile }}
+      run: python tools/ci_native.py key --profile "$BUILD_PROFILE"
+    - uses: actions/cache@v4
+      id: native
+      with:
+        path: .ci-native-cache
+        key: ${{ steps.identity.outputs.key }}
+    - uses: Swatinem/rust-cache@v2
+      if: steps.native.outputs.cache-hit != 'true'
+    - name: Build or restore and verify native extension
+      shell: bash
+      env:
+        BUILD_PROFILE: ${{ inputs.profile }}
+        CACHE_HIT: ${{ steps.native.outputs.cache-hit }}
+      run: |
+        args=()
+        if [ "$CACHE_HIT" = true ]; then args+=(--reuse); fi
+        python tools/ci_native.py install --profile "$BUILD_PROFILE" "${args[@]}"

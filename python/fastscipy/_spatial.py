@@ -54,6 +54,7 @@ _OPTIONS = {
 _WORK = 1_000_000  # pair-coordinates below which a block split loses to hand-off cost
 _BLOCK = 200_000  # about 100 us per block
 _PDIST_TILE = 131_072  # distance entries per tile (1 MiB), or one full row if larger
+_PDIST_LOW_DIM = {"euclidean", "sqeuclidean", "cityblock"}
 _QUERIES = 2000  # KDTree queries below which threads cost more than they save
 
 
@@ -152,6 +153,11 @@ def _pdist_fast(cdist):
             return NotImplemented
         m, d = X.shape
         if m * m * d < 2 * _WORK:
+            return NotImplemented
+        # Two-worker measurements favor SciPy for these cheap low-dimensional
+        # pairs: tiling adds rectangular work and condensed-output copies.
+        # Extra workers and weighted metrics retain their existing dispatch.
+        if d <= 3 and metric in _PDIST_LOW_DIM and kw.keys() <= {"metric"} and get_num_threads() == 2:
             return NotImplemented
         try:
             with np.errstate(all="raise"):

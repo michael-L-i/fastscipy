@@ -701,8 +701,80 @@ def test_threaded_initial_conditions(pmap, threads):
 def test_threaded_medfilt2d(pmap, threads, dtype, ks):
     img = (np.random.default_rng(7).random((700, 500)) * 255).astype(dtype)
     odd = bool(np.all(np.asarray(ks) % 2 == 1))
-    cmp_threaded(pmap, threads, "medfilt2d", img, ks, expect=odd)
-    cmp_threaded(pmap, threads, "medfilt2d", img[:, ::2], ks, expect=odd)
+    cmp_threaded(pmap, threads, "medfilt2d", img, ks, expect=odd and dtype != np.uint8)
+    cmp_threaded(pmap, threads, "medfilt2d", img[:, ::2], ks, expect=odd and dtype != np.uint8)
+
+
+@pytest.mark.parametrize(
+    "kernel", [None, 3, 5, 7, 15, 31, [3, 5], (7, 3), [1, 31], np.array([5, 7]), np.array(3), np.int32(3)]
+)
+@pytest.mark.parametrize("layout", ["c", "fortran", "reverse", "stride", "readonly"])
+def test_medfilt2d_uint8(kernel, layout):
+    image = np.random.default_rng(24).integers(0, 256, (64, 128), dtype=np.uint8)
+    if layout == "fortran":
+        image = np.asfortranarray(image)
+    elif layout == "reverse":
+        image = image[::-1, ::-1]
+    elif layout == "stride":
+        image = image[:, ::2]
+    elif layout == "readonly":
+        image.flags.writeable = False
+    # check() retains the actual strides and writeability (cmp() copies inputs).
+    before = image.copy()
+    check(lambda: sg.medfilt2d(image, kernel))
+    np.testing.assert_array_equal(image, before)
+    result = sg.medfilt2d(image, kernel)
+    assert result.flags.c_contiguous and not np.shares_memory(result, image)
+
+
+@pytest.mark.parametrize("shape,kernel", [((1, 4096), 3), ((4096, 1), 5), ((2, 2048), [7, 3])])
+def test_medfilt2d_uint8_padding(shape, kernel):
+    image = np.full(shape, 255, dtype=np.uint8)
+    cmp("medfilt2d", image, kernel, fast=False)
+    # More than half of each window is zero padding on these thin images.
+    assert not sg.medfilt2d(image, kernel).any()
+
+
+@pytest.mark.parametrize("kernel", [1, 2, [3, 4], [3], 33, 3.0, np.uint64(3), [[3], [5, 7]], 2**80])
+def test_medfilt2d_uint8_declines(kernel):
+    cmp("medfilt2d", np.zeros((64, 64), dtype=np.uint8), kernel, fast=False)
+
+
+@pytest.mark.parametrize("shape", [(0, 64), (64, 0), (4, 4)])
+def test_medfilt2d_uint8_small(shape):
+    cmp("medfilt2d", np.zeros(shape, dtype=np.uint8), 3, fast=False)
+
+
+def test_medfilt2d_foreign_kernel_declines_without_conversion():
+    from fastscipy import _signal_algo
+
+    class Kernel:
+        def __array__(self, dtype=None, copy=None):
+            raise AssertionError("The fast-path probe must not convert foreign kernel entries")
+
+    image = np.zeros((64, 64), dtype=np.uint8)
+    assert _signal_algo.medfilt2d(image, [Kernel(), 3]) is NotImplemented
+
+
+def test_medfilt2d_signal_only(threads):
+    script = """
+import sys
+import numpy as np
+import scipy.signal as sg
+import fastscipy
+from fastscipy.testing import identical
+
+image = np.random.default_rng(42).integers(0, 256, (64, 64), dtype=np.uint8)
+expected = sg.medfilt2d(image, [3, 5])
+assert fastscipy.patch(["signal"], threads=int(sys.argv[1]))["signal"] == "on"
+assert fastscipy.status().get("ndimage") != "on"
+assert identical(sg.medfilt2d(image, [3, 5]), expected)
+assert fastscipy.stats()[("medfilt2d", "fast")] == 1
+fastscipy.unpatch()
+assert identical(sg.medfilt2d(image, [3, 5]), expected)
+"""
+    result = subprocess.run([sys.executable, "-c", script, str(threads)], capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_unpatch_restores():

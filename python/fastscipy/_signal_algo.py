@@ -1,7 +1,7 @@
-"""Rust kernels for ``scipy.signal``: peak prominences and widths, ``dlsim``, direct 2-D correlation.
+"""Rust kernels for ``scipy.signal``: peaks, ``dlsim``, correlation and uint8 medians.
 
 Each wraps a seam below the public function (SciPy keeps its argument handling, warnings
-and errors) or, for ``dlsim``, replays SciPy's setup and replaces its Python state loop.
+and errors) or provides a narrowly guarded public fast path.
 """
 
 import warnings
@@ -17,6 +17,45 @@ MIN_PEAKS, MIN_SAMPLES, MIN_WIDTHS, MIN_STEPS, MIN_CORR = 16, 4096, 1 << 15, 200
 _sig = _native.signal
 _fused_width = _fused_corr = _fused_conv = None
 _blas_available = False
+_MEDIAN_INT_TYPES = (int, np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64)
+
+
+def medfilt2d(input, kernel_size=3):
+    """Use ndimage's integer rank kernels for signal's zero-padded median.
+
+    Integer ties are interchangeable. Float selection can distinguish NaNs and
+    signed zeros, so those inputs retain signal's own selection order.
+    """
+    if type(input) is not np.ndarray or input.dtype != np.uint8 or input.ndim != 2 or input.size < 4096:
+        return NI
+    # Narrow images spend too much time constructing/padding short rank lines.
+    if min(input.shape) < 32:
+        return NI
+    if kernel_size is None:
+        kernel_size = 3
+    if type(kernel_size) in (list, tuple):
+        if len(kernel_size) != 2 or any(type(k) not in _MEDIAN_INT_TYPES for k in kernel_size):
+            return NI
+    elif type(kernel_size) not in (*_MEDIAN_INT_TYPES, np.ndarray):
+        return NI
+    try:
+        sizes = np.asarray(kernel_size)
+    except (TypeError, ValueError, OverflowError):
+        return NI
+    if sizes.dtype.kind != "i" or not (sizes.ndim == 0 or sizes.shape == (2,)):
+        return NI
+    shape = (int(sizes),) * 2 if sizes.ndim == 0 else tuple(int(k) for k in sizes)
+    # Bound footprint allocation and interpreted selection-network construction.
+    if shape == (1, 1) or any(k < 1 or k > 31 or k % 2 == 0 for k in shape):
+        return NI
+    footprint = np.ones(shape, dtype=bool)
+    output = np.empty(input.shape, dtype=np.uint8)
+    # ndimage mode 4 is constant padding; signal.medfilt2d always pads with zero.
+    if _native.ndimage.rank_filter(
+        np.ascontiguousarray(input), shape[0] * shape[1] // 2, footprint, output, 4, 0.0, [0, 0]
+    ):
+        return output
+    return NI
 
 
 def configure(widths, correlate, convolve):

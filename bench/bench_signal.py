@@ -3,6 +3,11 @@ import scipy.signal as sg
 
 
 def cases():
+    median_rng = np.random.default_rng(31)
+    image = median_rng.integers(0, 256, (512, 512), dtype=np.uint8)
+    for kernel in (3, 5, 7, 15, (3, 5)):
+        yield f"medfilt2d uint8, 512^2, kernel={kernel}", lambda k=kernel: sg.medfilt2d(image, k)
+    yield "medfilt2d uint8 strided, 256^2, kernel=5", lambda: sg.medfilt2d(image[::2, ::2], 5)
     sweep_rng = np.random.default_rng(30)
     for dtype in (np.float32, np.complex64, np.complex128):
         data = sweep_rng.standard_normal(200).astype(dtype)

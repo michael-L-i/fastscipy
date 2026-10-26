@@ -1,4 +1,4 @@
-"""Rust radix `_rankdata` for float64 and integer input (used by rankdata, spearmanr,
+"""Rust radix `_rankdata` for float64, finite float32 and integer input (used by rankdata, spearmanr,
 mannwhitneyu, wilcoxon, kruskal, ...)."""
 
 import numpy as np
@@ -24,6 +24,14 @@ def _rankdata(x, method, return_sorted=False, return_ties=False, xp=None):
     dt = x.dtype
     if dt in _KIND:
         v = x
+    elif dt == np.float32:
+        # Widening is exact. Keep rank/count arithmetic exact in float32 too;
+        # beyond this length SciPy can round intermediate additions differently.
+        # Nonfinite values stay with SciPy, preserving signaling NaN behavior
+        # (including sorted-output payloads) without a conversion side effect.
+        if x.shape[-1] >= 2**23 or not np.isfinite(x).all():
+            return NotImplemented
+        v = x.astype(np.float64)
     elif dt.kind in "iu" and dt.itemsize < 8:  # SciPy ranks these as float64 too
         v = x.astype(np.int64)
     else:
@@ -34,6 +42,10 @@ def _rankdata(x, method, return_sorted=False, return_ties=False, xp=None):
     ranks, srt, ties = _native.stats.rankdata(
         bits, _KIND[v.dtype], _METHODS[method], bool(return_sorted) and not ordinal, bool(return_ties) and not ordinal
     )
+    if dt == np.float32:
+        ranks = ranks.astype(dt)
+        if ties is not None:
+            ties = ties.astype(dt)
     ranks = ranks.reshape(x.shape)
     if ordinal:
         return ranks, None, None

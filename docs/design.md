@@ -91,6 +91,43 @@ for threads. Thread-local state that SciPy depends on, such as
 `scipy.special` error handling, is either copied into workers or makes the
 call go to SciPy.
 
+## Integer mode histograms
+
+`stats.mode` retains SciPy's axis/NaN-policy decorator and replaces its inner
+calculation for supported integer arrays. For batches with at least 256 values
+per reduced slice, offset integer values into disjoint histogram bins, then
+select each row's first maximum. This preserves the smallest-value tie rule.
+SciPy still restores `keepdims`, handles empty input, and validates options.
+
+The global value range must fit `4 * slice_length + 1024` bins. Batched slices
+and individual histogram tables are additionally limited to `2**20` elements;
+chunks bound temporary index and count tables without a full input reshape or
+copy. Wider ranges, larger slices, and unsupported dtypes use SciPy. The prior
+one-dimensional histogram eligibility is unchanged.
+
+Local validation on Darwin arm64, Python 3.13, SciPy 1.18.1, with two numerical
+threads and one BLAS thread found byte-identical public results:
+
+| Input, int32 values in [-32, 32) | SciPy ms | fastscipy 1-thread ms | Speedup |
+|---|---:|---:|---:|
+| (512, 2048), axis=1 | 22.631 | 1.950 | 11.6x |
+| (512, 2048), axis=0 | 25.043 | 3.106 | 8.1x |
+| (2048, 512), axis=1 | 19.732 | 2.031 | 9.7x |
+| (2048, 512), axis=0 | 27.607 | 3.050 | 9.1x |
+
+`bench/run.py stats --only mode --check` compares genuinely unpatched SciPy
+with the candidate. The existing 10-million-element 1D case measured 3.7x;
+wide-range integer and float fallback controls measured approximately 1.0x.
+The benchmark process tree peaked at 484 MiB under a 2 GiB limit. These are
+local measurements, not performance claims for other platforms.
+
+`tests/test_stats.py` passed all 644 tests under a 512 MiB limit (270 MiB peak).
+The paired upstream `scipy.stats.tests.test_stats` run matched all 1388 outcomes
+(1361 passed, 24 skipped, 3 xfailed per run), with no fast-path errors. Its first
+512 MiB attempt was stopped by the resource monitor in the SciPy baseline;
+the complete rerun used a 2 GiB tree limit and `SCIPY_AVAILABLE_MEM=256Mib`
+(1548 MiB peak). Ruff checks passed; no native sources changed.
+
 ## Testing
 
 - `tests/` compares every fast path with plain SciPy on randomized inputs

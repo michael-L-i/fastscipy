@@ -62,5 +62,26 @@ def cases():
         yield f"solve_triangular {tag}", lambda: sl.solve_triangular(tri, b)
         yield f"eigh {tag}", lambda: sl.eigh(spd)
         yield f"eigvalsh {tag}", lambda: sl.eigvalsh(spd)
+    for B, n, rows in ((4, 8, 2), (1000, 32, 2), (1000, 128, 5), (128, 1024, 9)):
+        band = rng.uniform(-0.2, 0.2, (B, rows, n))
+        band[:, 0, :] = 2 * rows
+        band_rhs = rng.standard_normal((B, n, 2))
+        band_factor = sl.cholesky_banded(band, lower=True)
+        tag = f"{B}x{rows}x{n}"
+        yield f"cholesky_banded {tag}", lambda a=band: sl.cholesky_banded(a, lower=True)
+        yield (
+            f"cho_solve_banded {tag}",
+            lambda c=band_factor, b=band_rhs: sl.cho_solve_banded((c, True), b),
+        )
+        yield (
+            f"banded factor+solve {tag}",
+            lambda a=band, b=band_rhs: sl.cho_solve_banded((sl.cholesky_banded(a, lower=True), True), b),
+        )
+    for label, control_band in (("single", band[0]), ("complex", band.astype(complex))):
+        yield (
+            f"cholesky_banded fallback {label}",
+            lambda a=control_band: sl.cholesky_banded(a, lower=True),
+            False,
+        )
     tall = rng.standard_normal((2000, 500))
     yield "null_space 2000x500", lambda: sl.null_space(tall)

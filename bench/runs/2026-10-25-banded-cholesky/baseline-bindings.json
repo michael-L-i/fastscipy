@@ -1,0 +1,8 @@
+{
+  "revision": "95c4304c3e997b0875d2b4c0623b9ef2d66f5a45",
+  "untouched_scipy_bindings": {
+    "cholesky_banded": true,
+    "cho_solve_banded": true
+  },
+  "source": "/private/tmp/fastscipy-final/coverage-main-reference/python/fastscipy/__init__.py"
+}

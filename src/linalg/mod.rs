@@ -1,5 +1,5 @@
 //! Batched small-matrix LAPACK loops for `lu_factor`, `lu_solve`, `cho_solve`,
-//! `solve_triangular`, `eigh` and `eigvalsh`.
+//! `solve_triangular`, `cholesky_banded`, `cho_solve_banded`, `eigh` and `eigvalsh`.
 //!
 //! Each matrix goes to the Accelerate routine SciPy's f2py wrappers call (the
 //! pointers come from `scipy.linalg.cython_lapack`), with the same flags and
@@ -34,6 +34,18 @@ type Getrs = unsafe extern "C" fn(
 );
 type Potrs = unsafe extern "C" fn(
     *const c_char,
+    *const I,
+    *const I,
+    *const f64,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
+type Pbtrf = unsafe extern "C" fn(*const c_char, *const I, *const I, *mut f64, *const I, *mut I);
+type Pbtrs = unsafe extern "C" fn(
+    *const c_char,
+    *const I,
     *const I,
     *const I,
     *const f64,
@@ -82,6 +94,8 @@ struct Lapack {
     getrf: Getrf,
     getrs: Getrs,
     potrs: Potrs,
+    pbtrf: Pbtrf,
+    pbtrs: Pbtrs,
     trtrs: Trtrs,
     syevr: Syevr,
 }
@@ -122,6 +136,8 @@ fn init(py: Python<'_>) -> PyResult<()> {
             getrf: std::mem::transmute::<*mut c_void, Getrf>(get("dgetrf", c"void (int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, int *)")?),
             getrs: std::mem::transmute::<*mut c_void, Getrs>(get("dgetrs", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             potrs: std::mem::transmute::<*mut c_void, Potrs>(get("dpotrs", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            pbtrf: std::mem::transmute::<*mut c_void, Pbtrf>(get("dpbtrf", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            pbtrs: std::mem::transmute::<*mut c_void, Pbtrs>(get("dpbtrs", c"void (char *, int *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             trtrs: std::mem::transmute::<*mut c_void, Trtrs>(get("dtrtrs", c"void (char *, char *, char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             syevr: std::mem::transmute::<*mut c_void, Syevr>(get("dsyevr", c"void (char *, char *, char *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, int *, int *)")?),
         };
@@ -298,6 +314,82 @@ fn getrs<'py>(
     ok.then(|| PyArray1::from_vec(py, out))
 }
 
+/// Factor independent SPD bands without expanding them to dense matrices.
+#[pyfunction]
+fn pbtrf<'py>(
+    py: Python<'py>,
+    a: PyReadonlyArray3<'py, f64>,
+    uplo: char,
+    chk: bool,
+    threads: usize,
+) -> Option<Bound<'py, PyArray1<f64>>> {
+    let (b, rows, n) = (a.shape()[0], a.shape()[1], a.shape()[2]);
+    if rows == 0 || n == 0 || rows > I::MAX as usize || n > I::MAX as usize {
+        return None;
+    }
+    let (av, mut out) = (View::new(&a), vec![0.0; b * rows * n]);
+    let o = Out(out.as_mut_ptr());
+    let (ni, kd, ld, up) = (n as I, (rows - 1) as I, rows as I, ch(uplo));
+    let ok = run(py, b, threads, 0, 0, |i, _, _| unsafe {
+        let x = o.slice(i * rows * n, rows * n);
+        let mut info = 0;
+        // Copy even unused band padding: f2py preserves it in the result and
+        // asarray_chkfinite checks it before calling LAPACK.
+        if !av.load(i, rows, n, x, false, chk) {
+            return false;
+        }
+        (lapack().pbtrf)(&up, &ni, &kd, x.as_mut_ptr(), &ld, &mut info);
+        info == 0
+    });
+    ok.then(|| PyArray1::from_vec(py, out))
+}
+
+#[pyfunction]
+fn pbtrs<'py>(
+    py: Python<'py>,
+    c: PyReadonlyArray3<'py, f64>,
+    rhs: PyReadonlyArray3<'py, f64>,
+    uplo: char,
+    chk: bool,
+    threads: usize,
+) -> Option<Bound<'py, PyArray1<f64>>> {
+    let (b, rows, n, k) = (c.shape()[0], c.shape()[1], c.shape()[2], rhs.shape()[2]);
+    if rows == 0
+        || n == 0
+        || k == 0
+        || rows > I::MAX as usize
+        || n > I::MAX as usize
+        || k > I::MAX as usize
+        || rhs.shape()[0] != b
+        || rhs.shape()[1] != n
+    {
+        return None;
+    }
+    let (cv, bv, mut out) = (View::new(&c), View::new(&rhs), vec![0.0; b * n * k]);
+    let o = Out(out.as_mut_ptr());
+    let (ni, kd, ld, ki, up) = (n as I, (rows - 1) as I, rows as I, k as I, ch(uplo));
+    let ok = run(py, b, threads, rows * n, 0, |i, sf, _| unsafe {
+        let x = o.slice(i * n * k, n * k);
+        let mut info = 0;
+        if !(cv.load(i, rows, n, sf, false, chk) & bv.load(i, n, k, x, false, chk)) {
+            return false;
+        }
+        (lapack().pbtrs)(
+            &up,
+            &ni,
+            &kd,
+            &ki,
+            sf.as_ptr(),
+            &ld,
+            x.as_mut_ptr(),
+            &ni,
+            &mut info,
+        );
+        info == 0
+    });
+    ok.then(|| PyArray1::from_vec(py, out))
+}
+
 #[pyfunction]
 fn potrs<'py>(
     py: Python<'py>,
@@ -447,6 +539,8 @@ pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(getrf, m)?)?;
     m.add_function(wrap_pyfunction!(getrs, m)?)?;
     m.add_function(wrap_pyfunction!(potrs, m)?)?;
+    m.add_function(wrap_pyfunction!(pbtrf, m)?)?;
+    m.add_function(wrap_pyfunction!(pbtrs, m)?)?;
     m.add_function(wrap_pyfunction!(trtrs, m)?)?;
     m.add_function(wrap_pyfunction!(syevr, m)?)?;
     Ok(())

@@ -130,17 +130,20 @@ small and nonfinite NumPy queries; periodic extrapolation uses SciPy's full disp
 
 ## linalg
 
-`lu_factor`, `lu_solve`, `cho_solve`, `solve_triangular`, `eigh`, `eigvalsh`
+`lu_factor`, `lu_solve`, `cho_solve`, `solve_triangular`, `cholesky_banded`,
+`cho_solve_banded`, `eigh`, `eigvalsh`
 on stacks of float64 matrices call the same LAPACK routines as SciPy
 (through `scipy.linalg.cython_lapack`), without SciPy's per-matrix Python
 loop, and spread the batch over threads. A result is used only if every
 matrix succeeded; otherwise SciPy reruns the whole call and raises or warns.
+Banded Cholesky factorization and solves retain compact band storage and preserve
+unused padding, with broadcast matrix or vector right-hand sides.
 `null_space` skips computing the unused half of the SVD.
 
 Single-matrix `solve_triangular`, `cho_solve`, and `lu_solve` also support
 float32/float64 and complex64/complex128 NumPy inputs through SciPy's own
 LAPACK dispatcher and validation. Single `lu_solve` accepts int32 pivots.
-Other single matrices, unsupported dtypes, `overwrite_*`, generalized
+Other single matrices, unsupported dtypes, unaligned batch buffers, `overwrite_*`, generalized
 `eigh` and eigenvalue subsets go to SciPy.
 
 ## sparse linear algebra

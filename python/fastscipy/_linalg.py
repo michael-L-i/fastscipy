@@ -1,6 +1,7 @@
 """Batched stacks for the scipy.linalg functions that SciPy still loops over in
 Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
-``solve_triangular``, ``eigh`` and ``eigvalsh``; plus ``null_space`` of tall matrices
+``solve_triangular``, ``cholesky_banded``, ``cho_solve_banded``, ``eigh``
+and ``eigvalsh``; plus ``null_space`` of tall matrices
 (skips the unused (M, M) ``u``). Single NumPy triangular solves skip generic
 array validation and use SciPy's own LAPACK dispatcher, including complex data.
 Single factor solves bypass the batch adapter while retaining SciPy's core
@@ -29,7 +30,9 @@ _triangular_core = None
 
 
 def _ok(x, ndim, dtype=_F8):
-    return x.__class__ is np.ndarray and x.dtype is dtype and x.ndim >= ndim
+    # Native View builds an ndarray view and dereferences typed pointers; both
+    # require aligned data, even when NumPy permits an unaligned buffer view.
+    return x.__class__ is np.ndarray and x.dtype is dtype and x.ndim >= ndim and x.flags.aligned
 
 
 def _flatten(arrs):
@@ -225,6 +228,60 @@ def _lu_solve(lu_and_piv, b, trans=0, overwrite_b=False, check_finite=True):
     k = bv.shape[2] if bc == 2 else 1
     x = _native.linalg.getrs(luv, pv, bv if bc == 2 else bv[:, :, None], "NTC"[trans], check_finite, _threads(B, n, k))
     return NotImplemented if x is None else _solution(x, batch, n, bc, k)
+
+
+def _band_threads(B, rows, n, k=1):
+    # Banded LAPACK costs O(n * bandwidth**2), not the dense n**3.
+    est_us = B * (0.15 + 0.004 * n * rows * (rows + k))
+    return max(1, min(get_num_threads(), int(est_us / _MIN_WORK_US)))
+
+
+def _cholesky_banded(ab, overwrite_ab=False, lower=False, check_finite=True):
+    if (
+        not _ok(ab, 3)
+        or not ab.shape[-2]
+        or not ab.shape[-1]
+        or overwrite_ab is not False
+        or type(lower) is not bool
+        or type(check_finite) is not bool
+    ):
+        return NotImplemented
+    fl = _flatten([(ab, 2)])
+    if fl is None:
+        return NotImplemented
+    batch, B, (av,) = fl
+    rows, n = ab.shape[-2:]
+    raw = _native.linalg.pbtrf(av, "L" if lower else "U", check_finite, _band_threads(B, rows, n))
+    return NotImplemented if raw is None else _fview(raw, batch, rows, n)
+
+
+def _cho_solve_banded(cb_and_lower, b, overwrite_b=False, check_finite=True):
+    if type(cb_and_lower) not in (tuple, list) or len(cb_and_lower) != 2:
+        return NotImplemented
+    c, lower = cb_and_lower
+    if (
+        not _ok(c, 2)
+        or not _ok(b, 1)
+        or type(lower) is not bool
+        or overwrite_b is not False
+        or type(check_finite) is not bool
+        or not c.shape[-2]
+        or not c.shape[-1]
+        or not b.size
+    ):
+        return NotImplemented
+    rows, n = c.shape[-2:]
+    bc = _rhs(b)
+    if b.shape[-bc] != n:
+        return NotImplemented
+    fl = _flatten([(c, 2), (b, bc)])
+    if fl is None:
+        return NotImplemented
+    batch, B, (cv, bv) = fl
+    bv = bv if bc == 2 else bv[:, :, None]
+    k = bv.shape[-1]
+    raw = _native.linalg.pbtrs(cv, bv, "L" if lower else "U", check_finite, _band_threads(B, rows, n, k))
+    return NotImplemented if raw is None else _solution(raw, batch, n, bc, k)
 
 
 def _cho_solve(c_and_lower, b, overwrite_b=False, check_finite=True):
@@ -443,6 +500,8 @@ def patch():
         (lu, "lu_factor", _lu_factor),
         (lu, "lu_solve", _lu_solve),
         (cholesky, "cho_solve", _cho_solve),
+        (cholesky, "cholesky_banded", _cholesky_banded),
+        (cholesky, "cho_solve_banded", _cho_solve_banded),
         (basic, "solve_triangular", _solve_triangular),
         (decomp, "eigh", _eigh),
         (decomp, "eigvalsh", _eigvalsh),
@@ -472,6 +531,9 @@ def smoke():
     sl.solve_triangular(a[0], b[0])
     sl.cho_solve(sl.cho_factor(s + 6 * np.eye(3)), b)
     sl.cho_solve(sl.cho_factor(s[0] + 6 * np.eye(3)), b[0])
+    band = np.ones((4, 2, 3))
+    band[:, 0, :] = 4
+    sl.cho_solve_banded((sl.cholesky_banded(band, lower=True), True), b)
     sl.eigh(s)
     sl.eigvalsh(s)
     sl.null_space(rng.random((6, 3)))

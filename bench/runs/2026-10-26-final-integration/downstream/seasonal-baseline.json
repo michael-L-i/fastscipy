@@ -1,0 +1,72 @@
+{
+  "case": "seasonal",
+  "mode": "baseline",
+  "samples_seconds": [
+    0.0005710419500246644,
+    0.0006021250737830997,
+    0.0005557909607887268,
+    0.0005753340665251017,
+    0.0005660000024363399,
+    0.0005672909319400787,
+    0.0005850420566275716,
+    0.0006080829771235585,
+    0.0006262499373406172
+  ],
+  "median_seconds": 0.0005753340665251017,
+  "warnings": [],
+  "inputs_unchanged": true,
+  "structure": {
+    "observed": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    },
+    "trend": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    },
+    "seasonal": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        8,
+        19296
+      ]
+    },
+    "resid": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    }
+  },
+  "counts": {},
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-image": "0.26.0",
+    "scikit-learn": "1.9.1",
+    "statsmodels": "0.15.0"
+  }
+}

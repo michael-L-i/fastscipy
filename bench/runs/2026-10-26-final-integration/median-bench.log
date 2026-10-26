@@ -1,0 +1,11 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| signal: medfilt2d uint8, 512^2, kernel=3 | 12.069 | 0.036 | 0.036 | 334.3 | 338.8 | yes |
+| signal: medfilt2d uint8, 512^2, kernel=5 | 44.120 | 0.144 | 0.143 | 306.9 | 309.2 | yes |
+| signal: medfilt2d uint8, 512^2, kernel=7 | 80.911 | 0.375 | 0.374 | 215.8 | 216.4 | yes |
+| signal: medfilt2d uint8, 512^2, kernel=15 | 326.603 | 4.951 | 2.523 | 66.0 | 129.5 | yes |
+| signal: medfilt2d uint8, 512^2, kernel=(3, 5) | 27.302 | 0.305 | 0.307 | 89.6 | 88.9 | yes |
+| signal: medfilt2d uint8 strided, 256^2, kernel=5 | 10.994 | 0.056 | 0.056 | 194.6 | 195.1 | yes |
+| **signal geomean (byte-identical non-controls)** | | | | **171.5** | **192.5** | |

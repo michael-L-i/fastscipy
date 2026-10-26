@@ -1,6 +1,7 @@
 """Batched stacks for the scipy.linalg functions that SciPy still loops over in
 Python (``_apply_over_batch``): ``lu_factor``, ``lu_solve``, ``cho_solve``,
-``solve_triangular``, ``cholesky_banded``, ``cho_solve_banded``, ``eigh``
+``solve_triangular``, ``solve_banded``, ``solveh_banded``,
+``cholesky_banded``, ``cho_solve_banded``, ``eigh``
 and ``eigvalsh``; plus ``null_space`` of tall matrices
 (skips the unused (M, M) ``u``). Single NumPy triangular solves skip generic
 array validation and use SciPy's own LAPACK dispatcher, including complex data.
@@ -234,6 +235,48 @@ def _band_threads(B, rows, n, k=1):
     # Banded LAPACK costs O(n * bandwidth**2), not the dense n**3.
     est_us = B * (0.15 + 0.004 * n * rows * (rows + k))
     return max(1, min(get_num_threads(), int(est_us / _MIN_WORK_US)))
+
+
+def _band_solve(ab, b, kl, ku, positive, lower, overwrite_ab, overwrite_b, check_finite):
+    if (
+        not _ok(ab, 2)
+        or not _ok(b, 1)
+        or overwrite_ab is not False
+        or overwrite_b is not False
+        or type(lower) is not bool
+        or type(check_finite) is not bool
+        or not ab.shape[-2]
+        or ab.shape[-1] < 2
+        or not b.size
+    ):
+        return NotImplemented
+    rows, n = ab.shape[-2:]
+    bc = _rhs(b)
+    if b.shape[-bc] != n:
+        return NotImplemented
+    fl = _flatten([(ab, 2), (b, bc)])
+    if fl is None:
+        return NotImplemented
+    batch, B, (av, bv) = fl
+    bv = bv if bc == 2 else bv[:, :, None]
+    k = bv.shape[-1]
+    raw = _native.linalg.band_solve(av, bv, kl, ku, positive, lower, check_finite, _band_threads(B, rows, n, k))
+    return NotImplemented if raw is None else _solution(raw, batch, n, bc, k)
+
+
+def _solve_banded(l_and_u, ab, b, overwrite_ab=False, overwrite_b=False, check_finite=True):
+    if type(l_and_u) not in (tuple, list) or len(l_and_u) != 2:
+        return NotImplemented
+    kl, ku = l_and_u
+    if type(kl) is not int or type(ku) is not int or kl < 0 or ku < 0:
+        return NotImplemented
+    if not _ok(ab, 2) or kl + ku + 1 != ab.shape[-2]:
+        return NotImplemented
+    return _band_solve(ab, b, kl, ku, False, False, overwrite_ab, overwrite_b, check_finite)
+
+
+def _solveh_banded(ab, b, overwrite_ab=False, overwrite_b=False, lower=False, check_finite=True):
+    return _band_solve(ab, b, 0, 0, True, lower, overwrite_ab, overwrite_b, check_finite)
 
 
 def _cholesky_banded(ab, overwrite_ab=False, lower=False, check_finite=True):
@@ -503,6 +546,8 @@ def patch():
         (cholesky, "cholesky_banded", _cholesky_banded),
         (cholesky, "cho_solve_banded", _cho_solve_banded),
         (basic, "solve_triangular", _solve_triangular),
+        (basic, "solve_banded", _solve_banded),
+        (basic, "solveh_banded", _solveh_banded),
         (decomp, "eigh", _eigh),
         (decomp, "eigvalsh", _eigvalsh),
         (svdmod, "null_space", _null_space),
@@ -534,6 +579,8 @@ def smoke():
     band = np.ones((4, 2, 3))
     band[:, 0, :] = 4
     sl.cho_solve_banded((sl.cholesky_banded(band, lower=True), True), b)
+    sl.solve_banded((1, 0), band, b)
+    sl.solveh_banded(band, b, lower=True)
     sl.eigh(s)
     sl.eigvalsh(s)
     sl.null_space(rng.random((6, 3)))

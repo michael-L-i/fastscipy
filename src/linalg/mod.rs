@@ -54,6 +54,41 @@ type Pbtrs = unsafe extern "C" fn(
     *const I,
     *mut I,
 );
+type Gtsv = unsafe extern "C" fn(
+    *const I,
+    *const I,
+    *mut f64,
+    *mut f64,
+    *mut f64,
+    *mut f64,
+    *const I,
+    *mut I,
+);
+type Gbsv = unsafe extern "C" fn(
+    *const I,
+    *const I,
+    *const I,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
+type Ptsv =
+    unsafe extern "C" fn(*const I, *const I, *mut f64, *mut f64, *mut f64, *const I, *mut I);
+type Pbsv = unsafe extern "C" fn(
+    *const c_char,
+    *const I,
+    *const I,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut f64,
+    *const I,
+    *mut I,
+);
 type Trtrs = unsafe extern "C" fn(
     *const c_char,
     *const c_char,
@@ -96,6 +131,10 @@ struct Lapack {
     potrs: Potrs,
     pbtrf: Pbtrf,
     pbtrs: Pbtrs,
+    gtsv: Gtsv,
+    gbsv: Gbsv,
+    ptsv: Ptsv,
+    pbsv: Pbsv,
     trtrs: Trtrs,
     syevr: Syevr,
 }
@@ -138,6 +177,10 @@ fn init(py: Python<'_>) -> PyResult<()> {
             potrs: std::mem::transmute::<*mut c_void, Potrs>(get("dpotrs", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             pbtrf: std::mem::transmute::<*mut c_void, Pbtrf>(get("dpbtrf", c"void (char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             pbtrs: std::mem::transmute::<*mut c_void, Pbtrs>(get("dpbtrs", c"void (char *, int *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            gtsv: std::mem::transmute::<*mut c_void, Gtsv>(get("dgtsv", c"void (int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            gbsv: std::mem::transmute::<*mut c_void, Gbsv>(get("dgbsv", c"void (int *, int *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            ptsv: std::mem::transmute::<*mut c_void, Ptsv>(get("dptsv", c"void (int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
+            pbsv: std::mem::transmute::<*mut c_void, Pbsv>(get("dpbsv", c"void (char *, int *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             trtrs: std::mem::transmute::<*mut c_void, Trtrs>(get("dtrtrs", c"void (char *, char *, char *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *)")?),
             syevr: std::mem::transmute::<*mut c_void, Syevr>(get("dsyevr", c"void (char *, char *, char *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, __pyx_t_5scipy_6linalg_13cython_lapack_d *, int *, int *, int *, int *)")?),
         };
@@ -311,6 +354,139 @@ fn getrs<'py>(
         );
         info == 0
     });
+    ok.then(|| PyArray1::from_vec(py, out))
+}
+
+/// Preserve SciPy's driver choice, including the distinct tridiagonal drivers.
+#[pyfunction]
+#[allow(clippy::too_many_arguments)]
+fn band_solve<'py>(
+    py: Python<'py>,
+    a: PyReadonlyArray3<'py, f64>,
+    rhs: PyReadonlyArray3<'py, f64>,
+    kl: usize,
+    ku: usize,
+    positive: bool,
+    lower: bool,
+    chk: bool,
+    threads: usize,
+) -> Option<Bound<'py, PyArray1<f64>>> {
+    let (b, rows, n, k) = (a.shape()[0], a.shape()[1], a.shape()[2], rhs.shape()[2]);
+    // The Python dispatcher also bounds broadcast allocations. Keep LAPACK's
+    // signed dimensions and all direct-extension shape accesses safe here.
+    if rows == 0
+        || n < 2
+        || k == 0
+        || rhs.shape()[0] != b
+        || rhs.shape()[1] != n
+        || rows > I::MAX as usize
+        || n > I::MAX as usize
+        || k > I::MAX as usize
+        || kl > rows
+        || ku > rows
+        || (!positive && kl + ku + 1 != rows)
+    {
+        return None;
+    }
+    let ld = if positive { rows } else { rows + kl };
+    if ld > I::MAX as usize {
+        return None;
+    }
+    let (av, bv, mut out) = (View::new(&a), View::new(&rhs), vec![0.0; b * n * k]);
+    let o = Out(out.as_mut_ptr());
+    let (ni, ki, kli, kui, ldi, kd, up) = (
+        n as I,
+        k as I,
+        kl as I,
+        ku as I,
+        ld as I,
+        (rows - 1) as I,
+        ch(if lower { 'L' } else { 'U' }),
+    );
+    let ok = run(
+        py,
+        b,
+        threads,
+        rows * n + (ld * n).max(3 * n),
+        n,
+        |i, sf, piv| unsafe {
+            let (band, work) = sf.split_at_mut(rows * n);
+            let x = o.slice(i * n * k, n * k);
+            if !(av.load(i, rows, n, band, false, chk) & bv.load(i, n, k, x, false, chk)) {
+                return false;
+            }
+            let mut info = 0;
+            if positive && rows == 2 {
+                let (d, e) = work.split_at_mut(n);
+                for j in 0..n {
+                    d[j] = band[2 * j + usize::from(!lower)];
+                }
+                for j in 0..n - 1 {
+                    e[j] = band[2 * (j + usize::from(!lower)) + usize::from(lower)];
+                }
+                (lapack().ptsv)(
+                    &ni,
+                    &ki,
+                    d.as_mut_ptr(),
+                    e.as_mut_ptr(),
+                    x.as_mut_ptr(),
+                    &ni,
+                    &mut info,
+                );
+            } else if positive {
+                (lapack().pbsv)(
+                    &up,
+                    &ni,
+                    &kd,
+                    &ki,
+                    band.as_mut_ptr(),
+                    &ldi,
+                    x.as_mut_ptr(),
+                    &ni,
+                    &mut info,
+                );
+            } else if kl == 1 && ku == 1 {
+                let (d, rest) = work.split_at_mut(n);
+                let (dl, du) = rest.split_at_mut(n);
+                for j in 0..n {
+                    d[j] = band[3 * j + 1];
+                }
+                for j in 0..n - 1 {
+                    dl[j] = band[3 * j + 2];
+                    du[j] = band[3 * (j + 1)];
+                }
+                (lapack().gtsv)(
+                    &ni,
+                    &ki,
+                    dl.as_mut_ptr(),
+                    d.as_mut_ptr(),
+                    du.as_mut_ptr(),
+                    x.as_mut_ptr(),
+                    &ni,
+                    &mut info,
+                );
+            } else {
+                work.fill(0.0);
+                for j in 0..n {
+                    work[j * ld + kl..j * ld + kl + rows]
+                        .copy_from_slice(&band[j * rows..(j + 1) * rows]);
+                }
+                (lapack().gbsv)(
+                    &ni,
+                    &kli,
+                    &kui,
+                    &ki,
+                    work.as_mut_ptr(),
+                    &ldi,
+                    piv.as_mut_ptr(),
+                    x.as_mut_ptr(),
+                    &ni,
+                    &mut info,
+                );
+            }
+            info == 0
+        },
+    );
     ok.then(|| PyArray1::from_vec(py, out))
 }
 
@@ -539,6 +715,7 @@ pub fn register(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(getrf, m)?)?;
     m.add_function(wrap_pyfunction!(getrs, m)?)?;
     m.add_function(wrap_pyfunction!(potrs, m)?)?;
+    m.add_function(wrap_pyfunction!(band_solve, m)?)?;
     m.add_function(wrap_pyfunction!(pbtrf, m)?)?;
     m.add_function(wrap_pyfunction!(pbtrs, m)?)?;
     m.add_function(wrap_pyfunction!(trtrs, m)?)?;

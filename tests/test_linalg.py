@@ -14,7 +14,10 @@ BATCHES = [(5,), (2, 3), (700,)]
 THREADS = [1, 4]
 
 
-@pytest.mark.parametrize("routine", ["dgetrf", "dgetrs", "dpotrs", "dpbtrf", "dpbtrs", "dtrtrs", "dsyevr"])
+@pytest.mark.parametrize(
+    "routine",
+    ["dgetrf", "dgetrs", "dpotrs", "dpbtrf", "dpbtrs", "dgtsv", "dgbsv", "dptsv", "dpbsv", "dtrtrs", "dsyevr"],
+)
 def test_lapack_capsule_abi_rejected_in_fresh_process(routine):
     script = r"""
 import ctypes
@@ -581,3 +584,102 @@ def test_batched_lu_unaligned_declines():
     unaligned_b = np.ndarray((3, 4, 2), dtype=np.float64, buffer=buffer_b, offset=1)
     unaligned_b[...] = 1
     declined(lambda: sl.lu_solve((lu, piv), unaligned_b))
+
+
+@pytest.mark.parametrize(
+    "positive,kl,ku",
+    [(False, 1, 1), (False, 2, 1), (False, 0, 2), (False, 0, 0), (True, 1, 0), (True, 3, 0), (True, 0, 0)],
+)
+@pytest.mark.parametrize("layout", ["C", "F", "strided", "broadcast"])
+@pytest.mark.parametrize("n", [2, 12])
+def test_direct_banded_solvers(positive, kl, ku, layout, n):
+    rng = np.random.default_rng(932)
+    rows = kl + ku + 1
+    a = rng.uniform(-0.2, 0.2, (2, 3, rows, n))
+    a[..., 0 if positive else ku, :] = 2 * rows
+    if layout == "F":
+        a = np.asfortranarray(a)
+    elif layout == "strided":
+        a = a[::-1, ::-1, :, ::-1]
+    elif layout == "broadcast":
+        a = np.broadcast_to(a[0, 0], a.shape)
+    for lower in [True, False] if positive else [False]:
+        if positive and not lower:
+            a = a[..., ::-1, ::-1]
+        original_a = a.tobytes()
+        for finite in [True, False]:
+            for b in rhs(rng, (2, 3), n):
+                original_b = b.tobytes()
+                if positive:
+                    check(lambda: sl.solveh_banded(a, b, lower=lower, check_finite=finite))
+                else:
+                    check(lambda: sl.solve_banded((kl, ku), a, b, check_finite=finite))
+                assert b.tobytes() == original_b
+            b = rng.normal(size=(2, 3, n, 2))
+            if positive:
+                check(lambda: sl.solveh_banded(a[0, 0], b, lower=lower, check_finite=finite))
+            else:
+                check(lambda: sl.solve_banded((kl, ku), a[0, 0], b, check_finite=finite))
+        assert a.tobytes() == original_a
+
+
+@pytest.mark.parametrize("positive", [True, False])
+def test_direct_banded_solver_fallbacks(positive):
+    a = np.ones((4, 3, 8))
+    a[:, 1, :] = 8
+    b = np.ones((4, 8, 2))
+    solve = (
+        (lambda a, b, **kw: sl.solveh_banded(a, b, **kw))
+        if positive
+        else (lambda a, b, **kw: sl.solve_banded((1, 1), a, b, **kw))
+    )
+    for aa, bb in [
+        (a.astype(np.float32), b.astype(np.float32)),
+        (a.astype(complex), b),
+        (a[:0], b[:0]),
+        (a[..., :1], b[:, :1]),
+        (a[0], b[0]),
+        (a, b[:, :7]),
+    ]:
+        declined(lambda: solve(aa, bb))
+    for kw in [dict(overwrite_ab=True), dict(overwrite_b=True), dict(check_finite=1)]:
+        declined(lambda: solve(a.copy(), b.copy(), **kw))
+    bad = a.copy()
+    bad[0, 0, 0] = np.nan
+    declined(lambda: solve(bad, b))
+    bad = np.zeros_like(a)
+    declined(lambda: solve(bad, b))
+
+
+def test_banded_gtsv_pivoting():
+    a = np.ones((4, 3, 8))
+    a[:, 1, :] = 0
+    b = np.arange(64.0).reshape(4, 8, 2)
+    check(lambda: sl.solve_banded((1, 1), a, b))
+
+
+@pytest.mark.parametrize("positive", [False, True])
+def test_direct_banded_dense_residual_and_padding(positive):
+    rng = np.random.default_rng(673)
+    n = 9
+    a = rng.uniform(-0.3, 0.3, (3, 3, n))
+    a[:, 2 if positive else 1, :] = 9
+    b = rng.normal(size=(3, n, 2))
+    x = sl.solveh_banded(a, b) if positive else sl.solve_banded((1, 1), a, b)
+    dense = np.zeros((3, n, n))
+    for i in range(n):
+        for j in range(n):
+            if positive and 0 <= 2 + i - j < 3:
+                dense[:, i, j] = a[:, 2 + i - j, j]
+                dense[:, j, i] = dense[:, i, j]
+            elif not positive and abs(i - j) <= 1:
+                dense[:, i, j] = a[:, 1 + i - j, j]
+    np.testing.assert_allclose(dense @ x, b, rtol=2e-14, atol=2e-14)
+    # Finite validation includes unused padding, even for specialized drivers.
+    a[:, 0, 0] = np.inf
+    if positive:
+        declined(lambda: sl.solveh_banded(a, b))
+        check(lambda: sl.solveh_banded(a, b, check_finite=False))
+    else:
+        declined(lambda: sl.solve_banded((1, 1), a, b))
+        check(lambda: sl.solve_banded((1, 1), a, b, check_finite=False))

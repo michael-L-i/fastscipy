@@ -1,0 +1,77 @@
+{
+  "case": "seasonal",
+  "mode": "patched",
+  "samples_seconds": [
+    0.0008491250919178128,
+    0.0006131250411272049,
+    0.0005852080648764968,
+    0.0005954579683020711,
+    0.0005719170439988375,
+    0.0005872920155525208,
+    0.0005798750789836049,
+    0.000580916996113956,
+    0.0005699169123545289
+  ],
+  "median_seconds": 0.0005852080648764968,
+  "warnings": [
+    [
+      "FutureWarning",
+      "`extrapolate_trend='freq'` is deprecated and will be removed in 0.16, use `extrapolate_trend='period'` instead."
+    ]
+  ],
+  "inputs_unchanged": true,
+  "structure": {
+    "observed": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    },
+    "trend": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    },
+    "seasonal": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        8,
+        19296
+      ]
+    },
+    "resid": {
+      "dtype": "float64",
+      "shape": [
+        2400,
+        24
+      ],
+      "strides": [
+        192,
+        8
+      ]
+    }
+  },
+  "counts": {},
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-image": "0.26.0",
+    "scikit-learn": "1.9.1",
+    "statsmodels": "0.15.0"
+  }
+}

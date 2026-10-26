@@ -1,0 +1,33 @@
+{
+  "provenance": {
+    "extension": "/private/tmp/fastscipy-round2/provenance-native.so",
+    "binary_sha256": "954aa1f8513058831b05f055b74d62ae9374e0392f64e2b8921c3c3755d59011",
+    "source_root": "/private/tmp/fastscipy-final/ecosystem",
+    "build": {
+      "crate_version": "0.1.0-alpha.4",
+      "opt_level": "3",
+      "profile": "release",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_schema": "1",
+      "source_sha256": "5f9095417fd0f5fa4bfdd5ef4364c8ee926d6379342c5b9edfd7aa630023fdc4",
+      "target": "aarch64-apple-darwin"
+    },
+    "expected_source_sha256": "5f9095417fd0f5fa4bfdd5ef4364c8ee926d6379342c5b9edfd7aa630023fdc4",
+    "status": "match"
+  },
+  "cases": [
+    {
+      "case": "gaussian_process",
+      "exact": true,
+      "speedup": 1.067807992415407,
+      "baseline_seconds": 0.0004625829169526696,
+      "patched_seconds": 0.000433207955211401,
+      "counts": {
+        "pdist:fast": 656,
+        "cho_solve:fast": 656,
+        "cdist:scipy": 328,
+        "solve_triangular:fast": 328
+      }
+    }
+  ]
+}

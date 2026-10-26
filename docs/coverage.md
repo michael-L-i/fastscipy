@@ -275,3 +275,13 @@ export can still decline most input variants. These counts are not a count
 of guaranteed speedups or a percentage of SciPy covered. Benchmark run
 artifacts also record measured rejected candidates and remaining algorithmic
 opportunities, so unsupported variants are not mistaken for proven wins.
+
+### Downstream application pilots
+
+Patching before downstream imports can accelerate libraries that call supported
+SciPy paths. The [scikit-image, scikit-learn, and statsmodels pilots](../bench/runs/2026-10-26-downstream/README.md)
+compare fresh-process unpatched baselines, exact returned arrays, warnings,
+unchanged inputs, and patch hit counts. On the recorded local setup, image cleanup
+and segmentation improved about 30×; a small Gaussian-process fit/predict improved
+about 7%; seasonal decomposition reached no patched calls. These bounded workflows
+are evidence for specific call paths, not whole-library compatibility guarantees.

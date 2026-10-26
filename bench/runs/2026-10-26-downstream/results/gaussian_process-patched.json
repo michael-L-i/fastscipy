@@ -1,0 +1,71 @@
+{
+  "case": "gaussian_process",
+  "mode": "patched",
+  "samples_seconds": [
+    0.0006015410181134939,
+    0.00046695792116224766,
+    0.0004479160998016596,
+    0.0004407090600579977,
+    0.0004492499865591526,
+    0.00043745897710323334,
+    0.0004405409563332796,
+    0.0004362919135019183,
+    0.0004427500534802675
+  ],
+  "median_seconds": 0.0004427500534802675,
+  "warnings": [],
+  "inputs_unchanged": true,
+  "structure": {
+    "mean": {
+      "dtype": "float64",
+      "shape": [
+        256
+      ],
+      "strides": [
+        8
+      ]
+    },
+    "std": {
+      "dtype": "float64",
+      "shape": [
+        256
+      ],
+      "strides": [
+        8
+      ]
+    },
+    "alpha": {
+      "dtype": "float64",
+      "shape": [
+        128
+      ],
+      "strides": [
+        8
+      ]
+    },
+    "factor": {
+      "dtype": "float64",
+      "shape": [
+        128,
+        128
+      ],
+      "strides": [
+        1024,
+        8
+      ]
+    }
+  },
+  "counts": {
+    "pdist:fast": 20,
+    "cho_solve:fast": 20,
+    "cdist:scipy": 10,
+    "solve_triangular:fast": 10
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-image": "0.26.0",
+    "scikit-learn": "1.9.1",
+    "statsmodels": "0.15.0"
+  }
+}

@@ -338,12 +338,17 @@ def _evaluate_spline(self, xi, method):
         or not len(xi)
         or not _is_array(v, "f")
         or v.dtype != np.float64
-        or v.ndim != len(g)
+        or v.ndim < len(g)
         or not all(_is_array(a, "f") and a.dtype == np.float64 and a.ndim == 1 for a in g)
     ):
         return NotImplemented
-    out = _k.pchip_eval(list(g), np.ascontiguousarray(v).reshape(-1), np.ascontiguousarray(xi))
-    return NotImplemented if out is None else out
+    shape = v.shape[len(g) :]
+    channels = math.prod(shape)
+    out = _k.pchip_eval(list(g), np.ascontiguousarray(v).reshape(-1), channels, np.ascontiguousarray(xi))
+    if out is None:
+        return NotImplemented
+    # NumPy gives empty arrays zero strides; reshaping a flat empty buffer does not.
+    return np.empty((len(xi),) + shape) if channels == 0 else out.reshape((len(xi),) + shape)
 
 
 def patch():

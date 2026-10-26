@@ -71,3 +71,14 @@ def cases():
     rgi3 = si.RegularGridInterpolator(g3, r.standard_normal((64,) * 3), method="pchip", bounds_error=False)
     q3d = r.random((2000, 3))
     yield "RegularGridInterpolator pchip 64^3, 2000 queries", lambda: rgi3(q3d)
+
+    for grid_shape, channel_shape in (((12,), (8,)), ((4096,), (8,)), ((64, 64), (3,)), ((12, 12, 12), (2, 3))):
+        ndim = len(grid_shape)
+        channel_grid = tuple(np.linspace(0, 1, n) for n in grid_shape)
+        channel_values = r.standard_normal(grid_shape + channel_shape)
+        field = si.RegularGridInterpolator(channel_grid, channel_values, method="pchip")
+        queries = r.random((1000, ndim))
+        yield (
+            f"RegularGridInterpolator pchip grid {grid_shape} channels {channel_shape}, 1000 queries",
+            lambda f=field, q=queries: f(q),
+        )

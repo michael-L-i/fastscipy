@@ -30,19 +30,23 @@ def patch():
     # A callback must never run twice, even when it raises or returns a bad shape.
     @functools.wraps(original)
     def matvec(self, x, adjoint=False):
+        if not _patch.enabled or type(x) is not np.ndarray:
+            return original(self, x, adjoint)
+        # Batched and column inputs delegate before inspecting operator metadata.
+        shape = x.shape
         if (
-            not _patch.enabled
+            len(shape) != 1
+            or x.dtype.kind not in "fc"
             or type(self) not in _OPERATORS
             or self._xp is not _NP
             or len(self.shape) != 2
-            or type(x) is not np.ndarray
-            or x.dtype.kind not in "fc"
-            or type(adjoint) is not bool
+            or (adjoint is not False and adjoint is not True)
         ):
             return original(self, x, adjoint)
-        m, n = self.shape
-        inner, outer = (m, n) if adjoint else (n, m)
-        if x.shape != (inner,):
+        outer, inner = self.shape
+        if adjoint:
+            inner, outer = outer, inner
+        if shape[0] != inner:
             return original(self, x, adjoint)
         _patch.counts["LinearOperator._shared_matvec", "fast"] += 1
         y = self._rmatvec(x) if adjoint else self._matvec(x)

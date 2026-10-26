@@ -61,6 +61,8 @@ def cases():
     yield "lfilter FIR 7 taps, 200 samples", lambda: sg.lfilter(fir, fir_a, x200)
     yield "lfilter FIR 7 taps with zi, 200 samples", lambda: sg.lfilter(fir, fir_a, x200, zi=fir_zi)
     yield "welch, 1000 samples", lambda: sg.welch(x1000, nperseg=256)
+    spectral_x = np.random.default_rng(301).standard_normal((16, 32768))
+    yield "welch float64, 16x32768 samples", lambda: sg.welch(spectral_x, nperseg=1024)
     yield "per-voxel loop, 1000 x sosfiltfilt(150)", lambda: [sg.sosfiltfilt(sos, v) for v in voxels]
     yield "per-epoch loop, 200 x (detrend, welch)", lambda: [sg.welch(sg.detrend(e), nperseg=128) for e in epochs]
     multi = rng.standard_normal((64, 250_000))

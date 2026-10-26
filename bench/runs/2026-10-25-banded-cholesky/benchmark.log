@@ -1,0 +1,68 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| linalg: lu_solve single 8x8 float32, check_finite=True | 0.004 | 0.003 | 0.003 | 1.3 | 1.3 | yes |
+| linalg: lu_solve single 8x8 float32, check_finite=False | 0.004 | 0.003 | 0.003 | 1.3 | 1.3 | yes |
+| linalg: cho_solve single 8x8 float32, check_finite=True | 0.004 | 0.003 | 0.003 | 1.6 | 1.6 | yes |
+| linalg: cho_solve single 8x8 float32, check_finite=False | 0.003 | 0.002 | 0.002 | 2.0 | 1.8 | yes |
+| linalg: lu_solve single 8x8 float64, check_finite=True | 0.004 | 0.003 | 0.003 | 1.2 | 1.2 | yes |
+| linalg: lu_solve single 8x8 float64, check_finite=False | 0.004 | 0.003 | 0.003 | 1.2 | 1.3 | yes |
+| linalg: cho_solve single 8x8 float64, check_finite=True | 0.004 | 0.003 | 0.003 | 1.6 | 1.5 | yes |
+| linalg: cho_solve single 8x8 float64, check_finite=False | 0.003 | 0.002 | 0.002 | 1.9 | 2.0 | yes |
+| linalg: lu_solve single 8x8 complex64, check_finite=True | 0.004 | 0.003 | 0.003 | 1.3 | 1.3 | yes |
+| linalg: lu_solve single 8x8 complex64, check_finite=False | 0.004 | 0.003 | 0.003 | 1.3 | 1.2 | yes |
+| linalg: cho_solve single 8x8 complex64, check_finite=True | 0.004 | 0.003 | 0.003 | 1.6 | 1.6 | yes |
+| linalg: cho_solve single 8x8 complex64, check_finite=False | 0.003 | 0.002 | 0.002 | 1.9 | 1.9 | yes |
+| linalg: lu_solve single 8x8 complex128, check_finite=True | 0.004 | 0.003 | 0.003 | 1.3 | 1.3 | yes |
+| linalg: lu_solve single 8x8 complex128, check_finite=False | 0.004 | 0.003 | 0.003 | 1.2 | 1.3 | yes |
+| linalg: cho_solve single 8x8 complex128, check_finite=True | 0.004 | 0.003 | 0.003 | 1.6 | 1.7 | yes |
+| linalg: cho_solve single 8x8 complex128, check_finite=False | 0.003 | 0.002 | 0.002 | 1.9 | 1.9 | yes |
+| linalg: solve_triangular single 8x8 float32 C, check_finite=True | 0.005 | 0.003 | 0.003 | 2.0 | 2.0 | yes |
+| linalg: solve_triangular single 8x8 float32 C, check_finite=False | 0.004 | 0.002 | 0.002 | 2.3 | 2.3 | yes |
+| linalg: solve_triangular single 8x8 float64 F, check_finite=True | 0.005 | 0.003 | 0.003 | 2.0 | 2.0 | yes |
+| linalg: solve_triangular single 8x8 float64 F, check_finite=False | 0.004 | 0.002 | 0.002 | 2.3 | 2.4 | yes |
+| linalg: solve_triangular single 8x8 complex64 strided, check_finite=True | 0.006 | 0.003 | 0.003 | 1.8 | 1.9 | yes |
+| linalg: solve_triangular single 8x8 complex64 strided, check_finite=False | 0.004 | 0.002 | 0.002 | 2.2 | 2.2 | yes |
+| linalg: solve_triangular single 8x8 complex128 C, check_finite=True | 0.005 | 0.003 | 0.003 | 1.9 | 1.9 | yes |
+| linalg: solve_triangular single 8x8 complex128 C, check_finite=False | 0.004 | 0.002 | 0.002 | 2.2 | 2.2 | yes |
+| linalg: lu_factor small stack 4x3x3 | 0.015 | 0.003 | 0.003 | 5.6 | 5.7 | yes |
+| linalg: lu_solve small stack 4x3x3 | 0.020 | 0.004 | 0.004 | 5.2 | 5.1 | yes |
+| linalg: solve_triangular small stack 4x3x3 | 0.023 | 0.003 | 0.003 | 7.0 | 6.9 | yes |
+| linalg: lu_factor small stack 32x3x3 | 0.070 | 0.005 | 0.005 | 14.9 | 14.9 | yes |
+| linalg: lu_solve small stack 32x3x3 | 0.086 | 0.005 | 0.005 | 17.4 | 17.5 | yes |
+| linalg: solve_triangular small stack 32x3x3 | 0.118 | 0.004 | 0.004 | 29.2 | 30.0 | yes |
+| linalg: lu_factor 10000x3x3 | 19.647 | 0.728 | 0.432 | 27.0 | 45.5 | yes |
+| linalg: lu_solve 10000x3x3 | 24.021 | 0.374 | 0.243 | 64.3 | 99.0 | yes |
+| linalg: cho_solve 10000x3x3 | 29.934 | 0.380 | 0.231 | 78.7 | 129.3 | yes |
+| linalg: solve_triangular 10000x3x3 | 36.208 | 0.255 | 0.184 | 142.1 | 197.3 | yes |
+| linalg: eigh 10000x3x3 | 74.600 | 16.187 | 9.430 | 4.6 | 7.9 | yes |
+| linalg: eigvalsh 10000x3x3 | 78.155 | 3.997 | 2.185 | 19.6 | 35.8 | yes |
+| linalg: lu_factor 10000x8x8 | 22.155 | 2.008 | 1.087 | 11.0 | 20.4 | yes |
+| linalg: lu_solve 10000x8x8 | 24.417 | 0.978 | 0.543 | 25.0 | 45.0 | yes |
+| linalg: cho_solve 10000x8x8 | 30.253 | 0.994 | 0.544 | 30.4 | 55.6 | yes |
+| linalg: solve_triangular 10000x8x8 | 37.139 | 0.788 | 0.436 | 47.1 | 85.1 | yes |
+| linalg: eigh 10000x8x8 | 112.914 | 52.833 | 28.492 | 2.1 | 4.0 | yes |
+| linalg: eigvalsh 10000x8x8 | 89.758 | 14.408 | 7.610 | 6.2 | 11.8 | yes |
+| linalg: lu_factor 5000x32x32 | 32.337 | 16.960 | 10.720 | 1.9 | 3.0 | yes |
+| linalg: lu_solve 5000x32x32 | 15.519 | 4.090 | 2.135 | 3.8 | 7.3 | yes |
+| linalg: cho_solve 5000x32x32 | 21.213 | 5.232 | 2.790 | 4.1 | 7.6 | yes |
+| linalg: solve_triangular 5000x32x32 | 21.422 | 3.695 | 1.909 | 5.8 | 11.2 | yes |
+| linalg: eigh 5000x32x32 | 243.680 | 208.533 | 110.246 | 1.2 | 2.2 | yes |
+| linalg: eigvalsh 5000x32x32 | 105.474 | 65.298 | 34.211 | 1.6 | 3.1 | yes |
+| linalg: cholesky_banded 4x2x8 | 0.014 | 0.003 | 0.003 | 4.4 | 4.5 | yes |
+| linalg: cho_solve_banded 4x2x8 | 0.019 | 0.003 | 0.003 | 5.4 | 5.4 | yes |
+| linalg: banded factor+solve 4x2x8 | 0.033 | 0.007 | 0.007 | 4.9 | 4.9 | yes |
+| linalg: cholesky_banded 1000x2x32 | 2.334 | 0.598 | 0.377 | 3.9 | 6.2 | yes |
+| linalg: cho_solve_banded 1000x2x32 | 2.841 | 0.437 | 0.251 | 6.5 | 11.3 | yes |
+| linalg: banded factor+solve 1000x2x32 | 5.226 | 1.020 | 0.623 | 5.1 | 8.4 | yes |
+| linalg: cholesky_banded 1000x5x128 | 4.160 | 2.044 | 1.164 | 2.0 | 3.6 | yes |
+| linalg: cho_solve_banded 1000x5x128 | 5.203 | 2.856 | 1.532 | 1.8 | 3.4 | yes |
+| linalg: banded factor+solve 1000x5x128 | 9.329 | 4.977 | 2.709 | 1.9 | 3.4 | yes |
+| linalg: cholesky_banded 128x9x1024 | 2.772 | 2.280 | 1.200 | 1.2 | 2.3 | yes |
+| linalg: cho_solve_banded 128x9x1024 | 3.435 | 3.355 | 1.809 | 1.0 | 1.9 | yes |
+| linalg: banded factor+solve 128x9x1024 | 6.384 | 5.676 | 3.030 | 1.1 | 2.1 | yes |
+| linalg: cholesky_banded fallback single | 0.021 | 0.021 | 0.021 | 1.0 | 1.0 | yes |
+| linalg: cholesky_banded fallback complex | 4.640 | 4.448 | 4.773 | 1.0 | 1.0 | yes |
+| linalg: null_space 2000x500 | 117.655 | 39.833 | 39.597 | 3.0 | 3.0 | yes |
+| **linalg geomean (byte-identical non-controls)** | | | | **3.8** | **4.9** | |

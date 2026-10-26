@@ -14,7 +14,7 @@ BATCHES = [(5,), (2, 3), (700,)]
 THREADS = [1, 4]
 
 
-@pytest.mark.parametrize("routine", ["dgetrf", "dgetrs", "dpotrs", "dtrtrs", "dsyevr"])
+@pytest.mark.parametrize("routine", ["dgetrf", "dgetrs", "dpotrs", "dpbtrf", "dpbtrs", "dtrtrs", "dsyevr"])
 def test_lapack_capsule_abi_rejected_in_fresh_process(routine):
     script = r"""
 import ctypes
@@ -470,3 +470,114 @@ def test_single_factor_public_keyword_arguments():
     lu, cho, b = sl.lu_factor(a), sl.cho_factor(a), np.ones(2)
     check(lambda: sl.lu_solve(lu_and_piv=lu, b=b, trans=1))
     check(lambda: sl.cho_solve(c_and_lower=cho, b=b))
+
+
+def bands(rng, batch, rows, n, lower):
+    # Strict diagonal dominance gives positive definite symmetric bands.
+    a = rng.uniform(-0.2, 0.2, batch + (rows, n))
+    a[..., 0 if lower else -1, :] = 2 * rows
+    return a
+
+
+@pytest.mark.parametrize("lower", [False, True])
+@pytest.mark.parametrize("rows,n", [(1, 1), (1, 8), (2, 8), (4, 32), (10, 3)])
+@pytest.mark.parametrize("layout", ["C", "F", "strided", "broadcast"])
+def test_banded_cholesky(lower, rows, n, layout):
+    rng = np.random.default_rng(843)
+    a = bands(rng, (2, 3), rows, n, lower)
+    if layout == "F":
+        a = np.asfortranarray(a)
+    elif layout == "strided":
+        a = a[::-1, ::-1, :, ::-1]
+    elif layout == "broadcast":
+        a = np.broadcast_to(a[0, 0], a.shape)
+    before = (a.strides, a.tobytes())
+    for finite in (False, True):
+        c = check(lambda: sl.cholesky_banded(a, lower=lower, check_finite=finite))
+        original_c = (c.strides, c.tobytes())
+        for b in rhs(rng, (2, 3), n):
+            original_b = (b.strides, b.tobytes())
+            check(lambda: sl.cho_solve_banded((c, lower), b, check_finite=finite))
+            assert (b.strides, b.tobytes()) == original_b
+        assert (c.strides, c.tobytes()) == original_c
+        b = rng.normal(size=(2, 3, n, 2))[::-1, :, ::-1, :]
+        b.flags.writeable = False
+        check(lambda: sl.cho_solve_banded((c[0, 0], lower), b, check_finite=finite))
+    assert (a.strides, a.tobytes()) == before
+
+
+@pytest.mark.parametrize("lower", [False, True])
+def test_banded_cholesky_declines(lower):
+    rng = np.random.default_rng(567)
+    a = bands(rng, (3,), 2, 8, lower)
+    for unsupported in (a.astype(np.float32), a.astype(complex), a[:, :, :0], a[0]):
+        declined(lambda: sl.cholesky_banded(unsupported, lower=lower))
+    bad = a.copy()
+    bad[1, 0 if lower else -1, 0] = -1
+    declined(lambda: sl.cholesky_banded(bad, lower=lower))
+    bad = a.copy()
+    # Finite validation must inspect unused band padding as well.
+    bad[1, -1 if lower else 0, -1 if lower else 0] = np.nan
+    declined(lambda: sl.cholesky_banded(bad, lower=lower))
+    check(lambda: sl.cholesky_banded(bad, lower=lower, check_finite=False))
+    c = sl.cholesky_banded(a, lower=lower)
+    declined(lambda: sl.cho_solve_banded((c, lower), np.ones(7)))
+    declined(lambda: sl.cho_solve_banded((c, lower), np.full(8, np.inf)))
+    declined(lambda: sl.cho_solve_banded((bad, lower), np.ones(8)))
+    declined(lambda: sl.cho_solve_banded((c, lower), np.ones((4, 8, 2))))
+
+
+def test_banded_broadcast_and_overwrite_fallbacks():
+    rng = np.random.default_rng(47)
+    a = bands(rng, (2, 1), 3, 12, True)
+    c = sl.cholesky_banded(a, lower=True)
+    b = rng.normal(size=(1, 5, 12, 2))
+    check(lambda: sl.cho_solve_banded((c, True), b))
+    declined(lambda: sl.cholesky_banded(a.copy(), overwrite_ab=True, lower=True))
+    declined(lambda: sl.cho_solve_banded((c, True), b.copy(), overwrite_b=True))
+    declined(lambda: sl.cholesky_banded(a[:0], lower=True))
+    declined(lambda: sl.cholesky_banded(a[..., :0, :], lower=True))
+
+
+@pytest.mark.parametrize("lower,finite", [(1, True), (np.bool_(True), True), (True, 1)])
+def test_banded_nonbool_options_decline(lower, finite):
+    rng = np.random.default_rng(911)
+    a = bands(rng, (3,), 2, 8, True)
+    c = sl.cholesky_banded(a, lower=True)
+    declined(lambda: sl.cholesky_banded(a, lower=lower, check_finite=finite))
+    declined(lambda: sl.cho_solve_banded((c, lower), np.ones(8), check_finite=finite))
+
+
+@pytest.mark.parametrize("operand", ["band", "factor", "rhs"])
+def test_banded_unaligned_declines(operand):
+    rng = np.random.default_rng(516)
+    a = bands(rng, (3,), 2, 8, True)
+    c = sl.cholesky_banded(a, lower=True)
+    b = np.ones((3, 8, 2))
+    original = {"band": a, "factor": c, "rhs": b}[operand]
+    buffer = bytearray(original.nbytes + 1)
+    unaligned = np.ndarray(original.shape, dtype=np.float64, buffer=buffer, offset=1)
+    unaligned[...] = original
+    assert not unaligned.flags.aligned
+    if operand == "band":
+        declined(lambda: sl.cholesky_banded(unaligned, lower=True))
+    elif operand == "factor":
+        declined(lambda: sl.cho_solve_banded((unaligned, True), b))
+    else:
+        declined(lambda: sl.cho_solve_banded((c, True), unaligned))
+
+
+def test_batched_lu_unaligned_declines():
+    rng = np.random.default_rng(923)
+    a = mats(rng, (3,), 4)
+    buffer = bytearray(a.nbytes + 1)
+    unaligned = np.ndarray(a.shape, dtype=np.float64, buffer=buffer, offset=1)
+    unaligned[...] = a
+    declined(lambda: sl.lu_factor(unaligned))
+    lu, piv = sl.lu_factor(a)
+    unaligned[...] = lu
+    declined(lambda: sl.lu_solve((unaligned, piv), np.ones(4)))
+    buffer_b = bytearray(3 * 4 * 2 * 8 + 1)
+    unaligned_b = np.ndarray((3, 4, 2), dtype=np.float64, buffer=buffer_b, offset=1)
+    unaligned_b[...] = 1
+    declined(lambda: sl.lu_solve((lu, piv), unaligned_b))

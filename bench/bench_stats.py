@@ -16,6 +16,22 @@ def cases():
         if np.iscomplexobj(sem_data):
             sem_data += 1j * sem_rng.normal(size=shape)
         yield f"sem {np.dtype(dtype)} {shape}", lambda a=sem_data: st.sem(a)
+    binned_rng = np.random.default_rng(635)
+    for n, dimensions, rows in ((4096, 1, 1), (100_000, 1, 1), (100_000, 2, 3), (1_000_000, 3, 1)):
+        sample = binned_rng.uniform(-1, 1, (n, dimensions))
+        values = binned_rng.normal(size=(rows, n))
+        for statistic in ("min", "max"):
+            yield (
+                f"binned {statistic} n={n} d={dimensions} rows={rows}",
+                lambda s=sample, v=values, op=statistic: st.binned_statistic_dd(s, v, op, bins=10),
+            )
+    sample = np.arange(100_000)
+    for label, values in (("zeros fallback", np.zeros(100_000)), ("small fallback", np.ones(100))):
+        yield (
+            f"binned min {label}",
+            lambda s=sample[: values.size], v=values: st.binned_statistic(s, v, "min"),
+            False,
+        )
     rng = np.random.default_rng(0)
     for n in (10, 1000):
         a, b = rng.standard_normal(n), rng.standard_normal(n) + 0.1

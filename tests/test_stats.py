@@ -881,3 +881,121 @@ def test_gaussian_kde(d, threads):
         check(lambda: kde.pdf(pts))
     check(lambda: kde(pts[:, :1]), fast=False)
     check(lambda: kde(pts.astype(np.float32)))
+
+
+@pytest.mark.parametrize("statistic", ["min", "max", np.min, np.max])
+@pytest.mark.parametrize("ndim", [1, 2, 3])
+def test_binned_extrema(statistic, ndim):
+    rng = np.random.default_rng(635)
+    sample = rng.uniform(-2, 2, (6000, ndim))
+    values = rng.integers(1, 40, (2, 6000)).astype(float)
+    before = sample.copy(), values.copy()
+    for expanded in (False, True):
+        assert same(
+            lambda: st.binned_statistic_dd(
+                sample, values, statistic, bins=8, range=[(-1, 1)] * ndim, expand_binnumbers=expanded
+            )
+        )
+    with fastscipy.disabled():
+        bins = st.binned_statistic_dd(sample, values, "count", bins=8)
+    assert not same(lambda: st.binned_statistic_dd(sample, values[:, ::-1], statistic, binned_statistic_result=bins))
+    assert identical(sample, before[0]) and identical(values, before[1])
+
+
+@pytest.mark.parametrize("kind", ["zero", "nan", "inf", "complex", "small", "empty"])
+def test_binned_extrema_declines(kind):
+    values = np.ones(6000)
+    if kind in ("zero", "nan", "inf"):
+        values[::2] = {"zero": -0.0, "nan": np.nan, "inf": np.inf}[kind]
+    elif kind == "complex":
+        values = values.astype(complex)
+    elif kind == "small":
+        values = values[:12]
+    else:
+        values = values[:0]
+    for statistic in ("min", "max"):
+        assert not same(lambda: st.binned_statistic(np.arange(values.size), values, statistic))
+
+
+def test_binned_extrema_errors_and_callback():
+    sample = np.arange(6000, dtype=float)
+    values = np.ones(6000)
+    for kwargs in ({"bins": -1}, {"bins": [0, 0]}, {"range": [(2, 1)]}):
+        same(lambda: st.binned_statistic_dd(sample[:, None], values, "min", **kwargs))
+    same(lambda: st.binned_statistic(sample, values[:-1], "max"))
+    sample[0] = np.nan
+    same(lambda: st.binned_statistic(sample, values, "min"))
+    calls = []
+
+    def callback(a):
+        calls.append(a.copy() if isinstance(a, np.ndarray) else list(a))
+        return len(a)
+
+    sample[0] = 0
+    with fastscipy.disabled():
+        expected = st.binned_statistic(sample, values, callback)
+    expected_calls = calls.copy()
+    calls.clear()
+    assert identical(st.binned_statistic(sample, values, callback), expected)
+    assert identical(calls, expected_calls)
+
+
+@pytest.mark.parametrize("disabled", [False, True])
+def test_binned_extrema_reduction_fallback(monkeypatch, disabled):
+    from scipy.stats import _binned_statistic as sp
+
+    original = sp._calc_binned_statistic.__wrapped__
+
+    def fallback(*args):
+        if disabled:
+            with fastscipy.disabled():
+                return original(*args)
+        return original(*args)
+
+    monkeypatch.setattr(sp, "_calc_binned_statistic", fallback)
+    sample = np.zeros(6000)
+    values = np.arange(1, 6001, dtype=float)[::-1]
+    for statistic in ("min", "max"):
+        assert not same(lambda: st.binned_statistic(sample, values, statistic, bins=8, range=(-1, 1)))
+
+
+@pytest.mark.parametrize("statistic", ["min", "max"])
+@pytest.mark.parametrize("mutation", ["nan", "zero"])
+@pytest.mark.parametrize("disable", [False, True])
+def test_binned_extrema_bin_conversion_mutates_values(statistic, mutation, disable):
+    from fastscipy import _patch
+
+    values = np.ones(4096)
+    sample = np.arange(4096, dtype=float)[:, None]
+
+    class Bins:
+        def __index__(self):
+            values[0] = np.nan if mutation == "nan" else -0.0
+            if mutation == "zero":
+                values[1::2] = 0.0
+            if disable:
+                _patch.enabled = False
+            return 10
+
+    def call():
+        values.fill(1)
+        return st.binned_statistic_dd(sample, values, statistic, bins=Bins())
+
+    try:
+        assert not same(call)
+    finally:
+        _patch.enabled = True
+
+
+def test_binned_extrema_conversion_error_not_retried():
+    values = np.ones(4096)
+    calls = []
+
+    class Bins:
+        def __index__(self):
+            calls.append("index")
+            values[0] = np.nan
+            raise ValueError("bin conversion failed")
+
+    assert not same(lambda: st.binned_statistic(np.arange(4096), values, "max", bins=Bins()))
+    assert calls == ["index", "index"]  # Once per reference/candidate call.

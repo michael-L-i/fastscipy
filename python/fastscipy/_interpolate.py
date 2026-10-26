@@ -98,6 +98,45 @@ def _linear_arithmetic(nd):
     return None
 
 
+def _clough_kernel(obj, simplex, queries, mode):
+    tri = obj.tri
+    return _k.clough_eval(
+        simplex,
+        tri.transform,
+        tri.simplices,
+        tri.neighbors,
+        tri.points,
+        obj.values,
+        np.ascontiguousarray(obj.grad),
+        queries,
+        float(obj.fill_value),
+        mode,
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _clough_arithmetic():
+    """Match the installed SciPy binary's barycentric and cubic contraction."""
+    from scipy.interpolate import CloughTocher2DInterpolator
+
+    r = np.random.default_rng(759)
+    modes = [3, 0, 1, 2]
+    for scale, offset in ((1.0, 0.0), (0.01, 13.0)):
+        points = r.random((48, 2)) * scale + offset
+        obj = CloughTocher2DInterpolator(points, r.standard_normal((len(points), 5)))
+        # Interior queries avoid walk-dependent face choices. Include different
+        # triangle shapes and barycentric weights, not only their centroids.
+        weights = r.uniform(0.1, 1.0, (obj.tri.nsimplex, 3))
+        weights /= weights.sum(axis=1, keepdims=True)
+        q = np.ascontiguousarray((points[obj.tri.simplices] * weights[..., None]).sum(axis=1))
+        simplex = _orig["find_simplex"](obj.tri, q)
+        ref = np.asarray(_orig["clough_double"](obj, q)).tobytes()
+        modes = [mode for mode in modes if _clough_kernel(obj, simplex, q, mode).tobytes() == ref]
+        if not modes:
+            return None
+    return modes[0]
+
+
 def _spline(flat, shape, t, c, k, kernel_ok, axis, call, backend="bspline"):
     """Evaluate at the flat float64 queries by the Rust kernel, or by ``call`` on sorted queries.
     ``c`` has the coefficient axis first; the kernel gets it as (n, columns) float64."""
@@ -313,6 +352,26 @@ def _make_evaluate(cls, name):
             return _k.linear_eval(
                 res, tri.transform, tri.simplices, np.ascontiguousarray(v), x, float(self.fill_value), mode
             )
+        if (
+            threaded
+            and _is_array(v, "f")
+            and v.dtype == np.float64
+            and v.ndim == 2
+            and v.flags.c_contiguous
+            and v.shape[1] > 1
+            and _is_array(self.grad, "f")
+            and self.grad.dtype == np.float64
+            and self.grad.shape == v.shape + (2,)
+            and np.isfinite(v).all()
+            and np.isfinite(self.grad).all()
+        ):
+            mode = _clough_arithmetic()
+            if mode is not None:
+                out = _clough_kernel(self, res, x, mode)
+                # Near faces, the original walk can choose a different simplex.
+                for a, b in ranges:
+                    out[a : b + 1] = original(self, x[a : b + 1])
+                return out
         xs = x[order]
         slices = _threads.chunks(len(x), CHUNK) if threaded else [slice(0, len(x))]
         parts = _threads.parallel_map(lambda s: original(self, xs[s]), slices)
@@ -378,6 +437,8 @@ def patch():
             original, fast = _make_evaluate(cls, name)
             if cls.__name__ == "LinearNDInterpolator" and name == "_evaluate_double":
                 _orig["linear_double"] = original
+            if cls.__name__ == "CloughTocher2DInterpolator" and name == "_evaluate_double":
+                _orig["clough_double"] = original
             _patch.replace(cls, name, _patch.wrap(original, fast, f"{cls.__name__}.{name[1:]}"))
 
 
@@ -399,6 +460,6 @@ def smoke():
     xq = rng.random((2000, 2))
     tri.find_simplex(xq)
     si.LinearNDInterpolator(tri, np.sin(pts[:, 0]))(xq)
-    si.CloughTocher2DInterpolator(tri, np.sin(pts[:, 0]))(xq)
+    si.CloughTocher2DInterpolator(tri, np.c_[np.sin(pts[:, 0]), np.cos(pts[:, 1])])(xq)
     g = np.linspace(0, 1, 12)
     si.RegularGridInterpolator((g, g), np.add.outer(g, g) ** 2, method="pchip")(rng.random((16, 2)))

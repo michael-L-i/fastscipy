@@ -11,6 +11,7 @@ For candidate development, use Rust (stable) and Python 3.12–3.15.
 python -m venv .venv && source .venv/bin/activate
 pip install maturin "scipy==1.18.1" pytest hypothesis ruff psutil pooch
 CARGO_BUILD_JOBS=1 maturin develop --profile dev-release  # rebuild after Rust changes
+python tools/check_native_build.py                     # verify the imported extension
 ```
 
 ## Checks
@@ -33,6 +34,22 @@ Use `python tools/platform_suite.py --output artifacts/platform-local` for a
 serial project-suite and all-area benchmark report. The output directory must
 be empty. `--upstream` also runs paired upstream SciPy comparisons, partitioned
 by module. Choose explicit thread and memory budgets before larger runs.
+
+The native build check compares the imported extension's embedded SHA-256 with
+the current `src/` files, `Cargo.toml`, `Cargo.lock`, and `build.rs`. It works
+without Git and ignores Python-only or documentation changes. A stale extension
+or one built before provenance metadata was added fails with rebuild guidance.
+`platform_suite.py` performs this check before running tests or benchmarks and
+saves `native-build.json` beside its report. To compare an installed wheel with
+a particular source tree, run `tools/check_native_build.py` with
+`--source-root /path/to/source` using the wheel's interpreter. Unavailable sources are reported
+as unverified, never as a match.
+
+This verifies native source identity, not reproducible machine code or numerical
+compatibility on an untested platform. The report also records the extension's
+binary SHA-256 and build-time compiler, target, optimization level, and Cargo
+profile classification (`release` can include custom release-derived profiles).
+No source hashing or build checks happen during normal package import or calls.
 
 ## Adding a fast path
 

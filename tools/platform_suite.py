@@ -191,6 +191,8 @@ def revision():
 
 
 def main():
+    from check_native_build import REBUILD, inspect_build
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--budget", type=float, default=0.1)
@@ -215,12 +217,17 @@ def main():
         parser.error(f"Run from a complete source checkout containing benchmarks for all {len(AREAS)} areas")
     for key in ("FASTSCIPY_NUM_THREADS", "OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
         os.environ.setdefault(key, "2" if key == "FASTSCIPY_NUM_THREADS" else "1")
+    native_build = inspect_build(ROOT)
+    (output / "native-build.json").write_text(json.dumps(native_build, indent=2), encoding="utf-8")
+    if native_build["status"] != "match":
+        parser.error(f"Native build check: {native_build['status']}. {REBUILD}")
     os.environ.setdefault("SCIPY_AVAILABLE_MEM", f"{max(1, args.max_rss_mb // 2)}Mib")
     reference_report = output.resolve() / "reference-variance.jsonl"
     os.environ["FASTSCIPY_REFERENCE_REPORT"] = str(reference_report)
     report = {
         "recorded_utc": datetime.now(timezone.utc).isoformat(),
         "benchmark_commit": revision(),
+        "native_build": native_build,
         "fastscipy": importlib.metadata.version("fastscipy"),
         "platform": platform.platform(),
         "machine": platform.machine(),

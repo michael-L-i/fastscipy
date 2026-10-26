@@ -1,0 +1,44 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| spatial: small pdist euclidean 4x3 | 0.004 | 0.001 | 0.001 | 5.4 | 5.4 | yes |
+| spatial: small pdist cityblock 4x3 | 0.004 | 0.001 | 0.001 | 5.4 | 5.4 | yes |
+| spatial: small pdist sqeuclidean 4x3 | 0.004 | 0.001 | 0.001 | 5.4 | 5.4 | yes |
+| spatial: small pdist euclidean 16x3 | 0.004 | 0.001 | 0.001 | 4.7 | 4.7 | yes |
+| spatial: small pdist cityblock 16x3 | 0.004 | 0.001 | 0.001 | 4.7 | 4.7 | yes |
+| spatial: small pdist sqeuclidean 16x3 | 0.004 | 0.001 | 0.001 | 4.9 | 4.9 | yes |
+| spatial: small pdist euclidean 32x16 | 0.005 | 0.002 | 0.002 | 2.7 | 2.7 | yes |
+| spatial: small pdist cityblock 32x16 | 0.005 | 0.002 | 0.002 | 2.9 | 2.9 | yes |
+| spatial: small pdist sqeuclidean 32x16 | 0.005 | 0.002 | 0.002 | 2.7 | 2.7 | yes |
+| spatial: small pdist euclidean 100x16 | 0.015 | 0.012 | 0.012 | 1.3 | 1.3 | yes |
+| spatial: small pdist cityblock 100x16 | 0.013 | 0.010 | 0.009 | 1.3 | 1.3 | yes |
+| spatial: small pdist sqeuclidean 100x16 | 0.015 | 0.012 | 0.012 | 1.3 | 1.3 | yes |
+| spatial: cdist euclidean 4000x2000x16 | 18.841 | 18.715 | 9.902 | 1.0 | 1.9 | yes |
+| spatial: cdist cityblock 4000x2000x16 | 14.804 | 14.657 | 7.644 | 1.0 | 1.9 | yes |
+| spatial: cdist cosine 4000x2000x16 | 35.403 | 35.341 | 18.115 | 1.0 | 2.0 | yes |
+| spatial: pdist euclidean 3000x16 | 10.519 | 10.512 | 8.026 | 1.0 | 1.3 | yes |
+| spatial: pdist cityblock 3000x16 | 8.224 | 8.264 | 6.581 | 1.0 | 1.2 | yes |
+| spatial: cdist euclidean Fortran 4000x2000x16 | 25.688 | 25.193 | 9.920 | 1.0 | 2.6 | yes |
+| spatial: pdist euclidean Fortran 3000x16 | 12.939 | 12.783 | 8.034 | 1.0 | 1.6 | yes |
+| spatial: cdist euclidean strided 4000x2000x8 | 11.872 | 11.844 | 5.200 | 1.0 | 2.3 | yes |
+| spatial: cdist seuclidean 1500x1000x12 | 4.122 | 4.156 | 2.257 | 1.0 | 1.8 | yes |
+| spatial: pdist seuclidean 1500x12 | 3.091 | 3.136 | 2.607 | 1.0 | 1.2 | yes |
+| spatial: cdist mahalanobis 1500x1000x12 | 68.882 | 68.785 | 35.719 | 1.0 | 1.9 | yes |
+| spatial: pdist mahalanobis 1500x12 | 50.059 | 51.804 | 30.325 | 1.0 | 1.7 | yes |
+| spatial: weighted cdist euclidean 1200x900x16 | 3.056 | 3.014 | 1.650 | 1.0 | 1.9 | yes |
+| spatial: weighted pdist euclidean 1200x16 | 2.036 | 2.012 | 1.768 | 1.0 | 1.2 | yes |
+| spatial: weighted cdist minkowski 1200x900x16 | 82.508 | 82.776 | 43.086 | 1.0 | 1.9 | yes |
+| spatial: weighted pdist minkowski 1200x16 | 55.307 | 55.197 | 33.711 | 1.0 | 1.6 | yes |
+| spatial: float32 cdist euclidean 1200x900x16 | 2.484 | 2.470 | 1.384 | 1.0 | 1.8 | yes |
+| spatial: float32 pdist euclidean 1200x16 | 1.679 | 1.678 | 1.546 | 1.0 | 1.1 | yes |
+| spatial: pdist euclidean 4000x3 | 5.274 | 5.344 | 5.363 | 1.0 | 1.0 | yes |
+| spatial: pdist sqeuclidean 4000x3 (2-thread control) | 5.118 | 5.176 | 5.118 | 1.0 | 1.0 | yes |
+| spatial: pdist cityblock 4000x3 (2-thread control) | 5.520 | 5.526 | 5.557 | 1.0 | 1.0 | yes |
+| spatial: cKDTree.query 1M pts, 200k queries, k=1 | 207.896 | 208.206 | 117.111 | 1.0 | 1.8 | yes |
+| spatial: cKDTree.query 1M pts, 200k queries, k=8 | 432.040 | 428.646 | 220.592 | 1.0 | 2.0 | yes |
+| spatial: cKDTree.query_ball_point 200k, r=0.01 | 323.527 | 323.220 | 190.088 | 1.0 | 1.7 | yes |
+| spatial: cdist 300x100x16 (control) | 0.069 | 0.069 | 0.070 | 1.0 | 1.0 | yes |
+| spatial: pdist float32 100x16 (control) | 0.016 | 0.016 | 0.017 | 1.0 | 1.0 | yes |
+| spatial: cKDTree.query 100 queries (control) | 0.052 | 0.052 | 0.051 | 1.0 | 1.0 | yes |
+| **spatial geomean (byte-identical cases)** | | | | **1.4** | **1.9** | |

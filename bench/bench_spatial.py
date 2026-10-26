@@ -46,7 +46,10 @@ def cases():
     yield "float32 pdist euclidean 1200x16", lambda: dist.pdist(fa)
     # Low-dimensional clouds expose distance temporary memory and copy cost.
     cloud = np.random.default_rng(845).random((4000, 3))
-    yield "pdist euclidean 4000x3", lambda: dist.pdist(cloud)
+    # With two threads these cheap pairs stay on SciPy; four can still split.
+    yield "pdist euclidean 4000x3", lambda: dist.pdist(cloud), False
+    for metric in ("sqeuclidean", "cityblock"):
+        yield f"pdist {metric} 4000x3 (2-thread control)", lambda m=metric: dist.pdist(cloud, m), False
     pts = rng.random((1_000_000, 3))
     tree, q = sp.cKDTree(pts), rng.random((200_000, 3))
     for k in (1, 8):

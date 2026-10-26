@@ -14,6 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  RUSTFLAGS: ""
   CARGO_TERM_COLOR: always
   CARGO_BUILD_JOBS: "1"
   CARGO_PROFILE_DEV_RELEASE_CODEGEN_UNITS: "4"
@@ -60,15 +61,17 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - uses: dtolnay/rust-toolchain@1.97.1
-      - uses: Swatinem/rust-cache@v2
-      - name: Build
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install maturin "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis packaging psutil
-          maturin develop --profile dev-release
+      - name: Install tools
+        run: python -m pip install "maturin>=1.9,<2" "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis packaging psutil
+      - uses: ./.github/actions/native
       - name: Identity tests
-        run: .venv/bin/python -m pytest tests -q
+        run: python -m pytest tests -q
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-cache-python-${{ matrix.python }}
+          path: artifacts/
+          retention-days: 14
 
   scipy-suite:
     name: SciPy's test suite, with and without fastscipy
@@ -80,18 +83,14 @@ jobs:
         with:
           python-version: "3.13"
       - uses: dtolnay/rust-toolchain@1.97.1
-      - uses: Swatinem/rust-cache@v2
-      - name: Build
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install maturin "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis pooch packaging psutil
-          maturin develop --profile dev-release
+      - name: Install tools
+        run: python -m pip install "maturin>=1.9,<2" "numpy==2.5.4" "scipy==$SCIPY_VERSION" pytest pytest-xdist hypothesis pooch packaging psutil
+      - uses: ./.github/actions/native
       - name: Compare every test's outcome
-        run: .venv/bin/python tools/platform_suite.py --output artifacts/upstream --tests-only --upstream --max-rss-mb 4096
+        run: python tools/platform_suite.py --output artifacts/upstream --tests-only --upstream --max-rss-mb 4096
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: scipy-suite-macos-arm64
-          path: artifacts/upstream/
+          path: artifacts/
           retention-days: 14

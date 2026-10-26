@@ -34,7 +34,7 @@ permissions:
 
 concurrency:
   group: platforms-${{ github.ref }}-${{ inputs.platforms }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 env:
   CARGO_BUILD_JOBS: "1"

@@ -95,27 +95,55 @@ def _ppf(orig):
     return fast
 
 
+# Cap batched temporary index and histogram tables independently of machine RAM.
+_MODE_TABLE = 1 << 20
 _MODE_INTS = tuple(np.dtype(t) for t in (np.int64, np.int32, np.int16, np.int8, np.uint8))
 
 
 def _mode(orig):
     def fast(a, axis=0, nan_policy="propagate", keepdims=False):
+        # The surrounding SciPy decorator validates options, handles empty inputs,
+        # moves the reduction axis last, and restores keepdims.
         if not (
             type(a) is np.ndarray
-            and a.ndim == 1
-            and a.size >= 256
+            and a.ndim >= 1
+            and a.size > 0
+            and a.shape[-1] >= 256
             and a.dtype in _MODE_INTS
-            and axis in (0, -1, None)
-            and keepdims is False
-            and nan_policy == "propagate"
+            and (axis in (0, -1, None) if a.ndim == 1 else axis == -1)
         ):
             return NotImplemented
-        lo, hi = int(a.min()), int(a.max())
-        if hi - lo + 1 > 4 * a.size + 1024:
+        if keepdims is not False or nan_policy not in ("propagate", "omit", "raise"):
             return NotImplemented
-        cnt = np.bincount(a.astype(np.intp, copy=False) - lo)
-        i = int(cnt.argmax())
-        return sp.ModeResult(a.dtype.type(i + lo), cnt.dtype.type(cnt[i]))
+        lo, hi = int(a.min()), int(a.max())
+        width = hi - lo + 1
+        n = a.shape[-1]
+        if width > 4 * n + 1024:
+            return NotImplemented
+        if a.ndim == 1:
+            cnt = np.bincount(a.astype(np.intp, copy=False) - lo)
+            i = int(cnt.argmax())
+            return sp.ModeResult(a.dtype.type(i + lo), np.int64(cnt[i]))
+        if max(n, width) > _MODE_TABLE:
+            return NotImplemented
+        shape = a.shape[:-1]
+        rows = a.size // n
+        modes = np.empty(rows, dtype=a.dtype)
+        counts = np.empty(rows, dtype=np.int64)
+        # Index leading dimensions rather than reshape: a moved or strided axis
+        # must not cause a copy of the entire input before chunking.
+        step = max(1, _MODE_TABLE // (n + width))
+        for start in range(0, rows, step):
+            stop = min(start + step, rows)
+            index = np.unravel_index(np.arange(start, stop), shape)
+            values = a[index].astype(np.intp, copy=False) - lo
+            values += np.arange(stop - start, dtype=np.intp)[:, None] * width
+            hist = np.bincount(values.ravel(), minlength=(stop - start) * width)
+            hist = hist.reshape(stop - start, width)
+            winners = hist.argmax(axis=1)
+            modes[start:stop] = winners + lo
+            counts[start:stop] = hist[np.arange(stop - start), winners]
+        return sp.ModeResult(modes.reshape(shape), counts.reshape(shape))
 
     return fast
 

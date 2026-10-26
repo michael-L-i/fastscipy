@@ -864,10 +864,47 @@ def test_mode(dtype):
     a = rng.integers(0, 100, 5000).astype(dtype)
     check(lambda: st.mode(a))
     check(lambda: st.mode(a, axis=None))
-    check(lambda: st.mode(a, keepdims=True), fast=False)
+    check(lambda: st.mode(a, keepdims=True))
     check(lambda: st.mode(a.astype(float)), fast=False)
     check(lambda: st.mode((a.astype(np.int64) * 10**9)), fast=False)
     check(lambda: st.mode(a.reshape(50, 100), axis=1), fast=False)
+
+
+@pytest.mark.parametrize("dtype", [np.int64, np.int32, np.int16, np.uint8, np.int8])
+@pytest.mark.parametrize("axis", [0, 1, -1, None])
+def test_mode_batched(dtype, axis, threads):
+    a = np.random.default_rng(187).integers(0, 16, (256, 512)).astype(dtype)
+    original = a.copy()
+    for values in (a, a.T, a[::-1, ::-1]):
+        for keepdims in (False, True):
+            for policy in ("propagate", "omit", "raise"):
+                check(lambda: st.mode(values, axis=axis, keepdims=keepdims, nan_policy=policy))
+    np.testing.assert_array_equal(a, original)
+    # Every slice ties; the smallest value wins, including near integer limits.
+    for low in (np.iinfo(dtype).min, np.iinfo(dtype).max - 1):
+        tied = np.tile(np.array([low + 1, low], dtype=dtype), (3, 256))
+        check(lambda: st.mode(tied, axis=1))
+        result = st.mode(tied, axis=1)
+        assert np.all(result.mode == low) and np.all(result.count == 256)
+
+
+def test_mode_batched_chunks():
+    a = np.random.default_rng(188).integers(-1024, 1024, (5, 70, 4096), dtype=np.int64)
+    check(lambda: st.mode(a, axis=-1, keepdims=True))
+    check(lambda: st.mode(a.transpose(2, 0, 1), axis=0))
+
+
+def test_mode_batched_fallbacks():
+    for a in (
+        np.empty((2, 0), dtype=int),
+        np.zeros((2, 512)),
+        np.full((2, 512), np.nan),
+        np.arange(1024).reshape(2, 512) * 10**9,
+    ):
+        assert not same(lambda: st.mode(a, axis=1))
+    a = np.zeros((2, 512), dtype=np.int32)
+    for kw in ({"axis": 3}, {"axis": (0, 1)}, {"nan_policy": "invalid"}):
+        same(lambda: st.mode(a, **kw))
 
 
 @pytest.mark.parametrize("d", [1, 2, 3])

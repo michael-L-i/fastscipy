@@ -695,6 +695,32 @@ def test_rankdata_batched_row_independence(n, kind, method, threads):
     assert x.tobytes() == before
 
 
+@pytest.mark.parametrize("method", ["average", "min", "max", "dense", "ordinal"])
+def test_rankdata_float32(method, threads):
+    from scipy.stats import _stats_py
+
+    # Include adjacent floats, subnormals, signed zero, ties and readonly strides.
+    x = np.random.default_rng(371).integers(-8, 8, (7, 2, 1031)).astype(np.float32)
+    x[0, 0, :7] = [0.0, -0.0, 1.0, np.nextafter(np.float32(1), np.float32(2)), 1e-45, -1e-45, 0.0]
+    x = x[:, :, ::-2]
+    x.flags.writeable = False
+    before = x.tobytes()
+    for axis in (0, 1, -1, None):
+        check(lambda: st.rankdata(x, axis=axis, method=method))
+    check(lambda: _stats_py._rankdata(x, method, return_sorted=True, return_ties=True))
+    assert x.tobytes() == before
+
+
+def test_rankdata_float32_nonfinite_declines():
+    from scipy.stats import _stats_py
+
+    for bits in (0x7F800000, 0xFF800000, 0x7FC00123, 0x7F800123):
+        x = np.array([0x40000000, bits, 0x80000000, 0], dtype=np.uint32).view(np.float32)
+        for err in ("warn", "raise"):
+            with np.errstate(invalid=err):
+                assert not same(lambda: _stats_py._rankdata(x, "average", return_sorted=True, return_ties=True))
+
+
 def test_rankdata_nan_policies_and_declines():
     x = rng.standard_normal(50)
     x[3] = np.nan

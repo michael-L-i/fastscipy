@@ -44,6 +44,9 @@ def cases():
     fa, fb = wa.astype(np.float32), wb.astype(np.float32)
     yield "float32 cdist euclidean 1200x900x16", lambda: dist.cdist(fa, fb)
     yield "float32 pdist euclidean 1200x16", lambda: dist.pdist(fa)
+    # Low-dimensional clouds expose distance temporary memory and copy cost.
+    cloud = np.random.default_rng(845).random((4000, 3))
+    yield "pdist euclidean 4000x3", lambda: dist.pdist(cloud)
     pts = rng.random((1_000_000, 3))
     tree, q = sp.cKDTree(pts), rng.random((200_000, 3))
     for k in (1, 8):

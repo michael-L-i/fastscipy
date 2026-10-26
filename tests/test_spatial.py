@@ -42,6 +42,38 @@ def test_pdist(metric, d, threads):
     check(lambda: dist.pdist(X, metric), fast=threads > 1)
 
 
+@pytest.mark.parametrize("threads", [2], indirect=True)
+@pytest.mark.parametrize("metric", sorted(_spatial._PDIST))
+@pytest.mark.parametrize("tile_entries", [19, 512])
+def test_pdist_tiles(metric, tile_entries, threads, monkeypatch):
+    # Exercise both a tile smaller than one row and multirow tiles, including
+    # a final partial tile. The spy checks the actual SciPy temporary shapes.
+    monkeypatch.setattr(_spatial, "_WORK", 1)
+    monkeypatch.setattr(_spatial, "_BLOCK", 100_000)
+    monkeypatch.setattr(_spatial, "_PDIST_TILE", tile_entries)
+    x = np.random.default_rng(845).random((53, 7))
+    x[::7] = np.round(x[::7])
+    original = dist.cdist.__wrapped__
+    shapes = []
+    parameters = []
+
+    def cdist_spy(a, b, *args, **kwargs):
+        shapes.append((len(a), len(b)))
+        parameters.append(kwargs)
+        return original(a, b, *args, **kwargs)
+
+    result = _spatial._pdist_fast(cdist_spy)(x, metric)
+    with fastscipy.disabled():
+        expected = dist.pdist(x, metric)
+    assert_identical(expected, result)
+    assert len(shapes) > 2
+    assert all(rows * cols <= max(tile_entries, len(x)) for rows, cols in shapes)
+    assert sum(rows for rows, _ in shapes) == len(x) - 1
+    if metric in _spatial._STATISTICS:
+        key = _spatial._STATISTICS[metric]
+        assert all(p[key] is parameters[0][key] for p in parameters)
+
+
 def test_pdist_shapes_and_default_metric(threads):
     data_wide = data(5000, 400)
     for m in (1000, 1001, 1500):

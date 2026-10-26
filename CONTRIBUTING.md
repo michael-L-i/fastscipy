@@ -51,6 +51,26 @@ binary SHA-256 and build-time compiler, target, optimization level, and Cargo
 profile classification (`release` can include custom release-derived profiles).
 No source hashing or build checks happen during normal package import or calls.
 
+## Development CI compilation cache
+
+The CI workflow caches runner-local native wheels by native-source fingerprint,
+Python ABI/version, Rust compiler, runner image, build profile/flags, NumPy,
+Maturin and packaging/build recipe. Only exact cache keys are restored. Every
+job still runs its tests: the helper installs wheel metadata but imports Python
+from the current checkout, copies only the matching extension into that source
+package, and verifies its embedded fingerprint before testing. Python-only
+changes can therefore skip compilation without testing stale Python code.
+
+`artifacts/native-cache.json` records reuse, binary/source hashes and checkout
+identity. Cache identity or provenance failures stop the job; delete the affected
+GitHub cache to rebuild it. Caches follow GitHub's branch/PR access rules, so a
+new branch may build once before an eligible cache is available.
+
+This is source-level development validation, like the previous editable install.
+Platforms and Release still build fresh distribution wheels and validate them;
+they do not use this native cache. Superseded automatic Platforms runs on the
+same ref are canceled; explicitly dispatched diagnostic runs remain queued.
+
 ## Adding a fast path
 
 Each SciPy area is one component, `python/fastscipy/_<area>.py`, with

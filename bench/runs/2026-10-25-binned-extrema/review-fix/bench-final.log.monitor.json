@@ -1,0 +1,12 @@
+{
+  "returncode": 0,
+  "seconds": 22.81137637491338,
+  "peak_rss_bytes": 433979392,
+  "stopped": null,
+  "rss_scope": "sampled_readable_process_tree",
+  "rss_complete": true,
+  "peak_rss_is_lower_bound": false,
+  "inaccessible_pids": [],
+  "inaccessible_processes": [],
+  "cleanup_errors": []
+}

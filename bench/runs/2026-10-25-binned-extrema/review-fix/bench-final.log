@@ -1,0 +1,15 @@
+{'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+
+| case | SciPy ms | 1 thread ms | 2 threads ms | x 1T | x 2T | identical |
+|---|---:|---:|---:|---:|---:|---|
+| stats: binned min n=4096 d=1 rows=1 | 0.103 | 0.067 | 0.067 | 1.5 | 1.6 | yes |
+| stats: binned max n=4096 d=1 rows=1 | 0.099 | 0.065 | 0.065 | 1.5 | 1.5 | yes |
+| stats: binned min n=100000 d=1 rows=1 | 6.708 | 1.804 | 1.785 | 3.7 | 3.8 | yes |
+| stats: binned max n=100000 d=1 rows=1 | 6.681 | 1.810 | 1.756 | 3.7 | 3.8 | yes |
+| stats: binned min n=100000 d=2 rows=3 | 19.701 | 4.672 | 4.653 | 4.2 | 4.2 | yes |
+| stats: binned max n=100000 d=2 rows=3 | 19.931 | 4.846 | 4.773 | 4.1 | 4.2 | yes |
+| stats: binned min n=1000000 d=3 rows=1 | 123.049 | 60.905 | 60.642 | 2.0 | 2.0 | yes |
+| stats: binned max n=1000000 d=3 rows=1 | 123.165 | 62.395 | 61.180 | 2.0 | 2.0 | yes |
+| stats: binned min zeros fallback | 1.453 | 1.471 | 1.479 | 1.0 | 1.0 | yes |
+| stats: binned min small fallback | 0.027 | 0.027 | 0.027 | 1.0 | 1.0 | yes |
+| **stats geomean (byte-identical non-controls)** | | | | **2.6** | **2.7** | |

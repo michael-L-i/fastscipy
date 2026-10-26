@@ -1,0 +1,50 @@
+{
+  "probe": {
+    "returncode": 0,
+    "seconds": 7.762632250087336,
+    "peak_rss_bytes": 65536000,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "fused": {
+    "returncode": 0,
+    "seconds": 0.44049641606397927,
+    "peak_rss_bytes": 63488000,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "project-tests": {
+    "returncode": 0,
+    "seconds": 11.775132750044577,
+    "peak_rss_bytes": 249708544,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  },
+  "upstream": {
+    "returncode": 0,
+    "seconds": 10.27551329205744,
+    "peak_rss_bytes": 161677312,
+    "stopped": null,
+    "rss_scope": "sampled_readable_process_tree",
+    "rss_complete": true,
+    "peak_rss_is_lower_bound": false,
+    "inaccessible_pids": [],
+    "inaccessible_processes": [],
+    "cleanup_errors": []
+  }
+}

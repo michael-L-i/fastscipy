@@ -25,8 +25,23 @@ mod stats;
 
 type Register = fn(&Bound<'_, PyModule>) -> PyResult<()>;
 
+/// Build-time values only; inspecting them never reads files or invokes Git.
+#[pyfunction]
+fn _build_info() -> std::collections::BTreeMap<&'static str, &'static str> {
+    std::collections::BTreeMap::from([
+        ("source_schema", "1"),
+        ("source_sha256", env!("FASTSCIPY_SOURCE_SHA256")),
+        ("crate_version", env!("CARGO_PKG_VERSION")),
+        ("target", env!("FASTSCIPY_BUILD_TARGET")),
+        ("profile", env!("FASTSCIPY_BUILD_PROFILE")),
+        ("opt_level", env!("FASTSCIPY_BUILD_OPT_LEVEL")),
+        ("rustc", env!("FASTSCIPY_BUILD_RUSTC")),
+    ])
+}
+
 #[pymodule]
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(_build_info, m)?)?;
     pool::register(m)?;
     let areas: [(&str, Register); 7] = [
         ("csgraph", csgraph::register),

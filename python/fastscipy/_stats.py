@@ -10,7 +10,7 @@ import os
 import numpy as np
 import scipy.stats as stats
 
-from . import _patch, _stats_algos, _stats_dist, _stats_loop, _stats_rank
+from . import _patch, _stats_algos, _stats_binned, _stats_dist, _stats_loop, _stats_rank
 
 
 def patch():
@@ -20,6 +20,7 @@ def patch():
     _stats_dist.patch()
     _stats_rank.patch()
     _stats_algos.patch()
+    _stats_binned.patch()
     _stats_loop.patch()
 
 
@@ -30,6 +31,7 @@ def smoke():
     for f in (stats.ttest_1samp, stats.ttest_rel):
         f(a, 0.0) if f is stats.ttest_1samp else f(a, b)
     stats.ttest_ind(a, b), stats.pearsonr(a, b), stats.linregress(a, b), stats.mannwhitneyu(a, b)
+    stats.binned_statistic(np.arange(4096), np.ones(4096), statistic="min")
     stats.zscore(a), stats.skew(a), stats.kurtosis(a), stats.sem(a), stats.entropy(np.abs(a)), stats.describe(a)
     stats.rankdata(np.round(a, 1)), stats.spearmanr(a, b)
     stats.norm.cdf(0.5), stats.norm(1, 2).ppf(0.3), stats.poisson.pmf(3, 2.0)

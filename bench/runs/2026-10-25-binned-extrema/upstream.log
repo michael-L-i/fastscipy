@@ -1,0 +1,24 @@
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine --upstream-quarantine-report=/private/tmp/fastscipy-six/binned-evidence/upstream/0-False.quarantine.json --junitxml=/private/tmp/fastscipy-six/binned-evidence/upstream/0-False.xml --pyargs scipy.stats.tests.test_binned_statistic
+................................................................         [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+64 passed, 1 warning in 0.48s
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p fastscipy.pytest_plugin --upstream-quarantine-report=/private/tmp/fastscipy-six/binned-evidence/upstream/0-True.quarantine.json --junitxml=/private/tmp/fastscipy-six/binned-evidence/upstream/0-True.xml --pyargs scipy.stats.tests.test_binned_statistic
+................................................................         [100%]
+=============================== warnings summary ===============================
+../../../../Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy/.venv/lib/python3.13/site-packages/scipy/conftest.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.array_api_backends - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytest.param(np, id='numpy', marks=pytest.mark.array_api_backends)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'ndimage': 'on', 'special': 'on', 'stats': 'on', 'signal': 'on', 'sparse': 'on', 'sparse_linalg': 'on', 'linalg': 'on', 'interpolate': 'on', 'spatial': 'on', 'csgraph': 'on', 'cluster': 'on', 'integrate': 'on', 'optimize': 'on', 'fft': 'on'}
+fastscipy: 0 fast-path calls, 0 fast-path errors
+64 passed, 1 warning in 0.13s
+
+64 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

@@ -1,0 +1,16 @@
+{
+  "extension": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy/python/fastscipy/_native.cpython-313-darwin.so",
+  "binary_sha256": "f0b4579dfbb8d6a6b4b097c5e8e3a82b37acd12e9fa0b3c429672f8816abf3b0",
+  "source_root": "/private/tmp/fastscipy-six/binned",
+  "build": {
+    "crate_version": "0.1.0-alpha.4",
+    "opt_level": "3",
+    "profile": "release",
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "source_schema": "1",
+    "source_sha256": "4f171ca2041d08858e2f0167f4c62c8155430e48fde2adcc88de9531d8611579",
+    "target": "aarch64-apple-darwin"
+  },
+  "expected_source_sha256": "4f171ca2041d08858e2f0167f4c62c8155430e48fde2adcc88de9531d8611579",
+  "status": "match"
+}

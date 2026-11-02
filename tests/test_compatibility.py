@@ -125,6 +125,60 @@ def test_legacy_cdflib_is_not_threaded(version):
     assert _thread_safe(types.SimpleNamespace(__name__="bdtrik"), "1.13.0")
 
 
+@pytest.mark.parametrize("version", ["1.10.1", "1.11.4", "1.12.0", "1.13.1"])
+def test_legacy_cephes_jv_workspace_is_not_threaded(version):
+    from fastscipy._special import _CEPHES_JV, _thread_safe
+
+    for name in _CEPHES_JV:
+        uf = types.SimpleNamespace(__name__=name)
+        assert not _thread_safe(uf, version)
+        assert _thread_safe(uf, "1.14.0")
+    assert _thread_safe(types.SimpleNamespace(__name__="gammaln"), version)
+
+
+def test_legacy_cephes_jv_bindings_stay_original():
+    import sys
+
+    import numpy as np
+    import scipy
+    from scipy import special
+    from scipy.special import _ufuncs
+
+    from fastscipy._special import _CEPHES_JV
+
+    if not scipy.__version__.startswith(("1.10.", "1.11.", "1.12.", "1.13.")):
+        pytest.skip("Cephes jv workspace became local in SciPy 1.14")
+    fastscipy.unpatch(["special"])
+    originals = {name: getattr(_ufuncs, name) for name in _CEPHES_JV}
+    bindings = [
+        (module, attr, value)
+        for name, module in list(sys.modules.items())
+        if module is not None and (name == "scipy" or name.startswith("scipy."))
+        for attr, value in list(vars(module).items())
+        if any(value is original for original in originals.values())
+    ]
+    try:
+        assert fastscipy.patch(["special"])["special"] == "on"
+        for name, original in originals.items():
+            assert isinstance(original, np.ufunc)
+            assert getattr(_ufuncs, name) is original
+            if hasattr(special, name):
+                assert getattr(special, name) is original
+        for module, attr, original in bindings:
+            assert getattr(module, attr) is original
+        x = np.linspace(0.1, 5, 20)
+        mask = np.arange(20) % 2 == 0
+        for name in ("jv", "yv"):
+            expected = np.full(20, -1.0)
+            actual = expected.copy()
+            originals[name](2, x, out=expected, where=mask)
+            getattr(special, name)(2, x, out=actual, where=mask)
+            assert actual.tobytes() == expected.tobytes()
+    finally:
+        fastscipy.unpatch(["special"])
+        fastscipy.patch(["special"])
+
+
 def test_legacy_cdflib_bindings_stay_original():
     import sys
 

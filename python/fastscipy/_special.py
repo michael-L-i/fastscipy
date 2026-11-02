@@ -49,9 +49,20 @@ _CDFLIB = frozenset(
     "pdtrik stdtr stdtridf stdtrit tklmbda".split()
 )
 
+# Before SciPy 1.14, Cephes jv's jnx workspace (u, ai/aip/bi/bip) is
+# mutable static storage. Real AMOS jv/yv wrappers fall back to it after a
+# NaN result; the Struve helpers also call those wrappers. Keep these ufuncs
+# original until the Cephes C++ rewrite makes that workspace local.
+_CEPHES_JV = frozenset({"jv", "yv", "struve", "_struve_bessel_series", "_struve_asymp_large_z"})
+
 
 def _thread_safe(uf, version):
-    return not (version.startswith(("1.10.", "1.11.", "1.12.")) and uf.__name__ in _CDFLIB)
+    return not (
+        version.startswith(("1.10.", "1.11.", "1.12."))
+        and uf.__name__ in _CDFLIB
+        or version.startswith(("1.10.", "1.11.", "1.12.", "1.13."))
+        and uf.__name__ in _CEPHES_JV
+    )
 
 
 def _part(a, ax, nd, s):
@@ -156,4 +167,4 @@ def patch():
 
 def smoke():
     x = np.linspace(0.1, 5, 65536)
-    sc.erf(x), sc.gammaln(x), sc.jv(1.5, x)
+    sc.erf(x), sc.gammaln(x), sc.digamma(x)

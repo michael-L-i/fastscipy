@@ -1,6 +1,10 @@
 """Loader and rollback checks independent of the installed extension ABI."""
 
 import importlib
+import os
+from pathlib import Path
+import subprocess
+import sys
 import types
 
 import pytest
@@ -160,3 +164,27 @@ def test_legacy_cdflib_bindings_stay_original():
     finally:
         fastscipy.unpatch(["special"])
         fastscipy.patch(["special"])
+
+
+def test_fresh_import_survives_unavailable_native():
+    script = """
+import importlib.abc
+import sys
+
+class Unavailable(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == "fastscipy._native":
+            raise ImportError("test incompatible extension ABI")
+
+sys.meta_path.insert(0, Unavailable())
+import fastscipy
+assert "fastscipy._native" not in sys.modules
+from scipy import special
+original = special.erf
+status = fastscipy.patch(["ndimage"], threads=2)
+assert "native extension unavailable: test incompatible extension ABI" in status["ndimage"]
+assert special.erf is original and special.erf(0.0) == 0.0
+assert fastscipy.get_num_threads() == 2
+"""
+    env = dict(os.environ, PYTHONPATH=str(Path(fastscipy.__file__).resolve().parent.parent))
+    subprocess.run([sys.executable, "-c", script], env=env, check=True, capture_output=True, timeout=20)

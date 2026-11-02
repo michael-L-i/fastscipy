@@ -21,12 +21,16 @@ def inspect(expect_active=()):
 
     import fastscipy
     from fastscipy import _native
+    from check_native_build import inspect_build
 
     assert not os.environ.get("FASTSCIPY_ANY_VERSION"), "Version overrides invalidate compatibility checks"
     assert not os.environ.get("FASTSCIPY_ANY_PLATFORM"), "Platform overrides invalidate compatibility checks"
     site = Path(sysconfig.get_paths()["platlib"]).resolve()
     for module in (fastscipy, _native):
         assert Path(module.__file__).resolve().is_relative_to(site), f"Not installed: {module.__file__}"
+    assert fastscipy.__version__ == importlib.metadata.version("fastscipy")
+    provenance = inspect_build(Path(__file__).resolve().parent.parent, _native)
+    assert provenance["status"] == "match", provenance
 
     # Test a native NumPy allocation/write through the dynamically loaded C API,
     # even when this SciPy minor is deliberately fallback-only.
@@ -74,6 +78,7 @@ def inspect(expect_active=()):
         "installed_package": fastscipy.__file__,
         "native_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
         "native_build": _native._build_info(),
+        "native_source_check": provenance,
         "status": status,
         "expected_active": list(expect_active),
         "smoke_fast_calls": smokes,

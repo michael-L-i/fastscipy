@@ -1,0 +1,14 @@
+[
+  {
+    "wheel": "fastscipy-0.1.0a4-cp311-cp311-macosx_11_0_arm64.whl",
+    "sha256": "80d03d872775b42de5da95199882dc5a98630462bb501222115d98937ee8f84c",
+    "current_python_sources_match": false,
+    "note": "CP311 first canary predates legacy ndimage adapters; CP39 contains current runtime adapters"
+  },
+  {
+    "wheel": "fastscipy-0.1.0a4-cp39-cp39-macosx_14_0_arm64.whl",
+    "sha256": "568e5eb45c36a8475d96ab0f33ff057943ea8dc7347fdd782397cb68c79efa1f",
+    "current_python_sources_match": true,
+    "note": "CP311 first canary predates legacy ndimage adapters; CP39 contains current runtime adapters"
+  }
+]

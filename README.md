@@ -33,6 +33,11 @@ Published **0.1.0a4** wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust r
 Supports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
 and Windows. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 
+Development candidates broaden Python and dependency compatibility with a
+scoped set of acceleration paths. These changes are not in the published
+`0.1.0a4` wheels; older-Python source installs currently require Rust.
+[Candidate matrix, fallback behavior, and validation limits →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md#compatibility-candidates)
+
 Call `patch()` before importing libraries that use SciPy.
 Use `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,
 and `unpatch()` to restore SciPy.

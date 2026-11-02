@@ -40,6 +40,7 @@ def main():
             "-I",
             "-m",
             "pytest",
+            str(ROOT / "tests/test_compatibility.py"),
             *(str(ROOT / "tests" / ("test_" + component + ".py")) for component in COMPONENTS),
             "-q",
             "--tb=short",

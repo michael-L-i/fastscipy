@@ -19,6 +19,86 @@ python -m pip install --only-binary=:all: fastscipy==0.1.0a4
 
 Minimal Alpine images also need the runtime C++ library (`apk add --no-cache libstdc++`). A custom SciPy build or different dependency version requires its own validation. Intel Accelerate numerical compatibility and Windows ARM upstream coverage exceptions are documented below; numerical compatibility does not imply byte identity.
 
+## Compatibility candidates
+
+The development compatibility work targets Python 3.9–3.15 and SciPy
+1.10–1.18. NumPy and Python combinations must also satisfy the selected
+SciPy release's requirements. These are candidate ranges, not an extension
+of the published `0.1.0a4` validation record above. The candidate CI installs
+one native wheel per interpreter into several existing dependency environments,
+checks that installation preserves NumPy and SciPy versions, and records
+installed ABI, component activation and isolated fast-path smoke results.
+Those canaries do not establish full numerical qualification for every
+dependency combination.
+
+NumPy 2.5.4 is the latest available release checked for this candidate work.
+SciPy 1.18.1 permits NumPy versions below 2.8 in its dependency metadata,
+but NumPy 2.6 and 2.7 have not been released and have no validation evidence
+here. Installation permits those future versions within SciPy's constraints,
+but the runtime leaves acceleration off with an explicit status reason for
+NumPy 2.6 or newer and prereleases until they are qualified. An upstream
+dependency bound does not establish compatibility of future fastscipy
+acceleration paths.
+
+The proposed complete release gate retains all 32 current-stack wheel jobs
+and adds the following 21 older-Python wheel jobs:
+
+| Python | Release qualification dependencies | Platform variants | Required qualification |
+|---|---|---|---|
+| 3.9 | NumPy 2.0.2, SciPy 1.13.1 | Six: both macOS, both glibc Linux, musl x86_64, Windows x86_64 | Explicit older-stack components |
+| 3.10 | NumPy 2.2.6, SciPy 1.15.3 | Seven: all except Windows arm64 | Explicit older-stack components |
+| 3.11 | NumPy 2.4.0, SciPy 1.17.1 | All eight | Explicit older-stack components |
+| 3.12–3.15 | NumPy 2.5.4, SciPy 1.18.1 | All eight, 32 wheels | Existing all-component gate |
+
+The older-stack gate currently requires `ndimage`, `special`, and `spatial`.
+Each wheel must pass installed ABI checks, isolated component fast-path
+smokes, the corresponding project suites and paired upstream SciPy suites.
+The complete artifact check requires exactly 53 wheels plus one source
+archive. The eight-wheel CP313 preflight remains a separate, smaller check.
+None of these proposed jobs establishes published support until the complete
+release validation and publication process succeeds.
+
+Older `ndimage` candidates accelerate filters, ranks, generic filters,
+labeling, binary morphology and measurements. Interpolation and Euclidean
+distance transforms retain SciPy's original implementation before 1.18
+because numerical comparisons found differences. Other components and
+individual kernels can remain off or decline calls; `fastscipy.status()`
+records component activation reasons, and `fastscipy.stats()` records actual
+fast-path use. A component marked `on` does not promise acceleration for
+every function or argument combination.
+
+SciPy 1.10–1.12 CDFLIB-backed special functions retain their original
+ufuncs rather than running in fastscipy's thread pool. Those Fortran solvers
+use saved mutable state, and the older-stack sweep reproduced a threaded
+hang. This restriction leaves unrelated special functions eligible for
+acceleration. SciPy 1.10 also has baseline hangs for some nonfinite
+`sph_harm` and `yn` arguments; tests record those input-domain coverage
+exceptions separately and retain finite-input checks.
+
+The three excluded older-Python pairs lack the selected SciPy dependency
+wheels: Python 3.9 on musl arm64, and Python 3.9–3.10 on Windows arm64.
+Upstream wheel availability was checked against the release inventories for
+[SciPy 1.13.1](https://pypi.org/project/scipy/1.13.1/#files),
+[SciPy 1.15.3](https://pypi.org/project/scipy/1.15.3/#files), and
+[SciPy 1.17.1](https://pypi.org/project/scipy/1.17.1/#files).
+
+The candidate wheels retain the operating-system floors in the published
+platform table. Older SciPy wheels can support older macOS or glibc versions;
+that does not establish fastscipy support there. The candidate scope remains
+64-bit x86_64 and arm64 on the listed systems. Python 3.8 requires older
+native bindings than the current PyO3/rust-numpy dependencies, whose Python
+minimum is 3.9. Free-threaded Python, 32-bit architectures and custom SciPy
+builds need separate validation.
+
+Until matching wheels are published, older-Python installations require a
+source build with maturin and a current stable Rust toolchain; candidate
+builds use Rust 1.97.1. The bindings' minimum Rust version does not establish
+the minimum compiler for the whole project. Making native loading
+optional at runtime does not remove the mandatory native build step when pip
+installs the source archive. A missing or unloadable extension leaves native
+components off with a recorded reason; this fallback is not a promise of a
+compiler-free installation on every platform.
+
 ## Evidence
 
 The [a4 release](https://github.com/michael-L-i/fastscipy/actions/runs/39738398406) validated source `46b33f2882f0b10a126169bed0a088705cf402a0`, tag `v0.1.0a4`, and published the complete set. [Publication evidence](../bench/runs/2026-10-22-release-a4/publication/README.md) retains the run, approved manifest and independent hash comparison. [Installed pilot evidence](../bench/runs/2026-10-22-release-a4/installed-pilots/README.md) retains all eight clean installation and application reports from [run 39793298085](https://github.com/michael-L-i/fastscipy/actions/runs/39793298085).

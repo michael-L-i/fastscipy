@@ -1,0 +1,44 @@
+[
+  {
+    "platform": "linux",
+    "arch": "x86_64",
+    "returncode": 0,
+    "stdout": "cp39-manylinux_x86_64\ncp310-manylinux_x86_64\ncp311-manylinux_x86_64\ncp39-musllinux_x86_64\ncp310-musllinux_x86_64\ncp311-musllinux_x86_64\n",
+    "stderr": ""
+  },
+  {
+    "platform": "linux",
+    "arch": "aarch64",
+    "returncode": 0,
+    "stdout": "cp39-manylinux_aarch64\ncp310-manylinux_aarch64\ncp311-manylinux_aarch64\ncp39-musllinux_aarch64\ncp310-musllinux_aarch64\ncp311-musllinux_aarch64\n",
+    "stderr": ""
+  },
+  {
+    "platform": "macos",
+    "arch": "arm64",
+    "returncode": 0,
+    "stdout": "cp39-macosx_arm64\ncp310-macosx_arm64\ncp311-macosx_arm64\n",
+    "stderr": ""
+  },
+  {
+    "platform": "macos",
+    "arch": "x86_64",
+    "returncode": 0,
+    "stdout": "cp39-macosx_x86_64\ncp310-macosx_x86_64\ncp311-macosx_x86_64\n",
+    "stderr": ""
+  },
+  {
+    "platform": "windows",
+    "arch": "AMD64",
+    "returncode": 0,
+    "stdout": "cp39-win_amd64\ncp310-win_amd64\ncp311-win_amd64\n",
+    "stderr": ""
+  },
+  {
+    "platform": "windows",
+    "arch": "ARM64",
+    "returncode": 0,
+    "stdout": "cp311-win_arm64\n",
+    "stderr": ""
+  }
+]

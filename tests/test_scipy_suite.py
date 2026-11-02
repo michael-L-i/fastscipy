@@ -9,6 +9,14 @@ from types import SimpleNamespace
 import pytest
 
 
+def isolation_report(cmd, *, valid=True):
+    path = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-isolation-report=")))
+    state = next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-expected-state="))
+    path.write_text(
+        json.dumps({"plugin": "scipy_upstream_isolation", "expected_state": state, "valid": valid, "checked_calls": 1})
+    )
+
+
 @pytest.fixture
 def suite():
     spec = importlib.util.spec_from_file_location(
@@ -35,8 +43,11 @@ def test_incomplete_middle_partition_keeps_remaining_coverage(suite, monkeypatch
     )
     calls = []
 
-    def subprocess_run(cmd, check, env):
+    def subprocess_run(cmd, check, env, cwd):
         assert "scipy_upstream_quarantine" in cmd
+        assert "scipy_upstream_isolation" in cmd
+        assert Path(cwd).is_dir() and not Path(cwd).is_relative_to(Path(suite.__file__).parents[1])
+        isolation_report(cmd)
         assert env["PYTHONPATH"].split(suite.os.pathsep)[0] == str(Path(suite.__file__).parent)
         quarantine = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-quarantine-report=")))
         quarantine.write_text(json.dumps({"plugin": "scipy_upstream_quarantine", "selected": [], "active": False}))
@@ -93,6 +104,7 @@ def test_pytest_test_failure_is_complete(suite, monkeypatch, tmp_path):
     junit.write_text('<testsuite><testcase classname="tests.example" name="test_bad"><failure/></testcase></testsuite>')
 
     def subprocess_run(cmd, **kwargs):
+        isolation_report(cmd)
         quarantine = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-quarantine-report=")))
         quarantine.write_text(json.dumps({"plugin": "scipy_upstream_quarantine", "selected": [], "active": False}))
         return SimpleNamespace(returncode=1)
@@ -101,6 +113,49 @@ def test_pytest_test_failure_is_complete(suite, monkeypatch, tmp_path):
     results, returncode = suite.run(["--pyargs", "scipy.example"], False, str(junit))
     assert returncode == 1
     assert results == {"tests.example::test_bad": "failed"}
+
+
+def test_failed_isolation_cannot_qualify_plausible_junit(suite, monkeypatch, tmp_path):
+    junit = tmp_path / "failure.xml"
+    junit.write_text('<testsuite><testcase classname="scipy.example" name="test_ok"/></testsuite>')
+
+    def subprocess_run(cmd, **kwargs):
+        isolation_report(cmd, valid=False)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(suite.subprocess, "run", subprocess_run)
+    with pytest.raises(suite.IncompleteRun, match="Invalid upstream isolation report"):
+        suite.run(["--pyargs", "scipy.example"], False, str(junit))
+
+
+def test_requested_component_and_relative_node_path(suite, tmp_path):
+    scipy_root = tmp_path / "scipy"
+    path = scipy_root / "spatial/tests/test_example.py"
+    path.parent.mkdir(parents=True)
+    path.touch()
+    relative = suite.os.path.relpath(path)
+    args, required = suite.invocation([relative + "::test_case"], scipy_root)
+    assert args == [str(path) + "::test_case"]
+    assert required == ["spatial"]
+    assert suite.invocation(["--pyargs", "scipy.sparse.linalg"], scipy_root)[1] == ["sparse_linalg"]
+
+
+def test_other_active_component_cannot_qualify_request(monkeypatch, tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "isolation_under_test", Path(__file__).parents[1] / "tools/scipy_upstream_isolation.py"
+    )
+    guard = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guard)
+    monkeypatch.setattr(guard.fastscipy, "status", lambda: {"special": "on"})
+    monkeypatch.setattr(guard._patch, "_records", [("special",)])
+    monkeypatch.setattr(guard, "_write", lambda config: None)
+    proof = {"expected_state": "patched", "required_components": ["ndimage"], "checked_calls": 0}
+    item = SimpleNamespace(
+        config=SimpleNamespace(_upstream_isolation=proof, pluginmanager=SimpleNamespace(_conftest_plugins=set()))
+    )
+    with pytest.raises(pytest.exit.Exception, match="requested component is inactive"):
+        guard.pytest_runtest_call(item)
+    assert proof["valid"] is False
 
 
 @pytest.fixture
@@ -244,8 +299,11 @@ def test_missing_quarantine_report_fails_closed(suite, monkeypatch, tmp_path):
     junit.write_text('<testsuite><testcase classname="example" name="test_ok"/></testsuite>')
     monkeypatch.setenv("PYTHONPATH", "existing-path")
 
-    def subprocess_run(cmd, check, env):
-        assert env["PYTHONPATH"] == str(Path(suite.__file__).parent) + suite.os.pathsep + "existing-path"
+    def subprocess_run(cmd, check, env, cwd):
+        isolation_report(cmd)
+        assert env["PYTHONPATH"] == str(Path(suite.__file__).parent) + suite.os.pathsep + str(
+            Path("existing-path").resolve()
+        )
         return SimpleNamespace(returncode=0)
 
     monkeypatch.setattr(suite.subprocess, "run", subprocess_run)

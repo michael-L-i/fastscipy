@@ -21,6 +21,8 @@ COMPONENTS = ("ndimage", "special", "spatial")
 
 
 def main():
+    import scipy
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -56,6 +58,11 @@ def main():
             str(output / ("upstream-" + component)),
             "--pyargs",
             "scipy." + component,
+            # Old SciPy otherwise shortens JUnit names to tests.test_*.
+            # Keep package provenance so only the known special ufunc
+            # collection differences receive the comparator's exception.
+            "--rootdir",
+            str(Path(scipy.__file__).resolve().parent.parent),
         ]
     for name, command in commands.items():
         result = run(command, output / (name + ".log"), 4096, 14400)

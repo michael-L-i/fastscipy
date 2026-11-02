@@ -49,7 +49,6 @@ def _part(a, ax, nd, s):
 def _threaded(uf, st, args):
     if get_num_threads() <= 1 or any(v != "ignore" for k, v in sc.geterr().items() if k != "memory"):
         return NotImplemented
-    shapes = []
     order = "C"
     for a in args:
         if type(a) is np.ndarray:
@@ -59,10 +58,9 @@ def _threaded(uf, st, args):
                 if len(args) != 1 or not a.flags.f_contiguous:
                     return NotImplemented
                 order = "F"  # A unary ufunc preserves the input's Fortran layout.
-            shapes.append(a.shape)
         elif not isinstance(a, _SCALARS):
             return NotImplemented
-    shape = np.broadcast_shapes(*shapes)
+    shape = np.broadcast(*args).shape
     n, nd = math.prod(shape), len(shape)
     if n < st[0]:
         return NotImplemented
@@ -125,12 +123,13 @@ def _make(uf, module):
     fast.__name__, fast.__qualname__, fast.__module__, fast.__doc__ = name, name, module, uf.__doc__
     fast.__wrapped__ = uf
     for attr in _ATTRS:
-        setattr(fast, attr, getattr(uf, attr))
+        if hasattr(uf, attr):
+            setattr(fast, attr, getattr(uf, attr))
     return fast
 
 
 def patch():
-    _patch.require_validated("1.18.")
+    _patch.require_validated(*(f"1.{minor}." for minor in range(10, 19)))
     wrappers = {}
     for mod in (_ufuncs, sc):
         for uf in list(vars(mod).values()):

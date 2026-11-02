@@ -221,7 +221,7 @@ class _Meta(type):
 
 
 def patch():
-    _patch.require_validated("1.18.")
+    _patch.require_validated(*(f"1.{minor}." for minor in range(10, 19)))
     cdist = dist.cdist
     new_cdist = _patch.wrap(cdist, _cdist_fast(cdist), "cdist")
     _patch.rebind(cdist, new_cdist)

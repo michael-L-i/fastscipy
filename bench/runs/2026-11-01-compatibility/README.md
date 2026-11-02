@@ -15,6 +15,16 @@ ABI, special, and spatial result.
 | CPython 3.11.14, macOS arm64 | 1.23.5 | 1.10.1 | Native ABI; special/spatial isolated fast-path smokes |
 | CPython 3.9.25, macOS arm64 | 1.21.6 | 1.10.1 | Native ABI and source provenance; ndimage/special/spatial isolated fast-path smokes; dependency preservation |
 
+A later CPython 3.11.14 / NumPy 1.23.5 / SciPy 1.10.1 source-overlay run
+passed all 1,155 selected ndimage, special, spatial and compatibility tests
+(54 warnings, 59.83 seconds, sampled process-tree peak 354 MiB).
+`local/cp311-project.log` and its process report retain that result. It uses
+the matching PR30 native binary with the later runtime adapters; it is a
+project-suite result, not an installed final-wheel or paired-upstream result.
+That checkpoint predates the later floating-order test-input refinement and
+explicit Sokal-Sneath regression; those changes only add or refine tests,
+with production runtime code unchanged.
+
 The native ABI canary writes a NumPy array through Rust and compares exact
 SciPy bytes. Component smokes run with one component patched at a time and
 require actual fast-call increments. These small canaries do not replace

@@ -71,9 +71,12 @@ SciPy 1.10–1.12 CDFLIB-backed special functions retain their original
 ufuncs rather than running in fastscipy's thread pool. Those Fortran solvers
 use saved mutable state, and the older-stack sweep reproduced a threaded
 hang. This restriction leaves unrelated special functions eligible for
-acceleration. SciPy 1.10 also has baseline hangs for some nonfinite
-`sph_harm` and `yn` arguments; tests record those input-domain coverage
-exceptions separately and retain finite-input checks.
+acceleration. Legacy floating-order loops for `sph_harm` and `yn` can also
+hang in SciPy's baseline when degree or order is nonfinite. The aggregate
+identity test detects those loops and uses bounded finite integer degree
+and order, while retaining nonfinite spatial arguments or angles. A visible
+warning records the nonfinite-order coverage exception; finite-input
+acceleration checks remain in place.
 
 The three excluded older-Python pairs lack the selected SciPy dependency
 wheels: Python 3.9 on musl arm64, and Python 3.9–3.10 on Windows arm64.

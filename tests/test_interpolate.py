@@ -661,3 +661,76 @@ def test_unrecognized_linear_arithmetic_retains_reordering(monkeypatch):
 
     monkeypatch.setattr(_interpolate._k, "linear_eval", unexpected)
     check(lambda: interpolator(query))
+
+
+@pytest.mark.parametrize("width,scale,rescale", [(2, 1.0, False), (7, 1e5, True), (32, 1e-4, False)])
+def test_clough_shared_geometry(width, scale, rescale, monkeypatch):
+    from fastscipy import _interpolate
+
+    r = rng(802 + width)
+    points = r.random((600, 2)) * scale
+    obj = si.CloughTocher2DInterpolator(points, r.standard_normal((600, width)), rescale=rescale)
+    query = (r.uniform(-0.05, 1.05, (9002, 2)) * scale)[::2]
+    query[:20] = points[:20]
+    query[20:40] = (points[:20] + points[20:40]) / 2
+    query[40] = np.nan
+    query[41] = np.inf
+    before = [a.tobytes() for a in (obj.values, obj.grad, query)]
+    for a in (obj.values, obj.grad, query):
+        a.setflags(write=False)
+    kernel = _interpolate._k.clough_eval
+    calls = []
+
+    def counted(*args):
+        calls.append(1)
+        return kernel(*args)
+
+    assert _interpolate._clough_arithmetic() in range(4)
+    monkeypatch.setattr(_interpolate._k, "clough_eval", counted)
+    check(lambda: obj(query))
+    assert calls, "the geometry-sharing kernel must run, not just the old reordered path"
+    assert before == [a.tobytes() for a in (obj.values, obj.grad, query)]
+
+
+def test_clough_mutable_values_and_gradients():
+    r, points, values = scattered(600)
+    obj = si.CloughTocher2DInterpolator(points, np.c_[values, values**2, -values])
+    query = r.random((4501, 2))
+    check(lambda: obj(query))
+    # Neither coefficients nor geometry may be cached across calls.
+    obj.values *= -0.75
+    obj.grad *= 1.25
+    obj.grad = np.asfortranarray(obj.grad)
+    check(lambda: obj(query))
+    # An affine field with exact gradients is reproduced throughout the hull.
+    obj.values = np.c_[2 * points[:, 0] - points[:, 1] + 3, points[:, 0] + 4 * points[:, 1], -points[:, 1]]
+    obj.grad = np.broadcast_to([[2.0, -1.0], [1.0, 4.0], [0.0, -1.0]], obj.grad.shape).copy()
+    actual = check(lambda: obj(query))
+    expected = np.c_[2 * query[:, 0] - query[:, 1] + 3, query[:, 0] + 4 * query[:, 1], -query[:, 1]]
+    inside = np.isfinite(actual).all(axis=1)
+    np.testing.assert_allclose(actual[inside], expected[inside], rtol=1e-12, atol=1e-12)
+    # SciPy accepts strided gradients but rejects noncontiguous values.
+    obj.values = np.asfortranarray(obj.values)
+    check(lambda: obj(query))
+
+
+def test_clough_kernel_fallbacks(monkeypatch):
+    from fastscipy import _interpolate
+
+    r, points, values = scattered(600)
+    obj = si.CloughTocher2DInterpolator(points, np.c_[values, values**2])
+    query = r.random((4501, 2))
+    _interpolate._clough_arithmetic()  # calibrate before checking the per-call guard
+
+    def unexpected(*args):
+        raise AssertionError("unsupported inputs must retain SciPy's evaluator")
+
+    monkeypatch.setattr(_interpolate._k, "clough_eval", unexpected)
+    obj.grad[0, 0, 0] = np.nan
+    check(lambda: obj(query))
+    obj.grad[0, 0, 0] = 0.0
+    obj.values[0, 0] = np.inf
+    check(lambda: obj(query))
+    obj.values[0, 0] = 0.0
+    monkeypatch.setattr(_interpolate, "_clough_arithmetic", lambda: None)
+    check(lambda: obj(query))

@@ -40,7 +40,11 @@ Byte-identical output takes more than the same algorithm:
 - Interpolation, signal widths, and correlation kernels probe the installed
   SciPy binary to select matching fused or separate multiply-add arithmetic.
   C++ BSpline, Fortran FITPACK, and Cython interpolation are checked separately;
-  an unmatched kernel leaves the call to SciPy.
+  an unmatched kernel leaves the call to SciPy. Clough–Tocher evaluation of
+  finite real fields shares triangle geometry and polynomial weights across
+  output channels, while preserving each channel's coefficient and summation
+  order. Boundary queries retain the original walk replay. Geometry and
+  coefficients are not cached across calls because interpolator data is mutable.
 - ndimage spline transforms and EDT follow the compiler expression trees
   verified in official SciPy binaries, including operations that must remain
   separate. Matching one kernel does not establish another kernel's arithmetic.

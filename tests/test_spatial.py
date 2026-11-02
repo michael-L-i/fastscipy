@@ -8,7 +8,7 @@ import scipy.spatial.distance as dist
 
 import fastscipy
 from fastscipy import _patch, _spatial
-from fastscipy.testing import assert_identical, check
+from fastscipy.testing import assert_identical, check, fast_calls
 
 RNG = np.random.default_rng(0)
 
@@ -347,3 +347,15 @@ def test_unpatch_restores():
     assert not hasattr(dist.cdist, "fast") and not hasattr(sp.cKDTree.query, "fast")
     fastscipy.patch(["spatial"])
     assert hasattr(dist.cdist, "fast")
+
+
+def test_weighted_sokalsneath_pdist_ignores_unused_diagonal(monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1)
+    monkeypatch.setattr(_spatial, "_BLOCK", 1)
+    x = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0]])
+    weights = np.ones(3)
+    before = fast_calls()
+    tiled = "sokalsneath" in _spatial._PDIST and fastscipy.get_num_threads() > 1
+    check(lambda: dist.pdist(x, "sokalsneath", w=weights), fast=tiled)
+    if "sokalsneath" not in _spatial._PDIST:
+        assert fast_calls() == before

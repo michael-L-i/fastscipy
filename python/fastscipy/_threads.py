@@ -40,6 +40,7 @@ def _default_threads():
         threads = 0
     return threads if threads > 0 else (os.cpu_count() or 1)
 
+
 _pool = None
 _busy = threading.Lock()
 _pool_lock = threading.Lock()

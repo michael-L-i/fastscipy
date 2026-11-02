@@ -69,6 +69,7 @@ def patch(components=None, threads=None):
             continue
         _patch.current = name
         try:
+            _patch.require_numpy()
             if name in {"ndimage", "stats", "signal", "sparse", "linalg", "interpolate", "csgraph"}:
                 _threads.require_native()
             importlib.import_module(f"{__name__}._{name}").patch()

@@ -12,6 +12,7 @@ import math
 import time
 
 import numpy as np
+import scipy
 import scipy.special as sc
 import scipy.special._ufuncs as _ufuncs
 
@@ -37,6 +38,20 @@ _ATTRS = (
     "at",
     "resolve_dtypes",
 )
+
+
+# SciPy <=1.12's Fortran CDFLIB inverse solvers use shared SAVE/ENTRY state
+# (dinvr.f, dzror.f). Keep every CDFLIB-backed ufunc original on these versions.
+_CDFLIB = frozenset(
+    "bdtrik bdtrin btdtria btdtrib chdtriv chndtr chndtridf chndtrinc chndtrix "
+    "fdtridfd gdtria gdtrib gdtrix nbdtrik nbdtrin ncfdtr ncfdtri ncfdtridfd "
+    "ncfdtridfn ncfdtrinc nctdtr nctdtridf nctdtrinc nctdtrit nrdtrimn nrdtrisd "
+    "pdtrik stdtr stdtridf stdtrit tklmbda".split()
+)
+
+
+def _thread_safe(uf, version):
+    return not (version.startswith(("1.10.", "1.11.", "1.12.")) and uf.__name__ in _CDFLIB)
 
 
 def _part(a, ax, nd, s):
@@ -133,7 +148,7 @@ def patch():
     wrappers = {}
     for mod in (_ufuncs, sc):
         for uf in list(vars(mod).values()):
-            if isinstance(uf, np.ufunc) and uf not in wrappers:
+            if isinstance(uf, np.ufunc) and uf not in wrappers and _thread_safe(uf, scipy.__version__):
                 wrappers[uf] = _make(uf, mod.__name__)
     for uf, fast in wrappers.items():
         _patch.rebind(uf, fast)

@@ -136,7 +136,8 @@ def test_failed_isolation_cannot_qualify_plausible_junit(suite, monkeypatch, tmp
         suite.run(["--pyargs", "scipy.example"], False, str(junit))
 
 
-def test_requested_component_and_relative_node_path(suite, tmp_path):
+def test_requested_component_and_relative_node_path(suite, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     scipy_root = tmp_path / "scipy"
     path = scipy_root / "spatial/tests/test_example.py"
     path.parent.mkdir(parents=True)

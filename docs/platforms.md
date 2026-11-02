@@ -78,6 +78,21 @@ and order, while retaining nonfinite spatial arguments or angles. A visible
 warning records the nonfinite-order coverage exception; finite-input
 acceleration checks remain in place.
 
+SciPy 1.16/1.17 masked `special.erf` baselines can corrupt memory with
+fragmented `where` masks, including in a fresh process without fastscipy
+imported. Their project passthrough check uses a contiguous partial mask and
+emits a coverage warning. It still checks exact output bytes, output-buffer
+identity and absence of fast-path calls; other versions retain fragmented
+random-mask coverage. This is an upstream baseline limitation, not a
+production fix or validation of every masked call. Fastscipy continues to
+forward these keyword arguments to SciPy unchanged.
+The affected XSF loops advance caller-owned argument pointers
+([1.16 source](https://github.com/scipy/xsf/blob/33768a09623689efdf7bcaf0afa167341dda0758/include/xsf/numpy.h#L788-L805),
+[1.17 source](https://github.com/scipy/xsf/blob/0d0a593fd31073af10062d0093144e13ae34f8f3/include/xsf/numpy.h#L790-L807));
+[NumPy's masked loop](https://github.com/numpy/numpy/blob/v2.3.5/numpy/_core/src/multiarray/array_method.c#L865-L903)
+also advances them between selected runs. This double advancement explains
+the out-of-bounds writes reproduced with SciPy 1.16.3 and NumPy 2.3.5.
+
 The three excluded older-Python pairs lack the selected SciPy dependency
 wheels: Python 3.9 on musl arm64, and Python 3.9–3.10 on Windows arm64.
 Upstream wheel availability was checked against the release inventories for

@@ -137,7 +137,6 @@ def test_declined_still_correct():
         lambda: sc.erf(x.astype(np.longdouble)),
         lambda: sc.erf(x.astype(object)[:100]),
         lambda: sc.erf(x, out=np.empty_like(x)),
-        lambda: sc.erf(x, out=np.zeros_like(x), where=x > 1),
         lambda: sc.erf(x, dtype=np.float32),
         lambda: sc.erf(x[:100]),
         lambda: sc.erf(np.float64(1.0)),
@@ -148,6 +147,31 @@ def test_declined_still_correct():
             check(call, fast=False)
         except TypeError:
             pass  # object arrays raise in SciPy too
+
+
+def test_where_out_passthrough():
+    x = x64()
+    if scipy.__version__.startswith(("1.16.", "1.17.")):
+        # These SciPy baselines can corrupt memory with fragmented where masks,
+        # even without fastscipy imported. A single selected run is safe.
+        x.sort()
+        warnings.warn(
+            "SciPy 1.16/1.17 baseline fragmented where masks can corrupt memory; "
+            "testing a contiguous partial mask with exact output comparison",
+            RuntimeWarning,
+            stacklevel=1,
+        )
+    mask = x > 1
+    assert mask.any() and not mask.all()
+
+    def call():
+        out = np.zeros_like(x)
+        assert sc.erf(x, out=out, where=mask) is out
+        return out
+
+    before = fast_calls()
+    check(call, fast=False)
+    assert fast_calls() == before
 
 
 def test_out_buffer_written():

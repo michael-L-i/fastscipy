@@ -5,14 +5,15 @@ The published `0.1.0a4` support record remains unchanged.
 
 `local/` retains installed-wheel canaries, monitored process reports,
 dependency snapshots, and exact wheel hashes. The CP39 wheel's packaged Python
-files match the runtime sources in this candidate; the first CP311 wheel
+files match the runtime source checkpoint recorded by its canary, not later
+PR changes; the first CP311 wheel
 predates the legacy ndimage adapters and only establishes the narrower initial
 ABI, special, and spatial result.
 
 | Interpreter | NumPy | SciPy | Completed installed-wheel checks |
 |---|---|---|---|
 | CPython 3.11.14, macOS arm64 | 1.23.5 | 1.10.1 | Native ABI; special/spatial isolated fast-path smokes |
-| CPython 3.9, macOS arm64 | 1.21.6 | 1.10.1 | Native ABI and source provenance; ndimage/special/spatial isolated fast-path smokes; dependency preservation |
+| CPython 3.9.25, macOS arm64 | 1.21.6 | 1.10.1 | Native ABI and source provenance; ndimage/special/spatial isolated fast-path smokes; dependency preservation |
 
 The native ABI canary writes a NumPy array through Rust and compares exact
 SciPy bytes. Component smokes run with one component patched at a time and

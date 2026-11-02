@@ -99,6 +99,18 @@ installs the source archive. A missing or unloadable extension leaves native
 components off with a recorded reason; this fallback is not a promise of a
 compiler-free installation on every platform.
 
+### Measured candidate checkpoints
+
+The [local candidate archive](../bench/runs/2026-11-01-compatibility/README.md)
+records two completed macOS arm64 installed-wheel canaries: Python 3.9.25
+with NumPy 1.21.6/SciPy 1.10.1 passed native ABI and provenance checks,
+dependency preservation, and isolated `ndimage`, `special`, and `spatial`
+smokes; Python 3.11.14 with NumPy 1.23.5/SciPy 1.10.1 passed the earlier,
+narrower ABI and `special`/`spatial` smokes. These reports identify their
+wheel hashes and source checkpoints. They are not numerical-suite results
+or validation of later source changes. The Python 3.9/NumPy 1.19.5 endpoint
+and cross-platform candidate matrix still require their configured CI checks.
+
 ## Evidence
 
 The [a4 release](https://github.com/michael-L-i/fastscipy/actions/runs/39738398406) validated source `46b33f2882f0b10a126169bed0a088705cf402a0`, tag `v0.1.0a4`, and published the complete set. [Publication evidence](../bench/runs/2026-10-22-release-a4/publication/README.md) retains the run, approved manifest and independent hash comparison. [Installed pilot evidence](../bench/runs/2026-10-22-release-a4/installed-pilots/README.md) retains all eight clean installation and application reports from [run 39793298085](https://github.com/michael-L-i/fastscipy/actions/runs/39793298085).

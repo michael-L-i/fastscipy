@@ -182,6 +182,7 @@ def test_float32_cast_warning_events(threads, monkeypatch):
         with fastscipy.disabled():
             expected = outcome()
         assert_identical(expected, outcome())
+        callback_outcomes = []
         for enabled in (False, True):
             events = []
 
@@ -191,9 +192,14 @@ def test_float32_cast_warning_events(threads, monkeypatch):
 
             context = fastscipy.disabled() if not enabled else contextlib.nullcontext()
             with context, np.errstate(invalid="call", call=handler):
-                with pytest.raises(RuntimeError, match="cast callback"):
-                    call()
-            assert len(events) == 1
+                try:
+                    result = call()
+                except RuntimeError as error:
+                    result = (type(error), str(error))
+            callback_outcomes.append((result, events))
+            assert len(events) <= 1
+        # NumPy 1.x does not report this signaling-NaN cast on every platform.
+        assert_identical(callback_outcomes[0], callback_outcomes[1])
     assert a.tobytes() == before
 
 

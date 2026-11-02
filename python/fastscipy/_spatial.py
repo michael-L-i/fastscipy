@@ -10,6 +10,7 @@ metric, bypassing array-namespace dispatch that is redundant for exact ndarrays.
 """
 
 import numpy as np
+import scipy
 import scipy.spatial as sp
 import scipy.spatial._ckdtree as _ck
 import scipy.spatial.distance as dist
@@ -39,6 +40,10 @@ _CDIST = {
     "mahalanobis",
 }
 _PDIST = _CDIST - {"dice"}
+if not scipy.__version__.startswith("1.18."):
+    # Tiling computes unused diagonal pairs. Historical weighted Sokal-Sneath
+    # raises for all-false self-pairs even when every requested pdist pair is valid.
+    _PDIST = _PDIST - {"sokalsneath"}
 # These entries are SciPy's pybind kernels, without Python statistics or
 # preprocessing. Keep the same kernel (including pdist/dice's own arithmetic).
 _DIRECT_PDIST = _CDIST - {"cosine", "correlation", "jensenshannon", "seuclidean", "mahalanobis"}

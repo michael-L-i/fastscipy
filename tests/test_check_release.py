@@ -69,11 +69,21 @@ def test_eight_wheel_preflight_is_explicit_and_exact(release, tmp_path):
         release.archives(tmp_path, project, complete=True, complete_python="cp313")
 
 
-def test_default_complete_gate_still_requires_32(release, tmp_path):
+def test_default_complete_gate_retains_32_and_requires_21_older_wheels(release, tmp_path):
     project = make_archives(tmp_path, ["cp312", "cp313", "cp314", "cp315"])
-    release.archives(tmp_path, project, complete=True)
+    with pytest.raises(AssertionError, match="Missing"):
+        release.archives(tmp_path, project, complete=True)
     with pytest.raises(AssertionError, match="unexpected"):
         release.archives(tmp_path, project, complete=True, complete_python="cp313")
+    make_archives(tmp_path, ["cp39", "cp310", "cp311"])
+    # SciPy does not provide these dependency wheels for the older interpreters.
+    for suffix in ("cp39-cp39-musllinux_1_2_aarch64", "cp39-cp39-win_arm64", "cp310-cp310-win_arm64"):
+        next(tmp_path.glob("*" + suffix + ".whl")).unlink()
+    release.archives(tmp_path, project, complete=True)
+    assert len(list(tmp_path.glob("*.whl"))) == 53
+    next(tmp_path.glob("*cp312-cp312-win_arm64.whl")).unlink()
+    with pytest.raises(AssertionError, match="Missing"):
+        release.archives(tmp_path, project, complete=True)
 
 
 @pytest.mark.parametrize(

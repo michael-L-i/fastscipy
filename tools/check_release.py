@@ -19,6 +19,38 @@ from packaging.utils import parse_wheel_filename
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# Older interpreters have a different last available SciPy wheel. Keep their
+# scoped qualification separate from the established all-component release gate.
+LEGACY_TARGETS = {
+    "cp39": {
+        "macos-arm64",
+        "macos-x86_64",
+        "manylinux-aarch64",
+        "manylinux-x86_64",
+        "musllinux-x86_64",
+        "windows-amd64",
+    },
+    "cp310": {
+        "macos-arm64",
+        "macos-x86_64",
+        "manylinux-aarch64",
+        "manylinux-x86_64",
+        "musllinux-aarch64",
+        "musllinux-x86_64",
+        "windows-amd64",
+    },
+    "cp311": {
+        "macos-arm64",
+        "macos-x86_64",
+        "manylinux-aarch64",
+        "manylinux-x86_64",
+        "musllinux-aarch64",
+        "musllinux-x86_64",
+        "windows-amd64",
+        "windows-arm64",
+    },
+}
+
 
 def versions():
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
@@ -60,7 +92,9 @@ def archives(directory, project, complete=False, complete_python=None):
                 r"(?:manylinux_2_\d+|manylinux2014|musllinux_1_2)_(?:aarch64|x86_64)|win_(?:amd64|arm64))"
             )
             assert all(allowed.fullmatch(tag.platform) for tag in tags), path.name
-            assert all(tag.interpreter in {"cp312", "cp313", "cp314", "cp315"} for tag in tags), path.name
+            assert all(
+                tag.interpreter in {"cp39", "cp310", "cp311", "cp312", "cp313", "cp314", "cp315"} for tag in tags
+            ), path.name
             assert all(tag.abi == tag.interpreter for tag in tags), path.name
             for tag in tags:
                 if tag.platform.startswith("macosx_"):
@@ -113,6 +147,8 @@ def archives(directory, project, complete=False, complete_python=None):
         }
         interpreters = (complete_python,) if complete_python else ("cp312", "cp313", "cp314", "cp315")
         expected = {(python, target) for python in interpreters for target in platforms}
+        if complete_python is None:
+            expected.update((python, target) for python, targets in LEGACY_TARGETS.items() for target in targets)
         assert targets == expected, f"Missing {expected - targets}; unexpected {targets - expected}"
         assert len(list(directory.glob("*.whl"))) == len(expected), f"Expected exactly {len(expected)} wheels"
         assert len(list(directory.glob("*.tar.gz"))) == 1, "Expected exactly one source distribution"
@@ -148,7 +184,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dist", type=Path)
     parser.add_argument("--installed", action="store_true")
-    parser.add_argument("--complete", action="store_true", help="Require all eight platforms and four Python versions")
+    parser.add_argument(
+        "--complete", action="store_true", help="Require all 32 current-stack and 21 older-Python wheels"
+    )
     parser.add_argument(
         "--complete-python", choices=["cp313"], help="Explicit eight-platform Python 3.13 preflight set"
     )

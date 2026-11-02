@@ -80,7 +80,7 @@ jobs:
       # inside the six-hour job limit. Preflight uses two separate runner VMs;
       # the full release uses eight, with the same per-machine resource limits.
       matrix:
-        python: ${{ fromJSON(inputs.validation_only && '["cp313"]' || '["cp312", "cp313", "cp314", "cp315"]') }}
+        python: ${{ fromJSON(inputs.validation_only && '["cp313"]' || '["cp39", "cp310", "cp311", "cp312", "cp313", "cp314", "cp315"]') }}
         target:
           - name: manylinux-x86_64
             runner: ubuntu-24.04
@@ -114,6 +114,10 @@ jobs:
             runner: windows-11-arm
             arch: ARM64
             platform: win
+        exclude:
+          - {python: cp39, target: {name: musllinux-aarch64, runner: ubuntu-24.04-arm, arch: aarch64, platform: musllinux}}
+          - {python: cp39, target: {name: windows-arm64, runner: windows-11-arm, arch: ARM64, platform: win}}
+          - {python: cp310, target: {name: windows-arm64, runner: windows-11-arm, arch: ARM64, platform: win}}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -176,14 +180,17 @@ jobs:
             VALIDATION_ONLY GITHUB_EVENT_NAME
           CIBW_CONFIG_SETTINGS: maturin.build-args=--locked
           CIBW_TEST_REQUIRES: >-
-            numpy==2.5.4 scipy==1.18.1 pytest pytest-xdist hypothesis packaging psutil pooch
+            ${{ fromJSON('{"cp39":"numpy==2.0.2 scipy==1.13.1", "cp310":"numpy==2.2.6 scipy==1.15.3", "cp311":"numpy==2.4.0 scipy==1.17.1", "cp312":"numpy==2.5.4 scipy==1.18.1", "cp313":"numpy==2.5.4 scipy==1.18.1", "cp314":"numpy==2.5.4 scipy==1.18.1", "cp315":"numpy==2.5.4 scipy==1.18.1"}')[matrix.python] }}
+            pytest pytest-xdist hypothesis packaging psutil pooch
           # Python 3.13 runs project identity tests, every benchmark area and
           # paired upstream SciPy tests; 3.12/3.14/3.15 run project tests only.
           # Each interpreter has its own report directory. Linux project files
           # are copied into a container, so persist reports on an explicit volume.
+          # Older interpreters qualify the explicit compatibility component set
+          # with numerical and paired upstream checks. The original 32 wheels
+          # retain their all-component checks, benchmarks and CP313 upstream gate.
           CIBW_TEST_COMMAND: >-
-            python -I "{project}/tools/check_release.py" --installed &&
-            python -I -c "import os,subprocess,sys; subprocess.run([sys.executable,'-I',r'{project}/tools/platform_suite.py','--output',os.environ.get('FASTSCIPY_RELEASE_REPORT_DIR',r'{project}/artifacts')+'/'+sys.implementation.cache_tag,'--max-rss-mb','4096']+(['--upstream'] if sys.version_info[:2]==(3,13) else ['--tests-only']),check=True)"
+            python -I -c "import os,subprocess,sys; root=r'{project}'; output=os.environ.get('FASTSCIPY_RELEASE_REPORT_DIR',root+'/artifacts')+'/'+sys.implementation.cache_tag; legacy=sys.version_info[:2]<(3,12); subprocess.run([sys.executable,'-I',root+'/tools/compatibility_release.py','--output',output] if legacy else [sys.executable,'-I',root+'/tools/check_release.py','--installed'],check=True); legacy or subprocess.run([sys.executable,'-I',root+'/tools/platform_suite.py','--output',output,'--max-rss-mb','4096']+(['--upstream'] if sys.version_info[:2]==(3,13) else ['--tests-only']),check=True)"
       - name: Validate repaired wheel archives
         run: |
           python tools/check_release.py --dist wheelhouse

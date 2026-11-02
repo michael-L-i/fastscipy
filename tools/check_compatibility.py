@@ -40,24 +40,29 @@ def inspect(expect_active=()):
     originals = (ndimage.correlate1d, special.expit)
     samples = (expected, special.expit(x))
     status = fastscipy.patch(threads=2)
+    errors_before = sum(v for (_, kind), v in fastscipy.stats().items() if kind == "error")
     try:
         for component in expect_active:
             assert status.get(component) == "on", (component, status)
         assert ndimage.correlate1d(x, weights, mode="reflect").tobytes() == samples[0].tobytes()
         assert special.expit(x).tobytes() == samples[1].tobytes()
         smokes = {}
+        fastscipy.unpatch()
         for component, state in status.items():
             if state != "on":
                 continue
             module = __import__("fastscipy._" + component, fromlist=["smoke"])
+            assert fastscipy.patch([component], threads=2)[component] == "on"
             before = sum(v for (_, kind), v in fastscipy.stats().items() if kind == "fast")
             module.smoke()
             after = sum(v for (_, kind), v in fastscipy.stats().items() if kind == "fast")
             smokes[component] = after - before
             assert after > before, f"No acceleration in {component} smoke"
+            fastscipy.unpatch()
     finally:
         fastscipy.unpatch()
     assert not fastscipy.status()
+    assert sum(v for (_, kind), v in fastscipy.stats().items() if kind == "error") == errors_before
     assert (ndimage.correlate1d, special.expit) == originals
     binary = Path(_native.__file__)
     return {
@@ -70,6 +75,7 @@ def inspect(expect_active=()):
         "native_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
         "native_build": _native._build_info(),
         "status": status,
+        "expected_active": list(expect_active),
         "smoke_fast_calls": smokes,
         "scope": "installed-wheel ABI and dispatch canary; not full numerical qualification",
     }

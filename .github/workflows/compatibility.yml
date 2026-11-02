@@ -1,0 +1,136 @@
+name: Compatibility candidates
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compatibility-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_BUILD_JOBS: "1"
+  FASTSCIPY_NUM_THREADS: "2"
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  VECLIB_MAXIMUM_THREADS: "1"
+  FASTSCIPY_STRICT: "1"
+
+jobs:
+  build:
+    name: Candidate wheel Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - {python: "3.9", numpy: "1.21.6", scipy: "1.10.1"}
+          - {python: "3.10", numpy: "1.21.6", scipy: "1.10.1"}
+          - {python: "3.11", numpy: "1.23.5", scipy: "1.10.1"}
+          - {python: "3.12", numpy: "2.0.2", scipy: "1.18.1"}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: dtolnay/rust-toolchain@1.97.1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: compatibility-${{ matrix.python }}
+      - name: Build one portable wheel per interpreter
+        run: |
+          python -m pip install --only-binary=:all: "numpy==${{ matrix.numpy }}" "scipy==${{ matrix.scipy }}" maturin psutil
+          mkdir -p artifacts/compatibility
+          python - <<'PYBUILD'
+          import json, pathlib, sys
+          sys.path.insert(0, 'tools')
+          from platform_suite import run
+          root = pathlib.Path('artifacts/compatibility')
+          report = run([sys.executable, '-m', 'maturin', 'build', '--profile', 'dev-release', '--out', str(root / 'wheels')], root / 'build.log', 6144, 1800)
+          (root / 'build.json').write_text(json.dumps(report, indent=2))
+          assert report['returncode'] == 0 and not report['stopped'], report
+          PYBUILD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compatibility-wheel-${{ matrix.python }}
+          path: artifacts/compatibility/wheels/*.whl
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compatibility-build-${{ matrix.python }}
+          path: artifacts/compatibility/*.log
+
+  installed:
+    needs: build
+    name: Installed CP${{ matrix.python }} SciPy ${{ matrix.scipy }} NumPy ${{ matrix.numpy }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - {python: "3.9", numpy: "1.19.5", scipy: "1.10.1"}
+          - {python: "3.9", numpy: "1.21.6", scipy: "1.10.1"}
+          - {python: "3.10", numpy: "1.21.6", scipy: "1.10.1"}
+          - {python: "3.10", numpy: "1.23.5", scipy: "1.10.1"}
+          - {python: "3.11", numpy: "1.26.4", scipy: "1.11.4"}
+          - {python: "3.11", numpy: "1.26.4", scipy: "1.12.0"}
+          - {python: "3.11", numpy: "2.0.2", scipy: "1.13.1"}
+          - {python: "3.11", numpy: "2.1.3", scipy: "1.14.1"}
+          - {python: "3.11", numpy: "2.3.5", scipy: "1.15.3"}
+          - {python: "3.11", numpy: "2.3.5", scipy: "1.16.3"}
+          - {python: "3.11", numpy: "2.4.0", scipy: "1.17.1"}
+          - {python: "3.12", numpy: "2.0.2", scipy: "1.18.1"}
+          - {python: "3.12", numpy: "2.5.4", scipy: "1.18.1"}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install existing scientific environment
+        run: |
+          python -m pip install --only-binary=:all: "numpy==${{ matrix.numpy }}" "scipy==${{ matrix.scipy }}" maturin psutil pytest hypothesis
+          python -m pip freeze > environment-before.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: compatibility-wheel-${{ matrix.python }}
+          path: candidate-wheel
+      - name: Install without dependency changes
+        run: |
+          mkdir -p artifacts/compatibility
+          python -m pip install candidate-wheel/*.whl
+          python -m pip check
+          python -m pip freeze > environment-after.txt
+          python - <<'PY'
+          from pathlib import Path
+          def scientific(path):
+              return [line for line in Path(path).read_text().splitlines() if line.lower().startswith(('numpy==', 'scipy=='))]
+          assert scientific('environment-before.txt') == scientific('environment-after.txt')
+          PY
+      - name: Installed ABI and dispatch canary
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          sys.path.insert(0, 'tools')
+          from platform_suite import run
+          root = pathlib.Path('artifacts/compatibility')
+          report = run([sys.executable, 'tools/check_compatibility.py', '--expect-active', 'special', 'spatial', '--output', str(root / 'installed.json')], root / 'installed.log', 1024, 300)
+          (root / 'canary-process.json').write_text(json.dumps(report, indent=2))
+          assert report['returncode'] == 0 and not report['stopped'], report
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compatibility-${{ matrix.python }}-${{ matrix.scipy }}-${{ matrix.numpy }}
+          path: |
+            artifacts/compatibility/
+            environment-before.txt
+            environment-after.txt
+          retention-days: 14

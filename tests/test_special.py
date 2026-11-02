@@ -3,7 +3,6 @@ import warnings
 
 import numpy as np
 import pytest
-import scipy
 import scipy.special as sc
 import scipy.special._ufuncs as _ufuncs
 
@@ -239,13 +238,15 @@ def test_all_ufuncs_identical(threads):
         uf = getattr(fast_uf, "__wrapped__", None)
         if not isinstance(uf, np.ufunc) or name in SKIP or name.startswith(("obl_", "pro_", "mathieu_")):
             continue
-        if name in {"sph_harm", "yn"} and scipy.__version__.startswith("1.10."):
+        if not any(t.startswith("d" * uf.nin) for t in uf.types):
+            continue
+        if name in {"sph_harm", "yn"}:
             warnings.warn(
-                f"SciPy 1.10 {name}: nonfinite degree/order baseline hangs; finite inputs tested separately",
+                f"{name}: legacy floating-order loop tested with finite integer degree/order; "
+                "nonfinite order can hang SciPy's baseline",
                 RuntimeWarning,
                 stacklevel=1,
             )
-            continue
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             args = []
@@ -253,9 +254,14 @@ def test_all_ufuncs_identical(threads):
                 a = RNG.uniform(0.1, 5, n)
                 a[::97], a[1::101], a[2::103] = np.nan, np.inf, 0.0
                 args.append(a)
-            if not any(t.startswith("d" * uf.nin) for t in uf.types):
-                continue
             args = [a.astype(np.float64) for a in args]
+            if name in {"sph_harm", "yn"}:
+                # Legacy floating-order loops cast to C integers without an
+                # infinity check, which can hang in the baseline recurrence.
+                # Keep nonfinite x/angles; only degree/order needs bounding.
+                args[0].fill(1 if name == "sph_harm" else 3)
+                if name == "sph_harm":
+                    args[1].fill(3)
             with fastscipy.disabled():
                 try:
                     expected = uf(*args)

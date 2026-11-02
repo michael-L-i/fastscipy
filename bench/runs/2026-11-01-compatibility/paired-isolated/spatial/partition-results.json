@@ -1,0 +1,80 @@
+[
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    "patched": false,
+    "junit": "0-False.xml",
+    "quarantine": "0-False.quarantine.json",
+    "isolation": "0-False.isolation.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1155,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "darwin",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "macosx-26.0-arm64",
+        "python": [
+          3,
+          11,
+          14
+        ],
+        "numpy": "1.23.5",
+        "scipy": "1.10.1",
+        "test_source": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "58a8e2523f961738ee8d3ede1af1801dd3239a1617e1c346f8e420908023c584"
+      },
+      "active": false,
+      "selected": []
+    }
+  },
+  {
+    "partition": 0,
+    "args": [
+      "--pyargs",
+      "scipy.spatial"
+    ],
+    "patched": true,
+    "junit": "0-True.xml",
+    "quarantine": "0-True.quarantine.json",
+    "isolation": "0-True.isolation.json",
+    "status": "completed",
+    "complete": true,
+    "returncode": 0,
+    "tests": 1155,
+    "junit_exists": true,
+    "quarantine_exists": true,
+    "quarantine_report": {
+      "plugin": "scipy_upstream_quarantine",
+      "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "reason": "Known upstream NumPy 2.5.4 Windows ARM64 access violation; independently reproduced without SciPy, and in both paired runs: https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+      "observed": {
+        "platform": "darwin",
+        "machine": "arm64",
+        "implementation": "cpython",
+        "python_platform": "macosx-26.0-arm64",
+        "python": [
+          3,
+          11,
+          14
+        ],
+        "numpy": "1.23.5",
+        "scipy": "1.10.1",
+        "test_source": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/linalg/tests/test_basic.py",
+        "test_source_sha256": "58a8e2523f961738ee8d3ede1af1801dd3239a1617e1c346f8e420908023c584"
+      },
+      "active": false,
+      "selected": []
+    }
+  }
+]

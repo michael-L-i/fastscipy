@@ -1,0 +1,335 @@
+{
+  "harness_checkpoint": "a11c13b",
+  "followup": "Default non-require-fast interaction mode restored separately; strict legacy path unchanged.",
+  "pairs": {
+    "ndimage": {
+      "common_tests": 3592,
+      "changed_outcomes": [],
+      "baseline_only": 0,
+      "patched_only": 0,
+      "junit_sha256": {
+        "0-True.xml": "406ea17096990536ec5a3c5e4adec0ad1b771b6d938915d15d131ad8c94250a7",
+        "0-False.xml": "749fa4ce8117c38332329e5023c1746c269a3c20a5f5c966aefa85d91e38ab7e"
+      },
+      "baseline_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "baseline",
+        "required_components": [
+          "ndimage"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-u80ufm3l",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 3592,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_c_api.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_datatypes.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_filters.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_fourier.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_interpolation.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_measurements.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_morphology.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_splines.py"
+        ],
+        "status": {},
+        "original_bindings": true,
+        "fast_calls": 0,
+        "fast_errors": 0
+      },
+      "patched_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "patched",
+        "required_components": [
+          "ndimage"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-cwx7es06",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 3592,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_c_api.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_datatypes.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_filters.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_fourier.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_interpolation.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_measurements.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_morphology.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_splines.py"
+        ],
+        "status": {
+          "ndimage": "on"
+        },
+        "original_bindings": false,
+        "fast_calls": 9873,
+        "fast_errors": 0
+      },
+      "baseline_outcomes": {
+        "passed": 3592
+      },
+      "patched_outcomes": {
+        "passed": 3592
+      },
+      "expected_baseline_only_modules": {}
+    },
+    "special": {
+      "common_tests": 2248,
+      "changed_outcomes": [],
+      "baseline_only": 201,
+      "patched_only": 0,
+      "junit_sha256": {
+        "0-True.xml": "8a43b96edf8872cdafae6af15bc2cc35dc50a1e7979daf48aeb699e2b3983da9",
+        "0-False.xml": "914c8167ef6c2a5791158643700e7143f2f20005c92dec0cbecef9ec0a13ae9a"
+      },
+      "baseline_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "baseline",
+        "required_components": [
+          "special"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-ha99_b2r",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 2253,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_basic.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_bdtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_boxcox.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cdflib.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cdft_asymptotic.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cosine_distr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cython_special.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_data.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_dd.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_digamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ellip_harm.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_erfinv.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_exponential_integrals.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_faddeeva.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_gamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_gammainc.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_hyp2f1.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_hypergeometric.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_kolmogorov.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_lambertw.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_log_softmax.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_loggamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_logit.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_logsumexp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_mpmath.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_nan_inputs.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ndtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ndtri_exp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_orthogonal.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_orthogonal_eval.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_owens_t.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_pcf.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_pdtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_powm1.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_expn_asy.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_gammainc.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_utils.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_round.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sf_error.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sici.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spence.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spfun_stats.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sph_harm.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spherical_bessel.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_trig.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_wright_bessel.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_wrightomega.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_zeta.py"
+        ],
+        "status": {},
+        "original_bindings": true,
+        "fast_calls": 0,
+        "fast_errors": 0
+      },
+      "patched_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "patched",
+        "required_components": [
+          "special"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-9jicfmvh",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 2052,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_basic.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_bdtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_boxcox.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cdflib.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cdft_asymptotic.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cosine_distr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_cython_special.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_data.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_dd.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_digamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ellip_harm.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_erfinv.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_exponential_integrals.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_faddeeva.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_gamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_gammainc.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_hyp2f1.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_hypergeometric.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_kolmogorov.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_lambertw.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_log_softmax.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_loggamma.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_logit.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_logsumexp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_mpmath.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_nan_inputs.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ndtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_ndtri_exp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_orthogonal.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_orthogonal_eval.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_owens_t.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_pcf.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_pdtr.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_powm1.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_expn_asy.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_gammainc.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_precompute_utils.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_round.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sf_error.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sici.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spence.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spfun_stats.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_sph_harm.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_spherical_bessel.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_trig.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_wright_bessel.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_wrightomega.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/special/tests/test_zeta.py"
+        ],
+        "status": {
+          "special": "on"
+        },
+        "original_bindings": false,
+        "fast_calls": 9,
+        "fast_errors": 0
+      },
+      "baseline_outcomes": {
+        "passed": 2253,
+        "skipped": 196
+      },
+      "patched_outcomes": {
+        "passed": 2052,
+        "skipped": 196
+      },
+      "expected_baseline_only_modules": {
+        "scipy.special.tests.test_nan_inputs": 201
+      }
+    },
+    "spatial": {
+      "common_tests": 1155,
+      "changed_outcomes": [],
+      "baseline_only": 0,
+      "patched_only": 0,
+      "junit_sha256": {
+        "0-True.xml": "62ad8bf5c8588862b7a6a48c376b7afa73fe5b5595e09882e39b7614dc82d7f7",
+        "0-False.xml": "52db1de4cb7fbd338f7e77411d087b5c9eadb82cfc86c8f65705e9244d5a89ba"
+      },
+      "baseline_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "baseline",
+        "required_components": [
+          "spatial"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-637gwmik",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 1151,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__plotutils.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__procrustes.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_distance.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_hausdorff.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_kdtree.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_qhull.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_slerp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_spherical_voronoi.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_groups.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_spline.py"
+        ],
+        "status": {},
+        "original_bindings": true,
+        "fast_calls": 0,
+        "fast_errors": 0
+      },
+      "patched_isolation": {
+        "plugin": "scipy_upstream_isolation",
+        "expected_state": "patched",
+        "required_components": [
+          "spatial"
+        ],
+        "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-shdx59q3",
+        "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+        "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+        "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+        "conftests": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+        ],
+        "checked_calls": 1151,
+        "valid": true,
+        "test_paths": [
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__plotutils.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__procrustes.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_distance.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_hausdorff.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_kdtree.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_qhull.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_slerp.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_spherical_voronoi.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_groups.py",
+          "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_spline.py"
+        ],
+        "status": {
+          "spatial": "on"
+        },
+        "original_bindings": true,
+        "fast_calls": 376,
+        "fast_errors": 0
+      },
+      "baseline_outcomes": {
+        "skipped": 4,
+        "passed": 1151
+      },
+      "patched_outcomes": {
+        "skipped": 4,
+        "passed": 1151
+      },
+      "expected_baseline_only_modules": {}
+    }
+  }
+}

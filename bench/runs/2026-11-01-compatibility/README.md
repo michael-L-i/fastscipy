@@ -39,3 +39,20 @@ The pinned cibuildwheel 4.3.1 identifier probe confirms that the configured
 older interpreters have build identifiers. It does not establish successful
 cross-platform builds. The proposed 53-wheel release matrix has not been run
 or published by this work.
+
+Fresh isolated upstream comparisons on CPython 3.11.14 / NumPy 1.23.5 /
+SciPy 1.10.1 compared 6,995 common tests with zero changed outcomes and zero
+incomplete pairs: ndimage 3,592, special 2,248 and spatial 1,155. Special
+has 201 expected baseline-only NaN-input cases selected on original ufunc
+identity; these are not counted as common tests. Baseline failures and skips
+remain visible in the recorded JUnit outcome counts.
+
+`paired-isolated/` records each neutral working directory, installed SciPy
+test/conftest paths, after-fixture baseline state and active component,
+fast-call counts (9,873 / 9 / 376), zero fast-path errors, raw JUnit hashes,
+logs and watchdog results. All three baselines had empty status and zero
+fastscipy calls. A deliberately contaminating autouse fixture was rejected
+by the negative proof. The reports match harness checkpoint `a11c13b`; the
+follow-up preserves default all-component interactions and leaves these
+explicit `--require-fast` comparisons unchanged. Initial contaminated paired
+attempts are invalid diagnostics and are excluded from this evidence.

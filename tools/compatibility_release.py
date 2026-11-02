@@ -54,6 +54,7 @@ def main():
             sys.executable,
             "-I",
             str(ROOT / "tools/scipy_suite.py"),
+            "--require-fast",
             "--output-dir",
             str(output / ("upstream-" + component)),
             "--pyargs",

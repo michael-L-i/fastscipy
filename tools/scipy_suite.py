@@ -99,6 +99,8 @@ def invocation(args, scipy_root):
             module = ".".join(["scipy", *Path(head).relative_to(scipy_root).parts])
         if module == "scipy":
             required.update(fastscipy.COMPONENTS)
+        elif module == "scipy.sparse":
+            required.update(("sparse", "sparse_linalg", "csgraph"))
         elif module.startswith("scipy."):
             area = module.split(".")[1]
             if module.startswith("scipy.sparse.csgraph"):
@@ -146,9 +148,10 @@ def run(args, patched, junit, require_fast=False):
     # acquire a different meaning after moving to the neutral working directory.
     paths = [str(Path(p).resolve()) for p in env.get("PYTHONPATH", "").split(os.pathsep) if p]
     env["PYTHONPATH"] = os.pathsep.join([tools, *paths])
-    if required:
+    if required and require_fast:
         # Scoped upstream comparisons must exercise their requested component,
         # rather than borrowing another component's activation or counters.
+        # Normal runs retain the original all-component interaction coverage.
         env["FASTSCIPY_COMPONENTS"] = ",".join(required)
     print("$", " ".join(cmd), flush=True)
     try:

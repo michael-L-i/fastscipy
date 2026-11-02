@@ -13,7 +13,15 @@ def isolation_report(cmd, *, valid=True):
     path = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-isolation-report=")))
     state = next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-expected-state="))
     path.write_text(
-        json.dumps({"plugin": "scipy_upstream_isolation", "expected_state": state, "valid": valid, "checked_calls": 1})
+        json.dumps(
+            {
+                "plugin": "scipy_upstream_isolation",
+                "expected_state": state,
+                "valid": valid,
+                "checked_calls": 1,
+                "fast_calls": 1,
+            }
+        )
     )
 
 
@@ -138,6 +146,24 @@ def test_requested_component_and_relative_node_path(suite, tmp_path):
     assert args == [str(path) + "::test_case"]
     assert required == ["spatial"]
     assert suite.invocation(["--pyargs", "scipy.sparse.linalg"], scipy_root)[1] == ["sparse_linalg"]
+    assert suite.invocation(["--pyargs", "scipy.sparse"], scipy_root)[1] == ["csgraph", "sparse", "sparse_linalg"]
+
+
+@pytest.mark.parametrize("require_fast", [False, True])
+def test_default_interactions_preserved_and_qualification_scoped(suite, monkeypatch, tmp_path, require_fast):
+    monkeypatch.delenv("FASTSCIPY_COMPONENTS", raising=False)
+    junit = tmp_path / "result.xml"
+    junit.write_text('<testsuite><testcase classname="scipy.special" name="test_ok"/></testsuite>')
+
+    def subprocess_run(cmd, check, env, cwd):
+        assert env.get("FASTSCIPY_COMPONENTS") == ("special" if require_fast else None)
+        isolation_report(cmd)
+        quarantine = Path(next(arg.split("=", 1)[1] for arg in cmd if arg.startswith("--upstream-quarantine-report=")))
+        quarantine.write_text(json.dumps({"plugin": "scipy_upstream_quarantine", "selected": [], "active": False}))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(suite.subprocess, "run", subprocess_run)
+    suite.run(["--pyargs", "scipy.special"], True, str(junit), require_fast=require_fast)
 
 
 def test_other_active_component_cannot_qualify_request(monkeypatch, tmp_path):

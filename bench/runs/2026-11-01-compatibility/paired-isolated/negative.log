@@ -1,0 +1,15 @@
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p scipy_upstream_isolation --upstream-quarantine-report=/private/tmp/fastscipy-isolated-final/negative/0-False.quarantine.json --upstream-isolation-report=/private/tmp/fastscipy-isolated-final/negative/0-False.isolation.json --upstream-expected-state=baseline --upstream-required-components=spatial --rootdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages --confcutdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy --junitxml=/private/tmp/fastscipy-isolated-final/negative/0-False.xml --pyargs scipy.spatial.tests.test_kdtree -k test_kdtree_pickle
+
+! _pytest.outcomes.Exit: Upstream isolation failed: baseline was patched
+assert (not {'spatial': 'on'}) !
+228 deselected in 0.17s
+Incomplete partition 0, patched=False: pytest did not complete: exit 2
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p scipy_upstream_isolation -p fastscipy.pytest_plugin --upstream-quarantine-report=/private/tmp/fastscipy-isolated-final/negative/0-True.quarantine.json --upstream-isolation-report=/private/tmp/fastscipy-isolated-final/negative/0-True.isolation.json --upstream-expected-state=patched --upstream-required-components=spatial --rootdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages --confcutdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy --junitxml=/private/tmp/fastscipy-isolated-final/negative/0-True.xml --pyargs scipy.spatial.tests.test_kdtree -k test_kdtree_pickle
+....                                                                     [100%]
+fastscipy: {'spatial': 'on'}
+fastscipy: 0 fast-path calls, 0 fast-path errors
+4 passed, 228 deselected in 0.09s
+
+0 tests ran in both; 0 changed outcome
+1 incomplete partition pairs excluded from comparison: [0]
+0 collected only without fastscipy: {}

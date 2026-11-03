@@ -1,0 +1,5 @@
+import pytest
+import fastscipy
+@pytest.fixture(scope="session", autouse=True)
+def contaminate():
+    fastscipy.patch(["spatial"])

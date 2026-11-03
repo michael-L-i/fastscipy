@@ -5,11 +5,14 @@ import math
 
 import numpy as np
 import pytest
+import scipy
 import scipy.ndimage as ndi
 
 import fastscipy
 from fastscipy import _native
 from fastscipy.testing import check
+
+_CURRENT_ARITHMETIC = scipy.__version__.startswith("1.18.")
 
 MODES = ["reflect", "constant", "nearest", "mirror", "wrap", "grid-wrap", "grid-constant", "grid-mirror"]
 DTYPES = [np.uint8, np.int8, np.uint16, np.int16, np.uint32, np.int32, np.uint64, np.int64, np.float32, np.float64]
@@ -216,7 +219,7 @@ def test_edt_sampled_ties():
     rng = np.random.default_rng(901)
     x = rng.random((7, 11, 13)) > 0.8
     for sampling in ([0.7, 1.3, 2.1], [1.0, 1.3, 1.3], [0.1, 0.3, 0.9]):
-        check(lambda: ndi.distance_transform_edt(x, sampling=sampling, return_indices=True))
+        check(lambda: ndi.distance_transform_edt(x, sampling=sampling, return_indices=True), fast=_CURRENT_ARITHMETIC)
 
 
 @pytest.mark.parametrize("dtype", DTYPES[:8])
@@ -226,11 +229,18 @@ def test_interpolation_compiler_cast_fallback(monkeypatch, dtype):
     monkeypatch.setattr(interp, "_SCIPY_INT_CAST", True)
     x = np.resize(np.array([0.0, -0.0, 1.5, -1.5, 1e30, -1e30, np.nan, np.inf]), (7, 9))
     for order in (0, 1, 3):
-        check(lambda: ndi.shift(x, [0.3, -1.2], order=order, output=dtype))
-        check(lambda: ndi.affine_transform(x, [[0.9, 0.1], [-0.1, 1.1]], order=order, output=dtype))
-        check(lambda: ndi.map_coordinates(x, np.mgrid[:3, :4] + 0.3, order=order, output=dtype))
-    check(lambda: ndi.spline_filter1d(x, 3, axis=0, output=dtype))
-    check(lambda: ndi.spline_filter1d(x, 3, axis=1, output=np.empty((14, 18), dtype)[::2, ::2]))
+        check(lambda: ndi.shift(x, [0.3, -1.2], order=order, output=dtype), fast=_CURRENT_ARITHMETIC)
+        check(
+            lambda: ndi.affine_transform(x, [[0.9, 0.1], [-0.1, 1.1]], order=order, output=dtype),
+            fast=_CURRENT_ARITHMETIC,
+        )
+        check(
+            lambda: ndi.map_coordinates(x, np.mgrid[:3, :4] + 0.3, order=order, output=dtype), fast=_CURRENT_ARITHMETIC
+        )
+    check(lambda: ndi.spline_filter1d(x, 3, axis=0, output=dtype), fast=_CURRENT_ARITHMETIC)
+    check(
+        lambda: ndi.spline_filter1d(x, 3, axis=1, output=np.empty((14, 18), dtype)[::2, ::2]), fast=_CURRENT_ARITHMETIC
+    )
 
 
 # --- interpolation ----------------------------------------------------------------------------
@@ -245,11 +255,11 @@ def test_spline_zoom_shift(seed):
         gm = bool(rng.integers(2))
         kw = dict(order=order, mode=mode, cval=0.5, grid_mode=gm and mode in ("grid-wrap", "grid-constant"))
         factor, delta = float(rng.uniform(0.5, 2.2)), float(rng.uniform(-3, 3))
-        check(lambda: ndi.zoom(x, factor, **kw))
-        check(lambda: ndi.shift(x, [delta] * x.ndim, order=order, mode=mode))
+        check(lambda: ndi.zoom(x, factor, **kw), fast=_CURRENT_ARITHMETIC)
+        check(lambda: ndi.shift(x, [delta] * x.ndim, order=order, mode=mode), fast=_CURRENT_ARITHMETIC)
         if x.dtype.kind == "f":
-            check(lambda: ndi.spline_filter(x, order=max(order, 2), mode=mode))
-            check(lambda: ndi.spline_filter1d(x, order=max(order, 2), axis=0, mode=mode))
+            check(lambda: ndi.spline_filter(x, order=max(order, 2), mode=mode), fast=_CURRENT_ARITHMETIC)
+            check(lambda: ndi.spline_filter1d(x, order=max(order, 2), axis=0, mode=mode), fast=_CURRENT_ARITHMETIC)
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -259,11 +269,11 @@ def test_affine_rotate_map_coordinates(seed):
         x = view_of(rng, array(rng, shape_of(rng, 2, 40), pick(rng, DTYPES)))
         order, mode = int(rng.integers(0, 6)), pick(rng, MODES[:5])
         m = np.eye(2) + 0.2 * rng.standard_normal((2, 2))
-        check(lambda: ndi.affine_transform(x, m, offset=[0.3, -1.2], order=order, mode=mode))
+        check(lambda: ndi.affine_transform(x, m, offset=[0.3, -1.2], order=order, mode=mode), fast=_CURRENT_ARITHMETIC)
         angle, reshape = float(rng.uniform(-180, 180)), bool(rng.integers(2))
-        check(lambda: ndi.rotate(x, angle, order=order, mode=mode, reshape=reshape))
+        check(lambda: ndi.rotate(x, angle, order=order, mode=mode, reshape=reshape), fast=_CURRENT_ARITHMETIC)
         coords = rng.uniform(-3, 43, size=(2, 5, 7))
-        check(lambda: ndi.map_coordinates(x, coords, order=order, mode=mode, cval=1.0))
+        check(lambda: ndi.map_coordinates(x, coords, order=order, mode=mode, cval=1.0), fast=_CURRENT_ARITHMETIC)
         check(lambda: ndi.geometric_transform(x, lambda c: c, order=order), fast=False)
 
 
@@ -385,11 +395,17 @@ def test_distance_transform_edt(seed):
         x = array(rng, shape, pick(rng, [np.uint8, np.float32, np.float64, np.int64])) > 0
         sampling = None if rng.random() < 0.5 else [float(rng.uniform(0.2, 3))] * x.ndim
         ri, rd = bool(rng.integers(2)), True
-        check(lambda: ndi.distance_transform_edt(x, sampling=sampling, return_indices=ri, return_distances=rd))
-        check(lambda: ndi.distance_transform_edt(x != 0, return_distances=False, return_indices=True))
+        check(
+            lambda: ndi.distance_transform_edt(x, sampling=sampling, return_indices=ri, return_distances=rd),
+            fast=_CURRENT_ARITHMETIC,
+        )
+        check(
+            lambda: ndi.distance_transform_edt(x != 0, return_distances=False, return_indices=True),
+            fast=_CURRENT_ARITHMETIC,
+        )
     big = rng.random((300, 200)) > 0.999
-    check(lambda: ndi.distance_transform_edt(~big))
-    check(lambda: ndi.distance_transform_edt(~big, return_indices=True))
+    check(lambda: ndi.distance_transform_edt(~big), fast=_CURRENT_ARITHMETIC)
+    check(lambda: ndi.distance_transform_edt(~big, return_indices=True), fast=_CURRENT_ARITHMETIC)
 
 
 def test_edt_declined_and_errors():
@@ -551,8 +567,8 @@ def test_large_inputs():
     check(lambda: ndi.gaussian_filter(x, 2.0))
     check(lambda: ndi.median_filter(x, 5))
     check(lambda: ndi.uniform_filter(x, 7))
-    check(lambda: ndi.zoom(x, 1.3, order=3))
-    check(lambda: ndi.rotate(x, 20, order=1))
+    check(lambda: ndi.zoom(x, 1.3, order=3), fast=_CURRENT_ARITHMETIC)
+    check(lambda: ndi.rotate(x, 20, order=1), fast=_CURRENT_ARITHMETIC)
     v = np.random.default_rng(4).random((60, 60, 60))
     check(lambda: ndi.gaussian_filter(v, 1.5))
     check(lambda: ndi.maximum_filter(v, 3))

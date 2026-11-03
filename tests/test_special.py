@@ -3,11 +3,15 @@ import warnings
 
 import numpy as np
 import pytest
+import scipy
 import scipy.special as sc
 import scipy.special._ufuncs as _ufuncs
 
 import fastscipy
 from fastscipy.testing import check, fast_calls
+from fastscipy._special import _thread_safe
+
+_JV_THREAD_SAFE = _thread_safe(sc.jv, scipy.__version__)
 
 N = 300_000
 RNG = np.random.default_rng(0)
@@ -27,8 +31,8 @@ def x64(n=N):
     return RNG.uniform(0.1, 5, n)
 
 
-def go(call, threads):
-    check(call, fast=threads > 1)
+def go(call, threads, fast=True):
+    check(call, fast=fast and threads > 1)
 
 
 @pytest.mark.parametrize("dt", [np.float64, np.float32])
@@ -40,11 +44,11 @@ def test_unary(name, dt, threads):
 
 def test_binary_ternary_scalar(threads):
     x = x64()
-    go(lambda: sc.jv(1.5, x), threads)
-    go(lambda: sc.jv(x, 2.0), threads)
+    go(lambda: sc.jv(1.5, x), threads, fast=_JV_THREAD_SAFE)
+    go(lambda: sc.jv(x, 2.0), threads, fast=_JV_THREAD_SAFE)
     go(lambda: sc.betainc(2.0, 3.5, x / 6), threads)
     go(lambda: sc.betainc(x, x + 1, x / 6), threads)
-    go(lambda: sc.jv(x.astype(np.float32), 1.5), threads)
+    go(lambda: sc.jv(x.astype(np.float32), 1.5), threads, fast=_JV_THREAD_SAFE)
 
 
 def test_integer_and_complex_inputs(threads):
@@ -52,7 +56,7 @@ def test_integer_and_complex_inputs(threads):
     go(lambda: sc.gammaln(ints), threads)
     go(lambda: sc.gammaln(np.arange(1, N, dtype=np.int32)), threads)
     z = x64() + 1j * x64()
-    go(lambda: sc.jv(0.5, z), threads)
+    go(lambda: sc.jv(0.5, z), threads, fast=_JV_THREAD_SAFE)
 
 
 def test_multi_output(threads):
@@ -65,7 +69,8 @@ def test_multi_output(threads):
 @pytest.mark.parametrize("shape", [(500, 600), (3, 100_000), (200_000, 2), (2, 3, 50_000)])
 def test_shapes(shape, threads):
     x = x64(int(np.prod(shape))).reshape(shape)
-    go(lambda: sc.jv(1.5, x), threads)
+    go(lambda: sc.jv(1.5, x), threads, fast=_JV_THREAD_SAFE)
+    go(lambda: sc.gammaln(x), threads)
 
 
 @pytest.mark.parametrize("threads", [1, 2], indirect=True)
@@ -112,7 +117,7 @@ def test_broadcast(threads):
     c = x64(300_000).reshape(300, 1000)
     go(lambda: sc.betainc(a[:300] + 1, c, c / 6), threads)
     row = x64(1000)
-    go(lambda: sc.jv(row, c), threads)
+    go(lambda: sc.jv(row, c), threads, fast=_JV_THREAD_SAFE)
     check(lambda: sc.jv(a, b), fast=False)  # large output from small inputs: declined
 
 
@@ -132,7 +137,6 @@ def test_declined_still_correct():
         lambda: sc.erf(x.astype(np.longdouble)),
         lambda: sc.erf(x.astype(object)[:100]),
         lambda: sc.erf(x, out=np.empty_like(x)),
-        lambda: sc.erf(x, out=np.zeros_like(x), where=x > 1),
         lambda: sc.erf(x, dtype=np.float32),
         lambda: sc.erf(x[:100]),
         lambda: sc.erf(np.float64(1.0)),
@@ -143,6 +147,31 @@ def test_declined_still_correct():
             check(call, fast=False)
         except TypeError:
             pass  # object arrays raise in SciPy too
+
+
+def test_where_out_passthrough():
+    x = x64()
+    if scipy.__version__.startswith(("1.16.", "1.17.")):
+        # These SciPy baselines can corrupt memory with fragmented where masks,
+        # even without fastscipy imported. A single selected run is safe.
+        x.sort()
+        warnings.warn(
+            "SciPy 1.16/1.17 baseline fragmented where masks can corrupt memory; "
+            "testing a contiguous partial mask with exact output comparison",
+            RuntimeWarning,
+            stacklevel=1,
+        )
+    mask = x > 1
+    assert mask.any() and not mask.all()
+
+    def call():
+        out = np.zeros_like(x)
+        assert sc.erf(x, out=out, where=mask) is out
+        return out
+
+    before = fast_calls()
+    check(call, fast=False)
+    assert fast_calls() == before
 
 
 def test_out_buffer_written():
@@ -194,12 +223,12 @@ def test_numpy_errstate_propagates(threads):
 
 
 def test_ufunc_attributes():
-    f, g = sc.jv, sc.jv.__wrapped__
+    f, g = sc.xlogy, sc.xlogy.__wrapped__
     assert (f.nin, f.nout, f.types, f.__name__, f.__doc__) == (g.nin, g.nout, g.types, g.__name__, g.__doc__)
     assert f.identity is g.identity and callable(f.outer) and callable(f.reduce)
     a, b = x64(30), x64(40)
     assert np.array_equal(f.outer(a, b), g.outer(a, b))
-    assert _ufuncs.jv is f is sc.jv
+    assert _ufuncs.xlogy is f is sc.xlogy
 
 
 def test_pickle():
@@ -238,6 +267,15 @@ def test_all_ufuncs_identical(threads):
         uf = getattr(fast_uf, "__wrapped__", None)
         if not isinstance(uf, np.ufunc) or name in SKIP or name.startswith(("obl_", "pro_", "mathieu_")):
             continue
+        if not any(t.startswith("d" * uf.nin) for t in uf.types):
+            continue
+        if name in {"sph_harm", "yn"}:
+            warnings.warn(
+                f"{name}: legacy floating-order loop tested with finite integer degree/order; "
+                "nonfinite order can hang SciPy's baseline",
+                RuntimeWarning,
+                stacklevel=1,
+            )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             args = []
@@ -245,9 +283,14 @@ def test_all_ufuncs_identical(threads):
                 a = RNG.uniform(0.1, 5, n)
                 a[::97], a[1::101], a[2::103] = np.nan, np.inf, 0.0
                 args.append(a)
-            if not any(t.startswith("d" * uf.nin) for t in uf.types):
-                continue
             args = [a.astype(np.float64) for a in args]
+            if name in {"sph_harm", "yn"}:
+                # Legacy floating-order loops cast to C integers without an
+                # infinity check, which can hang in the baseline recurrence.
+                # Keep nonfinite x/angles; only degree/order needs bounding.
+                args[0].fill(1 if name == "sph_harm" else 3)
+                if name == "sph_harm":
+                    args[1].fill(3)
             with fastscipy.disabled():
                 try:
                     expected = uf(*args)
@@ -274,3 +317,15 @@ def test_error_warnings_match_scipy(threads):
     with fastscipy.disabled():
         expected = warned()
     assert expected and warned() == expected
+
+
+def test_legacy_spherical_harmonics_finite(threads):
+    if not hasattr(sc, "sph_harm"):
+        pytest.skip("sph_harm was removed by SciPy")
+    angle = np.linspace(0.1, 2.0, N)
+    go(lambda: sc.sph_harm(1, 3, angle, angle / 2), threads)
+
+
+def test_integer_order_bessel_finite(threads):
+    x = np.linspace(0.1, 5.0, N)
+    go(lambda: sc.yn(3, x), threads)

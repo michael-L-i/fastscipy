@@ -5,7 +5,9 @@ reports with a reproducer, and benchmark results from other machines.
 
 ## Setup
 
-For candidate development, use Rust (stable) and Python 3.12–3.15.
+For the full current-stack suite, use Rust (stable) and Python 3.12–3.15.
+Older-Python compatibility candidates use the dependency combinations and
+scoped checks described in [the compatibility matrix](docs/platforms.md#compatibility-candidates).
 
 ```sh
 python -m venv .venv && source .venv/bin/activate
@@ -117,9 +119,18 @@ BSD-3-Clause license of this project.
 The `0.1.0a4` release passed all 32 wheel jobs, source-distribution and
 complete artifact gates, PyPI publication, independent published-file hash
 verification, and eight clean installed CP313 application pilots.
-See [release evidence](docs/platforms.md#evidence). Every wheel runs installed
-package and project checks; CP313 also runs benchmarks and paired upstream
-comparisons. Publish only the complete validated set.
+See [release evidence](docs/platforms.md#evidence). This remains the published
+support record; the broader candidate workflow has not established a new release.
+
+The next complete release gate requires 53 wheels and one source archive.
+The original 32 Python 3.12–3.15 wheels retain their installed all-component
+and project checks; CP313 also retains benchmarks and paired upstream comparisons.
+The additional 21 Python 3.9–3.11 wheels require installed ABI and isolated
+component smoke checks, focused project suites, and paired upstream checks
+for the explicit component set in `tools/compatibility_release.py`.
+The [candidate matrix](docs/platforms.md#compatibility-candidates) lists the
+dependency pins and three excluded interpreter/platform pairs. Publish only
+the complete validated set; passing a canary alone is not release qualification.
 
 Builds use one Cargo job and bounded numerical thread and memory budgets.
 The preflight runs two wheel jobs concurrently on separate GitHub runner VMs;
@@ -134,11 +145,11 @@ gh workflow run release.yml --ref main -f publish=none -f validation_only=true
 ```
 
 This builds and validates eight Python 3.13 wheels plus one source archive,
-with publishing disabled. It does not replace the full 32-wheel publication
+with publishing disabled. It does not replace the full 53-wheel publication
 gate or establish published platform support.
 
 To rehearse, run the workflow manually with `publish: none`. After all jobs
-succeed, download the 32 `release-dist-<target>-<interpreter>` wheel artifacts
+succeed, download the 53 `release-dist-<target>-<interpreter>` wheel artifacts
 and the `release-dist-sdist` source archive. Review the corresponding
 `release-report-<target>-<interpreter>` validation logs. `publish: testpypi`
 exercises an upload to TestPyPI. Publishing to PyPI requires a matching `v<version>` tag;

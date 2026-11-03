@@ -1,0 +1,64 @@
+........................................................................ [  6%]
+........................................................................ [ 12%]
+........................................................................ [ 18%]
+........................................................................ [ 24%]
+........................................................................ [ 31%]
+........................................................................ [ 37%]
+........................................................................ [ 43%]
+........................................................................ [ 49%]
+........................................................................ [ 56%]
+........................................................................ [ 62%]
+........................................................................ [ 68%]
+........................................................................ [ 74%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+tests/test_ndimage.py::test_generic_filter_reducers[1t-1]
+tests/test_ndimage.py::test_generic_filter_reducers[1t-14]
+tests/test_ndimage.py::test_generic_filter_reducers[4t-1]
+tests/test_ndimage.py::test_generic_filter_reducers[4t-14]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/numpy/core/_methods.py:233: RuntimeWarning: invalid value encountered in subtract
+    x = asanyarray(arr - arrmean)
+
+tests/test_ndimage.py: 32 warnings
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/_measurements.py:1534: RuntimeWarning: invalid value encountered in divide
+    results = [sum(input * grids[dir].astype(float), labels, index) / normalizer
+
+tests/test_ndimage.py::test_labelled_measurements[1t-3]
+tests/test_ndimage.py::test_labelled_measurements[1t-8]
+tests/test_ndimage.py::test_labelled_measurements[1t-15]
+tests/test_ndimage.py::test_labelled_measurements[4t-3]
+tests/test_ndimage.py::test_labelled_measurements[4t-8]
+tests/test_ndimage.py::test_labelled_measurements[4t-15]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/_measurements.py:1534: RuntimeWarning: invalid value encountered in multiply
+    results = [sum(input * grids[dir].astype(float), labels, index) / normalizer
+
+tests/test_special.py::test_all_ufuncs_identical[1t]
+tests/test_special.py::test_all_ufuncs_identical[4t]
+  /private/tmp/fastscipy-compat-runtime/tests/test_special.py:243: RuntimeWarning: SciPy 1.10 sph_harm: nonfinite degree/order baseline hangs; finite inputs tested separately
+    warnings.warn(
+
+tests/test_special.py::test_all_ufuncs_identical[1t]
+tests/test_special.py::test_all_ufuncs_identical[4t]
+  /private/tmp/fastscipy-compat-runtime/tests/test_special.py:243: RuntimeWarning: SciPy 1.10 yn: nonfinite degree/order baseline hangs; finite inputs tested separately
+    warnings.warn(
+
+tests/test_spatial.py::test_weighted_distances[float32-dice-1]
+tests/test_spatial.py::test_weighted_distances[float32-dice-2]
+tests/test_spatial.py::test_weighted_distances[float64-dice-1]
+tests/test_spatial.py::test_weighted_distances[float64-dice-2]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/distance.py:1415: RuntimeWarning: invalid value encountered in divide
+    return float((ntf + nft) / np.array(2.0 * ntt + ntf + nft))
+
+tests/test_spatial.py::test_weighted_distances[float32-russellrao-1]
+tests/test_spatial.py::test_weighted_distances[float32-russellrao-2]
+tests/test_spatial.py::test_weighted_distances[float64-russellrao-1]
+tests/test_spatial.py::test_weighted_distances[float64-russellrao-2]
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/distance.py:1522: RuntimeWarning: invalid value encountered in double_scalars
+    return float(n - ntt) / n
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1155 passed, 54 warnings in 59.83s

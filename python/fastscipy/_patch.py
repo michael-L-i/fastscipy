@@ -7,6 +7,7 @@ every fast path goes through ``wrap`` (or checks ``enabled``) so
 
 import functools
 import os
+import re
 import sys
 
 
@@ -35,6 +36,17 @@ def stats():
     return dict(counts)
 
 
+def require_numpy():
+    """Keep future NumPy releases on SciPy until their dispatch is qualified."""
+    import numpy as np
+
+    version = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:\.post\d+)?", np.__version__)
+    if not os.environ.get("FASTSCIPY_ANY_VERSION") and (
+        version is None or tuple(map(int, version.groups())) >= (2, 6, 0)
+    ):
+        raise RuntimeError(f"unvalidated NumPy {np.__version__}; acceleration requires stable NumPy <2.6")
+
+
 def require_validated(*prefixes):
     """Gate component versions and candidate 64-bit platform families.
 
@@ -42,6 +54,7 @@ def require_validated(*prefixes):
     accepting a platform family does not certify a particular SciPy wheel.
     ``FASTSCIPY_ANY_VERSION=1`` and ``FASTSCIPY_ANY_PLATFORM=1`` override.
     """
+    require_numpy()
     import platform
 
     import scipy

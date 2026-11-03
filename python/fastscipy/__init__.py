@@ -14,7 +14,7 @@ import logging
 import os
 import threading
 
-from . import _patch
+from . import _patch, _threads
 from ._patch import stats
 from ._threads import get_num_threads, set_num_threads
 
@@ -69,6 +69,9 @@ def patch(components=None, threads=None):
             continue
         _patch.current = name
         try:
+            _patch.require_numpy()
+            if name in {"ndimage", "stats", "signal", "sparse", "linalg", "interpolate", "csgraph"}:
+                _threads.require_native()
             importlib.import_module(f"{__name__}._{name}").patch()
             _status[name] = "on"
         except Exception as e:

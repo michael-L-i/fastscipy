@@ -1,0 +1,30 @@
+{
+  "plugin": "scipy_upstream_isolation",
+  "expected_state": "baseline",
+  "required_components": [
+    "ndimage"
+  ],
+  "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-u80ufm3l",
+  "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+  "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+  "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+  "conftests": [
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+  ],
+  "checked_calls": 3592,
+  "valid": true,
+  "test_paths": [
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_c_api.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_datatypes.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_filters.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_fourier.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_interpolation.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_measurements.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_morphology.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/ndimage/tests/test_splines.py"
+  ],
+  "status": {},
+  "original_bindings": true,
+  "fast_calls": 0,
+  "fast_errors": 0
+}

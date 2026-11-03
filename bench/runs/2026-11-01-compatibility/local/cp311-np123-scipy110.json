@@ -1,0 +1,39 @@
+{
+  "python": "3.11.14",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "1.23.5",
+  "scipy": "1.10.1",
+  "fastscipy": "0.1.0a4",
+  "installed_package": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/fastscipy/__init__.py",
+  "native_sha256": "bd902329173c18252705a1a9463f73fe357f36dcc1e3f4a9efc0baad72cd3fb8",
+  "native_build": {
+    "crate_version": "0.1.0-alpha.4",
+    "opt_level": "3",
+    "profile": "release",
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "source_schema": "1",
+    "source_sha256": "e87cb71924643bddd1dfb5662f107d406531b852d85571c555696a4bcedc9fd3",
+    "target": "aarch64-apple-darwin"
+  },
+  "status": {
+    "ndimage": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "special": "on",
+    "stats": "off: AttributeError: module 'scipy.special' has no attribute 'betaincc'",
+    "signal": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "sparse": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "sparse_linalg": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "linalg": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "interpolate": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "spatial": "on",
+    "csgraph": "off: ImportError: cannot import name 'safely_cast_index_arrays' from 'scipy.sparse._sputils' (/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/sparse/_sputils.py)",
+    "cluster": "off: ImportError: cannot import name '_hierarchy_impl' from 'scipy.cluster.hierarchy' (/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/cluster/hierarchy.py)",
+    "integrate": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "optimize": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "fft": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1"
+  },
+  "smoke_fast_calls": {
+    "special": 3,
+    "spatial": 2
+  },
+  "scope": "installed-wheel ABI and dispatch canary; not full numerical qualification"
+}

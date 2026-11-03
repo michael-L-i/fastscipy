@@ -12,6 +12,7 @@ import math
 import time
 
 import numpy as np
+import scipy
 import scipy.special as sc
 import scipy.special._ufuncs as _ufuncs
 
@@ -39,6 +40,31 @@ _ATTRS = (
 )
 
 
+# SciPy <=1.12's Fortran CDFLIB inverse solvers use shared SAVE/ENTRY state
+# (dinvr.f, dzror.f). Keep every CDFLIB-backed ufunc original on these versions.
+_CDFLIB = frozenset(
+    "bdtrik bdtrin btdtria btdtrib chdtriv chndtr chndtridf chndtrinc chndtrix "
+    "fdtridfd gdtria gdtrib gdtrix nbdtrik nbdtrin ncfdtr ncfdtri ncfdtridfd "
+    "ncfdtridfn ncfdtrinc nctdtr nctdtridf nctdtrinc nctdtrit nrdtrimn nrdtrisd "
+    "pdtrik stdtr stdtridf stdtrit tklmbda".split()
+)
+
+# Before SciPy 1.14, Cephes jv's jnx workspace (u, ai/aip/bi/bip) is
+# mutable static storage. Real AMOS jv/yv wrappers fall back to it after a
+# NaN result; the Struve helpers also call those wrappers. Keep these ufuncs
+# original until the Cephes C++ rewrite makes that workspace local.
+_CEPHES_JV = frozenset({"jv", "yv", "struve", "_struve_bessel_series", "_struve_asymp_large_z"})
+
+
+def _thread_safe(uf, version):
+    return not (
+        version.startswith(("1.10.", "1.11.", "1.12."))
+        and uf.__name__ in _CDFLIB
+        or version.startswith(("1.10.", "1.11.", "1.12.", "1.13."))
+        and uf.__name__ in _CEPHES_JV
+    )
+
+
 def _part(a, ax, nd, s):
     if type(a) is not np.ndarray:
         return a
@@ -49,7 +75,6 @@ def _part(a, ax, nd, s):
 def _threaded(uf, st, args):
     if get_num_threads() <= 1 or any(v != "ignore" for k, v in sc.geterr().items() if k != "memory"):
         return NotImplemented
-    shapes = []
     order = "C"
     for a in args:
         if type(a) is np.ndarray:
@@ -59,10 +84,9 @@ def _threaded(uf, st, args):
                 if len(args) != 1 or not a.flags.f_contiguous:
                     return NotImplemented
                 order = "F"  # A unary ufunc preserves the input's Fortran layout.
-            shapes.append(a.shape)
         elif not isinstance(a, _SCALARS):
             return NotImplemented
-    shape = np.broadcast_shapes(*shapes)
+    shape = np.broadcast(*args).shape
     n, nd = math.prod(shape), len(shape)
     if n < st[0]:
         return NotImplemented
@@ -125,16 +149,17 @@ def _make(uf, module):
     fast.__name__, fast.__qualname__, fast.__module__, fast.__doc__ = name, name, module, uf.__doc__
     fast.__wrapped__ = uf
     for attr in _ATTRS:
-        setattr(fast, attr, getattr(uf, attr))
+        if hasattr(uf, attr):
+            setattr(fast, attr, getattr(uf, attr))
     return fast
 
 
 def patch():
-    _patch.require_validated("1.18.")
+    _patch.require_validated(*(f"1.{minor}." for minor in range(10, 19)))
     wrappers = {}
     for mod in (_ufuncs, sc):
         for uf in list(vars(mod).values()):
-            if isinstance(uf, np.ufunc) and uf not in wrappers:
+            if isinstance(uf, np.ufunc) and uf not in wrappers and _thread_safe(uf, scipy.__version__):
                 wrappers[uf] = _make(uf, mod.__name__)
     for uf, fast in wrappers.items():
         _patch.rebind(uf, fast)
@@ -142,4 +167,4 @@ def patch():
 
 def smoke():
     x = np.linspace(0.1, 5, 65536)
-    sc.erf(x), sc.gammaln(x), sc.jv(1.5, x)
+    sc.erf(x), sc.gammaln(x), sc.digamma(x)

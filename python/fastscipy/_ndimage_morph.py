@@ -2,6 +2,7 @@
 and the Euclidean distance transform."""
 
 import functools
+import inspect
 import numbers
 import operator
 
@@ -157,7 +158,7 @@ def _offsets(sbytes, sshape, origin, erode):
 def _fixed_point_dilation(erode):
     """Fast path for ``_binary_erosion(..., iterations < 1, invert=True)``: dilation until nothing changes."""
 
-    def fast(input, structure, iterations, mask, output, border_value, origin, invert, brute_force, axes):
+    def fast(input, structure, iterations, mask, output, border_value, origin, invert, brute_force, axes=None):
         if iterations > 0 or not invert:
             return NotImplemented
         if axes is not None and tuple(axes) != tuple(range(np.ndim(input))):
@@ -212,11 +213,20 @@ def _fixed_point_dilation(erode):
     return fast
 
 
-def patch():
+def patch(*, edt=True):
     erode = _morphology._binary_erosion
+    offset_erode = erode
+    if "axes" not in inspect.signature(erode).parameters:
+        # Older SciPy uses the same operation over all axes, with nine arguments.
+        def offset_erode(input, structure, iterations, mask, output, border_value, origin, invert, brute_force, axes):
+            return erode(input, structure, iterations, mask, output, border_value, origin, invert, brute_force)
+
     _patch.replace(
-        _morphology, "_binary_erosion", _patch.wrap(erode, _fixed_point_dilation(erode), "fixed_point_dilation")
+        _morphology, "_binary_erosion", _patch.wrap(erode, _fixed_point_dilation(offset_erode), "fixed_point_dilation")
     )
+    if not edt or not hasattr(_morphology, "_distance_transform_arg_check"):
+        # Preserve SciPy's historical validation and distance arithmetic.
+        return
     old = ndi.distance_transform_edt
     new = _patch.wrap(old, _distance_transform_edt, "distance_transform_edt")
     _patch.rebind(old, new)

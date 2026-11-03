@@ -6,6 +6,7 @@ stand-in (see `_ndimage_seam`).
 """
 
 import numpy as np
+import scipy
 import scipy.ndimage as ndi
 from scipy.ndimage import _filters, _interpolation, _measurements, _morphology
 
@@ -18,11 +19,18 @@ _WRAPPERS = (_filters, _interpolation, _measurements, _morphology)
 
 
 def patch():
-    _patch.require_validated("1.18.")
-    mod = standin()
+    _patch.require_validated(*(f"1.{minor}." for minor in range(10, 19)))
+    # Interpolation and EDT kernels reproduce the current SciPy arithmetic, including
+    # its compiler contraction. Older wheels differ even on integer outputs.
+    interpolation = (
+        ()
+        if scipy.__version__.startswith("1.18.")
+        else ("spline_filter1d", "zoom_shift", "geometric_transform", "euclidean_feature_transform")
+    )
+    mod = standin(exclude=interpolation)
     for wrapper in _WRAPPERS:
         _patch.replace(wrapper, "_nd_image", mod)
-    _ndimage_morph.patch()
+    _ndimage_morph.patch(edt=not interpolation)
     _ndimage_label.patch()
 
 

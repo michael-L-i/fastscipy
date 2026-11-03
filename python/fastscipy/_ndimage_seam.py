@@ -49,11 +49,12 @@ def accelerated(name):
     return decorate
 
 
-def standin():
+def standin(exclude=()):
     m = types.ModuleType("fastscipy._nd_image")
     for name in dir(orig):
         if not name.startswith("__"):
             setattr(m, name, getattr(orig, name))
     for name, wrapper in OVERRIDES.items():
-        setattr(m, name, wrapper)
+        if name not in exclude:
+            setattr(m, name, wrapper)
     return m

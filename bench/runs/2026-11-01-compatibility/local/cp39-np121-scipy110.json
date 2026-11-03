@@ -1,0 +1,61 @@
+{
+  "python": "3.9.25",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "numpy": "1.21.6",
+  "scipy": "1.10.1",
+  "fastscipy": "0.1.0a4",
+  "installed_package": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat39/lib/python3.9/site-packages/fastscipy/__init__.py",
+  "native_sha256": "b98ecf1ce394cfd04fa626079487b124930cbb293a6674a1c3a0b3a75d7199ea",
+  "native_build": {
+    "crate_version": "0.1.0-alpha.4",
+    "opt_level": "3",
+    "profile": "release",
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "source_schema": "1",
+    "source_sha256": "e87cb71924643bddd1dfb5662f107d406531b852d85571c555696a4bcedc9fd3",
+    "target": "aarch64-apple-darwin"
+  },
+  "native_source_check": {
+    "extension": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat39/lib/python3.9/site-packages/fastscipy/_native.cpython-39-darwin.so",
+    "binary_sha256": "b98ecf1ce394cfd04fa626079487b124930cbb293a6674a1c3a0b3a75d7199ea",
+    "source_root": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution",
+    "build": {
+      "crate_version": "0.1.0-alpha.4",
+      "opt_level": "3",
+      "profile": "release",
+      "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+      "source_schema": "1",
+      "source_sha256": "e87cb71924643bddd1dfb5662f107d406531b852d85571c555696a4bcedc9fd3",
+      "target": "aarch64-apple-darwin"
+    },
+    "expected_source_sha256": "e87cb71924643bddd1dfb5662f107d406531b852d85571c555696a4bcedc9fd3",
+    "status": "match"
+  },
+  "status": {
+    "ndimage": "on",
+    "special": "on",
+    "stats": "off: AttributeError: module 'scipy.special' has no attribute 'betaincc'",
+    "signal": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "sparse": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "sparse_linalg": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "linalg": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "interpolate": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "spatial": "on",
+    "csgraph": "off: ImportError: cannot import name 'safely_cast_index_arrays' from 'scipy.sparse._sputils' (/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat39/lib/python3.9/site-packages/scipy/sparse/_sputils.py)",
+    "cluster": "off: ImportError: cannot import name '_hierarchy_impl' from 'scipy.cluster.hierarchy' (/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat39/lib/python3.9/site-packages/scipy/cluster/hierarchy.py)",
+    "integrate": "off: ModuleNotFoundError: No module named 'scipy._lib._array_api'",
+    "optimize": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1",
+    "fft": "off: RuntimeError: validated on SciPy 1.18., found 1.10.1"
+  },
+  "expected_active": [
+    "ndimage",
+    "special",
+    "spatial"
+  ],
+  "smoke_fast_calls": {
+    "ndimage": 22,
+    "special": 3,
+    "spatial": 2
+  },
+  "scope": "installed-wheel ABI and dispatch canary; not full numerical qualification"
+}

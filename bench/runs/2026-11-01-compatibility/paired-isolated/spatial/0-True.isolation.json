@@ -1,0 +1,35 @@
+{
+  "plugin": "scipy_upstream_isolation",
+  "expected_state": "patched",
+  "required_components": [
+    "spatial"
+  ],
+  "cwd": "/private/var/folders/dj/3p8x43cs4pl41l9h8fj5rvmr0000gn/T/fastscipy-upstream-shdx59q3",
+  "rootdir": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages",
+  "scipy": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/__init__.py",
+  "fastscipy": "/private/tmp/fastscipy-compat-runtime/python/fastscipy/__init__.py",
+  "conftests": [
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/conftest.py"
+  ],
+  "checked_calls": 1151,
+  "valid": true,
+  "test_paths": [
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__plotutils.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test__procrustes.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_distance.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_hausdorff.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_kdtree.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_qhull.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_slerp.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/tests/test_spherical_voronoi.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_groups.py",
+    "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/transform/tests/test_rotation_spline.py"
+  ],
+  "status": {
+    "spatial": "on"
+  },
+  "original_bindings": true,
+  "fast_calls": 376,
+  "fast_errors": 0
+}

@@ -1,0 +1,32 @@
+{
+  "python": "3.11.14 (main, Oct  9 2025, 16:16:55) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "executable": "/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/bin/python",
+  "revision": "733dbc11db8b9779c91a60a0bc796341a32f01a3",
+  "versions": {
+    "numpy": "1.23.5",
+    "scipy": "1.10.1",
+    "fastscipy": "0.1.0a4"
+  },
+  "scipy_available_memory": "2048Mib",
+  "batches": [
+    [
+      "--pyargs",
+      "scipy.spatial.tests.test_kdtree",
+      "-k",
+      "test_kdtree_pickle"
+    ]
+  ],
+  "upstream_isolation": {
+    "plugin": "scipy_upstream_isolation",
+    "source_sha256": "d1dbe11b7443d1dab52ef922532908459c7caa95378bdd6f2632c1fe68d92b43",
+    "harness_sha256": "44f45d17858b8ace818912d1bea15d9b366e7a40604375120067b271db00ad63",
+    "require_fast": false,
+    "policy": "Neutral cwd; installed SciPy conftests only; baseline/patch assertions after fixtures"
+  },
+  "paired_quarantine": {
+    "plugin": "scipy_upstream_quarantine",
+    "source_sha256": "ead990fbe13a21611634e37e50f4fdab5006c504e8847e3204a43fca0ebb3051",
+    "reproduction": "https://github.com/michael-L-i/fastscipy/actions/runs/39376117965",
+    "policy": "Visible, exactly scoped upstream-only skips in both baseline and patched runs"
+  }
+}

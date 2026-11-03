@@ -1,0 +1,98 @@
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p scipy_upstream_isolation --upstream-quarantine-report=/private/tmp/fastscipy-isolated-final/spatial/0-False.quarantine.json --upstream-isolation-report=/private/tmp/fastscipy-isolated-final/spatial/0-False.isolation.json --upstream-expected-state=baseline --upstream-required-components=spatial --upstream-require-fast --rootdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages --confcutdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy --junitxml=/private/tmp/fastscipy-isolated-final/spatial/0-False.xml --pyargs scipy.spatial
+sss..................................................................... [  6%]
+........................................................................ [ 12%]
+..........................................................s............. [ 18%]
+........................................................................ [ 24%]
+........................................................................ [ 31%]
+........................................................................ [ 37%]
+........................................................................ [ 43%]
+........................................................................ [ 49%]
+........................................................................ [ 56%]
+........................................................................ [ 62%]
+........................................................................ [ 68%]
+........................................................................ [ 74%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_sizes, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_no_duplicates, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_symmetry, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+scipy/spatial/tests/test_distance.py::test_kulsinski_deprecation
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/distance.py:862: RuntimeWarning: invalid value encountered in double_scalars
+    return (ntf + nft - ntt + n) / (ntf + nft + n)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1151 passed, 4 skipped, 4 warnings in 16.93s
+$ /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/bin/python -m pytest -q -p no:cacheprovider -p scipy_upstream_quarantine -p scipy_upstream_isolation -p fastscipy.pytest_plugin --upstream-quarantine-report=/private/tmp/fastscipy-isolated-final/spatial/0-True.quarantine.json --upstream-isolation-report=/private/tmp/fastscipy-isolated-final/spatial/0-True.isolation.json --upstream-expected-state=patched --upstream-required-components=spatial --upstream-require-fast --rootdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages --confcutdir=/Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy --junitxml=/private/tmp/fastscipy-isolated-final/spatial/0-True.xml --pyargs scipy.spatial
+sss..................................................................... [  6%]
+........................................................................ [ 12%]
+..........................................................s............. [ 18%]
+........................................................................ [ 24%]
+........................................................................ [ 31%]
+........................................................................ [ 37%]
+........................................................................ [ 43%]
+........................................................................ [ 49%]
+........................................................................ [ 56%]
+........................................................................ [ 62%]
+........................................................................ [ 68%]
+........................................................................ [ 74%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+...                                                                      [100%]
+=============================== warnings summary ===============================
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_sizes, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_no_duplicates, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+../../../../../../tmp/fastscipy-compat-test-tools/_pytest/python.py:144
+  /private/tmp/fastscipy-compat-test-tools/_pytest/python.py:144: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: scipy/spatial/transform/tests/test_rotation_groups.py::test_group_symmetry, argvalues type: zip
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+scipy/spatial/tests/test_distance.py::test_kulsinski_deprecation
+  /Users/michaelli/code.tmp/GithubDevelopment/fastscipy-compat-distribution/.compat311/lib/python3.11/site-packages/scipy/spatial/distance.py:862: RuntimeWarning: invalid value encountered in double_scalars
+    return (ntf + nft - ntt + n) / (ntf + nft + n)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+fastscipy: {'spatial': 'on'}
+fastscipy: 376 fast-path calls, 0 fast-path errors
+1151 passed, 4 skipped, 4 warnings in 16.72s
+
+1155 tests ran in both; 0 changed outcome
+0 incomplete partition pairs excluded from comparison: []
+0 collected only without fastscipy: {}

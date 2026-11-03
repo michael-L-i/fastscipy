@@ -8,7 +8,7 @@ import scipy.spatial.distance as dist
 
 import fastscipy
 from fastscipy import _patch, _spatial
-from fastscipy.testing import assert_identical, check
+from fastscipy.testing import assert_identical, check, fast_calls
 
 RNG = np.random.default_rng(0)
 
@@ -182,6 +182,7 @@ def test_float32_cast_warning_events(threads, monkeypatch):
         with fastscipy.disabled():
             expected = outcome()
         assert_identical(expected, outcome())
+        callback_outcomes = []
         for enabled in (False, True):
             events = []
 
@@ -191,9 +192,14 @@ def test_float32_cast_warning_events(threads, monkeypatch):
 
             context = fastscipy.disabled() if not enabled else contextlib.nullcontext()
             with context, np.errstate(invalid="call", call=handler):
-                with pytest.raises(RuntimeError, match="cast callback"):
-                    call()
-            assert len(events) == 1
+                try:
+                    result = call()
+                except RuntimeError as error:
+                    result = (type(error), str(error))
+            callback_outcomes.append((result, events))
+            assert len(events) <= 1
+        # NumPy 1.x does not report this signaling-NaN cast on every platform.
+        assert_identical(callback_outcomes[0], callback_outcomes[1])
     assert a.tobytes() == before
 
 
@@ -341,3 +347,15 @@ def test_unpatch_restores():
     assert not hasattr(dist.cdist, "fast") and not hasattr(sp.cKDTree.query, "fast")
     fastscipy.patch(["spatial"])
     assert hasattr(dist.cdist, "fast")
+
+
+def test_weighted_sokalsneath_pdist_ignores_unused_diagonal(monkeypatch):
+    monkeypatch.setattr(_spatial, "_WORK", 1)
+    monkeypatch.setattr(_spatial, "_BLOCK", 1)
+    x = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0]])
+    weights = np.ones(3)
+    before = fast_calls()
+    tiled = "sokalsneath" in _spatial._PDIST and fastscipy.get_num_threads() > 1
+    check(lambda: dist.pdist(x, "sokalsneath", w=weights), fast=tiled)
+    if "sokalsneath" not in _spatial._PDIST:
+        assert fast_calls() == before

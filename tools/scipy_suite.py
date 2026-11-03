@@ -81,9 +81,45 @@ def outcomes(path):
     return result
 
 
-def run(args, patched, junit):
+def invocation(args, scipy_root):
+    """Resolve checkout-relative paths and identify explicitly requested areas."""
+    import fastscipy
+
+    normalized, required = [], set()
+    path_option = False
+    for arg in args:
+        head, *node = arg.split("::")
+        if path_option or (not arg.startswith("-") and Path(head).exists()):
+            head = str(Path(head).resolve())
+            arg = "::".join([head, *node])
+        normalized.append(arg)
+        path_option = arg in {"--rootdir", "--confcutdir", "-c"}
+        module = arg
+        if Path(head).is_absolute() and Path(head).is_relative_to(scipy_root):
+            module = ".".join(["scipy", *Path(head).relative_to(scipy_root).parts])
+        if module == "scipy":
+            required.update(fastscipy.COMPONENTS)
+        elif module == "scipy.sparse":
+            required.update(("sparse", "sparse_linalg", "csgraph"))
+        elif module.startswith("scipy."):
+            area = module.split(".")[1]
+            if module.startswith("scipy.sparse.csgraph"):
+                area = "csgraph"
+            elif module.startswith("scipy.sparse.linalg"):
+                area = "sparse_linalg"
+            if area in fastscipy.COMPONENTS:
+                required.add(area)
+    return normalized, sorted(required)
+
+
+def run(args, patched, junit, require_fast=False):
+    import scipy
+
     plugin = ["-p", "fastscipy.pytest_plugin"] if patched else []
     quarantine = Path(junit).with_suffix(".quarantine.json")
+    isolation = Path(junit).with_suffix(".isolation.json")
+    scipy_root = Path(scipy.__file__).resolve().parent
+    args, required = invocation(args, scipy_root)
     cmd = [
         sys.executable,
         "-m",
@@ -93,17 +129,34 @@ def run(args, patched, junit):
         "no:cacheprovider",
         "-p",
         "scipy_upstream_quarantine",
+        "-p",
+        "scipy_upstream_isolation",
         *plugin,
         f"--upstream-quarantine-report={quarantine}",
+        f"--upstream-isolation-report={isolation}",
+        f"--upstream-expected-state={'patched' if patched else 'baseline'}",
+        f"--upstream-required-components={','.join(required)}",
+        *(["--upstream-require-fast"] if require_fast else []),
+        f"--rootdir={scipy_root.parent}",
+        f"--confcutdir={scipy_root}",
         f"--junitxml={junit}",
         *args,
     ]
     env = os.environ.copy()
     tools = str(Path(__file__).resolve().parent)
-    env["PYTHONPATH"] = tools + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+    # Preserve explicit source overlays, but never let an empty/relative entry
+    # acquire a different meaning after moving to the neutral working directory.
+    paths = [str(Path(p).resolve()) for p in env.get("PYTHONPATH", "").split(os.pathsep) if p]
+    env["PYTHONPATH"] = os.pathsep.join([tools, *paths])
+    if required and require_fast:
+        # Scoped upstream comparisons must exercise their requested component,
+        # rather than borrowing another component's activation or counters.
+        # Normal runs retain the original all-component interaction coverage.
+        env["FASTSCIPY_COMPONENTS"] = ",".join(required)
     print("$", " ".join(cmd), flush=True)
     try:
-        result = subprocess.run(cmd, check=False, env=env)
+        with tempfile.TemporaryDirectory(prefix="fastscipy-upstream-") as cwd:
+            result = subprocess.run(cmd, check=False, env=env, cwd=cwd)
     except OSError as error:
         raise IncompleteRun(f"Could not launch pytest: {error}") from error
     if result.returncode not in (0, 1):
@@ -114,6 +167,18 @@ def run(args, patched, junit):
         raise IncompleteRun(f"Invalid JUnit results: {error}", result.returncode) from error
     if not results:
         raise IncompleteRun("pytest collected no tests", result.returncode)
+    try:
+        proof = json.loads(isolation.read_text(encoding="utf-8"))
+        if (
+            proof["plugin"] != "scipy_upstream_isolation"
+            or proof["expected_state"] != ("patched" if patched else "baseline")
+            or not proof["valid"]
+            or proof["checked_calls"] < 1
+            or (require_fast and patched and proof.get("fast_calls", 0) < 1)
+        ):
+            raise ValueError("Missing or failed baseline/patch isolation proof")
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise IncompleteRun(f"Invalid upstream isolation report: {error}", result.returncode) from error
     try:
         quarantine_report = json.loads(quarantine.read_text(encoding="utf-8"))
         if quarantine_report["plugin"] != "scipy_upstream_quarantine" or not isinstance(
@@ -132,6 +197,7 @@ def main():
     parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
     parser.add_argument("--partitioned", action="store_true")
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--require-fast", action="store_true", help="Require a fast call in each patched partition")
     options, args = parser.parse_known_args()
     partitioned = options.partitioned
     if options.output_dir is not None:
@@ -179,6 +245,15 @@ def main():
                 "versions": {name: importlib.metadata.version(name) for name in ("numpy", "scipy", "fastscipy")},
                 "scipy_available_memory": os.environ["SCIPY_AVAILABLE_MEM"],
                 "batches": batches,
+                "upstream_isolation": {
+                    "plugin": "scipy_upstream_isolation",
+                    "source_sha256": hashlib.sha256(
+                        Path(__file__).with_name("scipy_upstream_isolation.py").read_bytes()
+                    ).hexdigest(),
+                    "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    "require_fast": options.require_fast,
+                    "policy": "Neutral cwd; installed SciPy conftests only; baseline/patch assertions after fixtures",
+                },
                 "paired_quarantine": {
                     "plugin": "scipy_upstream_quarantine",
                     "source_sha256": hashlib.sha256(
@@ -201,6 +276,7 @@ def main():
                     "patched": patched,
                     "junit": junit.name,
                     "quarantine": junit.with_suffix(".quarantine.json").name,
+                    "isolation": junit.with_suffix(".isolation.json").name,
                     "status": "running",
                     "complete": False,
                 }
@@ -208,7 +284,7 @@ def main():
                 report = Path(tmp) / "partition-results.json"
                 report.write_text(json.dumps(records, indent=2), encoding="utf-8")
                 try:
-                    result, returncode = run(batch, patched, str(junit))
+                    result, returncode = run(batch, patched, str(junit), require_fast=options.require_fast)
                 except IncompleteRun as error:
                     result = None
                     record.update(status="incomplete", returncode=error.returncode, error=str(error))

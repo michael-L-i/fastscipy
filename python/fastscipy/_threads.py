@@ -7,11 +7,39 @@ runs at a time; a second caller (another user thread, or a nested call) runs
 serially instead of oversubscribing. Both pools are rebuilt after ``fork``.
 """
 
+import importlib
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor, wait
 
-from . import _native
+_native = None
+_native_error = None
+_fallback_threads = None
+
+
+def native():
+    """Load the optional extension once, retaining loader diagnostics."""
+    global _native, _native_error
+    if _native is None and _native_error is None:
+        try:
+            _native = importlib.import_module("fastscipy._native")
+        except (ImportError, OSError) as error:
+            _native_error = error
+    return _native
+
+
+def require_native():
+    if native() is None:
+        raise ImportError(f"native extension unavailable: {_native_error}") from _native_error
+
+
+def _default_threads():
+    try:
+        threads = int(os.environ.get("FASTSCIPY_NUM_THREADS", "0"))
+    except ValueError:
+        threads = 0
+    return threads if threads > 0 else (os.cpu_count() or 1)
+
 
 _pool = None
 _busy = threading.Lock()
@@ -19,16 +47,23 @@ _pool_lock = threading.Lock()
 
 
 def get_num_threads():
-    return _native.get_num_threads()
+    module = native()
+    return module.get_num_threads() if module is not None else (_fallback_threads or _default_threads())
 
 
 def set_num_threads(threads):
     """Set the thread budget for every component (1 = single-threaded)."""
-    global _pool
+    global _pool, _fallback_threads
     threads = int(threads)
+    if threads < 1:
+        raise ValueError("threads must be >= 1")
     with _pool_lock:
         previous = get_num_threads()
-        _native.set_num_threads(threads)
+        module = native()
+        if module is not None:
+            module.set_num_threads(threads)
+        else:
+            _fallback_threads = threads
         if threads != previous and _pool is not None:
             # Submission holds this same lock. Already submitted work finishes
             # on its original executor; no worker needs to join itself.

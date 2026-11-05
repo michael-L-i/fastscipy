@@ -56,7 +56,8 @@ if hasattr(os, "register_at_fork"):
 def patch(components=None, threads=None):
     """Make SciPy faster in this process.
 
-    ``components`` limits which SciPy areas are patched (default: all);
+    ``components`` limits which SciPy areas are patched (``None``: all;
+    an empty iterable: none);
     ``threads`` sets the thread budget (default: all cores, or
     ``FASTSCIPY_NUM_THREADS``). Returns ``status()``. A component that cannot
     be patched (unsupported SciPy version, missing hook) is left off and its
@@ -64,7 +65,7 @@ def patch(components=None, threads=None):
     """
     if threads is not None:
         set_num_threads(threads)
-    for name in components or COMPONENTS:
+    for name in COMPONENTS if components is None else components:
         if _status.get(name) == "on":
             continue
         _patch.current = name
@@ -84,8 +85,8 @@ def patch(components=None, threads=None):
 
 
 def unpatch(components=None):
-    """Restore SciPy's own code (all components, or the ones named)."""
-    for name in components or list(_status):
+    """Restore SciPy's own code (``None``: all; an empty iterable: none)."""
+    for name in list(_status) if components is None else components:
         _patch.restore(name)
         _status.pop(name, None)
 

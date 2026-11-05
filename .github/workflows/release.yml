@@ -190,7 +190,7 @@ jobs:
           # with numerical and paired upstream checks. The original 32 wheels
           # retain their all-component checks, benchmarks and CP313 upstream gate.
           CIBW_TEST_COMMAND: >-
-            python -I -c "import os,subprocess,sys; root=r'{project}'; output=os.environ.get('FASTSCIPY_RELEASE_REPORT_DIR',root+'/artifacts')+'/'+sys.implementation.cache_tag; legacy=sys.version_info[:2]<(3,12); subprocess.run([sys.executable,'-I',root+'/tools/compatibility_release.py','--output',output] if legacy else [sys.executable,'-I',root+'/tools/check_release.py','--installed'],check=True); legacy or subprocess.run([sys.executable,'-I',root+'/tools/platform_suite.py','--output',output,'--max-rss-mb','4096']+(['--upstream'] if sys.version_info[:2]==(3,13) else ['--tests-only']),check=True)"
+            python -I "{project}/tools/test_release_wheel.py"
       - name: Validate repaired wheel archives
         run: |
           python tools/check_release.py --dist wheelhouse

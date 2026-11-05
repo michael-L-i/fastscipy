@@ -5,6 +5,16 @@ This page describes the main source branch. The
 including ND FFT dispatch, small `pdist` calls and scalar optimization bounds,
 are not yet in published 0.1.0a4.
 
+The function lists and counts below describe SciPy 1.18. Older SciPy candidates
+have narrower coverage: the required components are `ndimage`, `special` and
+`spatial`; interpolation and distance transforms stay with SciPy before 1.18,
+and SciPy 1.10–1.12 CDFLIB functions retain their original unthreaded ufuncs.
+See the [candidate matrix and known baseline limitations](platforms.md#compatibility-candidates)
+for tested combinations and the SciPy 1.16/1.17 masked `erf` exception.
+`status()` reports component activation; `stats()` shows whether calls actually
+used fast paths. Neither an enabled component nor a function listed here
+promises acceleration for every argument combination.
+
 Fast paths are checked against SciPy 1.18, byte for byte where its reference
 is reproducible. Intel Mac's Accelerate reductions can vary even in plain
 SciPy; [platform details](platforms.md) describe that measured limitation and

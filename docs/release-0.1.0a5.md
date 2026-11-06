@@ -23,7 +23,7 @@
 The full [53-wheel rehearsal](https://github.com/michael-L-i/fastscipy/actions/runs/42139402656)
 passed on 2026-11-06 UTC at source
 `074db9aa2dfd0db97264dc6bf82aa1a3c3e8ce00`, including the source archive and
-complete artifact gate, with publishing disabled. This does not qualify the
+complete artifact gate, with publishing disabled. This does not qualify
 a different source or establish publication. Release-source validation,
 publication, independent file-hash verification and clean installed pilots
 are separate steps.

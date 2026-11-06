@@ -1,12 +1,10 @@
-# 0.1.0a5 release preparation
-
-This release is being prepared; 0.1.0a4 remains the published release.
+# 0.1.0a5
 
 - Broaden Python metadata from 3.12–3.15 to 3.9–3.15, SciPy from 1.18 to
   1.10–1.18, and NumPy to >=1.19.5,<2.8, subject to SciPy's requirements.
   Stable NumPy <2.6 is required for acceleration; newer or prerelease NumPy
   leaves acceleration off with a status reason.
-- Plan 53 wheels across eight 64-bit Linux, macOS and Windows variants.
+- Configure 53 wheels across eight 64-bit Linux, macOS and Windows variants.
   Python 3.9 on musl arm64 and Python 3.9–3.10 on Windows arm64 are excluded
   because the selected SciPy dependency wheels are unavailable.
 - Qualify older-Python wheels for `ndimage`, `special` and `spatial` with
@@ -26,9 +24,9 @@ The full [53-wheel rehearsal](https://github.com/michael-L-i/fastscipy/actions/r
 passed on 2026-11-06 UTC at source
 `074db9aa2dfd0db97264dc6bf82aa1a3c3e8ce00`, including the source archive and
 complete artifact gate, with publishing disabled. This does not qualify the
-future a5 tag or claim a5 publication. Release-source validation, publication,
-independent file-hash verification and clean installed pilots remain separate
-steps.
+a different source or establish publication. Release-source validation,
+publication, independent file-hash verification and clean installed pilots
+are separate steps.
 
 The [platform record](platforms.md#compatibility-candidates) lists exact
 dependency pins and upstream baseline limitations, including nonfinite legacy

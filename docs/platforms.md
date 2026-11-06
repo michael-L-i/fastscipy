@@ -40,7 +40,7 @@ NumPy 2.6 or newer and prereleases until they are qualified. An upstream
 dependency bound does not establish compatibility of future fastscipy
 acceleration paths.
 
-The proposed complete release gate retains all 32 current-stack wheel jobs
+The configured complete release gate retains all 32 current-stack wheel jobs
 and adds the following 21 older-Python wheel jobs:
 
 | Python | Release qualification dependencies | Platform variants | Required qualification |
@@ -55,8 +55,8 @@ Each wheel must pass installed ABI checks, isolated component fast-path
 smokes, the corresponding project suites and paired upstream SciPy suites.
 The complete artifact check requires exactly 53 wheels plus one source
 archive. The eight-wheel CP313 preflight remains a separate, smaller check.
-None of these proposed jobs establishes published support until the complete
-release validation and publication process succeeds.
+This 53-wheel gate has not been run. It establishes published support only
+when the complete release validation and publication process succeeds.
 
 Older `ndimage` candidates accelerate filters, ranks, generic filters,
 labeling, binary morphology and measurements. Interpolation and Euclidean
@@ -126,8 +126,25 @@ dependency preservation, and isolated `ndimage`, `special`, and `spatial`
 smokes; Python 3.11.14 with NumPy 1.23.5/SciPy 1.10.1 passed the earlier,
 narrower ABI and `special`/`spatial` smokes. These reports identify their
 wheel hashes and source checkpoints. They are not numerical-suite results
-or validation of later source changes. The Python 3.9/NumPy 1.19.5 endpoint
-and cross-platform candidate matrix still require their configured CI checks.
+or validation of later source changes. The later [PR #31 candidate run](https://github.com/michael-L-i/fastscipy/actions/runs/41540982237)
+passed all four interpreter wheel builds and all 15 installed dependency tuples
+on Linux x86_64, including the Python 3.9/NumPy 1.19.5 endpoint:
+
+| Python | Tested NumPy / SciPy pairs |
+|---|---|
+| 3.9 | 1.19.5 / 1.10.1; 1.21.6 / 1.10.1; 2.0.2 / 1.13.1 |
+| 3.10 | 1.21.6 / 1.10.1; 1.23.5 / 1.10.1; 2.2.6 / 1.15.3 |
+| 3.11 | 1.26.4 / 1.11.4; 1.26.4 / 1.12.0; 2.0.2 / 1.13.1; 2.1.3 / 1.14.1; 2.3.5 / 1.15.3; 2.3.5 / 1.16.3; 2.4.0 / 1.17.1 |
+| 3.12 | 2.0.2 / 1.18.1; 2.5.4 / 1.18.1 |
+
+Each installed tuple passed dependency-preservation, ABI and isolated component
+smokes, plus the selected numerical project suites (`ndimage`, `special`,
+`spatial` and compatibility tests on older SciPy; the full project suite on
+SciPy 1.18). These results cover those Linux tuples at PR head
+`a03c6aaa50756e6ccaa0d8dc5336b5562d250cdd`, subsequently merged in
+[PR #31](https://github.com/michael-L-i/fastscipy/pull/31). They do not
+establish every combination within the dependency ranges, older-Python
+cross-platform wheel support, or completion of the 53-wheel release gate.
 
 ## Evidence
 

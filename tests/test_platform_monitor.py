@@ -3,6 +3,8 @@
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 from types import SimpleNamespace
 
 import psutil
@@ -13,6 +15,18 @@ SPEC = importlib.util.spec_from_file_location(
 )
 monitor = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(monitor)
+
+
+def test_platform_cli_imports_helpers_in_isolated_mode(tmp_path):
+    result = subprocess.run(
+        [sys.executable, "-I", str(Path(monitor.__file__).resolve()), "--help"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "--max-rss-mb" in result.stdout
 
 
 class Child:

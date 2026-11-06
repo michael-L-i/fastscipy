@@ -6,16 +6,18 @@ Portable Rust kernels and shared thread pools accelerate supported calls.
 Everything else stays with SciPy.
 
 ```sh
-pip install --pre fastscipy
+python -m pip install --only-binary=:all: fastscipy==0.1.0a4
 ```
 
 ```python
+import numpy as np
 import fastscipy
 
-fastscipy.patch()
+fastscipy.patch(threads=2)
 
 from scipy import ndimage
 
+image = np.random.default_rng(0).normal(size=(256, 256))
 clean = ndimage.median_filter(image, size=3)
 ```
 
@@ -29,7 +31,7 @@ clean = ndimage.median_filter(image, size=3)
 
 ## Install and use
 
-Published **0.1.0a4** wheels for **Python 3.12–3.15 · SciPy 1.18**; no Rust required.
+Published **0.1.0a4** wheels use **Python 3.12–3.15 · SciPy 1.18 · NumPy 2.5**; no Rust required.
 Supports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
 and Windows. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
 
@@ -38,9 +40,20 @@ scoped set of acceleration paths. These changes are not in the published
 `0.1.0a4` wheels; older-Python source installs currently require Rust.
 [Candidate matrix, fallback behavior, and validation limits →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md#compatibility-candidates)
 
-Call `patch()` before importing libraries that use SciPy.
-Use `patch(threads=4)` to choose a thread budget, `status()` to see what's enabled,
-and `unpatch()` to restore SciPy.
+Call `patch()` before importing libraries that use SciPy. The default thread
+budget uses all cores; choose `threads=2` (as above) to bound fastscipy's work.
+BLAS has its own thread settings.
+
+```python
+print(fastscipy.status())  # component: "on" or "off: <reason>"
+print(fastscipy.stats())   # counters showing actual fast-path use
+fastscipy.unpatch()        # restore SciPy
+```
+
+An enabled component still forwards unsupported inputs and options to SciPy.
+An unavailable component stays off with a reason in `status()`. See
+[coverage](https://github.com/michael-L-i/fastscipy/blob/main/docs/coverage.md)
+for the supported calls and older-stack restrictions.
 
 ## Performance across platforms
 

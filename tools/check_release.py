@@ -14,6 +14,7 @@ import tomllib
 import zipfile
 
 from packaging.version import Version
+from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.utils import parse_wheel_filename
 
@@ -110,9 +111,7 @@ def archives(directory, project, complete=False, complete_python=None):
                 meta = BytesParser().parsebytes(
                     archive.read(next(n for n in names if n.endswith(".dist-info/METADATA")))
                 )
-                assert meta["Name"] == project["name"] and meta["Version"] == project["version"]
-                assert meta["License-Expression"] == "BSD-3-Clause"
-                assert SpecifierSet(meta["Requires-Python"]) == SpecifierSet(project["requires-python"])
+                check_metadata(meta, project)
                 for license in ("LICENSE", "scipy-LICENSE.txt"):
                     assert any(n.endswith("/" + license) for n in names), f"Missing {license}"
                 assert any(n.startswith("fastscipy/_native.") and n.endswith((".so", ".pyd")) for n in names)
@@ -120,6 +119,7 @@ def archives(directory, project, complete=False, complete_python=None):
                 body = meta.get_payload()
                 assert "](docs/" not in body and "](examples/" not in body, "Relative PyPI README links"
         else:
+            assert path.name == f"{project['name']}-{project['version']}.tar.gz", path.name
             with tarfile.open(path) as archive:
                 names = {n.split("/", 1)[-1] for n in archive.getnames()}
                 for required in (
@@ -130,8 +130,11 @@ def archives(directory, project, complete=False, complete_python=None):
                     "python/fastscipy/__init__.py",
                     "LICENSE",
                     "LICENSES/scipy-LICENSE.txt",
+                    "PKG-INFO",
                 ):
                     assert required in names, f"Missing {required}"
+                metadata = archive.extractfile(f"{project['name']}-{project['version']}/PKG-INFO")
+                check_metadata(BytesParser().parsebytes(metadata.read()), project)
                 assert not any(n.startswith(("bench/", "examples/", "docs/")) for n in names)
         print("Validated", path.name)
     if complete:
@@ -152,6 +155,24 @@ def archives(directory, project, complete=False, complete_python=None):
         assert targets == expected, f"Missing {expected - targets}; unexpected {targets - expected}"
         assert len(list(directory.glob("*.whl"))) == len(expected), f"Expected exactly {len(expected)} wheels"
         assert len(list(directory.glob("*.tar.gz"))) == 1, "Expected exactly one source distribution"
+
+
+def check_metadata(metadata, project):
+    """Reject stale dependency bounds as well as stale version declarations."""
+    assert metadata["Name"] == project["name"] and metadata["Version"] == project["version"]
+    assert metadata["License-Expression"] == "BSD-3-Clause"
+    assert SpecifierSet(metadata["Requires-Python"]) == SpecifierSet(project["requires-python"])
+    expected = {Requirement(dependency) for dependency in project.get("dependencies", [])}
+    for extra, dependencies in project.get("optional-dependencies", {}).items():
+        for dependency in dependencies:
+            requirement = Requirement(dependency)
+            marker = f"({requirement.marker}) and " if requirement.marker else ""
+            requirement.marker = Requirement(f'placeholder; {marker}extra == "{extra}"').marker
+            expected.add(requirement)
+    actual = {Requirement(dependency) for dependency in metadata.get_all("Requires-Dist", [])}
+    assert actual == expected, (
+        f"Dependency metadata mismatch: missing {expected - actual}; unexpected {actual - expected}"
+    )
 
 
 def installed(project):
@@ -191,6 +212,8 @@ def main():
         "--complete-python", choices=["cp313"], help="Explicit eight-platform Python 3.13 preflight set"
     )
     args = parser.parse_args()
+    if args.complete and not args.dist:
+        parser.error("--complete requires --dist")
     if args.complete_python and not (args.complete and args.dist):
         parser.error("--complete-python requires --complete and --dist")
     project = versions()

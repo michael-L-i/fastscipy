@@ -191,6 +191,9 @@ def revision():
 
 
 def main():
+    # -I keeps fastscipy isolated from the checkout, but also removes this
+    # script's directory. Restore only the validation helpers, not python/.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     from check_native_build import REBUILD, inspect_build
 
     parser = argparse.ArgumentParser(description=__doc__)

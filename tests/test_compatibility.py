@@ -13,6 +13,47 @@ import fastscipy
 from fastscipy import _patch, _threads
 
 
+@pytest.mark.parametrize("components", [[], ()])
+def test_empty_component_selection_preserves_patches(monkeypatch, components):
+    status = {"compatibility_test": "on"}
+    monkeypatch.setattr(fastscipy, "_status", status.copy())
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("an empty component selection must not patch or restore anything")
+
+    monkeypatch.setattr(_patch, "require_numpy", unexpected)
+    monkeypatch.setattr(_patch, "restore", unexpected)
+    assert fastscipy.patch(components) == status
+    fastscipy.unpatch(components)
+    assert fastscipy.status() == status
+
+
+def test_default_component_selection_patches_and_restores_bindings(monkeypatch):
+    original, replacement = object(), object()
+    owner = types.SimpleNamespace(hook=original)
+    module = types.SimpleNamespace(patch=lambda: _patch.replace(owner, "hook", replacement))
+    monkeypatch.setattr(fastscipy, "_status", {})
+    monkeypatch.setattr(fastscipy, "COMPONENTS", ("compatibility_test",))
+    original_import = importlib.import_module
+
+    def load(name, *args, **kwargs):
+        if name == "fastscipy._compatibility_test":
+            return module
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(importlib, "import_module", load)
+    try:
+        assert fastscipy.patch() == {"compatibility_test": "on"}
+        assert owner.hook is replacement
+        fastscipy.unpatch([])
+        assert owner.hook is replacement
+        fastscipy.unpatch()
+        assert owner.hook is original
+        assert fastscipy.status() == {}
+    finally:
+        _patch.restore("compatibility_test")
+
+
 def test_missing_native_keeps_python_thread_budget(monkeypatch):
     def unavailable(name):
         raise ImportError("test ABI unavailable")

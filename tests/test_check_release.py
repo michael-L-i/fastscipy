@@ -2,6 +2,7 @@
 
 import importlib.util
 import io
+from email.parser import Parser
 from pathlib import Path
 import tarfile
 import zipfile
@@ -56,6 +57,12 @@ def make_archives(directory, interpreters):
         ):
             info = tarfile.TarInfo("fastscipy-0.1.0a2/" + name)
             archive.addfile(info, io.BytesIO())
+        metadata = (
+            "Name: fastscipy\nVersion: 0.1.0a2\nLicense-Expression: BSD-3-Clause\nRequires-Python: >=3.12\n\nFixture"
+        ).encode()
+        info = tarfile.TarInfo("fastscipy-0.1.0a2/PKG-INFO")
+        info.size = len(metadata)
+        archive.addfile(info, io.BytesIO(metadata))
     return project
 
 
@@ -107,3 +114,57 @@ def test_validation_only_source_guard(release, monkeypatch, event, destination, 
     else:
         with pytest.raises(AssertionError, match="Validation-only"):
             release.versions()
+
+
+def test_source_archive_version_must_match(release, tmp_path):
+    project = make_archives(tmp_path, [])
+    next(tmp_path.glob("*.tar.gz")).rename(tmp_path / "fastscipy-0.1.0a1.tar.gz")
+    with pytest.raises(AssertionError, match="fastscipy-0.1.0a1"):
+        release.archives(tmp_path, project)
+
+
+def test_dependency_metadata_includes_core_and_extra_bounds(release):
+    project = {
+        "name": "fastscipy",
+        "version": "0.1.0a2",
+        "requires-python": ">=3.9,<3.16",
+        "dependencies": ["numpy>=1.19.5,<2.8", "scipy>=1.10,<1.19"],
+        "optional-dependencies": {"test": ["pytest", "hypothesis; python_version >= '3.9'"]},
+    }
+    text = (
+        "Name: fastscipy\nVersion: 0.1.0a2\nLicense-Expression: BSD-3-Clause\n"
+        "Requires-Python: <3.16,>=3.9\n"
+        "Requires-Dist: numpy<2.8,>=1.19.5\nRequires-Dist: scipy<1.19,>=1.10\n"
+        'Requires-Dist: pytest; extra == "test"\n'
+        'Requires-Dist: hypothesis; python_version >= "3.9" and extra == "test"\n'
+    )
+    release.check_metadata(Parser().parsestr(text), project)
+    for malformed in (
+        text.replace("scipy<1.19,>=1.10", "scipy==1.18.1"),
+        text.replace('Requires-Dist: pytest; extra == "test"\n', ""),
+        text + "Requires-Dist: unexpected-package\n",
+    ):
+        with pytest.raises(AssertionError, match="Dependency metadata mismatch"):
+            release.check_metadata(Parser().parsestr(malformed), project)
+
+
+@pytest.mark.parametrize("minor", range(9, 16))
+def test_installed_gate_preserves_interpreter_scope(minor, tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "release_wheel_gate", Path(__file__).parents[1] / "tools/test_release_wheel.py"
+    )
+    gate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gate)
+    commands = gate.commands(tmp_path, (3, minor))
+    assert all(command[1] == "-I" for command in commands)
+    if minor < 12:
+        assert len(commands) == 1
+        assert Path(commands[0][2]).name == "compatibility_release.py"
+    else:
+        assert len(commands) == 2
+        assert Path(commands[0][2]).name == "check_release.py"
+        assert commands[0][-1] == "--installed"
+        assert Path(commands[1][2]).name == "platform_suite.py"
+        assert commands[1][-1] == ("--upstream" if minor == 13 else "--tests-only")
+        assert commands[1][-3:-1] == ["--max-rss-mb", "4096"]
+    assert str(tmp_path) in commands[-1]

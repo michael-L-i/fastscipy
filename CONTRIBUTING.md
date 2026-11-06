@@ -120,9 +120,13 @@ The `0.1.0a4` release passed all 32 wheel jobs, source-distribution and
 complete artifact gates, PyPI publication, independent published-file hash
 verification, and eight clean installed CP313 application pilots.
 See [release evidence](docs/platforms.md#evidence). This remains the published
-support record; the broader candidate workflow has not established a new release.
+support record. The full 53-wheel rehearsal passed on 2026-11-06 UTC at
+`074db9aa2dfd0db97264dc6bf82aa1a3c3e8ce00`, with both publishers skipped
+([run 42139402656](https://github.com/michael-L-i/fastscipy/actions/runs/42139402656)).
+The forthcoming `0.1.0a5` still needs validation at its own release source,
+publication and independent published-artifact checks.
 
-The next complete release gate requires 53 wheels and one source archive.
+The complete release gate requires 53 wheels and one source archive.
 The original 32 Python 3.12–3.15 wheels retain their installed all-component
 and project checks; CP313 also retains benchmarks and paired upstream comparisons.
 The additional 21 Python 3.9–3.11 wheels require installed ABI and isolated

@@ -5,8 +5,11 @@
 Portable Rust kernels and shared thread pools accelerate supported calls.
 Everything else stays with SciPy.
 
+**0.1.0a5 release preparation:** the command below targets the forthcoming
+release. The currently published release is 0.1.0a4.
+
 ```sh
-python -m pip install --only-binary=:all: fastscipy==0.1.0a4
+python -m pip install --only-binary=:all: fastscipy==0.1.0a5
 ```
 
 ```python
@@ -31,14 +34,29 @@ clean = ndimage.median_filter(image, size=3)
 
 ## Install and use
 
-Published **0.1.0a4** wheels use **Python 3.12–3.15 · SciPy 1.18 · NumPy 2.5**; no Rust required.
-Supports **x86_64 and ARM64** on Linux (glibc 2.28+ or musl 1.2+), macOS 14+,
-and Windows. [Platform details and measurements →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md)
+The forthcoming **0.1.0a5** targets **Python 3.9–3.15 · SciPy 1.10–1.18**.
+Dependency metadata permits **NumPy 1.19.5–<2.8**, subject to SciPy's own
+requirements; acceleration requires stable **NumPy <2.6**. A permitted
+installation is not a claim that every dependency combination is qualified.
 
-Development candidates broaden Python and dependency compatibility with a
-scoped set of acceleration paths. These changes are not in the published
-`0.1.0a4` wheels; older-Python source installs currently require Rust.
-[Candidate matrix, fallback behavior, and validation limits →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md#compatibility-candidates)
+The planned 53-wheel set needs no Rust and covers **x86_64 and ARM64** on
+Linux (glibc 2.28+ or musl 1.2+), macOS 14+, and Windows:
+
+| Platform | Python versions in the planned wheel set |
+|---|---|
+| macOS arm64 / x86_64 | 3.9–3.15 |
+| Linux glibc arm64 / x86_64 | 3.9–3.15 |
+| Linux musl x86_64 | 3.9–3.15 |
+| Linux musl arm64 | 3.10–3.15 |
+| Windows x86_64 | 3.9–3.15 |
+| Windows arm64 | 3.11–3.15 |
+
+Python 3.9 on musl arm64 and Python 3.9–3.10 on Windows arm64 lack the
+selected SciPy dependency wheels. Older-stack release qualification covers
+`ndimage`, `special`, and `spatial`; SciPy 1.18 retains the full component
+gate. Unsupported calls fall back to SciPy. The full 53-wheel rehearsal
+passed with publishing disabled; a5 still requires its own tagged validation
+and publication. [Dependency pins, evidence, and limitations →](https://github.com/michael-L-i/fastscipy/blob/main/docs/platforms.md#compatibility-candidates)
 
 Call `patch()` before importing libraries that use SciPy. The default thread
 budget uses all cores; choose `threads=2` (as above) to bound fastscipy's work.
@@ -58,7 +76,7 @@ for the supported calls and older-stack restrictions.
 ## Performance across platforms
 
 Geometric-mean speedups at **two threads**, with BLAS limited to one.
-These portability checkpoints use Python 3.13, NumPy 2.5.4, and SciPy 1.18.1;
+These historical portability checkpoints use Python 3.13, NumPy 2.5.4, and SciPy 1.18.1;
 each comparison uses the same machine and inputs.
 
 | Platform | ndimage | stats | linalg |

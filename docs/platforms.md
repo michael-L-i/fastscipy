@@ -21,9 +21,9 @@ Minimal Alpine images also need the runtime C++ library (`apk add --no-cache lib
 
 ## Compatibility candidates
 
-The development compatibility work targets Python 3.9–3.15 and SciPy
+The forthcoming `0.1.0a5` targets Python 3.9–3.15 and SciPy
 1.10–1.18. NumPy and Python combinations must also satisfy the selected
-SciPy release's requirements. These are candidate ranges, not an extension
+SciPy release's requirements. These are release-preparation ranges, not an extension
 of the published `0.1.0a4` validation record above. The candidate CI installs
 one native wheel per interpreter into several existing dependency environments,
 checks that installation preserves NumPy and SciPy versions, and records
@@ -55,8 +55,13 @@ Each wheel must pass installed ABI checks, isolated component fast-path
 smokes, the corresponding project suites and paired upstream SciPy suites.
 The complete artifact check requires exactly 53 wheels plus one source
 archive. The eight-wheel CP313 preflight remains a separate, smaller check.
-This 53-wheel gate has not been run. It establishes published support only
-when the complete release validation and publication process succeeds.
+The full rehearsal passed on 2026-11-06 UTC at source
+`074db9aa2dfd0db97264dc6bf82aa1a3c3e8ce00`:
+[run 42139402656](https://github.com/michael-L-i/fastscipy/actions/runs/42139402656)
+passed all 53 wheel jobs, the source-distribution/version gate and complete
+artifact-set verification. Both publishing jobs were skipped. This validates
+that source checkpoint and its pinned dependencies; it does not validate a
+future a5 tag or establish a published a5 release.
 
 Older `ndimage` candidates accelerate filters, ranks, generic filters,
 labeling, binary morphology and measurements. Interpolation and Euclidean
@@ -144,7 +149,8 @@ SciPy 1.18). These results cover those Linux tuples at PR head
 `a03c6aaa50756e6ccaa0d8dc5336b5562d250cdd`, subsequently merged in
 [PR #31](https://github.com/michael-L-i/fastscipy/pull/31). They do not
 establish every combination within the dependency ranges, older-Python
-cross-platform wheel support, or completion of the 53-wheel release gate.
+cross-platform wheel support. The separate full rehearsal above supplies
+source-specific cross-platform evidence at its pinned dependencies.
 
 ## Evidence
 

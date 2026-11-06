@@ -3,10 +3,10 @@
 This page describes the main source branch. The
 [latest development improvements](../bench/runs/2026-10-22-review/README.md),
 including ND FFT dispatch, small `pdist` calls and scalar optimization bounds,
-are not yet in published 0.1.0a4.
+are planned for 0.1.0a5 and are not in published 0.1.0a4.
 
-The function lists and counts below describe SciPy 1.18. Older SciPy candidates
-have narrower coverage: the required components are `ndimage`, `special` and
+The function lists and counts below describe SciPy 1.18. Older SciPy stacks
+have narrower qualified coverage: the required components are `ndimage`, `special` and
 `spatial`; interpolation and distance transforms stay with SciPy before 1.18,
 and SciPy 1.10–1.12 CDFLIB functions retain their original unthreaded ufuncs.
 See the [candidate matrix and known baseline limitations](platforms.md#compatibility-candidates)

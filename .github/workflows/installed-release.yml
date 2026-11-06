@@ -1,6 +1,6 @@
 name: Installed release pilots
 
-# Run after publication hashes match the approved 32-wheel and sdist artifacts.
+# Run after publication hashes match the approved 53-wheel and sdist artifacts.
 # These application pilots install PyPI binaries; they do not build this checkout.
 
 on:
@@ -12,7 +12,7 @@ on:
       version:
         description: Published fastscipy version matching this checkout
         required: true
-        default: "0.1.0a4"
+        default: "0.1.0a5"
 
 permissions:
   contents: read
@@ -36,7 +36,7 @@ jobs:
           - {name: windows-amd64, runner: windows-2025, image: ""}
           - {name: windows-arm64, runner: windows-11-arm, image: ""}
     env:
-      FASTSCIPY_EXPECTED_VERSION: ${{ inputs.version || '0.1.0a4' }}
+      FASTSCIPY_EXPECTED_VERSION: ${{ inputs.version || '0.1.0a5' }}
       FASTSCIPY_NUM_THREADS: "2"
       OPENBLAS_NUM_THREADS: "1"
       OMP_NUM_THREADS: "1"
